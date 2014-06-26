@@ -13,7 +13,7 @@
 
     <modules>
         <module>service-stubs</module>
-        <!-- <module>components/andes</module> -->
+        <module>components/andes</module>
     </modules>
 
 
