@@ -245,7 +245,7 @@ public class QpidServiceImpl implements QpidService {
     private int readPortOffset() {
         ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
         String portOffset = System.getProperty("portOffset",
-                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET_NODE));
 
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
@@ -597,7 +597,7 @@ public class QpidServiceImpl implements QpidService {
         return sslOnly;
     }
 
-    @Override
+    //@Override
     public int getCassandraConnectionPort() {
         int configuredPort = 9160;
         if(!isExternalCassandraServerRequired()){

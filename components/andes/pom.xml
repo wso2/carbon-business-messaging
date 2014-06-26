@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.coordination.server</artifactId>
-                <version>$4.2.0</version>
+                <version>4.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.andes.wso2</groupId>
