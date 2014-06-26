@@ -166,6 +166,12 @@ public interface QpidService {
     public String getSSLPort();
 
     /**
+     * Return if <sslOnly> option is enabled for embedded-qpid
+     * @return
+     */
+    public boolean getIfSSLOnly();
+
+    /**
      * Returns the Whether the clustering is enabled
      * @return  clustering enabled disabled status
      */
@@ -196,5 +202,8 @@ public interface QpidService {
      * @return zookeeper connection string
      */
     public String getZookeeperConnectionString();
+
+
+    public int getCassandraConnectionPort();
 
 }

@@ -58,7 +58,7 @@ public class QueueManagerServiceDS {
     }
 
     protected void unsetRealmService(RealmService realmService) {
-
+        QueueManagerServiceValueHolder.getInstance().registerRealmService(null);
     }
 
     protected void setRegistryService(RegistryService registryService) {

@@ -17,14 +17,15 @@
 */
 package org.wso2.carbon.andes.ui;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
+import org.wso2.carbon.andes.stub.admin.types.Subscription;
 import org.wso2.carbon.andes.ui.client.QueueReceiverClient;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.ui.CarbonUIUtil;
@@ -35,13 +36,25 @@ import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.rmi.RemoteException;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class UIUtils {
-    private static Log log = LogFactory.getLog(UIUtils.class);
 
-    private static Boolean IS_MSG_COUNT_VIEW_OPTION_SET = null;
+    private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
+    private static final String ANDES_CONF_FILE = "andes-config.xml";
+    private static final String QPID_CONF_CONNECTOR_NODE = "connector";
+    private static final String QPID_CONF_SSL_NODE = "ssl";
+    private static final String QPID_CONF_SSL_ONLY_NODE = "sslOnly";
+    private static final String QPID_CONF_SSL_KEYSTORE_PATH = "keystorePath";
+    private static final String QPID_CONF_SSL_KEYSTORE_PASSWORD = "keystorePassword";
+    private static final String QPID_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
+    private static final String QPID_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
+
 
     public static String getHtmlString(String message) {
         return message.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -106,6 +119,47 @@ public class UIUtils {
         return queueDetailsArray;
     }
 
+
+    public static Subscription[] getFilteredSubscriptionList(Subscription[] fullList ,int startingIndex, int maxSubscriptionCount) {
+        Subscription[] subscriptionDetailsArray;
+        int resultSetSize = maxSubscriptionCount;
+
+        ArrayList<Subscription> resultList = new ArrayList<Subscription>();
+        for(Subscription sub : fullList) {
+            resultList.add(sub);
+        }
+
+        if ((resultList.size() - startingIndex) < maxSubscriptionCount) {
+            resultSetSize = (resultList.size() - startingIndex);
+        }
+        subscriptionDetailsArray = new Subscription[resultSetSize];
+        int index = 0;
+        int subscriptionDetailsIndex = 0;
+        for (Subscription subscriptionDetail : resultList) {
+            if (startingIndex == index || startingIndex < index) {
+                subscriptionDetailsArray[subscriptionDetailsIndex] = new Subscription();
+
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscribedQueueOrTopicName(subscriptionDetail.getSubscribedQueueOrTopicName());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueBoundExchange(subscriptionDetail.getSubscriberQueueBoundExchange());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueName(subscriptionDetail.getSubscriberQueueName());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail.getDurable());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail.getActive());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber(subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail.getSubscriberNodeAddress());
+
+                subscriptionDetailsIndex++;
+                if (subscriptionDetailsIndex == maxSubscriptionCount) {
+                    break;
+                }
+            }
+            index++;
+        }
+
+        return subscriptionDetailsArray;
+    }
+
     /**
      * filter the whole message list to fit for the page range
      *
@@ -151,7 +205,8 @@ public class UIUtils {
         String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
         int CARBON_DEFAULT_PORT_OFFSET = 0;
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET);
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
 
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
@@ -167,7 +222,7 @@ public class UIUtils {
      * @param accessKey - the key (uuid) generated by authentication service
      * @return
      */
-    public static String getTCPConnectionURL(String userName, String accessKey) {
+    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException, XMLStreamException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
         String CARBON_CLIENT_ID = "carbon";
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
@@ -177,14 +232,54 @@ public class UIUtils {
         int carbonPort = Integer.valueOf(CARBON_DEFAULT_PORT)+portOffset;
         String CARBON_PORT = String.valueOf(carbonPort);
 
+        // these are the properties which needs to be passed when ssl is enabled
+        String CARBON_DEFAULT_SSL_PORT = "8672";
+        int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT)+portOffset;
+        String CARBON_SSL_PORT = String.valueOf(carbonSslPort);
+
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                getDocumentElement();
+        OMElement connectorNode = docRootNode.getFirstChildWithName(
+                new QName(QPID_CONF_CONNECTOR_NODE));
+        OMElement sslNode = connectorNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_NODE));
+        OMElement sslKeyStorePath = sslNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_KEYSTORE_PATH));
+        OMElement sslKeyStorePwd = sslNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_KEYSTORE_PASSWORD));
+        OMElement sslTrustStorePath = sslNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_TRUSTSTORE_PATH));
+        OMElement sslTrustStorePwd = sslNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_TRUSTSTORE_PASSWORD));
+
+        String KEY_STORE_PATH= sslKeyStorePath.getText();
+        String TRUST_STORE_PATH= sslTrustStorePath.getText();
+        String SSL_KEYSTORE_PASSWORD=sslKeyStorePwd.getText();
+        String SSL_TRUSTSTORE_PASSWORD=sslTrustStorePwd.getText();
+
         // as it is nt possible to obtain the password of for the given user, we use service generated access key
         // to authenticate the user
-        return new StringBuffer()
-                .append("amqp://").append(userName).append(":").append(accessKey)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT).append("'")
-                .toString();
+
+        if(isSSLOnly()){
+        //"amqp://admin:admin@carbon/carbon?brokerlist='tcp://{hostname}:{port}?ssl='true'&trust_store='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path}'&key_store_password='{key_store_pwd}''";
+
+            return new StringBuffer()
+                    .append("amqp://").append(userName).append(":").append(accessKey)
+                    .append("@").append(CARBON_CLIENT_ID)
+                    .append("/").append(CARBON_VIRTUAL_HOST_NAME)
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
+                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='").append(KEY_STORE_PATH)
+                    .append("'&key_store_password='").append(SSL_KEYSTORE_PASSWORD).append("''")
+                    .toString();
+        } else {
+            return new StringBuffer()
+                    .append("amqp://").append(userName).append(":").append(accessKey)
+                    .append("@").append(CARBON_CLIENT_ID)
+                    .append("/").append(CARBON_VIRTUAL_HOST_NAME)
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT).append("'")
+                    .toString();
+        }
     }
 
     /**
@@ -208,17 +303,36 @@ public class UIUtils {
         return messageCount;
     }
 
-    public static boolean isDefaultMsgCountViewOptionConfigured(AndesAdminServiceStub stub) throws RemoteException {
-       try{
-           if(IS_MSG_COUNT_VIEW_OPTION_SET == null){
-               IS_MSG_COUNT_VIEW_OPTION_SET = stub.getValueOfMsgCountViewOption();
-           }
+    public static void purgeQueue(String queuename, String username, String accesskey, Queue[] queueList) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
+        QueueReceiverClient qrClient;
+        int purgedMessageCount;
+        int currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
+        int time_out = 0;
+        while (currentMsgCount != 0 && time_out != 15) {
+            qrClient = new QueueReceiverClient();
+            javax.jms.Queue queue = qrClient.registerReceiver(queuename, username, accesskey);
+            purgedMessageCount = qrClient.purgeQueue(queue);
+            currentMsgCount = currentMsgCount - purgedMessageCount;
+            qrClient.closeReceiver();
+            time_out ++;
 
-       }catch (Exception e){
-           log.error("Error in reading MSG_COUNT_VIEW_OPTION from server: " , e);
-       }
-       return IS_MSG_COUNT_VIEW_OPTION_SET;
+        }
     }
 
+    public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
+            File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement connectorNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_CONF_CONNECTOR_NODE));
+            OMElement sslNode = connectorNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_NODE));
+            OMElement sslOnlyNode = sslNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_ONLY_NODE));
+
+            boolean sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
+
+        return sslOnly;
+    }
 }

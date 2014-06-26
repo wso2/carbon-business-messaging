@@ -1,5 +1,9 @@
 <%@ page import="org.wso2.carbon.andes.ui.Constants" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.andes.stub.admin.types.QueueRolePermission" %>
+<%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript" src="../resources/js/resource_util.js"></script>
@@ -44,9 +48,9 @@
     <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
 
     <div id="middle">
-        <h2><fmt:message key="add.queue"/></h2>
 
         <div id="workArea">
+            <h2><fmt:message key="add.queue"/></h2>
             <table class="styledLeft" style="width:100%">
                 <thead>
                 <tr>
@@ -60,7 +64,71 @@
                     <td><input type="text" id="queue"></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><input type="button" class="button"
+                    <td class="formRow" colspan="2">
+                        <h4>Permissions</h4>
+                        <table class="styledLeft" style="width:100%" id="permissionsTable">
+                            <thead>
+                            <tr>
+                                <th><fmt:message key="role"/></th>
+                                <th><fmt:message key="consume"/></th>
+                                <th><fmt:message key="publish"/></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <%
+                                String[] userRoles;
+                                AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
+
+                                try {
+                                    userRoles = stub.getUserRoles();
+                                } catch (AndesAdminServiceBrokerManagerAdminException e) {
+                            %>
+                            <script type="text/javascript">
+                                CARBON.showErrorDialog('<%= e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>');
+
+                            </script>
+                            <%
+                                    return;
+                                }
+
+                                if (userRoles != null) {
+                                    QueueRolePermission[] defaultRolePermissions = new QueueRolePermission[userRoles.length];
+                                    QueueRolePermission queueRolePermission;
+                                    int roleIndex = 0;
+                                    for (String role : userRoles) {
+                                        queueRolePermission = new QueueRolePermission();
+                                        queueRolePermission.setRoleName(role);
+                                        queueRolePermission.setAllowedToConsume(true);
+                                        queueRolePermission.setAllowedToPublish(true);
+                                        defaultRolePermissions[roleIndex] = queueRolePermission;
+                                        roleIndex++;
+                                    }
+
+                                    for (QueueRolePermission rolePermission : defaultRolePermissions) {
+                            %>
+                            <tr>
+                                <td><%=rolePermission.getRoleName()%>
+                                </td>
+                                <td><input type="checkbox"
+                                           id="<%=rolePermission.getRoleName()%>^consume"
+                                           value="consume" <% if (rolePermission.getAllowedToConsume()) { %>
+                                           checked <% } %></td>
+                                <td><input type="checkbox"
+                                           id="<%=rolePermission.getRoleName()%>^publish"
+                                           value="publish"  <% if (rolePermission.getAllowedToPublish()) { %>
+                                           checked <% } %></td>
+                            </tr>
+                            <%
+                                    }
+                                }
+                            %>
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="buttonRow"><input type="button" class="button"
                                value="<fmt:message key="add.queue"/>"
                                onclick="addQueue('<%=Constants.MB_QUEUE_CREATED_FROM_AMQP%>')"/>
                     </td>

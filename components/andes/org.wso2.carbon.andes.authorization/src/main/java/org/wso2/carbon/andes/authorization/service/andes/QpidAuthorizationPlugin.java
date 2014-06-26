@@ -115,17 +115,6 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
 
             // Get username from tenant username
             PrivilegedCarbonContext.startTenantFlow();
-            switch (operation) { // These operations do not need users associated with them
-                case UNBIND:
-                    return QpidAuthorizationHandler.handleUnbindQueue(properties);
-                case DELETE:
-                    if (ObjectType.EXCHANGE == objectType) {
-                        return Result.ALLOWED;
-                    } else if (ObjectType.QUEUE == objectType) {
-                        return QpidAuthorizationHandler.handleDeleteQueue(properties);
-                    }
-            }
-
             Subject subject = SecurityManager.getThreadSubject();
 
             Principal principal = null;
@@ -172,6 +161,14 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
                 case CONSUME:
                     return QpidAuthorizationHandler.handleConsumeQueue(
                             username, userRealm, properties);
+                case UNBIND:
+                    return QpidAuthorizationHandler.handleUnbindQueue(properties);
+                case DELETE:
+                    if (ObjectType.EXCHANGE == objectType) {
+                        return Result.ALLOWED;
+                    } else if (ObjectType.QUEUE == objectType) {
+                        return QpidAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
+                    }
             }
         } catch (Exception e) {
             logger.error("Error while invoking QpidAuthorizationHandler", e);

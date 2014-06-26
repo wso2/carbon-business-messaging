@@ -20,19 +20,14 @@ package org.wso2.carbon.andes.ui.client;
 
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
-import org.wso2.carbon.ui.CarbonUIMessage;
 
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 public class QueueSenderClient {
@@ -47,12 +42,12 @@ public class QueueSenderClient {
     private QueueSession queueSession;
     private QueueSender queueSender;
 
-    public QueueSenderClient(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException {
+    public QueueSenderClient(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
         queueSender = registerQueueSender(nameOfQueue, username, accessKey);
 
     }
 
-    private QueueSender registerQueueSender(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException {
+    private QueueSender registerQueueSender(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, UIUtils.getTCPConnectionURL(username, accessKey));
@@ -63,9 +58,9 @@ public class QueueSenderClient {
         // Lookup connection factory
         QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
         queueConnection = connFactory.createQueueConnection();
-        queueConnection.start();
         queueSession = queueConnection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
         Queue queue = (Queue) ctx.lookup(nameOfQueue);
+        queueConnection.start();
 
         return queueSession.createSender(queue);
 
@@ -106,12 +101,11 @@ public class QueueSenderClient {
                     queueSender.send(message, delivery_mode, priority, time_to_live);
 
                 }
-               // CarbonUIMessage.sendCarbonUIMessage("Successful sent message to: " +request.getParameter("nameOfQueue"), CarbonUIMessage.INFO, request);
+
             }
-            queueSender.close();
-            queueSession.close();
-            queueConnection.stop();
             queueConnection.close();
+            queueSession.close();
+            queueSender.close();
 
             return true;
         } else {

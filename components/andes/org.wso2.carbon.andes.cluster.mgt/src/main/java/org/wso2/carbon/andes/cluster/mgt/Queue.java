@@ -17,6 +17,8 @@ public class Queue {
 
     private String createdFrom;
 
+    private int subscriberCount;
+
 
     public Queue() {
     }
@@ -72,4 +74,13 @@ public class Queue {
     public void setCreatedFrom(String createdFrom) {
         this.createdFrom = createdFrom;
     }
+
+    public int getSubscriberCount() {
+        return subscriberCount;
+    }
+
+    public void setSubscriberCount(int subscriberCount) {
+        this.subscriberCount = subscriberCount;
+    }
+
 }

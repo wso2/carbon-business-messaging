@@ -1,11 +1,8 @@
-<%@ page import="org.wso2.carbon.andes.ui.client.QueueSenderClient" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="carbon" uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
-<%@ page import="javax.jms.JMSException" %>
-<%@ page import="javax.naming.NamingException" %>
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
     <carbon:jsi18n
@@ -39,6 +36,8 @@
 
     <%
         String numberOfMessagesToSend = request.getParameter("num_of_msgs");
+        int msg_count = 0;
+        long time_to_live = 0;
         if(numberOfMessagesToSend != null) {
             boolean inputValidated = true;
             if(request.getParameter("num_of_msgs").equals("")) {
@@ -52,7 +51,7 @@
             }
             if (inputValidated && !request.getParameter("num_of_msgs").equals("")) {
                 try {
-                    int msg_count = Integer.parseInt(request.getParameter("num_of_msgs"));
+                    msg_count = Integer.parseInt(request.getParameter("num_of_msgs"));
                     if(msg_count <= 0) {
                         inputValidated = false;
                         %>
@@ -76,7 +75,7 @@
             if (inputValidated && request.getParameter("expire") != null && !request.getParameter("expire").equals("")) {
                 try {
                     String expire_time = request.getParameter("expire");
-                    long time_to_live = Long.parseLong(expire_time);
+                    time_to_live = Long.parseLong(expire_time);
                     if(time_to_live < 0) {
                         inputValidated = false;
                         %>
@@ -98,8 +97,30 @@
             }
             if(inputValidated) {
                 try {
-                    QueueSenderClient queueSenderClient = new QueueSenderClient(nameOfQueue, stub.getCurrentUser(), stub.getAccessKey());
-                    boolean success = queueSenderClient.sendMessage(request);
+                    // set correlation id
+                    String cor_id = null;
+                    if (!request.getParameter("cor_id").equals("")) {
+                        cor_id = request.getParameter("cor_id");
+                    }
+                    // set jms type
+                    String jms_type = null;
+                    if (!request.getParameter("jms_type").equals("")) {
+                        jms_type = request.getParameter("jms_type");
+                    }
+                    // set message text
+                    String message_txt;
+                    if (!request.getParameter("msg_text").equalsIgnoreCase("")) {
+                        message_txt = request.getParameter("msg_text");
+                    } else {
+                        message_txt = "Type message here..";
+                    }
+                    int delivery_mode = 2;
+                    int priority = 4;
+                    // set delivery mode 1- non persistent, 2- persistent
+                    if (request.getParameter("delivery_mode") == null) {
+                        delivery_mode = 1;
+                    }
+                    boolean success = stub.sendMessage(nameOfQueue, jms_type, cor_id, msg_count, message_txt, delivery_mode, priority, time_to_live);
                     if(success) {
                     %>
                         <script type="text/javascript">CARBON.showInfoDialog('Successfully Sent <%=numberOfMessagesToSend%> Messages To Queue <%=nameOfQueue%>' , function
@@ -108,22 +129,13 @@
                         });</script>
                     <%
                 }
-                } catch (NamingException e) {
+                } catch (AndesAdminServiceBrokerManagerAdminException e) {
                     %>
-                    <script type="text/javascript">CARBON.showInfoDialog('<%=e.getMessage()%>' , function
+                    <script type="text/javascript">CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
                             () {
                         location.href = 'queue_details.jsp';
                     });</script>
                     <%
-                    e.printStackTrace();
-                } catch (JMSException e) {
-                    %>
-                        <script type="text/javascript">CARBON.showInfoDialog('<%=e.getMessage()%>' , function
-                                () {
-                            location.href = 'queue_details.jsp';
-                        });</script>
-                    <%
-                    e.printStackTrace();
                 }
             }
         }

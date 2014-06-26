@@ -24,4 +24,5 @@ public class ClusterMgtConstants {
     public static final String TOPICS_MBEAN_ATTRIB = "Topics";
     public static final String IS_CLUSTERING_ENABLED = "ClusteringEnabled";
     public static final String MY_NODE_ID = "MyNodeID";
+    public static final String QUEUES_OF_CLUSTER = "DestinationQueuesOfCluster";
 }

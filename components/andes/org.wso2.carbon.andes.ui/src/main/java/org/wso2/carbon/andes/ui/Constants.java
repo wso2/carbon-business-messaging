@@ -30,4 +30,6 @@ public interface Constants {
     public static final String SUCCESS = "success";
     public static final String FAILURE = "failure";
 
+    public static final String DEAD_LETTER_QUEUE_NAME = "DeadLetterChannel";
+
 }

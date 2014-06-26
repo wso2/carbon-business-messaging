@@ -24,7 +24,7 @@ public class NodeDetail {
     private String zookeeperID;
 
     private long numOfTopics;
-    private long numOfQueues;
+    private long numOfGlobalQueues;
 
     private long throughput;
     private long memoryUsage;
@@ -41,12 +41,12 @@ public class NodeDetail {
         this.numOfTopics = numOfTopics;
     }
 
-    public long getNumOfQueues() {
-        return numOfQueues;
+    public long getNumOfGlobalQueues() {
+        return numOfGlobalQueues;
     }
 
-    public void setNumOfQueues(long numOfQueues) {
-        this.numOfQueues = numOfQueues;
+    public void setNumOfGlobalQueues(long numOfGlobalQueues) {
+        this.numOfGlobalQueues = numOfGlobalQueues;
     }
 
     public long getThroughput() {

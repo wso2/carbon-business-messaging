@@ -21,23 +21,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageEOFException;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.StreamMessage;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -58,7 +47,7 @@ public class QueueBrowserClient {
     private QueueBrowser queueBrowser;
 
 
-    public QueueBrowserClient(String nameOfQueue, String userName, String accessKey) {
+    public QueueBrowserClient(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException, XMLStreamException {
         this.nameOfQueue = nameOfQueue;
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
@@ -75,10 +64,11 @@ public class QueueBrowserClient {
             InitialContext ctx = new InitialContext(properties);
             QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
             queueConnection = connFactory.createQueueConnection();
-            queueConnection.start();
             Queue queue = (Queue) ctx.lookup(nameOfQueue);
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             queueBrowser = queueSession.createBrowser(queue);
+            queueConnection.start();
+
             queueContentsEnu = queueBrowser.getEnumeration();
 
         } catch (NamingException e) {
@@ -90,9 +80,9 @@ public class QueueBrowserClient {
     }
 
     public void closeBrowser() throws JMSException {
-        queueBrowser.close();
-        queueSession.close();
         queueConnection.close();
+        queueSession.close();
+        queueBrowser.close();
     }
 
     public String getMsgProperties(Message queueMessage) throws JMSException {
@@ -154,6 +144,9 @@ public class QueueBrowserClient {
                 summaryMsg = wholeMsg.substring(0, 15);
             } else {
                 summaryMsg = wholeMsg;
+            }
+            if(wholeMsg.length() > 200){
+                wholeMsg = "Message Content is too large to display";
             }
 
 

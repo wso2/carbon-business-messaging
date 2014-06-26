@@ -23,32 +23,24 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSession;
+import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 public class QueueReceiverClient {
+    private static Log log = LogFactory.getLog(QueueReceiverClient.class);
     public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String CF_NAME = "qpidConnectionfactory";
     private QueueSession queueSession;
     private QueueConnection queueConnection;
-
-    public MessageConsumer getQueueConsumer() {
-        return queueConsumer;
-    }
-
     private MessageConsumer queueConsumer;
 
-    public Queue registerReceiver(String nameOfQueue, String username, String accesskey) throws NamingException, JMSException {
+    public Queue registerReceiver(String nameOfQueue, String username, String accesskey) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, UIUtils.getTCPConnectionURL(username, accesskey));
@@ -59,15 +51,25 @@ public class QueueReceiverClient {
         QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
         queueConnection = connFactory.createQueueConnection();
         queueSession = queueConnection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
-        queueConnection.start();
         //Receive message
         Queue queue = (Queue) ctx.lookup(nameOfQueue);
         queueConsumer = queueSession.createConsumer(queue);
+        queueConnection.start();
         return queue;
 
     }
 
-   public boolean closeReceiver() throws JMSException {
+    public int purgeQueue(Queue queue) throws JMSException {
+        Message message;
+        int messageCount = 0;
+        while ((message = queueConsumer.receive(10000)) != null) {
+            messageCount++;
+        }
+        log.info("Executed purge queue operation for the queue: " + queue.getQueueName() + " and removed " + messageCount + " messages");
+        return messageCount;
+    }
+
+    public boolean closeReceiver() throws JMSException {
         queueConnection.close();
         queueSession.close();
         queueConsumer.close();

@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
-	    <version>0.13.wso2v11</version>
+	    <version>3.0.0-SNAPSHOT</version>
     	</dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>

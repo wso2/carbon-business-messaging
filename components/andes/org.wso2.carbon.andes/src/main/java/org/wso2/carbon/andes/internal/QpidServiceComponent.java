@@ -43,6 +43,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -96,7 +97,7 @@ public class QpidServiceComponent {
     private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
     private static String CARBON_CONFIG_HOST_NAME = "HostName";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
-
+    public  static String START_ZOOKEEPER_SERVER = "start_zk_server";
 
     private ServiceRegistration qpidService = null;
 
@@ -124,8 +125,18 @@ public class QpidServiceComponent {
         CoordinationServerService coordinationServerService = QpidServiceDataHolder.getInstance().
                 getCoordinationServerService();
 
-        if(coordinationServerService != null) {
-            if(qpidServiceImpl.isClusterEnabled() && !qpidServiceImpl.isExternalZookeeperServerRequired()) {
+        if(qpidServiceImpl.isClusterEnabled()) {
+            log.info("Starting Message Broker in -- CLUSTERED MODE --");
+        } else {
+            log.info("Starting Message Broker in -- STANDALONE MODE --");
+        }
+
+         if(coordinationServerService != null) {
+             Properties properties= coordinationServerService.getZKServerConfigurationProperties();
+             // if start_zk_server=null|true coordination service starts zookeeper server, if not we will start it by qpid service
+             boolean coordinationServerStarted = properties.get(START_ZOOKEEPER_SERVER) == null || ("true".equals(properties.get(START_ZOOKEEPER_SERVER)));
+             if(qpidServiceImpl.isClusterEnabled() && !qpidServiceImpl.isExternalZookeeperServerRequired()&& !coordinationServerStarted) {
+                log.info("Activating Carbonized Coordination Service...");
                 coordinationServerService.startServer();
                 try {
                     Thread.sleep(2*1000);
@@ -154,6 +165,7 @@ public class QpidServiceComponent {
 
         if(cassandraServerService != null) {
             if(!qpidServiceImpl.isExternalCassandraServerRequired()) {
+                log.info("Activating Carbonized Cassandra Server...");
                 cassandraServerService.startServer();
                 int count = 0;
                 while (!isCassandraStarted()) {
@@ -176,9 +188,9 @@ public class QpidServiceComponent {
 
         // Start andes broker
         try {
-            log.debug("Starting andes server");
+            log.info("Activating Andes Message Broker Engine...");
             System.setProperty(BrokerOptions.QPID_HOME, qpidServiceImpl.getQpidHome());
-            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort()};
+            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort()};
             //Main.setStandaloneMode(false);
             Main.main(args);
 
@@ -196,7 +208,12 @@ public class QpidServiceComponent {
             //before Qpid server actually bind to the tcp port. in that case there are some connection
             //time out issues.
             boolean isServerStarted = false;
-            int port = Integer.parseInt(qpidServiceImpl.getPort());
+            int port;
+            if(qpidServiceImpl.getIfSSLOnly()) {
+                port =  Integer.parseInt(qpidServiceImpl.getSSLPort());
+            } else {
+                port = Integer.parseInt(qpidServiceImpl.getPort());
+            }
             while (!isServerStarted) {
                 Socket socket = null;
                 try {
@@ -204,10 +221,10 @@ public class QpidServiceComponent {
                     socket = new Socket(address, port);
                     isServerStarted = socket.isConnected();
                     if (isServerStarted) {
-                        log.info("Successfully connected to the server on port " + qpidServiceImpl.getPort());
+                        log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " + port);
                     }
                 } catch (IOException e) {
-                    log.info("Wait until Qpid server starts on port " + qpidServiceImpl.getPort());
+                    log.info("Wait until Qpid server starts on port " + port);
                     Thread.sleep(500);
                 } finally {
                     try {
@@ -215,7 +232,7 @@ public class QpidServiceComponent {
                             socket.close();
                         }
                     } catch (IOException e) {
-                        log.error("Can not close the socket with is used to check the server status ");
+                        log.error("Can not close the socket which is used to check the server status ");
                     }
                 }
             }
@@ -226,12 +243,18 @@ public class QpidServiceComponent {
             // Publish Qpid properties
             qpidService = ctx.getBundleContext().registerService(
                     QpidService.class.getName(), qpidServiceImpl, null);
+            String brokerPort = null;
+            if(qpidServiceImpl.getIfSSLOnly()) {
+              brokerPort = qpidServiceImpl.getSSLPort();
+            } else {
+              brokerPort = qpidServiceImpl.getPort();
+            }
             QpidServerDetails qpidServerDetails =
                           new QpidServerDetails(qpidServiceImpl.getAccessKey(),
                                   qpidServiceImpl.getClientID(),
                                   qpidServiceImpl.getVirtualHostName(),
                                   qpidServiceImpl.getHostname(),
-                                  qpidServiceImpl.getPort());
+                                  brokerPort,qpidServiceImpl.getIfSSLOnly());
             QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
              activated =true;
         }
@@ -383,8 +406,8 @@ public class QpidServiceComponent {
 
     private int readPortOffset() {
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET);
-
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
