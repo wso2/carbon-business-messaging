@@ -14,6 +14,7 @@
     <modules>
         <module>service-stubs</module>
         <module>components/andes</module>
+        <module>features/andes</module>
     </modules>
    
     <repositories>
@@ -235,10 +236,10 @@ considered very carefully. -->
         <version.javax.servlet>3.0.0.v201112011016</version.javax.servlet>
         <version.javax.el>2.2.0.v201108011116</version.javax.el>
         <version.javax.servlet.jsp>2.2.0.v201112011158</version.javax.servlet.jsp>
-        <version.jasper>2.2.2.v201205150955</version.jasper>
+        <version.jasper>2.2.2.v201205150955</version.jasper>-->
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
 
-        <axis2.osgi.version>1.6.1.wso2v10</axis2.osgi.version>
+        <!-- <axis2.osgi.version>1.6.1.wso2v10</axis2.osgi.version>
         <axis2.osgi.version.range>[1.6.1.wso2v10, 1.7.0)</axis2.osgi.version.range>
         <axiom.osgi.version>1.2.11.wso2v4</axiom.osgi.version>
         <axiom.osgi.version.range>[1.2.11.wso2v4, 1.3.0)</axiom.osgi.version.range>
@@ -448,6 +449,7 @@ considered very carefully. -->
 <!-- 	<jaggery.version>0.9.0.ALPHA4.wso2v1</jaggery.version> -->
 
     <orbit.version.commons-configuration>1.6.0.wso2v1</orbit.version.commons-configuration>
+    <zookeeper.wso2.version>3.3.5.wso2v1</zookeeper.wso2.version>
 
     </properties>
 </project>

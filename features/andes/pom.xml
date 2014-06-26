@@ -21,20 +21,22 @@
 
     <parent>
         <groupId>org.wso2.carbon</groupId>
-        <artifactId>carbon-features</artifactId>
-        <version>4.2.0</version>
+        <artifactId>business-messaging-parent</artifactId>
+        <version>4.3.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>andes-feature</artifactId>
+    <version>4.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes Aggregator Module</name>
     <url>http://wso2.org</url>
 
     <modules>
-        <module>org.wso2.carbon.andes.feature/4.2.0</module>
-        <module>org.wso2.carbon.andes.server.feature/4.2.0</module>
-	<module>org.wso2.carbon.andes.ui.feature/4.2.0</module>
+        <module>org.wso2.carbon.andes.feature</module>
+        <module>org.wso2.carbon.andes.server.feature</module>
+	    <module>org.wso2.carbon.andes.ui.feature</module>
     </modules>
 
     <dependencyManagement>
@@ -42,49 +44,49 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.andes.authentication</artifactId>
-                <version>${wso2carbon.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.andes.authorization</artifactId>
-                <version>${wso2carbon.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.andes.commons</artifactId>
-                <version>${wso2carbon.version}</version>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
-	    <dependency>
-		<groupId>org.wso2.carbon</groupId>
-		<artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
-		<version>4.2.0</version>
-	    </dependency>
-	    <dependency>
-		<groupId>org.wso2.carbon</groupId>
-		<artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
-		<version>4.2.0</version>
-	    </dependency>
-	    <dependency>
-		<groupId>org.wso2.carbon</groupId>
-		<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-		<version>4.2.0</version>
-	    </dependency>
-	    <dependency>
+    	    <dependency>
                 <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.andes.stub</artifactId>
-                <version>4.2.0</version>
+        		<artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
+        		<version>4.3.0-SNAPSHOT</version>
+    	    </dependency>
+    	    <dependency>
+        		<groupId>org.wso2.carbon</groupId>
+        		<artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
+        		<version>4.3.0-SNAPSHOT</version>
+    	    </dependency>
+    	    <dependency>
+        		<groupId>org.wso2.carbon</groupId>
+        		<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
+        		<version>4.3.0-SNAPSHOT</version>
+    	    </dependency>
+    	    <dependency>
+                    <groupId>org.wso2.carbon</groupId>
+                    <artifactId>org.wso2.carbon.andes.stub</artifactId>
+                    <version>4.3.0-SNAPSHOT</version>
+                </dependency>
+    	     <dependency>
+                    <groupId>org.wso2.carbon</groupId>
+                    <artifactId>org.wso2.carbon.andes.ui</artifactId>
+                    <version>4.3.0-SNAPSHOT</version>
             </dependency>
-	     <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.andes.ui</artifactId>
-                <version>4.2.0</version>
+    	    <dependency>
+                    <groupId>org.apache.zookeeper.wso2</groupId>
+                    <artifactId>apache-zookeeper</artifactId>
+                    <version>${zookeeper.wso2.version}</version>
             </dependency>
-	    <dependency>
-                <groupId>org.apache.zookeeper.wso2</groupId>
-                <artifactId>apache-zookeeper</artifactId>
-                <version>${zookeeper.wso2.version}</version>
-            </dependency>
-        </dependencies>
+            </dependencies>
     </dependencyManagement>
 
 </project>
