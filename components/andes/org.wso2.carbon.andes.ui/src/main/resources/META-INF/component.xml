@@ -18,7 +18,7 @@
 <component xmlns="http://products.wso2.org/carbon">
 	<menus>
         <menu>
-            <id>Queues</id>
+            <id>queue_menu</id>
             <i18n-key>queues</i18n-key>
             <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
             <parent-menu>manage_menu</parent-menu>
@@ -27,31 +27,91 @@
             <order>25</order>
             <style-class>home</style-class>
             <icon>../queues/images/queues.gif</icon>
-            <require-permission>/permission/admin/login</require-permission>
+            <require-permission>/permission/admin/manage/queue</require-permission>
         </menu>
         <menu>
             <id>queue_browse</id>
             <i18n-key>browse</i18n-key>
             <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
-            <parent-menu>Queues</parent-menu>
+            <parent-menu>queue_menu</parent-menu>
             <link>../queues/queue_details.jsp</link>
             <region>region1</region>
             <order>10</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/login</require-permission>
+            <require-permission>/permission/admin/manage/queue/browseQueue</require-permission>
         </menu>
         <menu>
             <id>queues_add</id>
             <i18n-key>add</i18n-key>
             <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
-            <parent-menu>Queues</parent-menu>
+            <parent-menu>queue_menu</parent-menu>
             <link>../queues/queue_add.jsp</link>
             <region>region1</region>
             <order>45</order>
             <style-class>home</style-class>
             <icon>../queues/images/add.gif</icon>
+            <require-permission>/permission/admin/manage/queue/addQueue</require-permission>
         </menu>
-
+        <menu>
+            <id>dead_letter_channel_menu</id>
+            <i18n-key>dead.letter.channel</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>manage_menu</parent-menu>
+            <link>#</link>
+            <region>region1</region>
+            <order>26</order>
+            <style-class>home</style-class>
+            <icon>../queues/images/queues.gif</icon>
+            <require-permission>/permission/admin/manage/dlc</require-permission>
+        </menu>
+        <menu>
+            <id>dlc_browse</id>
+            <i18n-key>browse</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>dead_letter_channel_menu</parent-menu>
+            <link>../queues/dlc_queue_details.jsp</link>
+            <region>region1</region>
+            <order>10</order>
+            <style-class>manage</style-class>
+            <icon>../queues/images/list.gif</icon>
+            <require-permission>/permission/admin/manage/dlc/browseDlc</require-permission>
+        </menu>
+        <menu>
+            <id>broker_subscriptions_menu</id>
+            <i18n-key>subscriptions</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>manage_menu</parent-menu>
+            <link>#</link>
+            <region>region1</region>
+            <order>30</order>
+            <style-class>home</style-class>
+            <icon>../subscriptions/images/subscribe.png</icon>
+            <require-permission>/permission/admin/manage/subscriptions</require-permission>
+        </menu>
+        <menu>
+            <id>queue_subscriptions</id>
+            <i18n-key>queue.subscription</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>broker_subscriptions_menu</parent-menu>
+            <link>../subscriptions/queue_subscriptions_list.jsp</link>
+            <region>region1</region>
+            <order>50</order>
+            <style-class>manage</style-class>
+            <icon>../queues/images/list.gif</icon>
+            <require-permission>/permission/admin/manage/subscriptions/queueSubscription</require-permission>
+        </menu>
+        <menu>
+            <id>topic_subscriptions</id>
+            <i18n-key>topic.subscription</i18n-key>
+            <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>broker_subscriptions_menu</parent-menu>
+            <link>../subscriptions/topic_subscriptions_list.jsp</link>
+            <region>region1</region>
+            <order>51</order>
+            <style-class>manage</style-class>
+            <icon>../queues/images/list.gif</icon>
+            <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
+        </menu>
 	</menus>
 </component>

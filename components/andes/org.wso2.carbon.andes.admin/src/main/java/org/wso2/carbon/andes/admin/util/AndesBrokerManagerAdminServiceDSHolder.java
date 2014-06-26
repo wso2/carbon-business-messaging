@@ -21,19 +21,26 @@
 package org.wso2.carbon.andes.admin.util;
 
 import org.wso2.carbon.andes.core.QueueManagerService;
+import org.wso2.carbon.andes.core.SubscriptionManagerService;
 
-public class AndesQueueManagerAdminServiceDSHolder {
+public class AndesBrokerManagerAdminServiceDSHolder {
+    private String accessKey;
     private QueueManagerService queueManagerService;
+    private SubscriptionManagerService subscriptionManagerService;
 
-    private static AndesQueueManagerAdminServiceDSHolder instance = new AndesQueueManagerAdminServiceDSHolder();
+    private static AndesBrokerManagerAdminServiceDSHolder instance = new AndesBrokerManagerAdminServiceDSHolder();
 
 
-    public static AndesQueueManagerAdminServiceDSHolder getInstance(){
+    public static AndesBrokerManagerAdminServiceDSHolder getInstance(){
         return instance;
     }
 
     public QueueManagerService getQueueManagerService(){
         return this.queueManagerService;
+    }
+
+    public SubscriptionManagerService getSubscriptionManagerService() {
+        return this.subscriptionManagerService;
     }
 
     public void registerQueueManagerService(QueueManagerService cepService){
@@ -42,5 +49,21 @@ public class AndesQueueManagerAdminServiceDSHolder {
 
      public void unRegisterQueueManagerService(QueueManagerService cepService){
         this.queueManagerService = null;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey =  accessKey;
+    }
+
+    public String getAccessKey() {
+        return this.accessKey;
+    }
+
+    public void registerSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
+        this.subscriptionManagerService = subscriptionManagerService;
+    }
+
+    public void unRegisterSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
+        this.subscriptionManagerService = null;
     }
 }

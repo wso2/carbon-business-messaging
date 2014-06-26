@@ -27,6 +27,7 @@ import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 import org.wso2.carbon.andes.cluster.mgt.internal.managementBeans.ClusterManagementBeans;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Admin service class for cluster management
@@ -58,7 +59,7 @@ public class ClusterManagerService {
      * @return Array of Queues
      * @throws ClusterMgtAdminException
      */
-    public Queue[] getAllQueuesForNode(String hostName, int startingIndex, int maxQueueCount)
+    public Queue[] getAllGlobalQueuesForNode(String hostName, int startingIndex, int maxQueueCount)
             throws ClusterMgtAdminException {
 
         try {
@@ -68,10 +69,10 @@ public class ClusterManagerService {
 
             //get queues  whose queue manager runs on the given node
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<Queue> allQueuesRunningInNode = clusterManagementBeans.getQueuesRunningInNode(hostName);
+            ArrayList<Queue> allGlobalQueuesRunningInNode = clusterManagementBeans.getGlobalQueuesRunningInNode(hostName);
 
             //filter queues according to tenant
-            resultList = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(allQueuesRunningInNode);
+            resultList = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(allGlobalQueuesRunningInNode);
 
             if ((resultList.size() - startingIndex) < maxQueueCount) {
                 resultSetSize = (resultList.size() - startingIndex);
@@ -107,6 +108,67 @@ public class ClusterManagerService {
         }
     }
 
+    public Queue[] getAllDestinationQueuesDetailForNode(String hostName,int startingIndex, int maxQueueCount)
+            throws ClusterMgtAdminException {
+
+        try {
+            Queue[] queueDetailsArray;
+            int resultSetSize = maxQueueCount;
+            ArrayList<Queue> resultList;
+
+            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+            List<String> queuesOfCluster =  clusterManagementBeans.queuesOfCluster();
+            List<Queue> queueObjectList =  new ArrayList<Queue>();
+            for(String destinationQueue : queuesOfCluster) {
+                Queue aQueue = new Queue();
+                aQueue.setQueueName(destinationQueue);queueObjectList.add(aQueue);
+            }
+            //filter according to tenant
+            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(queueObjectList);
+
+            if ((queuesSpecificToTenant.size() - startingIndex) < maxQueueCount) {
+                resultSetSize = (queuesSpecificToTenant.size() - startingIndex);
+            }
+            for(Queue aQueue : queuesSpecificToTenant) {
+                //get number of messages in node queue and set
+                aQueue.setMessageCount(clusterManagementBeans.
+                        getMessageCountOfNodeAddressedToDestinationQueue(hostName,aQueue.getQueueName()));
+
+                //get number of subscribers and set
+                aQueue.setSubscriberCount(clusterManagementBeans.
+                        getSubscriberCountOfNodeAddressedToDestinationQueue(hostName,aQueue.getQueueName()));
+            }
+            queueDetailsArray = new Queue[resultSetSize];
+            int index = 0;
+            int queueDetailsIndex = 0;
+            for (Queue queueDetail : queuesSpecificToTenant) {
+                if (startingIndex == index || startingIndex < index) {
+                    queueDetailsArray[queueDetailsIndex] = new Queue();
+
+                    queueDetailsArray[queueDetailsIndex].setQueueName(queueDetail.getQueueName());
+                    queueDetailsArray[queueDetailsIndex].setMessageCount(queueDetail.getMessageCount());
+                    queueDetailsArray[queueDetailsIndex].setSubscriberCount(queueDetail.getSubscriberCount());
+
+                    //queueDetailsArray[queueDetailsIndex].setQueueDepth(queueDetail.getQueueDepth());
+                    //queueDetailsArray[queueDetailsIndex].setUpdatedTime(queueDetail.getUpdatedTime());
+                    //queueDetailsArray[queueDetailsIndex].setCreatedTime(queueDetail.getCreatedTime());
+
+                    queueDetailsIndex++;
+                    if (queueDetailsIndex == maxQueueCount) {
+                        break;
+                    }
+
+                }
+
+                index++;
+            }
+
+            return queueDetailsArray;
+
+        } catch (Exception e) {
+            throw new ClusterMgtAdminException("Can not get the queue manager ", e);
+        }
+    }
     /**
      * gives topics whole list of topics in the cluster
      *
@@ -185,7 +247,7 @@ public class ClusterManagerService {
                     nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHour(nodeDetail.getMessagesReceivedLastHour());
 
                     nodeDetailArray[nodeDetailsIndex].setMemoryUsage(nodeDetail.getMemoryUsage());
-                    nodeDetailArray[nodeDetailsIndex].setNumOfQueues(nodeDetail.getNumOfQueues());
+                    nodeDetailArray[nodeDetailsIndex].setNumOfGlobalQueues(nodeDetail.getNumOfGlobalQueues());
                     nodeDetailArray[nodeDetailsIndex].setNumOfTopics(nodeDetail.getNumOfTopics());
 
 
@@ -247,18 +309,21 @@ public class ClusterManagerService {
     /**
      * gives number queues whose queue manager runs on the given node
      *
-     * @param hostName
      * @return long
      * @throws ClusterMgtAdminException
      */
-    public long getNumberOfQueues(String hostName) throws ClusterMgtAdminException {
+    public long getNumberOfQueues() throws ClusterMgtAdminException {
         try {
             long result = 0;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<Queue> queuesRunningInNode =  clusterManagementBeans.getQueuesRunningInNode(hostName);
-
+            List<String> queuesOfCluster =  clusterManagementBeans.queuesOfCluster();
+            List<Queue> queueObjectList =  new ArrayList<Queue>();
+            for(String destinationQueue : queuesOfCluster) {
+                Queue aQueue = new Queue();
+                aQueue.setQueueName(destinationQueue);queueObjectList.add(aQueue);
+            }
             //filter according to tenant
-            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(queuesRunningInNode);
+            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(queueObjectList);
             result = queuesSpecificToTenant.size();
             return result;
         } catch (Exception e) {

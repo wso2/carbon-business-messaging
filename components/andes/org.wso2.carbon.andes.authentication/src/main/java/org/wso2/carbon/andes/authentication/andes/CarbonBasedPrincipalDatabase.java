@@ -23,6 +23,7 @@ import org.wso2.andes.server.security.auth.sasl.UsernamePrincipal;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainInitialiser;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainPasswordCallback;
 import org.wso2.carbon.andes.authentication.internal.AuthenticationServiceDataHolder;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.service.RealmService;
@@ -137,6 +138,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
             // Given username/password
             String username = principal.getName();
             String password = ((PlainPasswordCallback)passwordCallback).getPlainPassword();
+            String domainName = null;
 
             boolean isAuthenticated = false;
 
@@ -154,16 +156,26 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 // Get username from tenant username
                 int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
                 if (-1 != domainNameSeparatorIndex) {
+                    domainName =  username.substring(domainNameSeparatorIndex + 1);
                     username = username.substring(0, domainNameSeparatorIndex);
                 }
 
                 // User not found in the UM
                 if (!userRealm.getUserStoreManager().isExistingUser(username)) {
+
                     throw new AccountNotFoundException("Invalid User : " + principal);
                 }
 
                 // Check if the user is authenticated
                 isAuthenticated = userRealm.getUserStoreManager().authenticate(username, password);
+                if (isAuthenticated && -1 != domainNameSeparatorIndex ) {
+                    RealmService realmService = AuthenticationServiceDataHolder.getInstance().getRealmService();
+                    int tenantID = realmService.getTenantManager().getTenantId(domainName);
+                    PrivilegedCarbonContext.destroyCurrentContext();
+                    PrivilegedCarbonContext cc = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+                    cc.setTenantDomain(domainName);
+                    cc.setTenantId(tenantID);
+                }
             }
 
             // Let the engine know if the user is authenticated or not
@@ -187,6 +199,10 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 // Get tenant ID
                 int tenantID =  MultitenantConstants.SUPER_TENANT_ID;
                 int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
+                PrivilegedCarbonContext.destroyCurrentContext();
+                PrivilegedCarbonContext cc = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+                cc.setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME);
+                cc.setTenantId(tenantID);
                 if (-1 != domainNameSeparatorIndex) { // Service case
                     String domainName = username.substring(domainNameSeparatorIndex + 1);
                     tenantID = realmService.getTenantManager().getTenantId(domainName);

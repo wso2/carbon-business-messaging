@@ -21,17 +21,41 @@
             <DisplayName>Manage</DisplayName>
             <ResourceId>/permission/admin/manage</ResourceId>
         </ManagementPermission>
-       <ManagementPermission>
-            <DisplayName>MB</DisplayName>
-            <ResourceId>/permission/admin/manage/mb</ResourceId>
+        <ManagementPermission>
+            <DisplayName>Queue</DisplayName>
+            <ResourceId>/permission/admin/manage/queue</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
             <DisplayName>Add Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/mb/addQueue</ResourceId>
+            <ResourceId>/permission/admin/manage/queue/addQueue</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Queue Details</DisplayName>
-            <ResourceId>/permission/admin/manage/mb/queueDetails</ResourceId>
+            <DisplayName>Browse Queue</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/browseQueue</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete Queue</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/deleteQueue</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Dead Letter Channel</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Browse DLC</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc/browseDlc</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Subscription</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Queue Subscription</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/queueSubscription</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Topic Subscription</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/topicSubscription</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>

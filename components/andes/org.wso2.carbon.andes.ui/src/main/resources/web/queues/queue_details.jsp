@@ -7,8 +7,7 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <%@ page import="javax.jms.JMSException" %>
 <%@ page import="javax.naming.NamingException" %>
-<%@ page import="org.wso2.carbon.andes.ui.client.QueueReceiverClient" %>
-<%@ page import="javax.jms.Message" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:jsi18n
@@ -41,9 +40,8 @@
                 numberOfPages = (int) Math.ceil(((float) totalQueueCount) / queueCountPerPage);
                 filteredQueueList = UIUtils.getFilteredQueueList(queueList, pageNumber * queueCountPerPage, queueCountPerPage);
             }
-        } catch (Exception e) {
-            CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-            e.printStackTrace();
+        } catch (AndesAdminServiceBrokerManagerAdminException e) {
+            CarbonUIMessage.sendCarbonUIMessage(e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), CarbonUIMessage.ERROR, request, e);
     %>
 
     <script type="text/javascript">
@@ -55,21 +53,13 @@
         }
     %>
 
-    <%-- This block is for handling queue purge operation--%>
+
     <%
         if(request.getParameter("purge") != null && request.getParameter("purge").equalsIgnoreCase("true")){
             String queuename = request.getParameter("nameOfQueue");
-            String accesskey = stub.getAccessKey();
-            String username = stub.getCurrentUser();
             try {
-                QueueReceiverClient receiverClient = new QueueReceiverClient();
-                receiverClient.registerReceiver(queuename, username, accesskey);
-                Message message = null;
-                while ((message = receiverClient.getQueueConsumer().receive(30000)) != null) {
-                }
-                receiverClient.closeReceiver();
-
-   %>
+                stub.purgeMessagesOfQueue(queuename);
+    %>
 
     <script type="text/javascript">CARBON.showInfoDialog('Queue <%=queuename %> successfully purged.', function
             () {
@@ -77,49 +67,16 @@
     });</script>
 
     <%
-            } catch (NamingException e) {
+            } catch (Exception e) {
     %>
             <script type="text/javascript">CARBON.showInfoDialog('<%=e.getMessage()%>' , function
                     () {
                 location.href = 'queue_details.jsp';
             });</script>
     <%
-                e.printStackTrace();
-            } catch (JMSException e) {
-    %>
-            <script type="text/javascript">CARBON.showInfoDialog('<%=e.getMessage()%>' , function
-                    () {
-                location.href = 'queue_details.jsp';
-            });</script>
-    <%
-                e.printStackTrace();
             }
-
         }
     %>
-
-    <%-- This block is for handling show message count operation--%>
-    <%
-        if(request.getParameter("show") != null && request.getParameter("show").equalsIgnoreCase("true")){
-            String queueName = request.getParameter("nameOfQueue");
-
-    %>
-    <script type="text/javascript">
-      CARBON.showConfirmationDialog('Do you wish to view message count in queue   ' + '<%=queueName%>' + '?',
-              function(){
-                  CARBON.showInfoDialog('Message Count: ' + '<%=stub.getMessageCountForQueue(queueName)%>',function
-                          () {
-                      location.href = 'queue_details.jsp';
-                  });
-
-              });
-
-    </script>
-
-    <%
-        }
-    %>
-
 
     <script type="text/javascript">
 
@@ -150,11 +107,6 @@
             });
         }
 
-        /* This function will display a loading dialog window till the selected queue is
-         *  successfully purged.*/
-        function waitTillPurgeDone(){
-            CARBON.showLoadingDialog('Purging is currently in Progress. Please Wait...', null);
-        }
     </script>
 
     <carbon:breadcrumb
@@ -224,27 +176,17 @@
                     if (filteredQueueList != null) {
                         for (Queue queue : filteredQueueList) {
                             String nameOfQueue = queue.getQueueName();
+                            if(nameOfQueue != null && !nameOfQueue.contains("DeadLetterChannel")){
                 %>
                 <tr>
                     <td>
-                        <%=queue.getQueueName()%>
+                        <a href="javascript:void(0);" onclick="showManageQueueWindow('<%=queue.getQueueName()%>')"><%=queue.getQueueName()%></a>
                     </td>
-
-                <%
-                    if(UIUtils.isDefaultMsgCountViewOptionConfigured(stub)){
-                %>
-                    <td><%=queue.getMessageCount()%></td>
-                <%
-                    } else {
-                %>
-                    <td><a href="queue_details.jsp?show=true&nameOfQueue=<%=nameOfQueue%>">Show</a></td>
-                <%
-                    }
-                %>
-
+                    <td><%=queue.getMessageCount()%>
+                    </td>
                     <td><a href="queue_messages_list.jsp?nameOfQueue=<%=nameOfQueue%>">Browse</a></td>
                     <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
-                    <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>" onclick="waitTillPurgeDone()">Purge Messages</a></td>
+                    <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>">Purge Messages</a></td>
                     <td>
                         <a style="background-image: url(../admin/images/delete.gif);"
                            class="icon-link"
@@ -252,6 +194,7 @@
                     </td>
                 </tr>
                 <%
+                        	}
                         }
                     }
                 %>

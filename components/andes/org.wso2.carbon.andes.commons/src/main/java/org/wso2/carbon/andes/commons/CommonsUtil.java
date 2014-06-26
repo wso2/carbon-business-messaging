@@ -68,6 +68,14 @@ public class CommonsUtil {
         return JMS_QUEUES;
     }
 
+    public static String getTenantBasedTopicName(String topicName) {
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        if (tenantDomain != null && (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
+            topicName = tenantDomain + "/" + topicName;
+        }
+        return topicName;
+    }
+
     /**
          * Get unique id for a topic
          *

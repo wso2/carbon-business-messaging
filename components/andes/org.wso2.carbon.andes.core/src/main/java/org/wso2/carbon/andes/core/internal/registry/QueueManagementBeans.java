@@ -177,13 +177,86 @@ public  class QueueManagementBeans {
                     signature);
 
         } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Cannot delete Queue : "+queueName,e);
+            throw new QueueManagerException("Cannot delete Queue : "+queueName+" "+e.getMessage(),e);
         } catch (InstanceNotFoundException e) {
-            throw new QueueManagerException("Cannot delete Queue : "+queueName,e);
+            throw new QueueManagerException("Cannot delete Queue : "+queueName+" "+e.getMessage(),e);
         } catch (MBeanException e) {
-            throw new QueueManagerException("Cannot delete Queue : "+queueName,e);
+            throw new QueueManagerException("Cannot delete Queue : "+queueName+" "+e.getMessage(),e);
         } catch (JMException e) {
-            throw new QueueManagerException("Cannot delete Queue : "+queueName,e);
+            throw new QueueManagerException("Cannot delete Queue : "+queueName+" "+e.getMessage(),e);
+        }
+    }
+
+    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName =
+                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+        String operationName = "deleteMessagesFromDeadLetterQueue";
+        Object[] parameters = new Object[]{messageIDs};
+        String[] signature = new String[]{String[].class.getName()};
+        Object result = mBeanServer.invoke(
+                objectName,
+                operationName,
+                parameters,
+                signature);
+    }
+
+    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName =
+                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+        String operationName = "restoreMessagesFromDeadLetterQueue";
+        Object[] parameters = new Object[]{messageIDs};
+        String[] signature = new String[]{String[].class.getName()};
+        Object result = mBeanServer.invoke(
+                objectName,
+                operationName,
+                parameters,
+                signature);
+    }
+
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination) throws Exception {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName =
+                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+        String operationName = "restoreMessagesFromDeadLetterQueue";
+        Object[] parameters = new Object[]{messageIDs, destination};
+        String[] signature = new String[]{String[].class.getName(), String.class.getName()};
+        Object result = mBeanServer.invoke(
+                objectName,
+                operationName,
+                parameters,
+                signature);
+    }
+
+    public void purgeMessagesFromQueue(String queueName) throws QueueManagerException{
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+
+            ObjectName bindingMBeanObjectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String bindingOperationName = "deleteAllMessagesInQueue";
+
+            Object[] bindingParams = new Object[]{queueName};
+            String[] bpSignatures = new String[]{String.class.getName()};
+
+            mBeanServer.invoke(
+                    bindingMBeanObjectName,
+                    bindingOperationName,
+                    bindingParams,
+                    bpSignatures);
+
+        } catch (MalformedObjectNameException e) {
+            throw new QueueManagerException("Cannot purge Queue : "+queueName+" "+e.getMessage(),e);
+        } catch (InstanceNotFoundException e) {
+            throw new QueueManagerException("Cannot purge Queue : "+queueName+" "+e.getMessage(),e);
+        } catch (MBeanException e) {
+            throw new QueueManagerException("Cannot purge Queue : "+queueName+" "+e.getMessage(),e);
+        } catch (JMException e) {
+            throw new QueueManagerException("Cannot purge Queue : "+queueName+" "+e.getMessage(),e);
         }
     }
 

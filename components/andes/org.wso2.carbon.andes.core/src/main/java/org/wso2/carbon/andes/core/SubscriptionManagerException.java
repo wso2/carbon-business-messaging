@@ -15,16 +15,18 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.carbon.andes.admin.internal.Exception;
 
-public class QueueManagerAdminException extends Exception{
-     private String faultCode;
+package org.wso2.carbon.andes.core;
+
+public class SubscriptionManagerException extends Exception {
+    private String faultCode;
     private String faultString;
-    public QueueManagerAdminException() {
+
+    public SubscriptionManagerException() {
         super();
     }
 
-    public QueueManagerAdminException(String message, Throwable cause) {
+    public SubscriptionManagerException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -36,16 +38,16 @@ public class QueueManagerAdminException extends Exception{
         return faultString;
     }
 
-    public QueueManagerAdminException(String message) {
+    public SubscriptionManagerException(String message) {
         super(message);
     }
 
-    public QueueManagerAdminException(String faultString, String faultCode) {
+    public SubscriptionManagerException(String faultString, String faultCode) {
         this.faultCode = faultCode;
         this.faultString = faultString;
     }
 
-    public QueueManagerAdminException(Throwable cause) {
+    public SubscriptionManagerException(Throwable cause) {
         super(cause);
     }
 }

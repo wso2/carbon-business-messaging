@@ -31,6 +31,7 @@ import org.wso2.carbon.utils.ServerConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,6 +68,7 @@ public class QpidServiceImpl implements QpidService {
     private static String CARBON_CONFIG_PORT_OFFSET_NODE = "Ports.Offset";
 
     private static final String QPID_VIRTUALHOST_NODE = "virtualhost";
+    private static final String QPID_VIRTUALHOST_NAME_NODE = "name";
     private static final String QPID_VIRTUALHOST_CARBON_NODE = "carbon";
     private static final String QPID_VIRTUALHOST_STORE_NODE = "store";
     private static final String QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE = "connectionString";
@@ -507,13 +509,16 @@ public class QpidServiceImpl implements QpidService {
         }
          try {
             File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
-
+            
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
             OMElement virtualHostNode = docRootNode.getFirstChildWithName(
                     new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText();
             OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
-                    new QName(QPID_VIRTUALHOST_CARBON_NODE));
+                    new QName(virtualHostName));
             OMElement storeElem  = carbonVirtualHost.
                     getFirstChildWithName(new QName(QPID_VIRTUALHOST_STORE_NODE));
             OMElement connectionStr = storeElem.getFirstChildWithName(
@@ -597,7 +602,7 @@ public class QpidServiceImpl implements QpidService {
         return sslOnly;
     }
 
-    //@Override
+    @Override
     public int getCassandraConnectionPort() {
         int configuredPort = 9160;
         if(!isExternalCassandraServerRequired()){

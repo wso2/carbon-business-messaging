@@ -207,7 +207,8 @@ public class RegistryClient {
 
             // Add new subscription and set properties
             Collection subscription = null;
-            String subscriptionID = CommonsUtil.getSubscriptionID(topic, subscriptionName);
+            String tenantBasedTopicName =  getTenantBasedTopicName(topic);
+            String subscriptionID = CommonsUtil.getSubscriptionID(tenantBasedTopicName, subscriptionName);
 
             if (!registry.resourceExists(subscriptionID)) {
                 subscription = registry.newCollection();
@@ -224,6 +225,19 @@ public class RegistryClient {
             throw new RegistryClientException(e);
         }
     }
+
+    public static String getTenantBasedTopicName(String topicName) {
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        String tenantBasedTopicName = topicName;
+        if (tenantDomain != null && (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
+            String formattedTenantDomain =  tenantDomain + "/";
+            if(topicName.contains(formattedTenantDomain)){
+               tenantBasedTopicName =  topicName.substring(formattedTenantDomain.length());
+            }
+        }
+        return tenantBasedTopicName;
+    }
+
 
     /**
         * Delete the entry for a subscription from the Registry

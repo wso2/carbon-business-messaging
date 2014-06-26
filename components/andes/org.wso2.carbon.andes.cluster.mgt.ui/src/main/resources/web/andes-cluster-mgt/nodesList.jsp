@@ -175,8 +175,10 @@
         <table class="styledLeft">
             <thead>
             <tr>
-                <th align="middle" width=50%><fmt:message key='node.id'/></th>
-                <th align="middle" width=50%><fmt:message key='node.queue.workers'/></th>
+                <th><fmt:message key='node.id'/></th>
+                <th><fmt:message key='node.ip'/></th>
+                <th><fmt:message key='node.total.subscribers'/></th>
+                <th><fmt:message key='node.queue.workers'/></th>
             </tr>
             </thead>
             <tbody>
@@ -189,6 +191,7 @@
                         String hostName = aNodeDetail.getHostName();
                         String ipAddress = aNodeDetail.getIpAddress();
                         String zookeeperID = aNodeDetail.getZookeeperID();
+                        int totalNumberOfSubscribers = client.getTotalSubscriptionCountForNode(hostName);
                         index++;
 
             %>
@@ -196,9 +199,15 @@
                 <td>
                     <%=zookeeperID%>
                 </td>
+                <td>
+                    <%=ipAddress%>
+                </td>
+                <td>
+                    <%=totalNumberOfSubscribers%>
+                </td>
                 <td align="right">
                     <a href="queue_List.jsp?hostName=<%=hostName%>&IPAddress=<%=ipAddress%>&isClusteringEnabled=<%=client.isClusteringEnabled()%>"><abbr
-                            id="queueLinkCell<%=index%>"><%=aNodeDetail.getNumOfQueues() %>
+                            id="queueLinkCell<%=index%>"><%=aNodeDetail.getNumOfGlobalQueues() %>
                     </abbr>
                     </a>
                 </td>

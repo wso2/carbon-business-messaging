@@ -20,12 +20,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.server.security.Result;
 import org.wso2.andes.server.security.access.ObjectProperties;
-import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.authorization.TreeNode;
 
 /**
@@ -41,6 +42,14 @@ public class QpidAuthorizationHandler {
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
     private static final String ADMIN_ROLE = "admin";
     private static final String AT_REPLACE_CHAR="_";
+    public static final String UI_EXECUTE = "ui.execute";
+    private static String ROLE_EVERY_ONE = "everyone";
+    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/addQueue";
+    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE_QUEUE = "/permission/admin/manage/queue/browseQueue";
+    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE = "/permission/admin/manage/queue/deleteQueue";
+    public static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC = "/permission/admin/manage/topic/addTopic";
+    public static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC = "/permission/admin/manage/topic/deleteTopic";
+    public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
 
     /**
         * Handle creating queue
@@ -59,24 +68,36 @@ public class QpidAuthorizationHandler {
             throws QpidAuthorizationHandlerException {
         try {
             if (null != userRealm) {
-                String queueName =
-                        getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+                if(isAdminUser(username, userRealm) || userRealm.getAuthorizationManager()
+                        .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE, UI_EXECUTE) || userRealm.getAuthorizationManager()
+                        .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
+                    String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+                    String queueName =
+                            getRawQueueName(properties.get(ObjectProperties.Property.NAME));
 
-                //For registry we use a modified queue name
-                String newQname = queueName.replace("@",AT_REPLACE_CHAR);
-                // Store queue details
-                RegistryClient.createQueue(newQname, username);
+                    //For registry we use a modified queue name
+                    String newQname = queueName.replace("@",AT_REPLACE_CHAR);
+                    // Store queue details
+                    RegistryClient.createQueue(newQname, username);
 
-                String queueID = CommonsUtil.getQueueID(queueName);
+                    String queueID = CommonsUtil.getQueueID(queueName);
 
-                userRealm.getAuthorizationManager().authorizeUser(
-                        username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase());
-                userRealm.getAuthorizationManager().authorizeUser(
-                        username, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase());
-                userRealm.getAuthorizationManager().authorizeUser(
-                        username, queueID, PERMISSION_CHANGE_PERMISSION);
-
-                return Result.ALLOWED;
+                    if (isOwnDomain(tenantDomain, queueName) || isTopicSubscriberQueue(queueName)) {
+                        UserStoreManager userStoreManager = userRealm.getUserStoreManager();
+                        String[] roleNames = userStoreManager.getRoleListOfUser(username);
+                        for (String role : roleNames) {
+                            if(!role.equalsIgnoreCase(ROLE_EVERY_ONE) &&  userStoreManager.isExistingRole(role)){
+                                userRealm.getAuthorizationManager().authorizeRole(
+                                        role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase());
+                                userRealm.getAuthorizationManager().authorizeRole(
+                                        role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                                userRealm.getAuthorizationManager().authorizeRole(
+                                        role, queueID, PERMISSION_CHANGE_PERMISSION);
+                            }
+                        }
+                        return Result.ALLOWED;
+                    }
+                }
             }
         } catch (RegistryClientException e) {
             throw new QpidAuthorizationHandlerException(e);
@@ -108,16 +129,20 @@ public class QpidAuthorizationHandler {
             throws QpidAuthorizationHandlerException {
         try {
             if (null != userRealm) {
-                // Queue properties
-                String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+                if(isAdminUser(username, userRealm) || userRealm.getAuthorizationManager()
+                        .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE_QUEUE, UI_EXECUTE) || userRealm.getAuthorizationManager()
+                        .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
+                    // Queue properties
+                    String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+                    String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+                    String queueID = CommonsUtil.getQueueID(queueName);
 
-                String queueID = CommonsUtil.getQueueID(queueName);
-
-                if (isAdminUser(username, userRealm)) {
-                    return Result.ALLOWED;
-                } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                        username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                    return Result.ALLOWED;
+                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, queueName)) {
+                        return Result.ALLOWED;
+                    } else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                            username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
+                        return Result.ALLOWED;
+                    }
                 }
             }
         } catch (UserStoreException e) {
@@ -144,6 +169,7 @@ public class QpidAuthorizationHandler {
             throws QpidAuthorizationHandlerException {
         try {
             if (null != userRealm) {
+                String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                 // Bind properties
                 String exchangeName =
                         getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
@@ -156,7 +182,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm)) {
+                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, queueName)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -167,7 +193,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm)) {
+                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, queueName)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -176,22 +202,23 @@ public class QpidAuthorizationHandler {
                     }
                 } else if (TOPIC_EXCHANGE.equals(exchangeName)) {
 
-                    if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
+                    // Note:  we don't give topic name as <domain_name/topicname> but just the <topicname> with current authorization
+                    //        model,hence commented this
+
+                    /*if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
                         // then we need to remove the domain name path from the topic name before saving to the registry
                         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                         routingKey = routingKey.substring(tenantDomain.length() + 1);
-                    }
+                    }*/
                     String topicID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize
                     String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
                     String newQName = queueName.replace("@", AT_REPLACE_CHAR);
-                    if (isAdminUser(username, userRealm)) {
+                    if (isAdminUser(username, userRealm) && (isOwnDomain(tenantDomain, queueName) || isTopicSubscriberQueue(queueName))) {
 
                         // Store subscription
-
-
-                        RegistryClient.createSubscription(newRoutingKey, newQName, username);
+                      RegistryClient.createSubscription(newRoutingKey, newQName, username);
                         
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
@@ -217,43 +244,49 @@ public class QpidAuthorizationHandler {
     /**
         * Authorise publishing to a given exchange
         *
-        * @param username
-        *              User who is trying to publish
-        * @param userRealm
-        *             User's Realm
-        * @param properties
-        *              NAME, ROUTING_KEY
-        * @return
+        *
+     * @param username
+     *              User who is trying to publish
+     *@param userRealm
+     *             User's Realm
+     * @param properties
+*              NAME, ROUTING_KEY   @return
         *              ALLOWED, DENIED
         * @throws QpidAuthorizationHandlerException
         */
-    public static Result handlePublishToExchange(String username, UserRealm userRealm, ObjectProperties properties)
+    public static Result handlePublishToExchange(String username,UserRealm userRealm, ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
             if (null != userRealm) {
+
+                String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+
                 // Exchange properties
                 String exchangeName = getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
                 String routingKey = getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
-                if (DIRECT_EXCHANGE.equals(exchangeName)) {
-                    // Publish to queue
+                if (DIRECT_EXCHANGE.equals(exchangeName)) {  // Publish to queue
+
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm)) {
+                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, routingKey)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
                             TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
                         return Result.ALLOWED;
                     }
-                } else if (TOPIC_EXCHANGE.equals(exchangeName)) {
-                    // Publish to topic
-                    if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-                        // then we need to remove the domain name path from the topic name before saving to the registry
+                } else if (TOPIC_EXCHANGE.equals(exchangeName)) {   // Publish to topic
+
+                    // Note:  we don't give topic name as <domain_name/topicname> but just the <topicname> with current authorization
+                    //        model,hence commented this
+
+                    /*if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
+                         then we need to remove the domain name path from the topic name before saving to the registry
                         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                         routingKey = routingKey.substring(tenantDomain.length() + 1);
-                    }
+                    }*/
                     String permissionID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize
@@ -264,12 +297,12 @@ public class QpidAuthorizationHandler {
                             TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
                         return Result.ALLOWED;
                     }
-                } else if (DEFAULT_EXCHANGE.equals(exchangeName)) {
-                    // Publish to queue
+                } else if (DEFAULT_EXCHANGE.equals(exchangeName)) {  // Publish to queue
+
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm)) {
+                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, routingKey)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -319,21 +352,28 @@ public class QpidAuthorizationHandler {
         *              ALLOWED/DENIED
         * @throws QpidAuthorizationHandlerException
         */
-    public static Result handleDeleteQueue(ObjectProperties properties)
+    public static Result handleDeleteQueue(String username,UserRealm userRealm, ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
-            String queueName =
-                getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+            if(isAdminUser(username, userRealm) || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE) || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
+                String queueName =
+                        getRawQueueName(properties.get(ObjectProperties.Property.NAME));
 
-            // Delete queue details
+                // Delete queue details
 
-            String newQName = queueName.replace("@", AT_REPLACE_CHAR);
-            RegistryClient.deleteQueue(queueName);
+                String newQName = queueName.replace("@", AT_REPLACE_CHAR);
+                RegistryClient.deleteQueue(queueName);
 
-            return Result.ALLOWED;
+                return Result.ALLOWED;
+            }
         } catch (RegistryClientException e) {
             throw new QpidAuthorizationHandlerException(e);
+        } catch (UserStoreException e) {
+            throw new QpidAuthorizationHandlerException(e);
         }
+        return Result.DENIED;
     }
 
     /**
@@ -392,6 +432,44 @@ public class QpidAuthorizationHandler {
         }
 
         return false;
+    }
+
+    /**
+     *  Check whether a queue/topic belongs to given domain in order to avoid other tenant domains' users operate on
+     *  the given queue/topic
+     * @param tenantDomain - domain name of tenant
+     * @param routingKey - queue/topic name to be verified against tenantDomain
+     * @return
+     */
+    private static boolean isOwnDomain(String tenantDomain, String routingKey) {
+         boolean isOwnDomain = false;
+
+        if(tenantDomain != null){
+            if(routingKey.length()>=tenantDomain.length()+1 && routingKey.substring(0,tenantDomain.length()+1).equals(tenantDomain+"/")){
+                isOwnDomain = true;
+            } else if (tenantDomain.equalsIgnoreCase("carbon.super")){
+                if(!routingKey.contains("/")){
+                    isOwnDomain =  true;
+                }
+            }
+        } else {   // tenantDomain is null,this implies this is a normal user.
+            if(!routingKey.contains("/")){
+                isOwnDomain =  true;
+            }
+        }
+
+        return isOwnDomain;
+    }
+
+    /**
+     * when a subscriber is created for a topic in tenant mode, a temporary queue as 'tmp_<queueId></>' created for its messages. this is to check
+     * whether a queue is such kind of one.
+     * @param queueName - topic subscriber's queue
+     * @return
+     */
+    private static boolean isTopicSubscriberQueue(String queueName) {
+        return queueName.startsWith("tmp_");
+
     }
 }
 
