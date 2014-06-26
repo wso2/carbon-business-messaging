@@ -48,9 +48,11 @@ public class QpidServiceImpl implements QpidService {
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
 
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
-    private static final String QPID_CONF_FILE = "qpid-config.xml";
-    private static final String QPID_VIRTUALHOST_CONF_FILE = "qpid-virtualhosts.xml";
+    private static final String ANDES_CONF_FILE = "andes-config.xml";
+    private static final String ANDES_VIRTUALHOST_CONF_FILE = "andes-virtualhosts.xml";
     private static final String QPID_CONF_CONNECTOR_NODE = "connector";
+    private static final String QPID_CONF_SSL_NODE = "ssl";
+    private static final String QPID_CONF_SSL_ONLY_NODE = "sslOnly";
     private static final String QPID_CONF_PORT_NODE = "port";
     private static final String QPID_CONF_SSL_PORT_NODE = "sslport";
     private static final String QPID_CONF_CLUSTER_NODE="clustering";
@@ -80,10 +82,12 @@ public class QpidServiceImpl implements QpidService {
     private int portOffset = 0;
     private String cassandraConnection;
     private String zkConnection;
+    private String cassandraPort = "";
 
     private Boolean clsuterEnabled;
     private Boolean externalCassandraRequired;
     private Boolean externalZookeeperRequired;
+    private Boolean sslOnly;
 
     public QpidServiceImpl(String accessKey) {
         this.accessKey = accessKey;
@@ -240,7 +244,8 @@ public class QpidServiceImpl implements QpidService {
 
     private int readPortOffset() {
         ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET_NODE);
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
 
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
@@ -286,7 +291,7 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-     * Read port from qpid-config.xml
+     * Read port from andes-config.xml
      *
      * @return
      */
@@ -294,7 +299,7 @@ public class QpidServiceImpl implements QpidService {
         String port = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -305,19 +310,19 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         return ((port != null) ? port.trim() : "");
     }
 
     /**
-     * Read port from qpid-config.xml
+     * Read port from andes-config.xml
      *
      * @return
      */
@@ -325,7 +330,7 @@ public class QpidServiceImpl implements QpidService {
         String required = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -338,12 +343,12 @@ public class QpidServiceImpl implements QpidService {
             }
             required = statusNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         if("true".equals(required)) {
@@ -357,7 +362,7 @@ public class QpidServiceImpl implements QpidService {
         String required = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -370,12 +375,12 @@ public class QpidServiceImpl implements QpidService {
             }
             required = statusNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         if("true".equals(required)) {
@@ -391,7 +396,7 @@ public class QpidServiceImpl implements QpidService {
         String enabled = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -405,12 +410,12 @@ public class QpidServiceImpl implements QpidService {
             }
             enabled = enabledNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         if("true".equals(enabled)) {
@@ -457,7 +462,7 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-        * Read port from qpid-config.xml
+        * Read port from andes-config.xml
         *
         * @return
         */
@@ -465,7 +470,7 @@ public class QpidServiceImpl implements QpidService {
         String port = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -476,12 +481,12 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         return ((port != null) ? port.trim() : "");
@@ -501,7 +506,7 @@ public class QpidServiceImpl implements QpidService {
             return cassandraConnection.trim();
         }
          try {
-            File confFile = new File(getQpidHome() + QPID_VIRTUALHOST_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -516,12 +521,12 @@ public class QpidServiceImpl implements QpidService {
 
             cassandraConnection = connectionStr.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         return ((cassandraConnection != null) ? cassandraConnection.trim() : "");
@@ -536,7 +541,7 @@ public class QpidServiceImpl implements QpidService {
         }
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -549,14 +554,68 @@ public class QpidServiceImpl implements QpidService {
 
             zkConnection = zkConnectionNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                    QPID_CONF_FILE + " : " + e.getMessage());
+                    ANDES_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
         }
 
         return (zkConnection != null) ? zkConnection.trim() : "";
     }
+
+    public boolean getIfSSLOnly() {
+
+        if(sslOnly != null) {
+            return sslOnly;
+        }
+
+        try {
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
+
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement connectorNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_CONF_CONNECTOR_NODE));
+            OMElement sslNode = connectorNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_NODE));
+            OMElement sslOnlyNode = sslNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_ONLY_NODE));
+
+            sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
+
+        } catch (FileNotFoundException e) {
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+        } catch (XMLStreamException e) {
+            log.error("Error while reading " + getQpidHome() +
+                    ANDES_CONF_FILE + " : " + e.getMessage());
+        } catch (NullPointerException e) {
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+        }
+
+        return sslOnly;
+    }
+
+    @Override
+    public int getCassandraConnectionPort() {
+        int configuredPort = 9160;
+        if(!isExternalCassandraServerRequired()){
+            configuredPort = configuredPort+ portOffset;
+        } else {
+        	configuredPort = this.getCassandraConnectionPortFromConfig();
+        }
+        return configuredPort;
+    }
+    
+    private int getCassandraConnectionPortFromConfig() {
+    	String connStr = this.getCassandraConnectionString();
+    	int index = connStr.lastIndexOf(":");
+    	if (index > 0) {
+    		return Integer.parseInt(connStr.substring(index + 1));
+    	} else {
+    		throw new RuntimeException("The Cassandra connection string does not contain the port");
+    	}
+    }
+    
 }

@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <version>4.2.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.2.1</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.feature</artifactId>
     <packaging>pom</packaging>
@@ -38,13 +38,13 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.ui.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -71,7 +71,7 @@
                                 </properties>
                             </adviceFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core:4.2.0</importFeatureDef>
                             </importFeatures>
                             <includedFeatures>
                                 <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.andes.server.feature</includedFeatureDef>

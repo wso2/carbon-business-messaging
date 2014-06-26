@@ -383,7 +383,8 @@ public class QpidServiceComponent {
 
     private int readPortOffset() {
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET);
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
 
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);

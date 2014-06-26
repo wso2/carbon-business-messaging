@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <version>4.2.0</version>
+	<relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.2.1</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
     <packaging>pom</packaging>
@@ -37,37 +37,37 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.authentication</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.authorization</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.commons</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
 	 <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.core</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.admin</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
@@ -119,6 +119,12 @@
             <artifactId>apache-zookeeper</artifactId>
             <version>3.4.4.wso2v1</version>
         </dependency>
+        <!--MQTT related dependencies-->
+        <dependency>
+            <groupId>io.netty.wso2</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.8.wso2v1</version>                 
+       </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -139,6 +145,9 @@
                                     <includes>
                                         <include>conf/qpid-config.xml</include>
                                         <include>conf/qpid-virtualhosts.xml</include>
+                                        <include>conf/moquette.conf</include>
+                                        <include>conf/moquette-log.properties</include>
+                                        <include>conf/password_file.conf</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
                                     </includes>
@@ -181,7 +190,7 @@
 				 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>                              
                                 <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
-                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>
+                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>                               
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration.wso2:commons-configuration
                                 </bundleDef>
@@ -189,10 +198,10 @@
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt</bundleDef>
 				<bundleDef>org.apache.zookeeper.wso2:apache-zookeeper</bundleDef>
+                                <bundleDef>io.netty.wso2:netty-all</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server
-                                </importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core.server:4.2.0</importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>

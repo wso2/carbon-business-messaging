@@ -151,8 +151,8 @@ public class UIUtils {
         String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
         int CARBON_DEFAULT_PORT_OFFSET = 0;
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET);
-
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {

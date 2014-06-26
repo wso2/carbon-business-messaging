@@ -36,6 +36,8 @@
             <sslOnly>false</sslOnly>
             <keystorePath>repository/resources/security/wso2carbon.jks</keystorePath>
             <keystorePassword>wso2carbon</keystorePassword>
+            <truststorePath>repository/resources/security/client-truststore.jks</truststorePath>
+            <truststorePassword>wso2carbon</truststorePassword>
         </ssl>
         <qpidnio>false</qpidnio>
         <protectio>
@@ -188,6 +190,10 @@
                 Virtual host details across the cluster -->
                 <virtualHostSyncTaskInterval>3600</virtualHostSyncTaskInterval>
             </waitTimes>
+            <flowControl>
+                <globalMemoryThresholdRatio>0</globalMemoryThresholdRatio>
+                <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
+            </flowControl>
         </tuning>
         
     </clustering>
