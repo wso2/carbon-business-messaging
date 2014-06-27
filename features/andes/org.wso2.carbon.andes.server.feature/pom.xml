@@ -80,9 +80,9 @@
             <version>${commons-cli.version}.wso2v1</version>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.disruptor</groupId>
+            <groupId>com.googlecode.disruptor.wso2</groupId>
             <artifactId>disruptor</artifactId>
-            <version>2.10.4</version>
+            <version>2.10.4-wso2v2</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration.wso2</groupId>
@@ -190,7 +190,7 @@
 				 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>                              
                                 <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
-                                <bundleDef>com.googlecode.disruptor:disruptor</bundleDef>                               
+                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>                               
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration.wso2:commons-configuration
                                 </bundleDef>
