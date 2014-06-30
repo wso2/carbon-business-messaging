@@ -95,9 +95,9 @@
 	<loadBalancingPolicy>DynamicLoadBalancingPolicy</loadBalancingPolicy>
         <maxWaitTimeWhenExhausted>4000</maxWaitTimeWhenExhausted>
         <maxActive>4000</maxActive>
-        <useHostTimeoutTracker>true</useHostTimeoutTracker> // default is false
-        <hostTimeoutCounter>10</hostTimeoutCounter>  // default is 10
-        <hostTimeoutSuspensionDurationInSeconds>10</hostTimeoutSuspensionDurationInSeconds> // default is 10
+        <useHostTimeoutTracker>true</useHostTimeoutTracker> <!-- default is false -->
+        <hostTimeoutCounter>10</hostTimeoutCounter>  <!-- default is 10-->
+        <hostTimeoutSuspensionDurationInSeconds>10</hostTimeoutSuspensionDurationInSeconds> <!--default is 10 -->
     </hector>
 
     <heartbeat>
