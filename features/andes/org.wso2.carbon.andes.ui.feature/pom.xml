@@ -71,8 +71,8 @@
                                 <resource>
                                     <directory>resources</directory>
                                     <includes>
-                                        <include>conf/qpid-config.xml</include>
-                                        <include>conf/qpid-virtualhosts.xml</include>
+                                        <include>conf/andes-config.xml</include>
+                                        <include>conf/andes-virtualhosts.xml</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
                                     </includes>
