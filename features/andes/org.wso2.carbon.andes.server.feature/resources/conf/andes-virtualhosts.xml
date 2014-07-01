@@ -30,7 +30,7 @@
                 <password>admin</password>
                 <cluster>ClusterOne</cluster>
                 <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
-                <connectionString>localhost:9160</connectionString>
+                <connectionString>localhost:9042</connectionString>
 
                <!-- Advanced overrides for the cassandra instance -->
                 <advanced>
