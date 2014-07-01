@@ -189,7 +189,7 @@ public class QpidServiceComponent {
         // Start andes broker
         try {
             log.info("Activating Andes Message Broker Engine...");
-            System.setProperty(BrokerOptions.QPID_HOME, qpidServiceImpl.getQpidHome());
+            System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
             String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort()};
             //Main.setStandaloneMode(false);
             Main.main(args);

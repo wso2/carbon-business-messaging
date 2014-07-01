@@ -5,8 +5,5 @@ target
 .project
 *.i??
 .idea
-<<<<<<< HEAD
 .DS_Store
-=======
 *.iml
->>>>>>> 8a3f18a2e476d9ee52a27175f6c16c622c401832
