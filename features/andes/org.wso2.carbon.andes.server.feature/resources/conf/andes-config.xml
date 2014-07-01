@@ -47,6 +47,7 @@
         </protectio>
         <transport>nio</transport>
         <port>5672</port>
+        <sslport>8672</sslport>
         <socketReceiveBuffer>32768</socketReceiveBuffer>
         <socketSendBuffer>32768</socketSendBuffer>
     </connector>
