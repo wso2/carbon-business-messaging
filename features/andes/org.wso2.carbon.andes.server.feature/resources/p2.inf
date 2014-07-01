@@ -1,0 +1,6 @@
+instructions.configure = \
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/andes-config.xml,target:${installFolder}/../../conf/advanced/andes-config.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/andes-virtualhosts.xml,target:${installFolder}/../../conf/advanced/andes-virtualhosts.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/moquette.conf,target:${installFolder}/../../conf/advanced/moquette.conf,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/moquette-log.properties,target:${installFolder}/../../conf/advanced/moquette-log.properties,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/password_file.conf,target:${installFolder}/../../conf/advanced/password_file.conf,overwrite:true);\
