@@ -46,6 +46,7 @@ public class QpidServiceImpl implements QpidService {
     private static String CARBON_DEFAULT_HOSTNAME = "localhost";
     private static String CARBON_DEFAULT_PORT = "5672";
     private static String CARBON_DEFAULT_SSL_PORT = "8672";
+    private static String CARBON_DEFAULT_MQTT_PORT = "1883";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
 
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
@@ -81,6 +82,7 @@ public class QpidServiceImpl implements QpidService {
     private String hostname = "";
     private String port = "";
     private String sslPort = "";
+    private String mqttPort = "";
     private int portOffset = 0;
     private String cassandraConnection;
     private String zkConnection;
@@ -109,6 +111,9 @@ public class QpidServiceImpl implements QpidService {
 
         // Read Qpid broker SSL port from configuration file
         sslPort = readSSLPortFromConfig();
+
+        // Read MQTT port from configuration file
+        mqttPort = readMQTTPortFromConfig();
     }
 
     public String getAccessKey() {
@@ -216,6 +221,10 @@ public class QpidServiceImpl implements QpidService {
 
     public String getSSLPort(){
         return sslPort;
+    }
+
+    public String getMQTTPort() {
+        return mqttPort;
     }
 
     public boolean isClusterEnabled() {
@@ -451,6 +460,19 @@ public class QpidServiceImpl implements QpidService {
         return port;
     }
 
+    private String readMQTTPortFromConfig() {
+        String port = CARBON_DEFAULT_MQTT_PORT;
+
+        // Offset
+        try {
+            port = Integer.toString(Integer.parseInt(port) + portOffset);
+        } catch (NumberFormatException e) {
+            port = CARBON_DEFAULT_MQTT_PORT;
+        }
+
+        return port;
+    }
+
     /**
         * Read port from carbon.xml
         *
@@ -622,5 +644,6 @@ public class QpidServiceImpl implements QpidService {
     		throw new RuntimeException("The Cassandra connection string does not contain the port");
     	}
     }
-    
+
+
 }
