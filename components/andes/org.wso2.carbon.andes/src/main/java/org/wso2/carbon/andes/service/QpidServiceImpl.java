@@ -604,7 +604,7 @@ public class QpidServiceImpl implements QpidService {
 
     @Override
     public int getCassandraConnectionPort() {
-        int configuredPort = 9160;
+        int configuredPort = 9042;
         if(!isExternalCassandraServerRequired()){
             configuredPort = configuredPort+ portOffset;
         } else {
