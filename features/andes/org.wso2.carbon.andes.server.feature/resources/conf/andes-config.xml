@@ -69,7 +69,14 @@
         <framesize>65535</framesize>
         <compressBufferOnQueue>false</compressBufferOnQueue>
         <enableJMSXUserID>false</enableJMSXUserID>
-        <locale>en_US</locale>	
+        <locale>en_US</locale>
+	<expiration>
+           <checkInterval>10000</checkInterval>
+           <messageBatchSize>1000</messageBatchSize>
+        </expiration>
+        <dlc>
+            <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
+        </dlc>	
     </advanced>
 
     <security>
