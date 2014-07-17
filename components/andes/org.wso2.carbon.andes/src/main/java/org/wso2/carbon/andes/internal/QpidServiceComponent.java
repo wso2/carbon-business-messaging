@@ -16,12 +16,15 @@
 
 package org.wso2.carbon.andes.internal;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
+import org.wso2.andes.server.HazelcastInstanceHolder;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
@@ -85,6 +88,12 @@ import java.util.Set;
  *                              policy="dynamic"
  *                              bind="setCoordinationServerService"
  *                              unbind="unsetCoordinationServerService"
+ * @scr.reference    name="hazelcast.instance.service"
+ *                              interface="com.hazelcast.core.HazelcastInstance"
+ *                              cardinality="0..1"
+ *                              policy="dynamic"
+ *                              bind="setHazelcastInstance"
+ *                              unbind="unsetHazelcastInstance"
  */
 public class QpidServiceComponent {
 
@@ -103,10 +112,10 @@ public class QpidServiceComponent {
 
 
     private boolean activated = false;
+    private HazelcastInstance hazelcastInstance;
 
 
     protected void activate(ComponentContext ctx) {
-
 
         if (ctx.getBundleContext().getServiceReference(QpidService.class.getName()) != null) {
             return;
@@ -326,6 +335,20 @@ public class QpidServiceComponent {
     protected void unsetCoordinationServerService(CoordinationServerService coordinationServerService) {
 
 
+    }
+
+    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+       log.info("======================================SET HAZELCAST ===========================");
+       AndesContext.getInstance().setHazelcastInstance(hazelcastInstance);
+       if(hazelcastInstance != null){
+           log.info("=========================== member list size: " + AndesContext.getInstance().getHazelcastInstance().getCluster().getMembers().size() + "==========");
+       }else {
+           log.info("=========================== Hazelcast instance is null ============================");
+       }
+    }
+
+    protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        log.info("======================================UnSET HAZELCAST ===========================");
     }
 
     /**
