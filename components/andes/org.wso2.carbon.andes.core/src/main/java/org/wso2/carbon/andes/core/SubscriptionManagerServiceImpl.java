@@ -34,8 +34,15 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         return Utils.filterDomainSpecificSubscribers(allSubscriptions);
     }
 
+    public List<Subscription> getQueueSubscriptions() throws SubscriptionManagerException {
+        List<Subscription> allSubscriptions = SubscriptionManagementBeans.getInstance().getQueueSubscriptions(true,true,true);
+        //show queues belonging to current domain of user
+        //also set queue name used by user
+        return Utils.filterDomainSpecificSubscribers(allSubscriptions);
+    }
+
     public List<Subscription> getAllDurableQueueSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = getAllSubscriptions();
+        List<Subscription> allSubscriptions = getQueueSubscriptions();
         List<Subscription> durableQueueSubscriptions = new ArrayList<Subscription>();
         for(Subscription sub : allSubscriptions) {
             if(sub.getSubscriberQueueBoundExchange().equals(Utils.DIRECT_EXCHANGE) && sub.isDurable()) {
