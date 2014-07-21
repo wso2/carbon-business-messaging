@@ -27,6 +27,8 @@ import java.util.List;
 
 public class SubscriptionManagerServiceImpl implements SubscriptionManagerService {
 
+    @Deprecated
+    //kept temporarily for back tracking purposes TODO hasithad remove after verifying
     public List<Subscription> getAllSubscriptions() throws SubscriptionManagerException {
         List<Subscription> allSubscriptions = SubscriptionManagementBeans.getInstance().getAllSubscriptions();
         //show queues belonging to current domain of user
@@ -34,56 +36,41 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         return Utils.filterDomainSpecificSubscribers(allSubscriptions);
     }
 
-    public List<Subscription> getQueueSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = SubscriptionManagementBeans.getInstance().getQueueSubscriptions(true,true,true);
-        //show queues belonging to current domain of user
-        //also set queue name used by user
-        return Utils.filterDomainSpecificSubscribers(allSubscriptions);
-    }
-
+    /**
+     * show queues belonging to current domain of user
+     * also set queue name used by user
+    */
     public List<Subscription> getAllDurableQueueSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = getQueueSubscriptions();
-        List<Subscription> durableQueueSubscriptions = new ArrayList<Subscription>();
-        for(Subscription sub : allSubscriptions) {
-            if(sub.getSubscriberQueueBoundExchange().equals(Utils.DIRECT_EXCHANGE) && sub.isDurable()) {
-                durableQueueSubscriptions.add(sub);
-            }
-        }
-        return durableQueueSubscriptions;
+
+        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getQueueSubscriptions("true","*"));
     }
 
+    /**
+     * show non-durable queues belonging to current domain of user
+     * also set queue name used by user
+     */
     public List<Subscription> getAllLocalTempQueueSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = getAllSubscriptions();
-        List<Subscription> tempLocalQueueSubscriptions = new ArrayList<Subscription>();
-        for(Subscription sub : allSubscriptions) {
-            if(sub.getSubscriberQueueBoundExchange().equals(Utils.DIRECT_EXCHANGE) && !sub.isDurable()) {
-                tempLocalQueueSubscriptions.add(sub);
-            }
-        }
 
-        return tempLocalQueueSubscriptions;
+        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getQueueSubscriptions("false","*"));
     }
 
+    /**
+     * show durable topics belonging to current domain of user
+     * also set topic name used by user
+     */
     public List<Subscription> getAllDurableTopicSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = getAllSubscriptions();
-        List<Subscription> durableTopicSubscriptions = new ArrayList<Subscription>();
-        for(Subscription sub : allSubscriptions) {
-            if(sub.getSubscriberQueueBoundExchange().equals(Utils.TOPIC_EXCHANGE) && sub.isDurable()) {
-                durableTopicSubscriptions.add(sub);
-            }
-        }
-        return durableTopicSubscriptions;
+
+        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getTopicSubscriptions("true","*"));
     }
 
+    /**
+     * show durable topics belonging to current domain of user
+     * also set topic name used by user
+     * @return
+     * @throws SubscriptionManagerException
+     */
     public List<Subscription> getAllLocalTempTopicSubscriptions() throws SubscriptionManagerException {
-        List<Subscription> allSubscriptions = getAllSubscriptions();
-        List<Subscription> tempLocalTopicSubscriptions = new ArrayList<Subscription>();
-        for(Subscription sub : allSubscriptions) {
-            if(sub.getSubscriberQueueBoundExchange().equals(Utils.TOPIC_EXCHANGE) && !sub.isDurable()) {
-                tempLocalTopicSubscriptions.add(sub);
-            }
-        }
 
-        return tempLocalTopicSubscriptions;
+        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getTopicSubscriptions("false","*"));
     }
 }

@@ -19,4 +19,5 @@ package org.wso2.carbon.andes.core.internal.util;/*
 public class SubscriptionManagementConstants {
 
     public static final String QUEUE_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getAllQueueSubscriptions";
+    public static final String TOPIC_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getAllTopicSubscriptions";
 }
