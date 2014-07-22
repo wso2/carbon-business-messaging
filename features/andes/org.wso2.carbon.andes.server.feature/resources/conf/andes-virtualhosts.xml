@@ -34,6 +34,8 @@
 
                <!-- Advanced overrides for the cassandra instance -->
                 <advanced>
+                    <!-- Default is 10 days.-->
+                    <GCGraceSeconds>864000</GCGraceSeconds>
                     <!-- Default is 1, this is not set if the strategy class is set to
                      org.apache.cassandra.locator.NetworkTopologyStrategy -->
                     <replicationFactor>1</replicationFactor>
