@@ -104,7 +104,6 @@ public class QpidServiceComponent {
     private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
     private static String CARBON_CONFIG_HOST_NAME = "HostName";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
-    public  static String START_ZOOKEEPER_SERVER = "start_zk_server";
 
     private ServiceRegistration qpidService = null;
 
@@ -127,6 +126,7 @@ public class QpidServiceComponent {
         QpidServiceImpl qpidServiceImpl =
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
         qpidServiceImpl.setClusterEnabled(this.isClusteringEnabled);
+        AndesContext.getInstance().setClusteringEnabled(this.isClusteringEnabled);
 
         CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
 
@@ -305,7 +305,7 @@ public class QpidServiceComponent {
 
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
-        this.isClusteringEnabled = (agent == null);
+        this.isClusteringEnabled = (agent != null);
     }
 
     /**
