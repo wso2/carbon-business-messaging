@@ -16,10 +16,13 @@
 
 package org.wso2.carbon.andes.internal;
 
+import com.hazelcast.core.HazelcastInstance;
+import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.registry.ApplicationRegistry;
@@ -33,6 +36,7 @@ import org.wso2.carbon.cassandra.server.service.CassandraServerService;
 import org.wso2.carbon.coordination.server.service.CoordinationServerService;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.ServerConstants;
 
 import javax.management.MBeanServer;
@@ -85,6 +89,17 @@ import java.util.Set;
  *                              policy="dynamic"
  *                              bind="setCoordinationServerService"
  *                              unbind="unsetCoordinationServerService"
+ * @scr.reference    name="hazelcast.instance.service"
+ *                              interface="com.hazelcast.core.HazelcastInstance"
+ *                              cardinality="0..1"
+ *                              policy="dynamic"
+ *                              bind="setHazelcastInstance"
+ *                              unbind="unsetHazelcastInstance"
+ * @scr.reference    name="config.context.service"
+ *                              interface="org.wso2.carbon.utils.ConfigurationContextService"
+ *                              cardinality="1..1" policy="dynamic"
+ *                              bind="setConfigurationContextService"
+ *                              unbind="unsetConfigurationContextService"
  */
 public class QpidServiceComponent {
 
@@ -103,10 +118,10 @@ public class QpidServiceComponent {
 
 
     private boolean activated = false;
+    private boolean isClusteringEnabled;
 
 
     protected void activate(ComponentContext ctx) {
-
 
         if (ctx.getBundleContext().getServiceReference(QpidService.class.getName()) != null) {
             return;
@@ -119,13 +134,14 @@ public class QpidServiceComponent {
         
         QpidServiceImpl qpidServiceImpl =
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+        qpidServiceImpl.setClusterEnabled(this.isClusteringEnabled);
 
         CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
 
         CoordinationServerService coordinationServerService = QpidServiceDataHolder.getInstance().
                 getCoordinationServerService();
 
-        if(qpidServiceImpl.isClusterEnabled()) {
+        if(this.isClusteringEnabled) {
             log.info("Starting Message Broker in -- CLUSTERED MODE --");
         } else {
             log.info("Starting Message Broker in -- STANDALONE MODE --");
@@ -135,7 +151,7 @@ public class QpidServiceComponent {
              Properties properties= coordinationServerService.getZKServerConfigurationProperties();
              // if start_zk_server=null|true coordination service starts zookeeper server, if not we will start it by qpid service
              boolean coordinationServerStarted = properties.get(START_ZOOKEEPER_SERVER) == null || ("true".equals(properties.get(START_ZOOKEEPER_SERVER)));
-             if(qpidServiceImpl.isClusterEnabled() && !qpidServiceImpl.isExternalZookeeperServerRequired()&& !coordinationServerStarted) {
+             if(this.isClusteringEnabled && !qpidServiceImpl.isExternalZookeeperServerRequired()&& !coordinationServerStarted) {
                 log.info("Activating Carbonized Coordination Service...");
                 coordinationServerService.startServer();
                 try {
@@ -192,6 +208,7 @@ public class QpidServiceComponent {
             System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
             String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
                                 "-q" + qpidServiceImpl.getMQTTPort()};
+
             //Main.setStandaloneMode(false);
             Main.main(args);
 
@@ -326,6 +343,23 @@ public class QpidServiceComponent {
     protected void unsetCoordinationServerService(CoordinationServerService coordinationServerService) {
 
 
+    }
+
+    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+       AndesContext.getInstance().setHazelcastInstance(hazelcastInstance);
+    }
+
+    protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        // Do nothing
+    }
+
+    protected void unsetConfigurationContextService(ConfigurationContextService configurationContextService) {
+        // Do nothing
+    }
+
+    protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
+        ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
+        this.isClusteringEnabled = (agent == null);
     }
 
     /**

@@ -227,13 +227,12 @@ public class QpidServiceImpl implements QpidService {
         return mqttPort;
     }
 
+    public void setClusterEnabled(boolean isClusterEnabled){
+        this.clsuterEnabled = isClusterEnabled;
+    }
+
+    @Override
     public boolean isClusterEnabled() {
-
-        if(clsuterEnabled==null) {
-            clsuterEnabled = readClusterEnabledDisabledStatusFromQpidConfig();
-            return clsuterEnabled;
-        }
-
         return clsuterEnabled;
     }
 
@@ -395,41 +394,6 @@ public class QpidServiceImpl implements QpidService {
         }
 
         if("true".equals(required)) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-
-    private boolean readClusterEnabledDisabledStatusFromQpidConfig() {
-        String enabled = "";
-
-        try {
-            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement enabledNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_ENABLE_NODE));
-
-            if(enabledNode == null) {
-                return false;
-            }
-            enabled = enabledNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
-        }
-
-        if("true".equals(enabled)) {
             return true;
         }
 
