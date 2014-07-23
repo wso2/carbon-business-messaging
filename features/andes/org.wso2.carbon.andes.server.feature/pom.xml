@@ -119,11 +119,6 @@
             <artifactId>commons-dbcp</artifactId>
             <version>${orbit.version.commons.dbcp}</version>
         </dependency>
-	<dependency>
-            <groupId>org.apache.zookeeper.wso2</groupId>
-            <artifactId>apache-zookeeper</artifactId>
-            <version>3.4.4.wso2v1</version>
-        </dependency>
         <!--MQTT related dependencies-->
         <dependency>
             <groupId>io.netty.wso2</groupId>
@@ -203,7 +198,6 @@
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
 				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt</bundleDef>
-				<bundleDef>org.apache.zookeeper.wso2:apache-zookeeper</bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
                             </bundles>
                             <importFeatures>

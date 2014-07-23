@@ -449,7 +449,6 @@ considered very carefully. -->
 <!-- 	<jaggery.version>0.9.0.ALPHA4.wso2v1</jaggery.version> -->
 
     <orbit.version.commons-configuration>1.6.0.wso2v1</orbit.version.commons-configuration>
-    <zookeeper.wso2.version>3.3.5.wso2v1</zookeeper.wso2.version>
 
     </properties>
 </project>

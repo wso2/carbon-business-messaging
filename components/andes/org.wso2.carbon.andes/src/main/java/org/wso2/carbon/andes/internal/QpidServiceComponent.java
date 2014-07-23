@@ -33,7 +33,6 @@ import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.server.service.CassandraServerService;
-import org.wso2.carbon.coordination.server.service.CoordinationServerService;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -47,7 +46,6 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -83,12 +81,6 @@ import java.util.Set;
  *                              policy="dynamic"
  *                              bind="setCassandraServerService"
  *                              unbind="unsetCassandraServerService"
- * @scr.reference    name="coordination.service"
- *                              interface="org.wso2.carbon.coordination.server.service.CoordinationServerService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setCoordinationServerService"
- *                              unbind="unsetCoordinationServerService"
  * @scr.reference    name="hazelcast.instance.service"
  *                              interface="com.hazelcast.core.HazelcastInstance"
  *                              cardinality="0..1"
@@ -138,45 +130,10 @@ public class QpidServiceComponent {
 
         CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
 
-        CoordinationServerService coordinationServerService = QpidServiceDataHolder.getInstance().
-                getCoordinationServerService();
-
         if(this.isClusteringEnabled) {
             log.info("Starting Message Broker in -- CLUSTERED MODE --");
         } else {
             log.info("Starting Message Broker in -- STANDALONE MODE --");
-        }
-
-         if(coordinationServerService != null) {
-             Properties properties= coordinationServerService.getZKServerConfigurationProperties();
-             // if start_zk_server=null|true coordination service starts zookeeper server, if not we will start it by qpid service
-             boolean coordinationServerStarted = properties.get(START_ZOOKEEPER_SERVER) == null || ("true".equals(properties.get(START_ZOOKEEPER_SERVER)));
-             if(this.isClusteringEnabled && !qpidServiceImpl.isExternalZookeeperServerRequired()&& !coordinationServerStarted) {
-                log.info("Activating Carbonized Coordination Service...");
-                coordinationServerService.startServer();
-                try {
-                    Thread.sleep(2*1000);
-                } catch (InterruptedException e) {
-
-                }
-
-                int count = 0;
-
-                while (!isCoordinationServerStarted()) {
-                    count++;
-                    if(count > 60) {
-                        break;
-                    }
-                    try {
-                        Thread.sleep(10*1000);
-                    } catch (InterruptedException e) {
-
-                    }
-                }
-            }
-        } else {
-            log.error("Coordination Server service not set properly server will not start properly");
-            throw new RuntimeException("Coordination Server service not set properly server will not start properly");
         }
 
         if(cassandraServerService != null) {
@@ -334,17 +291,6 @@ public class QpidServiceComponent {
 
     }
 
-    protected void setCoordinationServerService(CoordinationServerService coordinationServerService) {
-        if (QpidServiceDataHolder.getInstance().getCoordinationServerService() == null) {
-            QpidServiceDataHolder.getInstance().setCoordinationServerService(coordinationServerService);
-        }
-    }
-
-    protected void unsetCoordinationServerService(CoordinationServerService coordinationServerService) {
-
-
-    }
-
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
        AndesContext.getInstance().setHazelcastInstance(hazelcastInstance);
     }
@@ -391,36 +337,6 @@ public class QpidServiceComponent {
         boolean status = false;
         try {
             int listenPort =  CASSANDRA_THRIFT_PORT + readPortOffset();
-            socket = new Socket(InetAddress.getByName(getCarbonHostName()),listenPort);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("Unexpected Error while Checking for Cassandra Startup",e);
-        } catch (IOException e) {
-        } finally {
-            if(socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-
-                }
-                status = true;
-            }
-        }
-        log.debug("Checking for Cassandra server started status - status :" + status);
-        return status;
-    }
-
-
-    private boolean isCoordinationServerStarted() {
-         Socket socket = null;
-        boolean status = false;
-        try {
-
-            CoordinationServerService coordinationServerService = QpidServiceDataHolder.getInstance().
-                    getCoordinationServerService();
-
-            String clientPortStr = coordinationServerService.getZKServerConfigurationProperties().
-                    getProperty(CoordinationServerService.CLIENT_PORT);
-            int listenPort =  clientPortStr!= null? Integer.parseInt(clientPortStr) : 2181 + readPortOffset();
             socket = new Socket(InetAddress.getByName(getCarbonHostName()),listenPort);
         } catch (UnknownHostException e) {
             throw new RuntimeException("Unexpected Error while Checking for Cassandra Startup",e);
