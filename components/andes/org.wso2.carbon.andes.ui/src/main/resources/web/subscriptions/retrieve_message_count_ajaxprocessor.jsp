@@ -8,7 +8,8 @@
     long numberOfMessages = -1;
     try{
         String queueName = request.getParameter("queueName");
-        numberOfMessages = stub.getMessageCountForQueue(queueName);
+        String msgPattern = request.getParameter("msgPattern");
+        numberOfMessages = stub.getMessageCountForQueue(queueName,msgPattern);
     } catch (Exception e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);

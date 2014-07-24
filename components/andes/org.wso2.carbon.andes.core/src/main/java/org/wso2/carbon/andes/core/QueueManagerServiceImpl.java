@@ -203,10 +203,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         }
     }
 
-    public long getMessageCountForQueue(String queueName) throws Exception{
+    public long getMessageCountForQueue(String queueName,String msgPattern) throws Exception{
         long messageCount = 0;
         try {
-            messageCount = QueueManagementBeans.getInstance().getMessageCount(queueName);
+            messageCount = QueueManagementBeans.getInstance().getMessageCount(queueName,msgPattern);
             return messageCount;
         } catch (Exception e) {
             throw new Exception("Failed to get message count for queue :" + queueName + e);
@@ -414,7 +414,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
 
     @Override
     public long getTotalMessagesInQueue(String nameOfQueue) throws QueueManagerException {
-        int messageCount = QueueManagementBeans.getInstance().getMessageCount(nameOfQueue);
+        int messageCount = QueueManagementBeans.getInstance().getMessageCount(nameOfQueue,"queue");
         return messageCount;
     }
 
