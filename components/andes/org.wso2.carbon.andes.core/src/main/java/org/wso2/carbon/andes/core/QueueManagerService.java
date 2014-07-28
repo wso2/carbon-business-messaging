@@ -23,7 +23,7 @@ public interface QueueManagerService  {
 
     public void purgeMessagesOfQueue(String queueName) throws Exception;
 
-    public long getMessageCountForQueue(String queueName) throws Exception;
+    public long getMessageCountForQueue(String queueName,String msgPattern) throws Exception;
 
     public void updatePermission(String queueName, org.wso2.carbon.andes.core.types.QueueRolePermission[] queueRolePermissions)
             throws QueueManagerException;

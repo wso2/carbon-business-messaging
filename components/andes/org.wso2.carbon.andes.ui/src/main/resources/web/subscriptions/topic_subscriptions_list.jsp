@@ -14,12 +14,12 @@
     function refreshMessageCount(obj){
         var aTag = jQuery(obj);
         var subscriptionId = aTag.attr('data-id');
-        var queueName = subscriptionId.split("@")[0];
+        var queueName = subscriptionId.split("@")[1];
 
         aTag.css('font-weight', 'bolder');
 
         jQuery.ajax({
-            url:"retrieve_message_count_ajaxprocessor.jsp?queueName="+queueName,
+            url:"retrieve_message_count_ajaxprocessor.jsp?queueName="+queueName+"&msgPattern=topic",
             data:{},
             type:"POST",
             success:function(data){

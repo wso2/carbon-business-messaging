@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.core.internal.registry;
 
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
+import org.wso2.carbon.andes.core.internal.util.SubscriptionManagementConstants;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Subscription;
 
@@ -40,6 +41,82 @@ public class SubscriptionManagementBeans {
         return self;
     }
 
+    public ArrayList<Subscription> getTopicSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
+        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,name=SubscriptionManagementInformation");
+
+            Object[] parameters = new Object[]{isDurable,isActive};
+            String[] signature = new String[]{String.class.getName(),String.class.getName()};
+
+            Object result = mBeanServer.invoke(objectName,SubscriptionManagementConstants.TOPIC_SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
+                    parameters,signature);
+
+            if(result!=null)
+            {
+                String[] subscriptionInformationList = (String[])result;
+
+                for(String subscriptionInfo : subscriptionInformationList)
+                {
+                    Subscription sub = Utils.parseStringToASubscription(subscriptionInfo);
+                    subscriptionDetailsList.add(sub);
+                }
+
+            }
+            return subscriptionDetailsList;
+
+        } catch (MalformedObjectNameException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (ReflectionException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (MBeanException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (InstanceNotFoundException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        }
+    }
+
+    public ArrayList<Subscription> getQueueSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
+        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,name=SubscriptionManagementInformation");
+
+            Object[] parameters = new Object[]{isDurable,isActive};
+            String[] signature = new String[]{String.class.getName(),String.class.getName()};
+
+            Object result = mBeanServer.invoke(objectName,SubscriptionManagementConstants.QUEUE_SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
+                    parameters,signature);
+
+            if(result!=null)
+            {
+                String[] subscriptionInformationList = (String[])result;
+
+                for(String subscriptionInfo : subscriptionInformationList)
+                {
+                    Subscription sub = Utils.parseStringToASubscription(subscriptionInfo);
+                    subscriptionDetailsList.add(sub);
+                }
+
+            }
+            return subscriptionDetailsList;
+
+        } catch (MalformedObjectNameException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (ReflectionException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (MBeanException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        } catch (InstanceNotFoundException e) {
+            throw new SubscriptionManagerException("Cannot access mBean operations to get subscription list",e);
+        }
+    }
+
+    @Deprecated
+    //Replaced by seperate mbean services for topics and queues
     public ArrayList<Subscription> getAllSubscriptions() throws SubscriptionManagerException {
         ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();

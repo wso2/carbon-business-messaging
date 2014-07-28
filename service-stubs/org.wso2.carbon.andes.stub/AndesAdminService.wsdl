@@ -81,6 +81,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

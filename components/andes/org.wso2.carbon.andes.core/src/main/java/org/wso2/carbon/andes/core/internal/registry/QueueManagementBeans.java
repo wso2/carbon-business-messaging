@@ -92,7 +92,7 @@ public  class QueueManagementBeans {
                 {
                     Queue queue = new Queue();
                     queue.setQueueName(queueName);
-                    queue.setMessageCount(getMessageCount(queueName));
+                    queue.setMessageCount(getMessageCount(queueName,"queue"));
                     queueDetailsList.add(queue);
                 }
 
@@ -111,7 +111,7 @@ public  class QueueManagementBeans {
              throw new QueueManagerException("Cannot access mBean operations to get queue list",e);
         }
     }
-    public int getMessageCount(String queueName) throws QueueManagerException
+    public int getMessageCount(String queueName,String msgPattern) throws QueueManagerException
     {
         int messageCount =0;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -121,8 +121,8 @@ public  class QueueManagementBeans {
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
          String operationName = "getMessageCount";
-         Object [] parameters = new Object[]{queueName};
-         String [] signature = new String[]{String.class.getName()};
+         Object [] parameters = new Object[]{queueName,msgPattern};
+         String [] signature = new String[]{String.class.getName(),String.class.getName()};
          Object result = mBeanServer.invoke(
                                          objectName,
                                          operationName,

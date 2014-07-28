@@ -27,7 +27,7 @@
             aTag.css('font-weight', 'bolder');
 
             jQuery.ajax({
-                url:"retrieve_message_count_ajaxprocessor.jsp?queueName="+queueName,
+                url:"retrieve_message_count_ajaxprocessor.jsp?queueName="+queueName+"&msgPattern=queue",
                 data:{},
                 type:"POST",
                 success:function(data){

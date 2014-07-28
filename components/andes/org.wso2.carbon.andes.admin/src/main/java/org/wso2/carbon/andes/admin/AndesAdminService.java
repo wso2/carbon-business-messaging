@@ -76,12 +76,12 @@ public class AndesAdminService extends AbstractAdmin {
         return queuesDTO;
     }
 
-    public long getMessageCountForQueue(String queueName) throws BrokerManagerAdminException {//done
+    public long getMessageCountForQueue(String queueName,String msgPattern) throws BrokerManagerAdminException {//done
         long messageCount = 0;
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            messageCount = queueManagerService.getMessageCountForQueue(queueName);
+            messageCount = queueManagerService.getMessageCountForQueue(queueName,msgPattern);
             return messageCount;
         } catch (Exception e) {
             throw new BrokerManagerAdminException("Error while getting message count for queue", e);
