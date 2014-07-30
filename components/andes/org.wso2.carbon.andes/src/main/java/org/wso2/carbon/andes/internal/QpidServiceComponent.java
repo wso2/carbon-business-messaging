@@ -109,6 +109,10 @@ public class QpidServiceComponent {
 
 
     private boolean activated = false;
+
+    /**
+     * Is clustering enabled in the axis2.xml.
+     */
     private boolean isClusteringEnabled;
 
 
@@ -291,6 +295,10 @@ public class QpidServiceComponent {
 
     }
 
+    /**
+     * Access Hazelcast Instance, which is exposed as an OSGI service.
+     * @param hazelcastInstance
+     */
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
        AndesContext.getInstance().setHazelcastInstance(hazelcastInstance);
     }
@@ -303,6 +311,10 @@ public class QpidServiceComponent {
         // Do nothing
     }
 
+    /**
+     * Access ConfigurationContextService, which is exposed as an OSGI service, to read cluster configuration.
+     * @param configurationContextService
+     */
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
         this.isClusteringEnabled = (agent != null);
