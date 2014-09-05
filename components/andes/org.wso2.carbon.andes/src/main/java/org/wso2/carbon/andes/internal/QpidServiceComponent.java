@@ -132,7 +132,8 @@ public class QpidServiceComponent {
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
         qpidServiceImpl.setClusterEnabled(this.isClusteringEnabled);
         AndesContext.getInstance().setClusteringEnabled(this.isClusteringEnabled);
-
+        AndesContext.getInstance().setMessageStoreClass(qpidServiceImpl.getMessageStoreClassName());
+        AndesContext.getInstance().setAndesContextStoreClass(qpidServiceImpl.getAndesContextStoreClassName());
         CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
 
         if(this.isClusteringEnabled) {

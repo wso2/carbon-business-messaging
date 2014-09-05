@@ -73,7 +73,8 @@ public class QpidServiceImpl implements QpidService {
     private static final String QPID_VIRTUALHOST_CARBON_NODE = "carbon";
     private static final String QPID_VIRTUALHOST_STORE_NODE = "store";
     private static final String QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE = "connectionString";
-
+    private static final String QPID_VIRTUALHOST_MESSAGE_STORE_CLASS = "messageStore";
+    private static final String QPID_VIRTUALHOST_CONTEXT_STORE_CLASS = "andesContextStore";
 
     private static final String DOMAIN_NAME_SEPARATOR = "@";
     private static final String DOMAIN_NAME_SEPARATOR_INTERNAL = "!";
@@ -87,6 +88,8 @@ public class QpidServiceImpl implements QpidService {
     private String cassandraConnection;
     private String zkConnection;
     private String cassandraPort = "";
+    private String messageStoreClassName;
+    private String andesContextStoreClassName;
 
     private Boolean clsuterEnabled;
     private Boolean externalCassandraRequired;
@@ -114,6 +117,9 @@ public class QpidServiceImpl implements QpidService {
 
         // Read MQTT port from configuration file
         mqttPort = readMQTTPortFromConfig();
+
+        // read messageStore implementation and andesContextStore class names from config file
+        readVirtualHostConfig();
     }
 
     public String getAccessKey() {
@@ -261,6 +267,36 @@ public class QpidServiceImpl implements QpidService {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
             return CARBON_DEFAULT_PORT_OFFSET;
+        }
+    }
+
+    private void readVirtualHostConfig() {
+        String vHostFilePath = getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE;
+        try {
+            File confFile = new File(vHostFilePath);
+
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement virtualHostNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText();
+            OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
+                    new QName(virtualHostName));
+            OMElement storeElem = carbonVirtualHost.
+                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_STORE_NODE));
+            OMElement storeClassElem = storeElem.getFirstChildWithName(new QName(QPID_VIRTUALHOST_MESSAGE_STORE_CLASS));
+            messageStoreClassName = storeClassElem.getText();
+            OMElement contextStoreElem = storeElem.getFirstChildWithName(new QName(QPID_VIRTUALHOST_CONTEXT_STORE_CLASS));
+            andesContextStoreClassName = contextStoreElem.getText();
+
+        } catch (FileNotFoundException e) {
+            log.error(vHostFilePath + " not found");
+        } catch (XMLStreamException e) {
+            log.error("Error while reading " + vHostFilePath + " : " + e.getMessage());
+        } catch (NullPointerException e) {
+            log.error("Invalid configuration : " + vHostFilePath);
         }
     }
 
@@ -490,12 +526,14 @@ public class QpidServiceImpl implements QpidService {
     @Override
     public String getCassandraConnectionString() {
 
-        if(cassandraConnection != null) {
+        if (cassandraConnection != null) {
             return cassandraConnection.trim();
         }
-         try {
-            File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
-            
+
+        String vHostFilePath = getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE;
+        try {
+            File confFile = new File(vHostFilePath);
+
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
             OMElement virtualHostNode = docRootNode.getFirstChildWithName(
@@ -505,23 +543,30 @@ public class QpidServiceImpl implements QpidService {
             String virtualHostName = virtualHostNameNode.getText();
             OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
                     new QName(virtualHostName));
-            OMElement storeElem  = carbonVirtualHost.
+            OMElement storeElem = carbonVirtualHost.
                     getFirstChildWithName(new QName(QPID_VIRTUALHOST_STORE_NODE));
             OMElement connectionStr = storeElem.getFirstChildWithName(
                     new QName(QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE));
 
             cassandraConnection = connectionStr.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(vHostFilePath + " not found");
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + vHostFilePath + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + vHostFilePath);
         }
 
         return ((cassandraConnection != null) ? cassandraConnection.trim() : "");
 
+    }
+
+    public String getMessageStoreClassName() {
+        return messageStoreClassName;
+    }
+
+    public String getAndesContextStoreClassName() {
+        return andesContextStoreClassName;
     }
 
     @Override

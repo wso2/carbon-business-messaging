@@ -25,7 +25,8 @@
         <name>carbon</name>
         <carbon>
            <store>
-                <class>org.wso2.andes.server.store.CassandraMessageStore</class>
+                <messageStore>org.wso2.andes.messageStore.CQLBasedMessageStoreImpl</messageStore>
+                <andesContextStore>org.wso2.andes.kernel.CassandraBasedAndesContextStore</andesContextStore>
                 <username>admin</username>
                 <password>admin</password>
                 <cluster>ClusterOne</cluster>
