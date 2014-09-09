@@ -25,6 +25,7 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
+import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
@@ -297,10 +298,10 @@ public class QpidServiceComponent {
 
     /**
      * Access Hazelcast Instance, which is exposed as an OSGI service.
-     * @param hazelcastInstance
+     * @param hazelcastInstance  hazelcastInstance found from the OSGI service
      */
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-       AndesContext.getInstance().setHazelcastInstance(hazelcastInstance);
+        HazelcastAgent.getInstance().init(hazelcastInstance);
     }
 
     protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
