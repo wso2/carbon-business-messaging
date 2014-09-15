@@ -20,20 +20,24 @@
  -
  -->
 <virtualhosts>
-    <default>carbon</default>   
-   <virtualhost>
+    <default>carbon</default>
+    <virtualhost>
         <name>carbon</name>
         <carbon>
-           <store>
-                <messageStore>org.wso2.andes.messageStore.CQLBasedMessageStoreImpl</messageStore>
-                <andesContextStore>org.wso2.andes.kernel.CassandraBasedAndesContextStore</andesContextStore>
+            <store>
+                <messageStore class="org.wso2.andes.messageStore.CQLBasedMessageStoreImpl">
+                    <property name="dataSource"></property>
+                </messageStore>
+                <andesContextStore class="org.wso2.andes.kernel.CassandraBasedAndesContextStore">
+                    <property name="daraSource"></property>
+                </andesContextStore>
                 <username>admin</username>
                 <password>admin</password>
                 <cluster>ClusterOne</cluster>
                 <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
                 <connectionString>localhost:9042</connectionString>
 
-               <!-- Advanced overrides for the cassandra instance -->
+                <!-- Advanced overrides for the cassandra instance -->
                 <advanced>
                     <!-- Default is 10 days.-->
                     <GCGraceSeconds>864000</GCGraceSeconds>
@@ -55,17 +59,17 @@
             </housekeeping>
 
             <exchanges>
-                
-		<!-- Here you can add remove exchange to this virtualhost-->
-		<!--exchange>
-                    <type>direct</type>
-                    <name>carbon.direct</name>
-                    <durable>true</durable>
-                </exchange>
-                <exchange>
-                    <type>topic</type>
-                    <name>carbon.topic</name>
-                </exchange-->
+
+                <!-- Here you can add remove exchange to this virtualhost-->
+                <!--exchange>
+                            <type>direct</type>
+                            <name>carbon.direct</name>
+                            <durable>true</durable>
+                        </exchange>
+                        <exchange>
+                            <type>topic</type>
+                            <name>carbon.topic</name>
+                        </exchange-->
             </exchanges>
 
             <queues>

@@ -172,13 +172,6 @@ public interface QpidService {
     public boolean getIfSSLOnly();
 
     /**
-     * Returns the Whether the clustering is enabled
-     * @return  clustering enabled disabled status
-     */
-    public boolean isClusterEnabled();
-
-
-    /**
      * Returns whether external cassandra server required
      * @return required status of external cassandra server*/
     public boolean isExternalCassandraServerRequired();

@@ -26,10 +26,10 @@
 
     <plugin-directory>${ANDES_HOME}/lib/plugins</plugin-directory>
     <cache-directory>${QPID_WORK}/cache</cache-directory>
-    
+
     <connector>
         <!-- To enable SSL edit the keystorePath and keystorePassword
-	     and set enabled to true. 
+     and set enabled to true.
              To disasble Non-SSL port set sslOnly to true -->
         <ssl>
             <enabled>true</enabled>
@@ -43,7 +43,7 @@
         <protectio>
             <enabled>false</enabled>
             <readBufferLimitSize>262144</readBufferLimitSize>
-            <writeBufferLimitSize>262144</writeBufferLimitSize>	    
+            <writeBufferLimitSize>262144</writeBufferLimitSize>
         </protectio>
         <transport>nio</transport>
         <port>5672</port>
@@ -70,19 +70,18 @@
         <compressBufferOnQueue>false</compressBufferOnQueue>
         <enableJMSXUserID>false</enableJMSXUserID>
         <locale>en_US</locale>
-	<expiration>
-           <checkInterval>10000</checkInterval>
-           <messageBatchSize>1000</messageBatchSize>
+        <expiration>
+            <checkInterval>10000</checkInterval>
+            <messageBatchSize>1000</messageBatchSize>
         </expiration>
         <dlc>
             <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
-        </dlc>	
+        </dlc>
     </advanced>
 
     <security>
-       <pd-auth-manager>
+        <pd-auth-manager>
             <principal-database>
-               
                 <class>org.wso2.carbon.andes.authentication.andes.CarbonBasedPrincipalDatabase</class>
                 <!--attributes>
                     <attribute>
@@ -91,7 +90,7 @@
                     </attribute>
                 </attributes-->
             </principal-database>
-       </pd-auth-manager>
+        </pd-auth-manager>
 
         <msg-auth>false</msg-auth>
     </security>
@@ -99,13 +98,16 @@
     <virtualhosts>${conf}/andes-virtualhosts.xml</virtualhosts>
 
     <hector>
-	<!-- Set load balance mechanism for Hector client in MB. Accepted values as DynamicLoadBalancingPolicy,LeastActiveBalancingPolicy and RoundRobinBalancingPolicy -->
-	<loadBalancingPolicy>DynamicLoadBalancingPolicy</loadBalancingPolicy>
+        <!-- Set load balance mechanism for Hector client in MB. Accepted values as DynamicLoadBalancingPolicy,LeastActiveBalancingPolicy and RoundRobinBalancingPolicy -->
+        <loadBalancingPolicy>DynamicLoadBalancingPolicy</loadBalancingPolicy>
         <maxWaitTimeWhenExhausted>4000</maxWaitTimeWhenExhausted>
         <maxActive>4000</maxActive>
-        <useHostTimeoutTracker>true</useHostTimeoutTracker> <!-- default is false -->
-        <hostTimeoutCounter>10</hostTimeoutCounter>  <!-- default is 10-->
-        <hostTimeoutSuspensionDurationInSeconds>10</hostTimeoutSuspensionDurationInSeconds> <!--default is 10 -->
+        <useHostTimeoutTracker>true</useHostTimeoutTracker>
+        <!-- default is false -->
+        <hostTimeoutCounter>10</hostTimeoutCounter>
+        <!-- default is 10-->
+        <hostTimeoutSuspensionDurationInSeconds>10</hostTimeoutSuspensionDurationInSeconds>
+        <!--default is 10 -->
     </hector>
 
     <heartbeat>
@@ -123,7 +125,7 @@
     <status-updates>ON</status-updates>
     <clustering>
 
-        <enabled>false</enabled>       
+        <enabled>false</enabled>
         <!--To enable External Cassandra server ? true|false-->
         <externalCassandraServerRequired>false</externalCassandraServerRequired>
         <!--To enable External Zookeeper server ? true|false -->
@@ -132,14 +134,14 @@
         <coordination>
             <!-- Apache Zookeeper Address -->
             <ZooKeeperConnection>127.0.0.1:2181</ZooKeeperConnection>
-             <!-- Format yyyy-MM-dd HH:mm:ss -->
+            <!-- Format yyyy-MM-dd HH:mm:ss -->
             <ReferenceTime>2012-02-29 08:08:08</ReferenceTime>
         </coordination>
         <tuning>
             <messageBatchSizes>
-            	<!-- message delivery from server to the client will be paused temporarily if number of delivered but unacknowledged message count reaches this size.
-            	Should be set considering message consume rate-->
-            	<maxNumberOfUnackedMessages>1000</maxNumberOfUnackedMessages>
+                <!-- message delivery from server to the client will be paused temporarily if number of delivered but unacknowledged message count reaches this size.
+                Should be set considering message consume rate-->
+                <maxNumberOfUnackedMessages>1000</maxNumberOfUnackedMessages>
 
                 <!-- Maximum number of undelivered messages that can have in memory. Increasing this value
                 increase the possibility of out of memory scenario but performance will be improved-->
@@ -151,29 +153,30 @@
 
                 <!--Message Batch size Taken in to memory for a one time to deliver to subscribers -->
                 <messageBatchSizeForSubscribers>
-                	<!--initially this value will be taken as the batch size of messages to read into memory. This should be a value between man and min values below--> 
-                	<default>50</default>
-                	<!--dynamically broker will increase batch size upto this value if there are many messages. Consider size of a message when increasing-->   
-                	<max>300</max>
-                	<!--broker will try to read at least this number of messages into memory-->
-                	<min>20</min>
+                    <!--initially this value will be taken as the batch size of messages to read into memory. This should be a value between man and min values below-->
+                    <default>50</default>
+                    <!--dynamically broker will increase batch size upto this value if there are many messages. Consider size of a message when increasing-->
+                    <max>300</max>
+                    <!--broker will try to read at least this number of messages into memory-->
+                    <min>20</min>
                 </messageBatchSizeForSubscribers>
 
-		        <!--Maximum number of message taken it to memory when transering from interal queues to subscriber queues.
-		        We need to increase the memory allocation from the broker if we are to increase this.Increasing this will increase the consumer throughout-->
+                <!--Maximum number of message taken it to memory when transering from interal queues to subscriber queues.
+                We need to increase the memory allocation from the broker if we are to increase this.Increasing this will increase the consumer throughout-->
                 <globalQueueWorkerMessageBatchSize>700</globalQueueWorkerMessageBatchSize>
-		
-                <!--Max number of Messages chunks to buffer before message contents are written to the cassandra -->
-		        <contentPublisherMessageBatchSize>200</contentPublisherMessageBatchSize>
 
-                <!--Max number of Messages meta data to buffer before message Meta data are written to the cassandra -->      
+                <!--Max number of Messages chunks to buffer before message contents are written to the cassandra -->
+                <contentPublisherMessageBatchSize>200</contentPublisherMessageBatchSize>
+
+                <!--Max number of Messages meta data to buffer before message Meta data are written to the cassandra -->
                 <medataDatePublisherMessageBatchSize>200</medataDatePublisherMessageBatchSize>
 
-		        <!--Maximumu number of messages to be fetched using andes message browser when browsing queues-->
-		        <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
+                <!--Maximumu number of messages to be fetched using andes message browser when browsing queues-->
+                <messageBatchSizeForBrowserSubscriptions>200
+                </messageBatchSizeForBrowserSubscriptions>
 
             </messageBatchSizes>
-            <threading>            	
+            <threading>
                 <!-- This the the Thread pool size which will be used by the Sender Task to send messages asynchronously
                 to the subscriber.  You will have to consider the value of parameter messageBatchSizeForSubscribers
                 when configuring this pool size -->
@@ -182,19 +185,20 @@
                 <!-- This is the Thread pool size which will be used by the internal Queue copy Task to move messages to from Global Queue to
                 Node queue in Cassandra tables. Make this to a higher number if there are lots of subscriptions to the system at a given time.
 	            -->
-	           <internalSequentialThreadPoolSize>5</internalSequentialThreadPoolSize>
+                <internalSequentialThreadPoolSize>5</internalSequentialThreadPoolSize>
 
-               <!-- This is the Thread pool size which will be used by the Andes core to schedule its internal parallel tasks -->
-               <andesInternalParallelThreadPoolSize>50</andesInternalParallelThreadPoolSize>
+                <!-- This is the Thread pool size which will be used by the Andes core to schedule its internal parallel tasks -->
+                <andesInternalParallelThreadPoolSize>50</andesInternalParallelThreadPoolSize>
 
-               <!-- This is the Thread pool size which will be used by the queue delivery workers.
-                Make this to a higher number if there are lots of unique queues to the system at a given time. -->
-               <publisherPoolSize>50</publisherPoolSize>
+                <!-- This is the Thread pool size which will be used by the queue delivery workers.
+                 Make this to a higher number if there are lots of unique queues to the system at a given time. -->
+                <publisherPoolSize>50</publisherPoolSize>
             </threading>
             <waitTimes>
                 <!-- Time (in miliseconds) to wait until older messages in queues start being delivered-->
-                <queueMsgDeliveryCurserResetTimeInterval>60000</queueMsgDeliveryCurserResetTimeInterval>
-                
+                <queueMsgDeliveryCurserResetTimeInterval>60000
+                </queueMsgDeliveryCurserResetTimeInterval>
+
                 <!-- Max wait time(in seconds)  for a acknowledgement for Batch of messages that that is sent from
                 subscribers -->
                 <maxAckWaitTimeForBatch>120</maxAckWaitTimeForBatch>
@@ -221,20 +225,20 @@
                 Virtual host details across the cluster -->
                 <virtualHostSyncTaskInterval>3600</virtualHostSyncTaskInterval>
             </waitTimes>
-	    <!--Broker will drop the message after the configured number of delivery attempts for each message.-->
-	    <maximumNumberOfMessageDeliveryAttempts>10</maximumNumberOfMessageDeliveryAttempts>
+            <!--Broker will drop the message after the configured number of delivery attempts for each message.-->
+            <maximumNumberOfMessageDeliveryAttempts>10</maximumNumberOfMessageDeliveryAttempts>
             <flowControl>
-               <memoryBased>
-		  <memoryCheckInterval>20000</memoryCheckInterval>
-                  <globalMemoryThresholdRatio>0.4</globalMemoryThresholdRatio>
-                  <globalMemoryRecoveryThresholdRatio>0.5</globalMemoryRecoveryThresholdRatio>
-               </memoryBased>
-               <connectionBased>
-                  <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
-               </connectionBased>
+                <memoryBased>
+                    <memoryCheckInterval>20000</memoryCheckInterval>
+                    <globalMemoryThresholdRatio>0.4</globalMemoryThresholdRatio>
+                    <globalMemoryRecoveryThresholdRatio>0.5</globalMemoryRecoveryThresholdRatio>
+                </memoryBased>
+                <connectionBased>
+                    <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
+                </connectionBased>
             </flowControl>
         </tuning>
-        
+
     </clustering>
 
 </broker>
