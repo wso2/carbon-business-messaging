@@ -189,6 +189,12 @@ public interface QpidService {
      */
     public String getCassandraConnectionString();
 
+    /**
+     * Returns Thrift Server Host Name in the mb cluster
+     * @return  thrift server host name
+     */
+    public String getThriftServerHost();
+
 
     /**
      * Returns Zookeeper Connection String used in the internal broker

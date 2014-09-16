@@ -50,6 +50,8 @@ public class QpidServiceImpl implements QpidService {
     private static String CARBON_DEFAULT_MQTT_PORT = "1883";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
 
+    private static String THRIFT_DEFAULT_SERVER_HOST = "localhost";
+
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
     private static final String ANDES_CONF_FILE = "andes-config.xml";
     private static final String ANDES_VIRTUALHOST_CONF_FILE = "andes-virtualhosts.xml";
@@ -73,6 +75,7 @@ public class QpidServiceImpl implements QpidService {
     private static final String QPID_VIRTUALHOST_NAME_NODE = "name";
     private static final String QPID_VIRTUALHOST_CARBON_NODE = "carbon";
     private static final String QPID_VIRTUALHOST_STORE_NODE = "store";
+    private static final String QPID_VIRTUALHOST_COORDINATION_NODE = "coordination";
     private static final String QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE = "connectionString";
     private static final String QPID_VIRTUALHOST_MESSAGE_STORE_NODE = "messageStore";
     private static final String QPID_VIRTUALHOST_CLASS_ATTRIBUTE = "class";
@@ -80,6 +83,9 @@ public class QpidServiceImpl implements QpidService {
     private static final String QPID_VIRTUALHOST_NAME_ATTRIBUTE = "name";
     private static final String QPID_VIRTUALHOST_DATA_SOURCE = "dataSource";
     private static final String QPID_VIRTUALHOST_CONTEXT_STORE_NODE = "andesContextStore";
+
+    private static final String QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_HOST_NODE = "thriftServerHost";
+
 
     private static final String DOMAIN_NAME_SEPARATOR = "@";
     private static final String DOMAIN_NAME_SEPARATOR_INTERNAL = "!";
@@ -101,6 +107,8 @@ public class QpidServiceImpl implements QpidService {
     private Boolean externalCassandraRequired;
     private Boolean externalZookeeperRequired;
     private Boolean sslOnly;
+
+    private String thriftServerHost;
 
     public QpidServiceImpl(String accessKey) {
         this.accessKey = accessKey;
@@ -595,6 +603,40 @@ public class QpidServiceImpl implements QpidService {
 
     public String getAndesContextStoreClassName() {
         return andesContextStoreClassName;
+    }
+
+    @Override
+    public String getThriftServerHost() {
+        try {
+            File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement virtualHostNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText();
+            OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
+                    new QName(virtualHostName));
+            OMElement coordinationElem = carbonVirtualHost.
+                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_COORDINATION_NODE));
+            OMElement thriftServerHostStr = coordinationElem.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_HOST_NODE));
+
+            thriftServerHost = thriftServerHostStr.getText();
+            if(thriftServerHost==null){
+              thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
+            }
+        } catch (FileNotFoundException e) {
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+        } catch (XMLStreamException e) {
+            log.error("Error while reading " + getQpidHome() +
+                    ANDES_CONF_FILE + " : " + e.getMessage());
+        } catch (NullPointerException e) {
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+        }
+
+        return thriftServerHost;
     }
 
     @Override

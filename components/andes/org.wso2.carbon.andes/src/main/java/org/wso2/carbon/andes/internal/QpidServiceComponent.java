@@ -27,6 +27,8 @@ import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
+import org.wso2.andes.server.slot.thrift.MBThriftServer;
+import org.wso2.andes.server.slot.thrift.SlotManagementServerHandler;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.service.QpidService;
@@ -36,6 +38,7 @@ import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.server.service.CassandraServerService;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.ServerConstants;
 
@@ -221,6 +224,10 @@ public class QpidServiceComponent {
                     }
                 }
             }
+            //start the thrift server
+            SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
+            MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
+            thriftServer.start(qpidServiceImpl.getThriftServerHost(),7611,"MB-ThriftServer-main-thread");
 
         } catch (Exception e) {
             log.error("Failed to start Qpid broker : " + e.getMessage());
