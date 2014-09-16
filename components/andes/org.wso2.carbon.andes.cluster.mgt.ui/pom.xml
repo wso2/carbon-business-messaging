@@ -16,28 +16,31 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<parent>
-		<groupId>org.wso2.carbon</groupId>
-		<artifactId>andes</artifactId>
-		<version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-        </parent>
+    <parent>
+        <groupId>org.wso2.carbon</groupId>
+        <artifactId>andes</artifactId>
+        <version>4.3.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
     <packaging>bundle</packaging>
-	<name>WSO2 Carbon Component  - MB Cluster Management - UI</name>
-	<description>org.wso2.carbon.mb.cluster.mgt.ui represent the UI aspects of org.wso2.carbon.andes.cluster.mgt bundle</description>
-	<url>http://wso2.org</url>
+    <name>WSO2 Carbon Component - MB Cluster Management - UI</name>
+    <description>org.wso2.carbon.mb.cluster.mgt.ui represent the UI aspects of
+        org.wso2.carbon.andes.cluster.mgt bundle
+    </description>
+    <url>http://wso2.org</url>
 
-	<dependencies>
-    	<dependency>
-    	  <groupId>org.wso2.carbon</groupId>
-    	  <artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-    	  <version>4.3.0-SNAPSHOT</version>
-    	</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
+            <version>4.3.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
             <artifactId>axis2</artifactId>
@@ -63,30 +66,30 @@
             <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
             <version>4.3.0-SNAPSHOT</version>
         </dependency>
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Name>${project.artifactId}</Bundle-Name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
-						<Export-Package>
-							org.wso2.carbon.andes.cluster.mgt.ui.*;version="${carbon.platform.package.export.version}"
-						</Export-Package>
-						<Import-Package>
-							org.wso2.carbon.mb.cluster.mgt.stub.*;version="${carbon.platform.package.import.version.range}",
+                        <Export-Package>
+                            org.wso2.carbon.andes.cluster.mgt.ui.*;version="${carbon.platform.package.export.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            org.wso2.carbon.mb.cluster.mgt.stub.*;version="${carbon.platform.package.import.version.range}",
                             org.wso2.carbon.utils,
-						</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                        </Import-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

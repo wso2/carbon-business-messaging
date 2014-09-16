@@ -14,7 +14,7 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-        
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -36,7 +36,7 @@
     <modules>
         <module>org.wso2.carbon.andes.feature</module>
         <module>org.wso2.carbon.andes.server.feature</module>
-	    <module>org.wso2.carbon.andes.ui.feature</module>
+        <module>org.wso2.carbon.andes.ui.feature</module>
     </modules>
 
     <dependencyManagement>
@@ -56,32 +56,32 @@
                 <artifactId>org.wso2.carbon.andes.commons</artifactId>
                 <version>4.3.0-SNAPSHOT</version>
             </dependency>
-    	    <dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
-        		<artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
-        		<version>4.3.0-SNAPSHOT</version>
-    	    </dependency>
-    	    <dependency>
-        		<groupId>org.wso2.carbon</groupId>
-        		<artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
-        		<version>4.3.0-SNAPSHOT</version>
-    	    </dependency>
-    	    <dependency>
-        		<groupId>org.wso2.carbon</groupId>
-        		<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-        		<version>4.3.0-SNAPSHOT</version>
-    	    </dependency>
-    	    <dependency>
-                    <groupId>org.wso2.carbon</groupId>
-                    <artifactId>org.wso2.carbon.andes.stub</artifactId>
-                    <version>4.3.0-SNAPSHOT</version>
-                </dependency>
-    	     <dependency>
-                    <groupId>org.wso2.carbon</groupId>
-                    <artifactId>org.wso2.carbon.andes.ui</artifactId>
-                    <version>4.3.0-SNAPSHOT</version>
+                <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
+                <version>4.3.0-SNAPSHOT</version>
             </dependency>
-            </dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
+                <version>4.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
+                <version>4.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.andes.stub</artifactId>
+                <version>4.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.andes.ui</artifactId>
+                <version>4.3.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
 </project>

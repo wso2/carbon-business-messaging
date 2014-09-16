@@ -23,7 +23,7 @@
         <groupId>org.wso2.carbon</groupId>
         <artifactId>andes-feature</artifactId>
         <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <version>4.3.0-SNAPSHOT</version>
@@ -59,7 +59,7 @@
             <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
             <version>4.3.0-SNAPSHOT</version>
         </dependency>
-	 <dependency>
+        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.core</artifactId>
             <version>4.3.0-SNAPSHOT</version>
@@ -85,10 +85,10 @@
             <version>2.10.4-wso2v2</version>
         </dependency>
         <dependency>
-           <groupId>com.datastax.cassandra.wso2</groupId>
-  	   <artifactId>cql-driver</artifactId>
-           <version>1.0.5.wso2v1</version>        
-	</dependency>
+            <groupId>com.datastax.cassandra.wso2</groupId>
+            <artifactId>cql-driver</artifactId>
+            <version>1.0.5.wso2v1</version>
+        </dependency>
         <dependency>
             <groupId>commons-configuration.wso2</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -123,8 +123,8 @@
         <dependency>
             <groupId>io.netty.wso2</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.0.8.wso2v1</version>                 
-       </dependency>
+            <version>4.0.8.wso2v1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -187,21 +187,23 @@
                                 </bundleDef>
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes</bundleDef>
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.commons</bundleDef>
-				 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
-				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>                              
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
-                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>                               
-                                <bundleDef>com.datastax.cassandra.wso2:cql-driver</bundleDef>                               
+                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>
+                                <bundleDef>com.datastax.cassandra.wso2:cql-driver</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration.wso2:commons-configuration
                                 </bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
-				<bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt</bundleDef>
+                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt
+                                </bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:4.3.0-SNAPSHOT</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core.server:4.3.0-SNAPSHOT
+                                </importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>

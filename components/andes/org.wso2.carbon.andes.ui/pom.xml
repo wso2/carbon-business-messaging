@@ -16,20 +16,21 @@
  ~ specific language governing permissions and limitations
  ~ under the License.
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon</groupId>
         <artifactId>andes</artifactId>
         <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <version>4.3.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.ui</artifactId>
     <packaging>bundle</packaging>
-    <name> WSO2 Carbon - Component - Andes UI</name>
+    <name>WSO2 Carbon - Component - Andes UI</name>
     <description>Andes UI Bundle</description>
     <url>http://wso2.org</url>
 
@@ -37,7 +38,7 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.stub</artifactId>
-            <version>4.3.0-SNAPSHOT</version>  
+            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
@@ -64,7 +65,7 @@
             <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
             <version>4.3.0-SNAPSHOT</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.geronimo.specs.wso2</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
         </dependency>

@@ -23,7 +23,7 @@
         <groupId>org.wso2.carbon</groupId>
         <artifactId>andes</artifactId>
         <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <version>4.3.0-SNAPSHOT</version>
@@ -43,13 +43,13 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.core</artifactId>
-           <version>4.3.0-SNAPSHOT</version>
+            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-              <groupId>org.wso2.carbon</groupId>
-              <artifactId>org.wso2.carbon.core</artifactId>
-              <version>4.3.0-SNAPSHOT</version>
-          </dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.core</artifactId>
+            <version>4.3.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.andes.authentication</artifactId>
@@ -64,7 +64,7 @@
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
             <version>3.0.0-SNAPSHOT</version>
-    	</dependency>
+        </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.cassandra.server</artifactId>
@@ -74,7 +74,7 @@
     </dependencies>
 
     <build>
-	    <plugins>
+        <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
