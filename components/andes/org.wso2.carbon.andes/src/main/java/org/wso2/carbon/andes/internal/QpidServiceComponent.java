@@ -228,11 +228,11 @@ public class QpidServiceComponent {
             }
             //start the thrift server if this is the coordinator
 
-            //if (isCoordinator) {
+            if (isCoordinator) {
                 SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
                 MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
                 thriftServer.start(qpidServiceImpl.getThriftServerHost(),qpidServiceImpl.getThriftServerPort(),"MB-ThriftServer-main-thread");
-           // }
+            }
 
         } catch (Exception e) {
             log.error("Failed to start Qpid broker : " + e.getMessage());
