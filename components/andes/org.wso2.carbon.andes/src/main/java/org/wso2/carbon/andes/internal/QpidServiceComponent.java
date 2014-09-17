@@ -119,6 +119,8 @@ public class QpidServiceComponent {
      */
     private boolean isClusteringEnabled;
 
+    private boolean isCoordinator;
+
 
     protected void activate(ComponentContext ctx) {
 
@@ -224,10 +226,13 @@ public class QpidServiceComponent {
                     }
                 }
             }
-            //start the thrift server
-            SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
-            MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
-            thriftServer.start(qpidServiceImpl.getThriftServerHost(),7611,"MB-ThriftServer-main-thread");
+            //start the thrift server if this is the coordinator
+
+            //if (isCoordinator) {
+                SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
+                MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
+                thriftServer.start(qpidServiceImpl.getThriftServerHost(),qpidServiceImpl.getThriftServerPort(),"MB-ThriftServer-main-thread");
+           // }
 
         } catch (Exception e) {
             log.error("Failed to start Qpid broker : " + e.getMessage());
@@ -327,6 +332,7 @@ public class QpidServiceComponent {
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
         AndesContext.getInstance().setClusteringAgent(agent);
+        isCoordinator = agent.isCoordinator();
         this.isClusteringEnabled = (agent != null);
     }
 
@@ -356,7 +362,6 @@ public class QpidServiceComponent {
 
         return response;
     }
-
 
     private boolean isCassandraStarted() {
         Socket socket = null;
