@@ -52,7 +52,11 @@
                     <strategyClass>org.apache.cassandra.locator.SimpleStrategy</strategyClass>
                 </advanced>
             </store>
-
+            <coordination>
+                <thriftServerHost>localhost</thriftServerHost>
+                <thriftServerPort>7611</thriftServerPort>
+                <thriftClientPort>7611</thriftClientPort>
+            </coordination>
             <housekeeping>
                 <threadCount>2</threadCount>
                 <expiredMessageCheckPeriod>20000</expiredMessageCheckPeriod>
