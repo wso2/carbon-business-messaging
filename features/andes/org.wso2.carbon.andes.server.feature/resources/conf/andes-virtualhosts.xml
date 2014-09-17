@@ -25,10 +25,10 @@
         <name>carbon</name>
         <carbon>
             <store>
-                <messageStore class="org.wso2.andes.messageStore.CQLBasedMessageStoreImpl">
+                <messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
                     <property name="dataSource"></property>
                 </messageStore>
-                <andesContextStore class="org.wso2.andes.kernel.CassandraBasedAndesContextStore">
+                <andesContextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
                     <property name="daraSource"></property>
                 </andesContextStore>
                 <username>admin</username>
