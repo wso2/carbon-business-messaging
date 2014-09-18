@@ -119,9 +119,6 @@ public class QpidServiceComponent {
      */
     private boolean isClusteringEnabled;
 
-    private boolean isCoordinator;
-
-
     protected void activate(ComponentContext ctx) {
 
         if (ctx.getBundleContext().getServiceReference(QpidService.class.getName()) != null) {
@@ -176,6 +173,12 @@ public class QpidServiceComponent {
 
         // Start andes broker
         try {
+            //set thrift server port and thrift server host in andes dependency
+            String thriftServerHost = qpidServiceImpl.getThriftServerHost();
+            int thriftServerPort = qpidServiceImpl.getThriftServerPort();
+            AndesContext.getInstance().setThriftServerHost(thriftServerHost);
+            AndesContext.getInstance().setThriftServerPort(thriftServerPort);
+
             log.info("Activating Andes Message Broker Engine...");
             System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
             String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
@@ -225,13 +228,6 @@ public class QpidServiceComponent {
                         log.error("Can not close the socket which is used to check the server status ");
                     }
                 }
-            }
-            //start the thrift server if this is the coordinator
-
-            if (isCoordinator) {
-                SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
-                MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
-                thriftServer.start(qpidServiceImpl.getThriftServerHost(),qpidServiceImpl.getThriftServerPort(),"MB-ThriftServer-main-thread");
             }
 
         } catch (Exception e) {
@@ -332,7 +328,6 @@ public class QpidServiceComponent {
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
         AndesContext.getInstance().setClusteringAgent(agent);
-        isCoordinator = agent.isCoordinator();
         this.isClusteringEnabled = (agent != null);
     }
 
