@@ -659,7 +659,7 @@ public class QpidServiceImpl implements QpidService {
             OMElement thriftServerPortStr = coordinationElem.getFirstChildWithName(
                     new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_PORT_NODE));
 
-            thriftServerPort = Integer.parseInt(thriftServerPortStr.getText());
+            thriftServerPort = Integer.parseInt(thriftServerPortStr.getText()) + portOffset;
             if(thriftServerHost==null){
                 thriftServerPort = THRIFT_DEFAULT_SERVER_PORT;
             }

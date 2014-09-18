@@ -226,13 +226,12 @@ public class QpidServiceComponent {
                     }
                 }
             }
-            //start the thrift server if this is the coordinator
+            //start the thrift server
 
-            if (isCoordinator) {
-                SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
-                MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
-                thriftServer.start(qpidServiceImpl.getThriftServerHost(),qpidServiceImpl.getThriftServerPort(),"MB-ThriftServer-main-thread");
-            }
+            SlotManagementServerHandler slotManagementServerHandler = new SlotManagementServerHandler();
+            MBThriftServer thriftServer = new MBThriftServer(slotManagementServerHandler);
+            thriftServer.start(qpidServiceImpl.getThriftServerHost(), qpidServiceImpl.getThriftServerPort(), "MB-ThriftServer-main-thread");
+            log.info("Thrift server started on host:" + qpidServiceImpl.getThriftServerHost() + "port:" + qpidServiceImpl.getThriftServerPort());
 
         } catch (Exception e) {
             log.error("Failed to start Qpid broker : " + e.getMessage());
