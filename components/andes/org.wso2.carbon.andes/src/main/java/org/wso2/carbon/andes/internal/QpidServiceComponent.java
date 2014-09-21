@@ -132,31 +132,38 @@ public class QpidServiceComponent {
         AndesContext.getInstance().setMessageStoreDataSourceName(qpidServiceImpl.getMessageStoreDataSourceName());
         AndesContext.getInstance().setContextStoreDataSourceName(qpidServiceImpl.getAndesContextStoreDataSourceName());
 
-        CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
-
-        if (cassandraServerService != null) {
-            if (!qpidServiceImpl.isExternalCassandraServerRequired()) {
-                log.info("Activating Carbonized Cassandra Server...");
-                cassandraServerService.startServer();
-                int count = 0;
-                //TODO:This should be handled by the callback from CassandraServerService
-                while (!isCassandraStarted()) {
-                    count++;
-                    if (count > 10) {
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(30 * 1000);
-                    } catch (InterruptedException e) {
-                        //ignore
-                    }
-                }
-            }
-        } else {
-            log.fatal("Cassandra Server service not set properly server will not start properly");
-            return;
-        }
+        //.todo: need to totally remove cassandraServerService related stuff from MB
+        // only disabled here
+//        CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
+//
+//        if(this.isClusteringEnabled) {
+//            log.info("Starting Message Broker in -- CLUSTERED MODE --");
+//        } else {
+//            log.info("Starting Message Broker in -- STANDALONE MODE --");
+//        }
+//
+//        if(cassandraServerService != null) {
+//            if(!qpidServiceImpl.isExternalCassandraServerRequired()) {
+//                log.info("Activating Carbonized Cassandra Server...");
+//                cassandraServerService.startServer();
+//                int count = 0;
+//                while (!isCassandraStarted()) {
+//                    count++;
+//                    if(count > 10) {
+//                        break;
+//                    }
+//
+//                    try {
+//                        Thread.sleep(30*1000);
+//                    } catch (InterruptedException e) {
+//
+//                    }
+//                }
+//            }
+//        } else {
+//            log.error("Cassandra Server service not set properly server will not start properly");
+//            throw new RuntimeException("Cassandra Server service not set properly server will not start properly");
+//        }
 
         if(!AndesContext.getInstance().isClusteringEnabled() ){
             // If clustering is disabled, broker starts without waiting for hazelcastInstance
