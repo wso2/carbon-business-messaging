@@ -162,55 +162,36 @@ public class QpidServiceImpl implements QpidService {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{accessKey}@carbon/carbon?brokerlist='vm://:1'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(accessKey)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='vm://:1'").toString();
+        return "amqp://" + username + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='vm://:1'";
     }
 
     public String getTCPConnectionURL(String username, String password) {
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getTCPConnectionURL(String username, String password, String clientID) {
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(clientID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getInternalTCPConnectionURL(String username, String password) {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getInternalTCPConnectionURL(String username, String password, String clientID) {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(clientID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getQpidHome() {
@@ -329,12 +310,36 @@ public class QpidServiceImpl implements QpidService {
                 }
             }
 
+            // check for any errors in config file and log the errors
+            checkAndLogVHostConfigErrors(vHostFilePath);
         } catch (FileNotFoundException e) {
             log.error(vHostFilePath + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + vHostFilePath + " : " + e.getMessage());
         } catch (NullPointerException e) {
             log.error("Invalid configuration : " + vHostFilePath);
+        }
+    }
+
+    /**
+     * check whether the class names and data source names empty or null and log on error
+     * @param vHosFilePath virtual host config file path
+     */
+    private void checkAndLogVHostConfigErrors(String vHosFilePath) {
+        if (messageStoreClassName == null || messageStoreClassName.isEmpty()){
+            log.error("MessageStore implementation class name is not properly set in " +
+                    vHosFilePath);
+        }
+        if (andesContextStoreClassName == null || andesContextStoreClassName.isEmpty()) {
+            log.error("AndesContextStore implementation class is not properly set in" + vHosFilePath);
+        }
+
+        if (messageStoreDataSourceName == null || messageStoreDataSourceName.isEmpty()) {
+            log.error("MessageStore data source is not properly set in" + vHosFilePath);
+        }
+
+        if (andesContextStoreDataSourceName == null || andesContextStoreDataSourceName.isEmpty()) {
+            log.error("AndesContextStore data source is not properly set in" + vHosFilePath);
         }
     }
 
