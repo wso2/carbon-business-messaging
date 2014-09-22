@@ -211,10 +211,10 @@
                 in PubSub scenarios will be removed -->
                 <pubSubMessageRemovalTaskInterval>5000</pubSubMessageRemovalTaskInterval>
 
-                <!-- This is the Task interval(milli seconds) for the content removal task which will remove
+                <!-- This is the Task interval (seconds) for the content removal task which will remove
                     the actual message content from the store in the background. If the message rate is very high users
                     can set this to a lower value -->
-                <contentRemovalTaskInterval>4000</contentRemovalTaskInterval>
+                <contentRemovalTaskInterval>4</contentRemovalTaskInterval>
 
                 <!--Time to wait before removing a message from the store in PubSub implementation (in milliseconds)-->
                 <contentRemovalTimeDifference>600000</contentRemovalTimeDifference>
