@@ -145,8 +145,8 @@ public class QueueBrowserClient {
             } else {
                 summaryMsg = wholeMsg;
             }
-            if(wholeMsg.length() > 200){
-                wholeMsg = "Message Content is too large to display";
+            if(wholeMsg.length() > UIUtils.MESSAGE_DISPLAY_LENGTH_MAX){
+            	wholeMsg = wholeMsg.substring(0, UIUtils.MESSAGE_DISPLAY_LENGTH_MAX -3) + UIUtils.DISPLAY_CONTINUATION + UIUtils.DISPLAY_LENGTH_EXCEEDED;
             }
 
 

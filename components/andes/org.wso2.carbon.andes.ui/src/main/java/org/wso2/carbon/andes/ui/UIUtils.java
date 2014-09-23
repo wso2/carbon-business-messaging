@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,6 +55,15 @@ public class UIUtils {
     private static final String QPID_CONF_SSL_KEYSTORE_PASSWORD = "keystorePassword";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
+
+    /** Maximum size a message will be displayed on UI */
+    public static final int MESSAGE_DISPLAY_LENGTH_MAX = 4000;
+    
+    /** Shown to user has a indication that the particular message has more content than shown in UI */
+    public static final String DISPLAY_CONTINUATION = "...";
+    
+    /** Message shown in UI if message content exceed the limit - Further enhancement, these needs to read from a resource bundle */
+    public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
 
 
     public static String getHtmlString(String message) {
