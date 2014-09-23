@@ -27,8 +27,6 @@ import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
-import org.wso2.andes.server.slot.thrift.MBThriftServer;
-import org.wso2.andes.server.slot.thrift.SlotManagementServerHandler;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.service.QpidService;
@@ -38,9 +36,7 @@ import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.server.service.CassandraServerService;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.ConfigurationContextService;
-import org.wso2.carbon.utils.ServerConstants;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -101,40 +97,33 @@ public class QpidServiceComponent {
 
     private static final Log log = LogFactory.getLog(QpidServiceComponent.class);
 
-    private static final String VM_BROKER_AUTO_CREATE = "amqj.AutoCreateVMBroker";
-    private static final String DERBY_LOG_FILE = "derby.stream.error.file";
-    private static final String QPID_DERBY_LOG_FILE = "/repository/logs/qpid-derby-store.log";
-    private static final int CASSANDRA_THRIFT_PORT= 9160;
+    private static final int CASSANDRA_THRIFT_PORT = 9160;
     private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
     private static String CARBON_CONFIG_HOST_NAME = "HostName";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private ComponentContext componentContext;
 
     private ServiceRegistration qpidService = null;
 
-
-    private boolean activated = false;
+    /**
+     * This is used in the situations where the Hazelcast instance is not registered but the activate method of the
+     * QpidServiceComponent is called when clustering is enabled.
+     * This property is used to block the process of starting the broker until the hazelcast instance getting registered.
+     */
+    private boolean brokerShouldBeStarted = false;
 
     /**
-     * Is clustering enabled in axis2.xml.
+     *  This flag true if HazelcastInstance has been registered.
      */
-    private boolean isClusteringEnabled;
+    private boolean registeredHazelcast = false;
 
     protected void activate(ComponentContext ctx) {
+        this.componentContext = ctx;
 
-        if (ctx.getBundleContext().getServiceReference(QpidService.class.getName()) != null) {
-            return;
-        }
-
-        // Make it possible to create VM brokers automatically
-        System.setProperty(VM_BROKER_AUTO_CREATE, "true");
-        // Set Derby log filename
-        System.setProperty(DERBY_LOG_FILE, System.getProperty(ServerConstants.CARBON_HOME) + QPID_DERBY_LOG_FILE);
-        
         QpidServiceImpl qpidServiceImpl =
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-        AndesContext.getInstance().setClusteringEnabled(this.isClusteringEnabled);
 
-        // set message store and andes context store related configurationsz    z
+        // set message store and andes context store related configurations
         AndesContext.getInstance().setMessageStoreClass(qpidServiceImpl.getMessageStoreClassName());
         AndesContext.getInstance().setAndesContextStoreClass(qpidServiceImpl.getAndesContextStoreClassName());
         AndesContext.getInstance().setMessageStoreDataSourceName(qpidServiceImpl.getMessageStoreDataSourceName());
@@ -142,124 +131,50 @@ public class QpidServiceComponent {
 
         CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
 
-        if(this.isClusteringEnabled) {
-            log.info("Starting Message Broker in -- CLUSTERED MODE --");
-        } else {
-            log.info("Starting Message Broker in -- STANDALONE MODE --");
-        }
-
-        if(cassandraServerService != null) {
-            if(!qpidServiceImpl.isExternalCassandraServerRequired()) {
+        if (cassandraServerService != null) {
+            if (!qpidServiceImpl.isExternalCassandraServerRequired()) {
                 log.info("Activating Carbonized Cassandra Server...");
                 cassandraServerService.startServer();
                 int count = 0;
+                //TODO:This should be handled by the callback from CassandraServerService
                 while (!isCassandraStarted()) {
                     count++;
-                    if(count > 10) {
+                    if (count > 10) {
                         break;
                     }
 
                     try {
-                        Thread.sleep(30*1000);
+                        Thread.sleep(30 * 1000);
                     } catch (InterruptedException e) {
-
+                        //ignore
                     }
                 }
             }
         } else {
-            log.error("Cassandra Server service not set properly server will not start properly");
-            throw new RuntimeException("Cassandra Server service not set properly server will not start properly");
+            log.fatal("Cassandra Server service not set properly server will not start properly");
+            return;
         }
 
-        // Start andes broker
-        try {
-            //set thrift server port and thrift server host in andes dependency
-            String thriftServerHost = qpidServiceImpl.getThriftServerHost();
-            int thriftServerPort = qpidServiceImpl.getThriftServerPort();
-            AndesContext.getInstance().setThriftServerHost(thriftServerHost);
-            AndesContext.getInstance().setThriftServerPort(thriftServerPort);
-
-            log.info("Activating Andes Message Broker Engine...");
-            System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
-                                "-q" + qpidServiceImpl.getMQTTPort()};
-
-            //Main.setStandaloneMode(false);
-            Main.main(args);
-
-            // Remove Qpid shutdown hook so that I have control over shutting the broker down
-            Runtime.getRuntime().removeShutdownHook(ApplicationRegistry.getShutdownHook());
-
-            // Wait until the broker has started
-            while (!isBrokerRunning()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {}
-            }
-
-            //check whether the tcp port has started. some times the server started thread may return
-            //before Qpid server actually bind to the tcp port. in that case there are some connection
-            //time out issues.
-            boolean isServerStarted = false;
-            int port;
-            if(qpidServiceImpl.getIfSSLOnly()) {
-                port =  Integer.parseInt(qpidServiceImpl.getSSLPort());
+        if(!AndesContext.getInstance().isClusteringEnabled() ){
+            // If clustering is disabled, broker starts without waiting for hazelcastInstance
+            this.startAndesBroker();
+        } else {
+            if (registeredHazelcast) {
+                // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
+                this.startAndesBroker();
             } else {
-                port = Integer.parseInt(qpidServiceImpl.getPort());
+                // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
+                // wait for hazelcastInstance to be registered.
+                this.brokerShouldBeStarted = true;
             }
-            while (!isServerStarted) {
-                Socket socket = null;
-                try {
-                    InetAddress address = InetAddress.getByName(getCarbonHostName());
-                    socket = new Socket(address, port);
-                    isServerStarted = socket.isConnected();
-                    if (isServerStarted) {
-                        log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " + port);
-                    }
-                } catch (IOException e) {
-                    log.info("Wait until Qpid server starts on port " + port);
-                    Thread.sleep(500);
-                } finally {
-                    try {
-                        if ((socket != null) && (socket.isConnected())) {
-                            socket.close();
-                        }
-                    } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server status ");
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to start Qpid broker : " + e.getMessage());
-        } finally {
-            // Publish Qpid properties
-            qpidService = ctx.getBundleContext().registerService(
-                    QpidService.class.getName(), qpidServiceImpl, null);
-            String brokerPort = null;
-            if(qpidServiceImpl.getIfSSLOnly()) {
-              brokerPort = qpidServiceImpl.getSSLPort();
-            } else {
-              brokerPort = qpidServiceImpl.getPort();
-            }
-            QpidServerDetails qpidServerDetails =
-                          new QpidServerDetails(qpidServiceImpl.getAccessKey(),
-                                  qpidServiceImpl.getClientID(),
-                                  qpidServiceImpl.getVirtualHostName(),
-                                  qpidServiceImpl.getHostname(),
-                                  brokerPort,qpidServiceImpl.getIfSSLOnly());
-            QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
-             activated =true;
         }
     }
 
     protected void deactivate(ComponentContext ctx) {
         // Unregister QpidService
-        try {
-            if (null != qpidService) {
-                qpidService.unregister();
-            }
-        } catch (Exception e) {}
+        if (null != qpidService) {
+            qpidService.unregister();
+        }
 
         // Shutdown the Qpid broker
         ApplicationRegistry.remove();
@@ -272,14 +187,15 @@ public class QpidServiceComponent {
     protected void unsetAccessKey(AuthenticationService authenticationService) {
         QpidServiceDataHolder.getInstance().setAccessKey(null);
     }
-    
+
     protected void setQpidNotificationService(QpidNotificationService qpidNotificationService) {
         // Qpid broker should not start until Qpid bundle is activated.
         // QpidNotificationService informs that the Qpid bundle has started.
 
     }
 
-    protected void unsetQpidNotificationService(QpidNotificationService qpidNotificationService) {}
+    protected void unsetQpidNotificationService(QpidNotificationService qpidNotificationService) {
+    }
 
     protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
         QpidServiceDataHolder.getInstance().setCarbonConfiguration(serverConfiguration);
@@ -289,32 +205,39 @@ public class QpidServiceComponent {
         QpidServiceDataHolder.getInstance().setCarbonConfiguration(null);
     }
 
-    protected void setEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService){
+    protected void setEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService) {
         QpidServiceDataHolder.getInstance().registerEventBundleNotificationService(eventBundleNotificationService);
     }
 
-    protected void unsetEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService){
+    protected void unsetEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService) {
         // unsetting
     }
 
 
-    protected void setCassandraServerService(CassandraServerService cassandraServerService){
+    protected void setCassandraServerService(CassandraServerService cassandraServerService) {
         if (QpidServiceDataHolder.getInstance().getCassandraServerService() == null) {
             QpidServiceDataHolder.getInstance().registerCassandraServerService(cassandraServerService);
         }
     }
 
-    protected void unsetCassandraServerService(CassandraServerService cassandraServerService){
+    protected void unsetCassandraServerService(CassandraServerService cassandraServerService) {
 
 
     }
 
     /**
      * Access Hazelcast Instance, which is exposed as an OSGI service.
-     * @param hazelcastInstance  hazelcastInstance found from the OSGI service
+     *
+     * @param hazelcastInstance hazelcastInstance found from the OSGI service
      */
     protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         HazelcastAgent.getInstance().init(hazelcastInstance);
+        registeredHazelcast = true;
+
+        if (brokerShouldBeStarted) {
+            //Start the broker if the activate method of QpidServiceComponent is blocked until hazelcastInstance getting registered
+            this.startAndesBroker();
+        }
     }
 
     protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
@@ -323,12 +246,13 @@ public class QpidServiceComponent {
 
     /**
      * Access ConfigurationContextService, which is exposed as an OSGI service, to read cluster configuration.
-     * @param configurationContextService
+     *
+     * @param configurationContextService ConfigurationContextService from the OSGI service
      */
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration().getClusteringAgent();
         AndesContext.getInstance().setClusteringAgent(agent);
-        this.isClusteringEnabled = (agent != null);
+        AndesContext.getInstance().setClusteringEnabled(agent != null);
     }
 
     protected void unsetConfigurationContextService(ConfigurationContextService configurationContextService) {
@@ -336,11 +260,10 @@ public class QpidServiceComponent {
     }
 
     /**
-        * Check if the broker is up and running
-        *
-        * @return
-        *           true if the broker is running or false otherwise 
-        */
+     * Check if the broker is up and running
+     *
+     * @return true if the broker is running or false otherwise
+     */
     private boolean isBrokerRunning() {
         boolean response = false;
 
@@ -362,13 +285,13 @@ public class QpidServiceComponent {
         Socket socket = null;
         boolean status = false;
         try {
-            int listenPort =  CASSANDRA_THRIFT_PORT + readPortOffset();
-            socket = new Socket(InetAddress.getByName(getCarbonHostName()),listenPort);
+            int listenPort = CASSANDRA_THRIFT_PORT + readPortOffset();
+            socket = new Socket(InetAddress.getByName(getCarbonHostName()), listenPort);
         } catch (UnknownHostException e) {
-            throw new RuntimeException("Unexpected Error while Checking for Cassandra Startup",e);
+            throw new RuntimeException("Unexpected Error while Checking for Cassandra Startup", e);
         } catch (IOException e) {
         } finally {
-            if(socket != null) {
+            if (socket != null) {
                 try {
                     socket.close();
                 } catch (IOException e) {
@@ -400,5 +323,95 @@ public class QpidServiceComponent {
 
         return hostName != null ? hostName : "localhost";
 
+    }
+
+    private void startAndesBroker() {
+        brokerShouldBeStarted = false;
+
+        QpidServiceImpl qpidServiceImpl =
+                new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+
+        // Start andes broker
+        try {
+            //set thrift server port and thrift server host in andes dependency
+            String thriftServerHost = qpidServiceImpl.getThriftServerHost();
+            int thriftServerPort = qpidServiceImpl.getThriftServerPort();
+            AndesContext.getInstance().setThriftServerHost(thriftServerHost);
+            AndesContext.getInstance().setThriftServerPort(thriftServerPort);
+
+            log.info("Activating Andes Message Broker Engine...");
+            System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
+            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
+                    "-q" + qpidServiceImpl.getMQTTPort()};
+
+            //TODO: Change the functionality in andes main method to an API
+            //Main.setStandaloneMode(false);
+            Main.main(args);
+
+            // Remove Qpid shutdown hook so that I have control over shutting the broker down
+            Runtime.getRuntime().removeShutdownHook(ApplicationRegistry.getShutdownHook());
+
+            // Wait until the broker has started
+            while (!isBrokerRunning()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                     //ignore
+                }
+            }
+
+            //check whether the tcp port has started. some times the server started thread may return
+            //before Qpid server actually bind to the tcp port. in that case there are some connection
+            //time out issues.
+            boolean isServerStarted = false;
+            int port;
+            if (qpidServiceImpl.getIfSSLOnly()) {
+                port = Integer.parseInt(qpidServiceImpl.getSSLPort());
+            } else {
+                port = Integer.parseInt(qpidServiceImpl.getPort());
+            }
+            while (!isServerStarted) {
+                Socket socket = null;
+                try {
+                    InetAddress address = InetAddress.getByName(getCarbonHostName());
+                    socket = new Socket(address, port);
+                    isServerStarted = socket.isConnected();
+                    if (isServerStarted) {
+                        log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " + port);
+                    }
+                } catch (IOException e) {
+                    log.info("Wait until Qpid server starts on port " + port);
+                    Thread.sleep(500);
+                } finally {
+                    try {
+                        if ((socket != null) && (socket.isConnected())) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                        log.error("Can not close the socket which is used to check the server status ");
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to start Qpid broker : " + e.getMessage());
+        } finally {
+            // Publish Qpid properties
+            qpidService = this.componentContext.getBundleContext().registerService(
+                    QpidService.class.getName(), qpidServiceImpl, null);
+            String brokerPort;
+            if (qpidServiceImpl.getIfSSLOnly()) {
+                brokerPort = qpidServiceImpl.getSSLPort();
+            } else {
+                brokerPort = qpidServiceImpl.getPort();
+            }
+            QpidServerDetails qpidServerDetails =
+                    new QpidServerDetails(qpidServiceImpl.getAccessKey(),
+                            qpidServiceImpl.getClientID(),
+                            qpidServiceImpl.getVirtualHostName(),
+                            qpidServiceImpl.getHostname(),
+                            brokerPort, qpidServiceImpl.getIfSSLOnly());
+            QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
+        }
     }
 }
