@@ -630,12 +630,12 @@ public class QpidServiceImpl implements QpidService {
               thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
             }
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+                    ANDES_VIRTUALHOST_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
         }
 
         return thriftServerHost;
@@ -664,12 +664,12 @@ public class QpidServiceImpl implements QpidService {
                 thriftServerPort = THRIFT_DEFAULT_SERVER_PORT;
             }
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found");
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+                    ANDES_VIRTUALHOST_CONF_FILE + " : " + e.getMessage());
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
         }
 
         return thriftServerPort;

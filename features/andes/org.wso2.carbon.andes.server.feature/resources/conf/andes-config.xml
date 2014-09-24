@@ -131,6 +131,7 @@
         <!--To enable External Zookeeper server ? true|false -->
         <externalZookeeperServerRequired>false</externalZookeeperServerRequired>
         <GlobalQueueCount>10</GlobalQueueCount>
+        <SlotWindowSize>100</SlotWindowSize>
         <coordination>
             <!-- Apache Zookeeper Address -->
             <ZooKeeperConnection>127.0.0.1:2181</ZooKeeperConnection>
