@@ -368,26 +368,6 @@ public class ClusterManagerService {
     }
 
     /**
-     * get common cassandra connection
-     * @return String cassandra connection
-     */
-    public String getCassandraConnection() throws ClusterMgtAdminException {
-
-        return ClusterManagementDataHolder.getClusterManagementDataHolder().getQpidService().
-                getCassandraConnectionString();
-    }
-
-    /**
-     * get common zookeeper connection
-     *
-     * @return String zookeeper connection
-     */
-    public String getZookeeperConnection() throws ClusterMgtAdminException {
-        return ClusterManagementDataHolder.getClusterManagementDataHolder().getQpidService().
-                getZookeeperConnectionString();
-    }
-
-    /**
      * Reassign worker of a particular queue to another node
      *
      * @param queueToUpdate

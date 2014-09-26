@@ -127,10 +127,7 @@ public class QpidServiceComponent {
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
 
         // set message store and andes context store related configurations
-        AndesContext.getInstance().setMessageStoreClass(qpidServiceImpl.getMessageStoreClassName());
-        AndesContext.getInstance().setAndesContextStoreClass(qpidServiceImpl.getAndesContextStoreClassName());
-        AndesContext.getInstance().setMessageStoreDataSourceName(qpidServiceImpl.getMessageStoreDataSourceName());
-        AndesContext.getInstance().setContextStoreDataSourceName(qpidServiceImpl.getAndesContextStoreDataSourceName());
+        AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
 
         //.todo: need to totally remove cassandraServerService related stuff from MB
         // only disabled here
@@ -360,7 +357,7 @@ public class QpidServiceComponent {
 
             log.info("Activating Andes Message Broker Engine...");
             System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
+            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(),
                     "-q" + qpidServiceImpl.getMQTTPort()};
 
             //TODO: Change the functionality in andes main method to an API
