@@ -200,6 +200,7 @@ public interface QpidService {
      * @return thrift server port
      */
     public int getThriftServerPort();
+
     /**
      * Returns Zookeeper Connection String used in the internal broker
      * @return zookeeper connection string

@@ -20,6 +20,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.kernel.AndesContext;
@@ -29,11 +30,13 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.server.service.CassandraServerService;
+import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -162,6 +165,7 @@ public class QpidServiceComponent {
             if (registeredHazelcast) {
                 // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
                 this.startAndesBroker();
+
             } else {
                 // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
                 // wait for hazelcastInstance to be registered.
@@ -259,6 +263,7 @@ public class QpidServiceComponent {
         // Do nothing
     }
 
+
     /**
      * Check if the broker is up and running
      *
@@ -338,6 +343,13 @@ public class QpidServiceComponent {
             int thriftServerPort = qpidServiceImpl.getThriftServerPort();
             AndesContext.getInstance().setThriftServerHost(thriftServerHost);
             AndesContext.getInstance().setThriftServerPort(thriftServerPort);
+
+            //register coordinatedActivityImpl to get coordinator changes notification.
+            //When is node is appointed as the coordinator execute method of coordinatedActivityImpl will be called
+            CoordinatedActivity coordinatedActivity = new CoordinatedActivityImpl();
+
+            BundleContext bundleContext = componentContext.getBundleContext();
+            bundleContext.registerService(CoordinatedActivity.class.getName(), coordinatedActivity, null);
 
             log.info("Activating Andes Message Broker Engine...");
             System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
