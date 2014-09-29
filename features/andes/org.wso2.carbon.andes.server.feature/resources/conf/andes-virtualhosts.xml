@@ -25,32 +25,35 @@
         <name>carbon</name>
         <carbon>
             <store>
-                <messageStore class="org.wso2.andes.store.jdbc.H2BasedMessageStoreImpl">
+                <!-- JDBC Message Store configurations -->
+                <messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
                     <property name="dataSource">jdbc/WSO2MBStoreDB</property>
                 </messageStore>
-                <andesContextStore class="org.wso2.andes.store.jdbc.H2BasedAndesContextStoreImpl">
+
+                <!-- JDBC Andes Context Store configurations -->
+                <andesContextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
                     <property name="dataSource">jdbc/WSO2MBStoreDB</property>
                 </andesContextStore>
-                <username>admin</username>
-                <password>admin</password>
-                <cluster>ClusterOne</cluster>
-                <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
-                <connectionString>localhost:9042</connectionString>
 
-                <!-- Advanced overrides for the cassandra instance -->
-                <advanced>
-                    <!-- Default is 10 days.-->
-                    <GCGraceSeconds>864000</GCGraceSeconds>
-                    <!-- Default is 1, this is not set if the strategy class is set to
-                     org.apache.cassandra.locator.NetworkTopologyStrategy -->
-                    <replicationFactor>1</replicationFactor>
-                    <!-- Default is QUORUM, possible values ONE, TWO, THREE, QUORUM, ALL, ANY, EACH_QUORUM, LOCAL_QUORUM -->
-                    <readConsistencyLevel>QUORUM</readConsistencyLevel>
-                    <!-- Default is QUORUM, possible values ONE, TWO, THREE, QUORUM, ALL, ANY, EACH_QUORUM, LOCAL_QUORUM -->
-                    <writeConsistencyLevel>QUORUM</writeConsistencyLevel>
-                    <!-- Default is org.apache.cassandra.locator.SimpleStrategy -->
-                    <strategyClass>org.apache.cassandra.locator.SimpleStrategy</strategyClass>
-                </advanced>
+                <!-- Configurations related to external Cassandra data source -->
+
+                <!-- Uncomment the following to use the external Cassandra for Message Store Implementation. 
+                     NOTE: Update the master-datasources.xml file to connect to cassandra data source  
+                     READ the documentation to set advanced cassandra tuning parameters. -->
+ 
+                <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
+                    <property name="dataSource">CassandraRepo</property>
+                </messageStore-->
+
+                <!-- Uncomment the following to use the external Cassandra for Andes Context Store Implementation  
+                     NOTE: Update the master-datasources.xml file to connect to cassandra data source.
+                     READ the documentation to set advanced cassandra tuning parameters. -->
+
+                <!--andesContextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
+                    <property name="dataSource">CassandraRepo</property>
+                </andesContextStore-->
+
+                <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
             </store>
             <coordination>
                 <thriftServerHost>localhost</thriftServerHost>
