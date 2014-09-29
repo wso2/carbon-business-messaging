@@ -127,36 +127,40 @@ public class QpidServiceComponent {
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
 
         // set message store and andes context store related configurations
-        AndesContext.getInstance().setMessageStoreClass(qpidServiceImpl.getMessageStoreClassName());
-        AndesContext.getInstance().setAndesContextStoreClass(qpidServiceImpl.getAndesContextStoreClassName());
-        AndesContext.getInstance().setMessageStoreDataSourceName(qpidServiceImpl.getMessageStoreDataSourceName());
-        AndesContext.getInstance().setContextStoreDataSourceName(qpidServiceImpl.getAndesContextStoreDataSourceName());
+        AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
 
-        CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
-
-        if (cassandraServerService != null) {
-            if (!qpidServiceImpl.isExternalCassandraServerRequired()) {
-                log.info("Activating Carbonized Cassandra Server...");
-                cassandraServerService.startServer();
-                int count = 0;
-                //TODO:This should be handled by the callback from CassandraServerService
-                while (!isCassandraStarted()) {
-                    count++;
-                    if (count > 10) {
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(30 * 1000);
-                    } catch (InterruptedException e) {
-                        //ignore
-                    }
-                }
-            }
-        } else {
-            log.fatal("Cassandra Server service not set properly server will not start properly");
-            return;
-        }
+        //.todo: need to totally remove cassandraServerService related stuff from MB
+        // only disabled here
+//        CassandraServerService cassandraServerService = QpidServiceDataHolder.getInstance().getCassandraServerService();
+//
+//        if(this.isClusteringEnabled) {
+//            log.info("Starting Message Broker in -- CLUSTERED MODE --");
+//        } else {
+//            log.info("Starting Message Broker in -- STANDALONE MODE --");
+//        }
+//
+//        if(cassandraServerService != null) {
+//            if(!qpidServiceImpl.isExternalCassandraServerRequired()) {
+//                log.info("Activating Carbonized Cassandra Server...");
+//                cassandraServerService.startServer();
+//                int count = 0;
+//                while (!isCassandraStarted()) {
+//                    count++;
+//                    if(count > 10) {
+//                        break;
+//                    }
+//
+//                    try {
+//                        Thread.sleep(30*1000);
+//                    } catch (InterruptedException e) {
+//
+//                    }
+//                }
+//            }
+//        } else {
+//            log.error("Cassandra Server service not set properly server will not start properly");
+//            throw new RuntimeException("Cassandra Server service not set properly server will not start properly");
+//        }
 
         if(!AndesContext.getInstance().isClusteringEnabled() ){
             // If clustering is disabled, broker starts without waiting for hazelcastInstance
@@ -353,7 +357,7 @@ public class QpidServiceComponent {
 
             log.info("Activating Andes Message Broker Engine...");
             System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(), "-o" + qpidServiceImpl.getCassandraConnectionPort(),
+            String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(),
                     "-q" + qpidServiceImpl.getMQTTPort()};
 
             //TODO: Change the functionality in andes main method to an API

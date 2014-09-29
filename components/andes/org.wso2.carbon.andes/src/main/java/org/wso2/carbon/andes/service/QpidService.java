@@ -172,24 +172,6 @@ public interface QpidService {
     public boolean getIfSSLOnly();
 
     /**
-     * Returns whether external cassandra server required
-     * @return required status of external cassandra server*/
-    public boolean isExternalCassandraServerRequired();
-
-
-    /**
-     * Returns weather external zookeeper server required
-     * @return required status of external
-     */
-    public boolean isExternalZookeeperServerRequired();
-
-    /**
-     * Returns Cassandra Connection String used in the internal broker
-     * @return cassandra connection string
-     */
-    public String getCassandraConnectionString();
-
-    /**
      * Returns thrift server host name in the mb cluster
      * @return  thrift server host name
      */
@@ -200,14 +182,5 @@ public interface QpidService {
      * @return thrift server port
      */
     public int getThriftServerPort();
-
-    /**
-     * Returns Zookeeper Connection String used in the internal broker
-     * @return zookeeper connection string
-     */
-    public String getZookeeperConnectionString();
-
-
-    public int getCassandraConnectionPort();
 
 }
