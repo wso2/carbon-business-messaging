@@ -131,7 +131,10 @@
         <!--To enable External Zookeeper server ? true|false -->
         <externalZookeeperServerRequired>false</externalZookeeperServerRequired>
         <GlobalQueueCount>10</GlobalQueueCount>
+        <!--rough estimate for size of a slot-->
         <SlotWindowSize>1000</SlotWindowSize>
+        <!--Number of SlotDeliveryWorker threads should be started-->
+        <NumberOFSlotDeliveryWorkerThreads>5</NumberOFSlotDeliveryWorkerThreads>
         <coordination>
             <!-- Apache Zookeeper Address -->
             <ZooKeeperConnection>127.0.0.1:2181</ZooKeeperConnection>
@@ -225,6 +228,9 @@
                 <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will sync the
                 Virtual host details across the cluster -->
                 <virtualHostSyncTaskInterval>3600</virtualHostSyncTaskInterval>
+
+                <!--maximum time interval where slot can be retain in memory before updating to the cluster(in milliseconds)-->
+                <slotSubmitTimeOut>1000</slotSubmitTimeOut>
             </waitTimes>
             <!--Broker will drop the message after the configured number of delivery attempts for each message.-->
             <maximumNumberOfMessageDeliveryAttempts>10</maximumNumberOfMessageDeliveryAttempts>
