@@ -134,7 +134,7 @@
         <!--rough estimate for size of a slot-->
         <SlotWindowSize>1000</SlotWindowSize>
         <!--Number of SlotDeliveryWorker threads should be started-->
-        <NumberOFSlotDeliveryWorkerThreads>5</NumberOFSlotDeliveryWorkerThreads>
+        <NumberOfSlotDeliveryWorkerThreads>5</NumberOfSlotDeliveryWorkerThreads>
         <coordination>
             <!-- Apache Zookeeper Address -->
             <ZooKeeperConnection>127.0.0.1:2181</ZooKeeperConnection>
