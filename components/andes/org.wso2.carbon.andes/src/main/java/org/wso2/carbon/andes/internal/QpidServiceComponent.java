@@ -404,13 +404,14 @@ public class QpidServiceComponent {
                             socket.close();
                         }
                     } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server status ");
+                        log.error("Can not close the socket which is used to check the server " +
+                                "status ", e);
                     }
                 }
             }
 
         } catch (Exception e) {
-            log.error("Failed to start Qpid broker : " + e.getMessage());
+            log.error("Failed to start Qpid broker : " + e.getMessage(),e);
         } finally {
             // Publish Qpid properties
             qpidService = this.componentContext.getBundleContext().registerService(
