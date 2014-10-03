@@ -15,11 +15,34 @@ public interface QueueManagerService  {
 
     public void deleteQueue(String queueName) throws QueueManagerException;
 
-    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception;
+    /**
+     * Restore messages from the Dead Letter Queue to their original queues.
+     *
+     * @param messageIDs          Browser Message Id / External Message Id list
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws Exception;
 
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination) throws Exception;
+    /**
+     * Restore messages from the Dead Letter Queue to another queue in the same tenant.
+     *
+     * @param messageIDs          Browser Message Id / External Message Id list
+     * @param destination         The new destination queue for the messages in the same tenant
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination,
+                                                                           String deadLetterQueueName) throws Exception;
 
-    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception;
+    /**
+     * Delete messages from the Dead Letter Queue and delete their content.
+     *
+     * @param messageIDs          Browser Message Id / External Message Id list to be deleted
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws Exception;
 
     public void purgeMessagesOfQueue(String queueName) throws Exception;
 

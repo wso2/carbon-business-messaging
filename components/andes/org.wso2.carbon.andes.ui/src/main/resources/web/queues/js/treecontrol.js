@@ -238,7 +238,7 @@ function doReRouteMessages(nameOfQueue) {
 
                     CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.reRoute"], function () {
                         $.ajax({
-                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?newQueueName=' + selectedQueue + '&msgList=' + checkedValues,
+                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&newQueueName=' + selectedQueue + '&msgList=' + checkedValues,
                             async: true,
                             dataType: "html",
                             success: function () {

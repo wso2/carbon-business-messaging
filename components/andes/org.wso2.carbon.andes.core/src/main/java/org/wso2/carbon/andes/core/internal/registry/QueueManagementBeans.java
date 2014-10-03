@@ -111,9 +111,9 @@ public  class QueueManagementBeans {
              throw new QueueManagerException("Cannot access mBean operations to get queue list",e);
         }
     }
-    public int getMessageCount(String queueName,String msgPattern) throws QueueManagerException
+    public long getMessageCount(String queueName,String msgPattern) throws QueueManagerException
     {
-        int messageCount =0;
+        long messageCount = 0;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try
         {
@@ -130,7 +130,7 @@ public  class QueueManagementBeans {
                                          signature);
          if(result!=null)
          {
-            messageCount = (Integer) result;
+            messageCount = (Long) result;
          }
 
          return messageCount;
@@ -187,45 +187,69 @@ public  class QueueManagementBeans {
         }
     }
 
-    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception {
+    /**
+     * Invoke service bean for permanently deleting messages from the Dead Letter Channel.
+     *
+     * @param messageIDs          Browser message Id / External message Id list to be deleted
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws Exception {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName =
                 new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
         String operationName = "deleteMessagesFromDeadLetterQueue";
-        Object[] parameters = new Object[]{messageIDs};
-        String[] signature = new String[]{String[].class.getName()};
-        Object result = mBeanServer.invoke(
-                objectName,
-                operationName,
-                parameters,
-                signature);
-    }
-
-    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs) throws Exception {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        ObjectName objectName =
-                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-
-        String operationName = "restoreMessagesFromDeadLetterQueue";
-        Object[] parameters = new Object[]{messageIDs};
-        String[] signature = new String[]{String[].class.getName()};
-        Object result = mBeanServer.invoke(
-                objectName,
-                operationName,
-                parameters,
-                signature);
-    }
-
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination) throws Exception {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        ObjectName objectName =
-                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-
-        String operationName = "restoreMessagesFromDeadLetterQueue";
-        Object[] parameters = new Object[]{messageIDs, destination};
+        Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
         String[] signature = new String[]{String[].class.getName(), String.class.getName()};
-        Object result = mBeanServer.invoke(
+        mBeanServer.invoke(
+                objectName,
+                operationName,
+                parameters,
+                signature);
+    }
+
+    /**
+     * Invoke service bean for restoring messages from Dead Letter Channel to their original destinations.
+     *
+     * @param messageIDs          Browser message Id / External message Id list to be deleted
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws Exception {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName =
+                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+        String operationName = "restoreMessagesFromDeadLetterQueue";
+        Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
+        String[] signature = new String[]{String[].class.getName(), String.class.getName()};
+        mBeanServer.invoke(
+                objectName,
+                operationName,
+                parameters,
+                signature);
+    }
+
+    /**
+     * Invoke service bean for restoring messages from Dead Letter Channel to a given destination.
+     *
+     * @param messageIDs          Browser message Id / External message Id list to be deleted
+     * @param destination         The new destination for the messages in the same tenant
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @throws Exception
+     */
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination,
+                                                                           String deadLetterQueueName) throws
+            Exception {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName =
+                new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+        String operationName = "restoreMessagesFromDeadLetterQueue";
+        Object[] parameters = new Object[]{messageIDs, destination, deadLetterQueueName};
+        String[] signature = new String[]{String[].class.getName(), String.class.getName(), String.class.getName()};
+        mBeanServer.invoke(
                 objectName,
                 operationName,
                 parameters,
