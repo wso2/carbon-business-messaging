@@ -300,8 +300,8 @@ public class UIUtils {
      * @return - message count of the given queue
      */
 
-    public static int getCurrentMessageCountInQueue(Queue[] queueList, String queuename) {
-        int messageCount = 0;
+    public static long getCurrentMessageCountInQueue(Queue[] queueList, String queuename) {
+        long messageCount = 0;
         if (queueList != null) {
             for (Queue queue : queueList) {
                 if (queue.getQueueName().equals(queuename)) {
@@ -316,7 +316,7 @@ public class UIUtils {
     public static void purgeQueue(String queuename, String username, String accesskey, Queue[] queueList) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
         QueueReceiverClient qrClient;
         int purgedMessageCount;
-        int currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
+        long currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
         int time_out = 0;
         while (currentMsgCount != 0 && time_out != 15) {
             qrClient = new QueueReceiverClient();

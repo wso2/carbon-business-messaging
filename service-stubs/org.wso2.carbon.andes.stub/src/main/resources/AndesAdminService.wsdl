@@ -1,4 +1,4 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax23="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:ax23="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
     <wsdl:documentation>AndesAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd">
@@ -32,7 +32,7 @@
                 <xs:sequence>
                     <xs:element minOccurs="0" name="createdFrom" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"></xs:element>
-                    <xs:element minOccurs="0" name="messageCount" type="xs:int"></xs:element>
+                    <xs:element minOccurs="0" name="messageCount" type="xs:long"></xs:element>
                     <xs:element minOccurs="0" name="queueDepth" type="xs:long"></xs:element>
                     <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
                     <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime"></xs:element>
@@ -111,6 +111,7 @@
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -118,6 +119,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -278,6 +280,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -1184,13 +1187,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.5.49:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.49:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://10.100.5.49:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

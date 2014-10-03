@@ -25,7 +25,7 @@ public class Queue {
 
     private long queueDepth;
 
-    private int messageCount;
+    private long messageCount;
 
     private Calendar createdTime;
 
@@ -57,11 +57,11 @@ public class Queue {
         this.queueDepth = queueDepth;
     }
 
-    public int getMessageCount() {
+    public long getMessageCount() {
         return messageCount;
     }
 
-    public void setMessageCount(int messageCount) {
+    public void setMessageCount(long messageCount) {
         this.messageCount = messageCount;
     }
 

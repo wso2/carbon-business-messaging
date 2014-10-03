@@ -6,9 +6,11 @@
 <%  
       AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
       String idList = request.getParameter("msgList");
+      String nameOfQueue = request.getParameter("nameOfQueue");
+
       String[] idArray = idList.split(",");
        try{
-    	   stub.deleteMessagesFromDeadLetterQueue(idArray);
+    	   stub.deleteMessagesFromDeadLetterQueue(idArray, nameOfQueue);
              
     } catch (Exception e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
