@@ -21,7 +21,11 @@ package org.wso2.carbon.andes.service;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 
+/**
+ * This class will be triggered when cluster coordinator is changed.
+ */
 public class CoordinatedActivityImpl implements CoordinatedActivity{
+
     @Override
     public void execute() {
         ClusterResourceHolder.getInstance().getClusterManager().updateThriftCoordinatorDetailsToMap();
