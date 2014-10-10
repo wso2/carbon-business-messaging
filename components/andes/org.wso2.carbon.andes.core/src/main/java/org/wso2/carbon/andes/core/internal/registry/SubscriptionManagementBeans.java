@@ -15,7 +15,6 @@
  *   specific language governing permissions and limitations
  *   under the License.
  */
-
 package org.wso2.carbon.andes.core.internal.registry;
 
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
@@ -36,9 +35,23 @@ public class SubscriptionManagementBeans {
         return self;
     }
 
-    public ArrayList<Subscription> getTopicSubscriptions(String isDurable, String isActive)
-            throws SubscriptionManagerException {
+    public static SubscriptionManagementBeans getInstance(){
+        
+        if(self == null){
+            self = new SubscriptionManagementBeans();
+        }
+        return self;
+    }
 
+    /***
+     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component to gather information on topic subscriptions.
+     * @param isDurable filter subscriptions for durable topics
+     * @param isActive  filter only active subscriptions
+     * @return ArrayList\<Subscription\>
+     * @throws SubscriptionManagerException
+     */
+    public ArrayList<Subscription> getTopicSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
+        
         ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -64,6 +77,7 @@ public class SubscriptionManagementBeans {
             }
             return subscriptionDetailsList;
 
+        //could catch all these exceptions in one block if we use Java 7
         } catch (MalformedObjectNameException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
@@ -79,9 +93,16 @@ public class SubscriptionManagementBeans {
         }
     }
 
-    public ArrayList<Subscription> getQueueSubscriptions(String isDurable, String isActive)
-            throws SubscriptionManagerException {
 
+    /***
+     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component to gather information on queue subscriptions.
+     * @param isDurable filter subscriptions for durable queues
+     * @param isActive filter only active subscriptions
+     * @return ArrayList\<Subscription\>
+     * @throws SubscriptionManagerException
+     */
+    public ArrayList<Subscription> getQueueSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
+        
         ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -106,6 +127,7 @@ public class SubscriptionManagementBeans {
             }
             return subscriptionDetailsList;
 
+        //could catch all these exceptions in one block if we use Java 7
         } catch (MalformedObjectNameException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
@@ -144,6 +166,7 @@ public class SubscriptionManagementBeans {
             }
             return subscriptionDetailsList;
 
+        //could catch all these exceptions in one block if we use Java 7
         } catch (MalformedObjectNameException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
