@@ -1,20 +1,20 @@
 /*
-* Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-* WSO2 Inc. licenses this file to you under the Apache License,
-* Version 2.0 (the "License"); you may not use this file except
-* in compliance with the License.
-* You may obtain a copy of the License at
-*
-* 	http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
 
 package org.wso2.carbon.andes.cluster.mgt;
 
@@ -45,7 +45,7 @@ public class ClusterManagerService {
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             ArrayList<NodeDetail> nodeDetailList = clusterManagementBeans.getNodesWithZookeeperID();
             return nodeDetailList.size();
-        } catch (Exception e) {
+        } catch (ClusterMgtException e) {
             throw new ClusterMgtAdminException("cannot access MBean information for node detail");
         }
     }
@@ -69,7 +69,8 @@ public class ClusterManagerService {
 
             //get queues  whose queue manager runs on the given node
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<Queue> allGlobalQueuesRunningInNode = clusterManagementBeans.getGlobalQueuesRunningInNode(hostName);
+            ArrayList<Queue> allGlobalQueuesRunningInNode = clusterManagementBeans.getGlobalQueuesRunningInNode
+                    (hostName);
 
             //filter queues according to tenant
             resultList = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(allGlobalQueuesRunningInNode);
@@ -87,10 +88,6 @@ public class ClusterManagerService {
                     queueDetailsArray[queueDetailsIndex].setQueueName(queueDetail.getQueueName());
                     queueDetailsArray[queueDetailsIndex].setMessageCount(queueDetail.getMessageCount());
 
-                    //queueDetailsArray[queueDetailsIndex].setQueueDepth(queueDetail.getQueueDepth());
-                    //queueDetailsArray[queueDetailsIndex].setUpdatedTime(queueDetail.getUpdatedTime());
-                    //queueDetailsArray[queueDetailsIndex].setCreatedTime(queueDetail.getCreatedTime());
-
                     queueDetailsIndex++;
                     if (queueDetailsIndex == maxQueueCount) {
                         break;
@@ -104,11 +101,11 @@ public class ClusterManagerService {
             return queueDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager ", e);
+            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
         }
     }
 
-    public Queue[] getAllDestinationQueuesDetailForNode(String hostName,int startingIndex, int maxQueueCount)
+    public Queue[] getAllDestinationQueuesDetailForNode(String hostName, int startingIndex, int maxQueueCount)
             throws ClusterMgtAdminException {
 
         try {
@@ -117,26 +114,28 @@ public class ClusterManagerService {
             ArrayList<Queue> resultList;
 
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            List<String> queuesOfCluster =  clusterManagementBeans.queuesOfCluster();
-            List<Queue> queueObjectList =  new ArrayList<Queue>();
-            for(String destinationQueue : queuesOfCluster) {
+            List<String> queuesOfCluster = clusterManagementBeans.queuesOfCluster();
+            List<Queue> queueObjectList = new ArrayList<Queue>();
+            for (String destinationQueue : queuesOfCluster) {
                 Queue aQueue = new Queue();
-                aQueue.setQueueName(destinationQueue);queueObjectList.add(aQueue);
+                aQueue.setQueueName(destinationQueue);
+                queueObjectList.add(aQueue);
             }
             //filter according to tenant
-            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(queueObjectList);
+            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues
+                    (queueObjectList);
 
             if ((queuesSpecificToTenant.size() - startingIndex) < maxQueueCount) {
                 resultSetSize = (queuesSpecificToTenant.size() - startingIndex);
             }
-            for(Queue aQueue : queuesSpecificToTenant) {
+            for (Queue aQueue : queuesSpecificToTenant) {
                 //get number of messages in node queue and set
                 aQueue.setMessageCount(clusterManagementBeans.
-                        getMessageCountOfNodeAddressedToDestinationQueue(hostName,aQueue.getQueueName()));
+                        getMessageCountOfNodeAddressedToDestinationQueue(hostName, aQueue.getQueueName()));
 
                 //get number of subscribers and set
                 aQueue.setSubscriberCount(clusterManagementBeans.
-                        getSubscriberCountOfNodeAddressedToDestinationQueue(hostName,aQueue.getQueueName()));
+                        getSubscriberCountOfNodeAddressedToDestinationQueue(hostName, aQueue.getQueueName()));
             }
             queueDetailsArray = new Queue[resultSetSize];
             int index = 0;
@@ -166,9 +165,10 @@ public class ClusterManagerService {
             return queueDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager ", e);
+            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
         }
     }
+
     /**
      * gives topics whole list of topics in the cluster
      *
@@ -193,7 +193,8 @@ public class ClusterManagerService {
             for (Topic topicDetail : temp) {
                 if (startingIndex == index || startingIndex < index) {
                     topicDetailsArray[topicDetailDetailsIndex] = new Topic();
-                    topicDetailsArray[topicDetailDetailsIndex].setNumberOfSubscribers(topicDetail.getNumberOfSubscribers());
+                    topicDetailsArray[topicDetailDetailsIndex].setNumberOfSubscribers(topicDetail
+                            .getNumberOfSubscribers());
                     topicDetailsArray[topicDetailDetailsIndex].setName(topicDetail.getName());
                     topicDetailDetailsIndex++;
                     if (topicDetailDetailsIndex == maxTopicCount) {
@@ -208,7 +209,7 @@ public class ClusterManagerService {
             return topicDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not access MBean information for topics ", e);
+            throw new ClusterMgtAdminException("Can not access MBean information for topics.", e);
         }
     }
 
@@ -242,9 +243,12 @@ public class ClusterManagerService {
                     nodeDetailArray[nodeDetailsIndex].setIpAddress(nodeDetail.getIpAddress());
 
                     //to remove
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastFiveMin(nodeDetail.getMessagesReceivedLastFiveMin());
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHalfMin(nodeDetail.getMessagesReceivedLastHalfMin());
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHour(nodeDetail.getMessagesReceivedLastHour());
+                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastFiveMin(nodeDetail
+                            .getMessagesReceivedLastFiveMin());
+                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHalfMin(nodeDetail
+                            .getMessagesReceivedLastHalfMin());
+                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHour(nodeDetail
+                            .getMessagesReceivedLastHour());
 
                     nodeDetailArray[nodeDetailsIndex].setMemoryUsage(nodeDetail.getMemoryUsage());
                     nodeDetailArray[nodeDetailsIndex].setNumOfGlobalQueues(nodeDetail.getNumOfGlobalQueues());
@@ -263,7 +267,7 @@ public class ClusterManagerService {
 
             return nodeDetailArray;
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not access MBean information for nodes", e);
+            throw new ClusterMgtAdminException("Can not access MBean information for nodes.", e);
         }
     }
 
@@ -273,7 +277,7 @@ public class ClusterManagerService {
      * @param hostname
      * @return long
      */
-    public long getThroughputForNode(String hostname) throws ClusterMgtAdminException{
+    public long getThroughputForNode(String hostname) throws ClusterMgtAdminException {
 
         return 0;
     }
@@ -284,7 +288,7 @@ public class ClusterManagerService {
      * @param hostname
      * @return long
      */
-    public long getMemoryUsage(String hostname) throws ClusterMgtAdminException{
+    public long getMemoryUsage(String hostname) throws ClusterMgtAdminException {
 
         return 0;
     }
@@ -292,6 +296,7 @@ public class ClusterManagerService {
     /**
      * get current number of topics those have one
      * or more subscribers subscribed to that topic on the given node
+     *
      * @return long
      */
     public long getNumberOfTopics() throws ClusterMgtAdminException {
@@ -302,7 +307,7 @@ public class ClusterManagerService {
             result = topicList.size();
             return result;
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Cannot access MBean information for topics");
+            throw new ClusterMgtAdminException("Cannot access MBean information for topics.", e);
         }
     }
 
@@ -316,24 +321,27 @@ public class ClusterManagerService {
         try {
             long result = 0;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            List<String> queuesOfCluster =  clusterManagementBeans.queuesOfCluster();
-            List<Queue> queueObjectList =  new ArrayList<Queue>();
-            for(String destinationQueue : queuesOfCluster) {
+            List<String> queuesOfCluster = clusterManagementBeans.queuesOfCluster();
+            List<Queue> queueObjectList = new ArrayList<Queue>();
+            for (String destinationQueue : queuesOfCluster) {
                 Queue aQueue = new Queue();
-                aQueue.setQueueName(destinationQueue);queueObjectList.add(aQueue);
+                aQueue.setQueueName(destinationQueue);
+                queueObjectList.add(aQueue);
             }
             //filter according to tenant
-            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(queueObjectList);
+            ArrayList<Queue> queuesSpecificToTenant = (ArrayList<Queue>) Utils.filterDomainSpecificQueues
+                    (queueObjectList);
             result = queuesSpecificToTenant.size();
             return result;
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Cannot get the queue manager ", e);
+            throw new ClusterMgtAdminException("Cannot get the queue manager.", e);
         }
 
     }
 
     /**
      * Returns number of subscriptions for the topic
+     *
      * @param topicName
      * @return long
      */
@@ -345,25 +353,23 @@ public class ClusterManagerService {
             numOfSubscribers = clusterManagementBeans.getNumOfSubscribersForTopic(topicName);
             return numOfSubscribers;
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Cannot access MBean information for topics", e);
+            throw new ClusterMgtAdminException("Cannot access MBean information for topics.", e);
         }
     }
 
     /**
-     *
      * @param queueName
      * @return long number of messages
      * @throws ClusterMgtAdminException
      */
-    public long getNumberOfMessagesForQueue(String queueName) throws ClusterMgtAdminException
-    {
+    public long getNumberOfMessagesForQueue(String queueName) throws ClusterMgtAdminException {
         try {
             long numOfMessages = 0;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             numOfMessages = clusterManagementBeans.getNumberOfAllMessagesForQueue(queueName);
             return numOfMessages;
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Cannot access MBean information for queues", e);
+            throw new ClusterMgtAdminException("Cannot access MBean information for queues.", e);
         }
     }
 
@@ -377,13 +383,14 @@ public class ClusterManagerService {
     public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign) throws ClusterMgtException {
         boolean result = false;
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-        result =  clusterManagementBeans.updateWorkerForQueue(queueToUpdate,newNodeToAssign);
+        result = clusterManagementBeans.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
         return result;
     }
 
     /**
      * check if broker is in clustering mode
-     * @return  boolean if clustering enabled
+     *
+     * @return boolean if clustering enabled
      * @throws ClusterMgtException
      */
     public boolean isClusteringEnabled() throws ClusterMgtException {
@@ -393,7 +400,8 @@ public class ClusterManagerService {
 
     /**
      * get the ID assigned by zookeeper to this node
-     * @return  String node ID
+     *
+     * @return String node ID
      * @throws ClusterMgtException
      */
     public String getMyNodeID() throws ClusterMgtException {
