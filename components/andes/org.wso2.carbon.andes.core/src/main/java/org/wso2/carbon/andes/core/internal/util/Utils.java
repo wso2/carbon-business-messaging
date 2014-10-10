@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
 package org.wso2.carbon.andes.core.internal.util;
 
 import org.apache.axiom.om.OMElement;
@@ -60,15 +60,22 @@ public class Utils {
     private static final String QPID_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
 
-    /** Maximum size a message will be displayed on UI */
+    /**
+     * Maximum size a message will be displayed on UI
+     */
     public static final int MESSAGE_DISPLAY_LENGTH_MAX = 4000;
-    
-    /** Shown to user has a indication that the particular message has more content than shown in UI */
+
+    /**
+     * Shown to user has a indication that the particular message has more content than shown in UI
+     */
     public static final String DISPLAY_CONTINUATION = "...";
-    
-    /** Message shown in UI if message content exceed the limit - Further enhancement, these needs to read from a resource bundle */
+
+    /**
+     * Message shown in UI if message content exceed the limit - Further enhancement,
+     * these needs to read from a resource bundle
+     */
     public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
-    
+
     public static String getTenantAwareCurrentUserName() {
         String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
@@ -92,7 +99,8 @@ public class Utils {
 
     public static String getTenantBasedQueueName(String queueName) {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        if (tenantDomain != null && (!queueName.contains(tenantDomain)) && (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
+        if (tenantDomain != null && (!queueName.contains(tenantDomain)) && (!tenantDomain.equals(org.wso2.carbon.base
+                .MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
             queueName = tenantDomain + "/" + queueName;
         }
         return queueName;
@@ -103,8 +111,7 @@ public class Utils {
      *
      * @param username Name of the user
      * @return true if the user has admin rights or false otherwise
-     * @throws org.wso2.carbon.andes.core.QueueManagerException
-     *          if getting roles for the user fails
+     * @throws org.wso2.carbon.andes.core.QueueManagerException if getting roles for the user fails
      */
     public static boolean isAdmin(String username) throws QueueManagerException {
         boolean isAdmin = false;
@@ -130,26 +137,27 @@ public class Utils {
 
     /**
      * filter queues to suit the tenant domain
+     *
      * @param fullList
      * @return List<Queue>
      */
     public static List<Queue> filterDomainSpecificQueues(List<Queue> fullList) {
         String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         ArrayList<Queue> tenantFilteredQueues = new ArrayList<Queue>();
-        if(domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+        if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Queue aQueue : fullList) {
-                if(aQueue.getQueueName().startsWith(domainName)) {
+                if (aQueue.getQueueName().startsWith(domainName)) {
                     tenantFilteredQueues.add(aQueue);
                 }
             }
         }
         //for super tenant load all queues not specific to a domain. That means queues created by external
         //JMS clients are visible, and those names should not have "/" in their queue names
-        else if(domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
-                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)){
+        else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Queue aQueue : fullList) {
-                if(!aQueue.getQueueName().contains("/")) {
+                if (!aQueue.getQueueName().contains("/")) {
                     tenantFilteredQueues.add(aQueue);
                 }
             }
@@ -163,46 +171,49 @@ public class Utils {
         ArrayList<Subscription> tenantFilteredSubscriptions = new ArrayList<Subscription>();
 
         //filter subscriptions belonging to the tenant domain
-        if(domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+        if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
                 //for temp queues filter by queue name queueName=<tenantDomain>/queueName
-                if(!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq.direct")) {
-                    if(subscription.getSubscribedQueueOrTopicName().startsWith(domainName+"/")) {
+                if (!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq.direct")) {
+                    if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
                 }
                 //for temp topics filter by topic name topicName=<tenantDomain>/topicName
-                else if(!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq.topic")) {
-                    if(subscription.getSubscribedQueueOrTopicName().startsWith(domainName+"/")) {
+                else if (!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq" +
+                        ".topic")) {
+                    if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
                 }
                 //if a queue subscription queueName = <tenantDomain>/queueName
-                else if(subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq.direct")) {
-                    if(subscription.getSubscriberQueueName().startsWith(domainName+"/")) {
+                else if (subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq" +
+                        ".direct")) {
+                    if (subscription.getSubscriberQueueName().startsWith(domainName + "/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
                 }
                 //if a durable topic subscription queueName = carbon:<tenantdomain>/subID
-                else if(subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq.topic")) {
+                else if (subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals("amq" +
+                        ".topic")) {
                     String durableTopicQueueName = subscription.getSubscriberQueueName();
                     String subscriptionID = durableTopicQueueName.split(":")[1];
-                    if(subscriptionID.startsWith(domainName+"/")) {
+                    if (subscriptionID.startsWith(domainName + "/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
                 }
             }
             //super tenant domain queue should not have '/'
-        }  else if(domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
-                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)){
+        } else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
-                if(subscription.isDurable()) {
-                    if(!subscription.getSubscriberQueueName().contains("/")) {
+                if (subscription.isDurable()) {
+                    if (!subscription.getSubscriberQueueName().contains("/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
-                } else if(!subscription.isDurable()) {
-                    if(!subscription.getSubscribedQueueOrTopicName().contains("/")) {
+                } else if (!subscription.isDurable()) {
+                    if (!subscription.getSubscribedQueueOrTopicName().contains("/")) {
                         tenantFilteredSubscriptions.add(subscription);
                     }
                 }
@@ -213,8 +224,8 @@ public class Utils {
 
     public static Subscription parseStringToASubscription(String subscriptionInfo) {
 
-          //  subscriptionInfo =  subscriptionIdentifier |  subscribedQueueOrTopicName | subscriberQueueBoundExchange |
-          // subscriberQueueName |  isDurable | isActive | numberOfMessagesRemainingForSubscriber | subscriberNodeAddress
+        //  subscriptionInfo =  subscriptionIdentifier |  subscribedQueueOrTopicName | subscriberQueueBoundExchange |
+        // subscriberQueueName |  isDurable | isActive | numberOfMessagesRemainingForSubscriber | subscriberNodeAddress
 
         String[] subInfo = subscriptionInfo.split("\\|");
         Subscription subscription = new Subscription();
@@ -269,9 +280,10 @@ public class Utils {
 
     /**
      * Reads the post offset value defined in carbon.xml file
+     *
      * @return offset value
      */
-    public static int getPortOffset(){
+    public static int getPortOffset() {
         String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
         int CARBON_DEFAULT_PORT_OFFSET = 0;
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
@@ -287,23 +299,25 @@ public class Utils {
     /**
      * Gets the TCP connection url to reach the broker by using the currently logged in user and the accesskey for
      * the user, generated by andes Authentication Service
-     * @param userName - currently logged in user
+     *
+     * @param userName  - currently logged in user
      * @param accessKey - the key (uuid) generated by authentication service
      * @return
      */
-    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException, XMLStreamException {
+    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException,
+            XMLStreamException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
         String CARBON_CLIENT_ID = "carbon";
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
         String CARBON_DEFAULT_HOSTNAME = "localhost";
         String CARBON_DEFAULT_PORT = "5672";
         int portOffset = getPortOffset();
-        int carbonPort = Integer.valueOf(CARBON_DEFAULT_PORT)+portOffset;
+        int carbonPort = Integer.valueOf(CARBON_DEFAULT_PORT) + portOffset;
         String CARBON_PORT = String.valueOf(carbonPort);
 
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_DEFAULT_SSL_PORT = "8672";
-        int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT)+portOffset;
+        int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT) + portOffset;
         String CARBON_SSL_PORT = String.valueOf(carbonSslPort);
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
@@ -322,23 +336,27 @@ public class Utils {
         OMElement sslTrustStorePwd = sslNode.getFirstChildWithName(
                 new QName(QPID_CONF_SSL_TRUSTSTORE_PASSWORD));
 
-        String KEY_STORE_PATH= sslKeyStorePath.getText();
-        String TRUST_STORE_PATH= sslTrustStorePath.getText();
-        String SSL_KEYSTORE_PASSWORD=sslKeyStorePwd.getText();
-        String SSL_TRUSTSTORE_PASSWORD=sslTrustStorePwd.getText();
+        String KEY_STORE_PATH = sslKeyStorePath.getText();
+        String TRUST_STORE_PATH = sslTrustStorePath.getText();
+        String SSL_KEYSTORE_PASSWORD = sslKeyStorePwd.getText();
+        String SSL_TRUSTSTORE_PASSWORD = sslTrustStorePwd.getText();
 
         // as it is nt possible to obtain the password of for the given user, we use service generated access key
         // to authenticate the user
 
-        if(isSSLOnly()){
-            //"amqp://admin:admin@carbon/carbon?brokerlist='tcp://{hostname}:{port}?ssl='true'&trust_store='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path}'&key_store_password='{key_store_pwd}''";
+        if (isSSLOnly()) {
+            //"amqp://admin:admin@carbon/carbon?brokerlist='tcp://{hostname}:{port}?ssl='true'&trust_store
+            // ='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path
+            // }'&key_store_password='{key_store_pwd}''";
 
             return new StringBuffer()
                     .append("amqp://").append(userName).append(":").append(accessKey)
                     .append("@").append(CARBON_CLIENT_ID)
                     .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
-                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='").append(KEY_STORE_PATH)
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append
+                            (CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
+                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='")
+                    .append(KEY_STORE_PATH)
                     .append("'&key_store_password='").append(SSL_KEYSTORE_PASSWORD).append("''")
                     .toString();
         } else {
@@ -346,7 +364,8 @@ public class Utils {
                     .append("amqp://").append(userName).append(":").append(accessKey)
                     .append("@").append(CARBON_CLIENT_ID)
                     .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT).append("'")
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT)
+                    .append("'")
                     .toString();
         }
     }
@@ -411,13 +430,14 @@ public class Utils {
             } else {
                 summaryMsg = wholeMsg;
             }
-            if(wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX){
-            	wholeMsg = wholeMsg.substring(0,MESSAGE_DISPLAY_LENGTH_MAX -3) + DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
+            if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
+                wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) + DISPLAY_CONTINUATION +
+                        DISPLAY_LENGTH_EXCEEDED;
             }
 
 
         } else if (queueMessage instanceof ObjectMessage) {
-            wholeMsg = "This Operation is Not Supported!" ;
+            wholeMsg = "This Operation is Not Supported!";
             summaryMsg = "Not Supported";
 
         } else if (queueMessage instanceof MapMessage) {
@@ -468,13 +488,15 @@ public class Utils {
     /**
      * A stream message can have java primitives plus objects, as its content. This message it used to retrieve the
      *
-     * @param queueMessage   - input message
-     * @param sb   - a string builder to build the whole message content
-     * @return  - complete message content inside the stream message
+     * @param queueMessage - input message
+     * @param sb           - a string builder to build the whole message content
+     * @return - complete message content inside the stream message
      * @throws JMSException
      */
-    private static String getContentFromStreamMessage(StreamMessage queueMessage, StringBuilder sb) throws JMSException {
+    private static String getContentFromStreamMessage(StreamMessage queueMessage,
+                                                      StringBuilder sb) throws JMSException {
 
+        // todo: Need to find a better way to convert to String
         while (true) {
 
             try {

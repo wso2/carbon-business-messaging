@@ -1,23 +1,25 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
 package org.wso2.carbon.andes.ui.client;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
@@ -35,6 +37,8 @@ import java.util.Properties;
  */
 public class QueueBrowserClient {
 
+    private static final Log log = LogFactory.getLog(QueueBrowserClient.class);
+
     public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
@@ -47,7 +51,8 @@ public class QueueBrowserClient {
     private QueueBrowser queueBrowser;
 
 
-    public QueueBrowserClient(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException, XMLStreamException {
+    public QueueBrowserClient(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException,
+            XMLStreamException {
         this.nameOfQueue = nameOfQueue;
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
@@ -72,9 +77,9 @@ public class QueueBrowserClient {
             queueContentsEnu = queueBrowser.getEnumeration();
 
         } catch (NamingException e) {
-            e.printStackTrace();
+            log.error("Error browsing queue.", e);
         } catch (JMSException e) {
-            e.printStackTrace();
+            log.error("Error browsing queue.", e);
         }
         return queueContentsEnu;
     }
@@ -145,13 +150,14 @@ public class QueueBrowserClient {
             } else {
                 summaryMsg = wholeMsg;
             }
-            if(wholeMsg.length() > UIUtils.MESSAGE_DISPLAY_LENGTH_MAX){
-            	wholeMsg = wholeMsg.substring(0, UIUtils.MESSAGE_DISPLAY_LENGTH_MAX -3) + UIUtils.DISPLAY_CONTINUATION + UIUtils.DISPLAY_LENGTH_EXCEEDED;
+            if (wholeMsg.length() > UIUtils.MESSAGE_DISPLAY_LENGTH_MAX) {
+                wholeMsg = wholeMsg.substring(0, UIUtils.MESSAGE_DISPLAY_LENGTH_MAX - 3) + UIUtils
+                        .DISPLAY_CONTINUATION + UIUtils.DISPLAY_LENGTH_EXCEEDED;
             }
 
 
         } else if (queueMessage instanceof ObjectMessage) {
-            wholeMsg = "This Operation is Not Supported!" ;
+            wholeMsg = "This Operation is Not Supported!";
             summaryMsg = "Not Supported";
 
         } else if (queueMessage instanceof MapMessage) {
@@ -203,13 +209,14 @@ public class QueueBrowserClient {
     /**
      * A stream message can have java primitives plus objects, as its content. This message it used to retrieve the
      *
-     * @param queueMessage   - input message
-     * @param sb   - a string builder to build the whole message content
-     * @return  - complete message content inside the stream message
+     * @param queueMessage - input message
+     * @param sb           - a string builder to build the whole message content
+     * @return - complete message content inside the stream message
      * @throws JMSException
      */
     private String getContentFromStreamMessage(StreamMessage queueMessage, StringBuilder sb) throws JMSException {
 
+        // todo : Fix this to get content in a better way
         while (true) {
 
             try {

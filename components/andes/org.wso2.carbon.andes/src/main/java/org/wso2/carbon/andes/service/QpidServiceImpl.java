@@ -1,17 +1,19 @@
 /*
- *  Copyright (c) 2008, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
  */
 
 package org.wso2.carbon.andes.service;
@@ -187,7 +189,7 @@ public class QpidServiceImpl implements QpidService {
         try {
             queueDetails = RegistryClient.getQueues();
         } catch (RegistryClientException e) {
-            log.warn("Erro while retrieving queue details : " + e.getMessage());
+            log.error("Error while retrieving queue details.", e);
         }
 
         return queueDetails;
@@ -199,7 +201,7 @@ public class QpidServiceImpl implements QpidService {
         try {
             subsDetails = RegistryClient.getSubscriptions(topic);
         } catch (RegistryClientException e) {
-            log.warn("Erro while retrieving subscription details : " + e.getMessage());
+            log.error("Error while retrieving subscription details", e);
         }
 
         return subsDetails;
@@ -278,11 +280,11 @@ public class QpidServiceImpl implements QpidService {
             }
 
         } catch (FileNotFoundException e) {
-            log.error(vHostFilePath + " not found");
+            log.error(vHostFilePath + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + vHostFilePath + " : " + e.getMessage());
+            log.error("Error while reading " + vHostFilePath, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + vHostFilePath);
+            log.error("Invalid configuration : " + vHostFilePath, e);
         }
         return virtualHostsConfiguration;
     }
@@ -301,7 +303,7 @@ public class QpidServiceImpl implements QpidService {
             }
         }
 
-        // Offset
+        // If the port offset is not valid set the default port value
         try {
             port = Integer.toString(Integer.parseInt(port) + portOffset);
         } catch (NumberFormatException e) {
@@ -343,12 +345,11 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
@@ -376,12 +377,11 @@ public class QpidServiceImpl implements QpidService {
             }
             required = statusNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         if ("true".equals(required)) {
@@ -408,12 +408,11 @@ public class QpidServiceImpl implements QpidService {
             }
             required = statusNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         if ("true".equals(required)) {
@@ -492,12 +491,11 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
@@ -533,12 +531,11 @@ public class QpidServiceImpl implements QpidService {
               thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
             }
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_VIRTUALHOST_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
         return thriftServerHost;
@@ -567,12 +564,11 @@ public class QpidServiceImpl implements QpidService {
                 thriftServerPort = THRIFT_DEFAULT_SERVER_PORT;
             }
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_VIRTUALHOST_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE , e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
         return thriftServerPort;
@@ -599,12 +595,11 @@ public class QpidServiceImpl implements QpidService {
             sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
 
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    ANDES_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return sslOnly;

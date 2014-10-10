@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
 package org.wso2.carbon.andes.ui;
 
 import org.apache.axiom.om.OMElement;
@@ -56,13 +56,20 @@ public class UIUtils {
     private static final String QPID_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
     private static final String QPID_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
 
-    /** Maximum size a message will be displayed on UI */
+    /**
+     * Maximum size a message will be displayed on UI
+     */
     public static final int MESSAGE_DISPLAY_LENGTH_MAX = 4000;
-    
-    /** Shown to user has a indication that the particular message has more content than shown in UI */
+
+    /**
+     * Shown to user has a indication that the particular message has more content than shown in UI
+     */
     public static final String DISPLAY_CONTINUATION = "...";
-    
-    /** Message shown in UI if message content exceed the limit - Further enhancement, these needs to read from a resource bundle */
+
+    /**
+     * Message shown in UI if message content exceed the limit - Further enhancement,
+     * these needs to read from a resource bundle
+     */
     public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
 
 
@@ -72,14 +79,14 @@ public class UIUtils {
     }
 
     public static AndesAdminServiceStub getAndesAdminServiceStub(ServletConfig config,
-                                                                           HttpSession session,
-                                                                           HttpServletRequest request)
+                                                                 HttpSession session,
+                                                                 HttpServletRequest request)
             throws AxisFault {
         String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
         backendServerURL = backendServerURL + "AndesAdminService";
         ConfigurationContext configContext =
                 (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
-        AndesAdminServiceStub stub = new AndesAdminServiceStub(configContext,backendServerURL);
+        AndesAdminServiceStub stub = new AndesAdminServiceStub(configContext, backendServerURL);
         String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
         if (cookie != null) {
             Options option = stub._getServiceClient().getOptions();
@@ -92,17 +99,18 @@ public class UIUtils {
 
     /**
      * filter the full queue list to suit the range
+     *
      * @param fullList
      * @param startingIndex
      * @param maxQueueCount
-     * @return  Queue[]
+     * @return Queue[]
      */
-    public static Queue[] getFilteredQueueList(Queue[] fullList ,int startingIndex, int maxQueueCount) {
+    public static Queue[] getFilteredQueueList(Queue[] fullList, int startingIndex, int maxQueueCount) {
         Queue[] queueDetailsArray;
         int resultSetSize = maxQueueCount;
 
         ArrayList<Queue> resultList = new ArrayList<Queue>();
-        for(Queue aQueue : fullList) {
+        for (Queue aQueue : fullList) {
             resultList.add(aQueue);
         }
 
@@ -130,12 +138,13 @@ public class UIUtils {
     }
 
 
-    public static Subscription[] getFilteredSubscriptionList(Subscription[] fullList ,int startingIndex, int maxSubscriptionCount) {
+    public static Subscription[] getFilteredSubscriptionList(Subscription[] fullList, int startingIndex,
+                                                             int maxSubscriptionCount) {
         Subscription[] subscriptionDetailsArray;
         int resultSetSize = maxSubscriptionCount;
 
         ArrayList<Subscription> resultList = new ArrayList<Subscription>();
-        for(Subscription sub : fullList) {
+        for (Subscription sub : fullList) {
             resultList.add(sub);
         }
 
@@ -149,15 +158,22 @@ public class UIUtils {
             if (startingIndex == index || startingIndex < index) {
                 subscriptionDetailsArray[subscriptionDetailsIndex] = new Subscription();
 
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscribedQueueOrTopicName(subscriptionDetail.getSubscribedQueueOrTopicName());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueBoundExchange(subscriptionDetail.getSubscriberQueueBoundExchange());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueName(subscriptionDetail.getSubscriberQueueName());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
+                        .getSubscriptionIdentifier());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscribedQueueOrTopicName(subscriptionDetail
+                        .getSubscribedQueueOrTopicName());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueBoundExchange(subscriptionDetail
+                        .getSubscriberQueueBoundExchange());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueName(subscriptionDetail
+                        .getSubscriberQueueName());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
+                        .getSubscriptionIdentifier());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail.getDurable());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail.getActive());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber(subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail.getSubscriberNodeAddress());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber
+                        (subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail
+                        .getSubscriberNodeAddress());
 
                 subscriptionDetailsIndex++;
                 if (subscriptionDetailsIndex == maxSubscriptionCount) {
@@ -209,9 +225,10 @@ public class UIUtils {
 
     /**
      * Reads the post offset value defined in carbon.xml file
+     *
      * @return offset value
      */
-    public static int getPortOffset(){
+    public static int getPortOffset() {
         String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
         int CARBON_DEFAULT_PORT_OFFSET = 0;
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
@@ -228,23 +245,25 @@ public class UIUtils {
     /**
      * Gets the TCP connection url to reach the broker by using the currently logged in user and the accesskey for
      * the user, generated by andes Authentication Service
-     * @param userName - currently logged in user
+     *
+     * @param userName  - currently logged in user
      * @param accessKey - the key (uuid) generated by authentication service
      * @return
      */
-    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException, XMLStreamException {
+    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException,
+            XMLStreamException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
         String CARBON_CLIENT_ID = "carbon";
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
         String CARBON_DEFAULT_HOSTNAME = "localhost";
         String CARBON_DEFAULT_PORT = "5672";
         int portOffset = getPortOffset();
-        int carbonPort = Integer.valueOf(CARBON_DEFAULT_PORT)+portOffset;
+        int carbonPort = Integer.valueOf(CARBON_DEFAULT_PORT) + portOffset;
         String CARBON_PORT = String.valueOf(carbonPort);
 
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_DEFAULT_SSL_PORT = "8672";
-        int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT)+portOffset;
+        int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT) + portOffset;
         String CARBON_SSL_PORT = String.valueOf(carbonSslPort);
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
@@ -263,23 +282,27 @@ public class UIUtils {
         OMElement sslTrustStorePwd = sslNode.getFirstChildWithName(
                 new QName(QPID_CONF_SSL_TRUSTSTORE_PASSWORD));
 
-        String KEY_STORE_PATH= sslKeyStorePath.getText();
-        String TRUST_STORE_PATH= sslTrustStorePath.getText();
-        String SSL_KEYSTORE_PASSWORD=sslKeyStorePwd.getText();
-        String SSL_TRUSTSTORE_PASSWORD=sslTrustStorePwd.getText();
+        String KEY_STORE_PATH = sslKeyStorePath.getText();
+        String TRUST_STORE_PATH = sslTrustStorePath.getText();
+        String SSL_KEYSTORE_PASSWORD = sslKeyStorePwd.getText();
+        String SSL_TRUSTSTORE_PASSWORD = sslTrustStorePwd.getText();
 
         // as it is nt possible to obtain the password of for the given user, we use service generated access key
         // to authenticate the user
 
-        if(isSSLOnly()){
-        //"amqp://admin:admin@carbon/carbon?brokerlist='tcp://{hostname}:{port}?ssl='true'&trust_store='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path}'&key_store_password='{key_store_pwd}''";
+        if (isSSLOnly()) {
+            //"amqp://admin:admin@carbon/carbon?brokerlist='tcp://{hostname}:{port}?ssl='true'&trust_store
+            // ='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path
+            // }'&key_store_password='{key_store_pwd}''";
 
             return new StringBuffer()
                     .append("amqp://").append(userName).append(":").append(accessKey)
                     .append("@").append(CARBON_CLIENT_ID)
                     .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
-                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='").append(KEY_STORE_PATH)
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append
+                            (CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
+                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='")
+                    .append(KEY_STORE_PATH)
                     .append("'&key_store_password='").append(SSL_KEYSTORE_PASSWORD).append("''")
                     .toString();
         } else {
@@ -287,7 +310,8 @@ public class UIUtils {
                     .append("amqp://").append(userName).append(":").append(accessKey)
                     .append("@").append(CARBON_CLIENT_ID)
                     .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT).append("'")
+                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT)
+                    .append("'")
                     .toString();
         }
     }
@@ -313,7 +337,9 @@ public class UIUtils {
         return messageCount;
     }
 
-    public static void purgeQueue(String queuename, String username, String accesskey, Queue[] queueList) throws NamingException, JMSException, FileNotFoundException, XMLStreamException {
+    public static void purgeQueue(String queuename, String username, String accesskey,
+                                  Queue[] queueList) throws NamingException, JMSException, FileNotFoundException,
+            XMLStreamException {
         QueueReceiverClient qrClient;
         int purgedMessageCount;
         long currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
@@ -324,24 +350,24 @@ public class UIUtils {
             purgedMessageCount = qrClient.purgeQueue(queue);
             currentMsgCount = currentMsgCount - purgedMessageCount;
             qrClient.closeReceiver();
-            time_out ++;
+            time_out++;
 
         }
     }
 
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-            File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement connectorNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CONNECTOR_NODE));
-            OMElement sslNode = connectorNode.getFirstChildWithName(
-                    new QName(QPID_CONF_SSL_NODE));
-            OMElement sslOnlyNode = sslNode.getFirstChildWithName(
-                    new QName(QPID_CONF_SSL_ONLY_NODE));
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                getDocumentElement();
+        OMElement connectorNode = docRootNode.getFirstChildWithName(
+                new QName(QPID_CONF_CONNECTOR_NODE));
+        OMElement sslNode = connectorNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_NODE));
+        OMElement sslOnlyNode = sslNode.getFirstChildWithName(
+                new QName(QPID_CONF_SSL_ONLY_NODE));
 
-            boolean sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
+        boolean sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
 
         return sslOnly;
     }

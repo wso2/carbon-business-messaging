@@ -1,17 +1,19 @@
 /*
- *  Copyright (c) 2008, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
  */
 
 package org.wso2.carbon.andes.authentication.andes;
@@ -44,7 +46,7 @@ import java.util.Map;
 public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
     private static final String DOMAIN_NAME_SEPARATOR = "!";
-    
+
     private static final Logger logger = Logger.getLogger(CarbonBasedPrincipalDatabase.class);
     private Map<String, AuthenticationProviderInitialiser> saslServers;
 
@@ -59,11 +61,10 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
     }
 
     /**
-        * Get list of SASL mechanism objects. We only use PLAIN.
-        *
-        * @return
-        *           List of mechanism objects 
-        */
+     * Get list of SASL mechanism objects. We only use PLAIN.
+     *
+     * @return List of mechanism objects
+     */
     public Map<String, AuthenticationProviderInitialiser> getMechanisms() {
         return saslServers;
     }
@@ -78,13 +79,11 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
     }
 
     /**
-        * Create Principal instance for a valid user
-        *
-        * @param username
-        *               Principal username
-        * @return
-        *               Principal instance 
-        */
+     * Create Principal instance for a valid user
+     *
+     * @param username Principal username
+     * @return Principal instance
+     */
     public Principal getUser(String username) {
         Principal user = null;
 
@@ -95,7 +94,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 user = new UsernamePrincipal(username);
             }
         } catch (Exception e) {
-            logger.error("Error while retrieving RegistryService : " + e.getMessage());
+            logger.error("Error while retrieving RegistryService.", e);
         }
 
         return user;
@@ -119,15 +118,13 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
     }
 
     /**
-        * This method sets of a given principal is authenticated or not.
-        *
-        * @param principal
-        *               Principal to be authenticated
-        * @param passwordCallback
-        *               Callback to set if the user is authenticated or not. This also holds user's password.
-        * @throws IOException
-        * @throws AccountNotFoundException
-        */
+     * This method sets of a given principal is authenticated or not.
+     *
+     * @param principal        Principal to be authenticated
+     * @param passwordCallback Callback to set if the user is authenticated or not. This also holds user's password.
+     * @throws IOException
+     * @throws AccountNotFoundException
+     */
     public void setPassword(Principal principal, PasswordCallback passwordCallback)
             throws IOException, AccountNotFoundException {
         try {
@@ -137,7 +134,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
             // Given username/password
             String username = principal.getName();
-            String password = ((PlainPasswordCallback)passwordCallback).getPlainPassword();
+            String password = ((PlainPasswordCallback) passwordCallback).getPlainPassword();
             String domainName = null;
 
             boolean isAuthenticated = false;
@@ -156,7 +153,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 // Get username from tenant username
                 int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
                 if (-1 != domainNameSeparatorIndex) {
-                    domainName =  username.substring(domainNameSeparatorIndex + 1);
+                    domainName = username.substring(domainNameSeparatorIndex + 1);
                     username = username.substring(0, domainNameSeparatorIndex);
                 }
 
@@ -168,7 +165,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
                 // Check if the user is authenticated
                 isAuthenticated = userRealm.getUserStoreManager().authenticate(username, password);
-                if (isAuthenticated && -1 != domainNameSeparatorIndex ) {
+                if (isAuthenticated && -1 != domainNameSeparatorIndex) {
                     RealmService realmService = AuthenticationServiceDataHolder.getInstance().getRealmService();
                     int tenantID = realmService.getTenantManager().getTenantId(domainName);
                     PrivilegedCarbonContext.destroyCurrentContext();
@@ -179,11 +176,11 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
             }
 
             // Let the engine know if the user is authenticated or not
-            ((PlainPasswordCallback)passwordCallback).setAuthenticated(isAuthenticated);
+            ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);
         } catch (UserStoreException e) {
-            logger.error("User not authenticated : " + e.getMessage());
+            logger.error("User not authenticated.", e);
         } catch (NullPointerException e) {
-            logger.warn("Error while authenticating : " + e.getMessage());
+            logger.error("Error while authenticating.", e);
         }
     }
 
@@ -197,7 +194,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
         if (null != realmService) {
             try {
                 // Get tenant ID
-                int tenantID =  MultitenantConstants.SUPER_TENANT_ID;
+                int tenantID = MultitenantConstants.SUPER_TENANT_ID;
                 int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
                 PrivilegedCarbonContext.destroyCurrentContext();
                 PrivilegedCarbonContext cc = PrivilegedCarbonContext.getThreadLocalCarbonContext();
@@ -211,7 +208,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 // Get Realm
                 userRealm = realmService.getTenantUserRealm(tenantID);
             } catch (org.wso2.carbon.user.api.UserStoreException e) {
-                logger.warn("Error while getting tenant user realm for user " + username);
+                logger.error("Error while getting tenant user realm for user " + username, e);
             }
         }
 
