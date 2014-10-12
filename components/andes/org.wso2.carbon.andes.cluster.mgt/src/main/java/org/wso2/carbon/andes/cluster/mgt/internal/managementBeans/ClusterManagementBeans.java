@@ -32,41 +32,6 @@ import java.util.List;
 
 public class ClusterManagementBeans {
 
-    public String getZookeeperAddressAndPort() throws ClusterMgtException {
-        String result = "";
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation,name=127.0.0.1");
-            Object MBeanResultForPort = mBeanServer.getAttribute(objectName,
-                    ClusterMgtConstants.ZOOKEEPER_PORT_MBEAN_ATTRIB);
-            Object MBeanResultForAddress = mBeanServer.getAttribute(objectName,
-                    ClusterMgtConstants.ZOOKEEPER_ADDRESS_MBEAN_ATTRIB);
-            if (MBeanResultForPort != null && MBeanResultForAddress != null) {
-                int ZkPort = (Integer) MBeanResultForPort;
-                String ZkAddress = (String) MBeanResultForAddress;
-                result = ZkAddress + ":" + ZkPort;
-            }
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot find the MBean for Zookeeper Port and Address", e);
-        } catch (InstanceNotFoundException e) {
-            result = "Cannot receive information";
-            return result;
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot find the MBean for Zookeeper Port and Address", e);
-        } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot find the MBean for Zookeeper Port and Address", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot find the MBean for Zookeeper Port and Address", e);
-        }
-
-        return result;
-    }
-
-    public String getCassandraAddressAndPort() {
-        return "";
-    }
-
     public boolean isClusteringEnabled() throws ClusterMgtException {
         boolean isClustered = false;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -173,44 +138,6 @@ public class ClusterManagementBeans {
             throw new ClusterMgtException("Cannot get queues of cluster", e);
         } catch (MBeanException e) {
             throw new ClusterMgtException("Cannot get queues of cluster", e);
-        }
-    }
-
-    public ArrayList<NodeDetail> getNodesWithZookeeperID() throws ClusterMgtException {
-        ArrayList<NodeDetail> nodeDetailsList = new ArrayList<NodeDetail>();
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.ZOOKEEPER_NODES_MBEAN_ATTRIB);
-            if (result != null) {
-                List<Integer> ZkIDList = (List<Integer>) result;
-                for (Integer zKID : ZkIDList) {
-                    String zKIDString = Integer.toString(zKID);
-                    NodeDetail aNodeDetail = new NodeDetail();
-                    aNodeDetail.setZookeeperID(zKIDString);
-                    aNodeDetail.setHostName(zKIDString);
-                    aNodeDetail.setNumOfGlobalQueues(Utils.filterDomainSpecificQueues(getGlobalQueuesRunningInNode
-                            (zKIDString)).size());
-                    aNodeDetail.setIpAddress(getIPAddressForNode(zKID));
-                    //aNodeDetail.setNumOfTopics(getTopicList().size());
-                    nodeDetailsList.add(aNodeDetail);
-                }
-            }
-
-            return nodeDetailsList;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access Zookeeper nodes", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access Zookeeper nodes", e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access Zookeeper nodes", e);
-        } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access Zookeeper nodes", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access Zookeeper nodes", e);
         }
     }
 

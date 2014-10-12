@@ -29,7 +29,6 @@ import org.wso2.carbon.andes.mgt.stub.types.carbon.Queue;
 import org.wso2.carbon.andes.mgt.stub.types.carbon.Topic;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
  * This class is used to call MB Cluster Manager service from client side

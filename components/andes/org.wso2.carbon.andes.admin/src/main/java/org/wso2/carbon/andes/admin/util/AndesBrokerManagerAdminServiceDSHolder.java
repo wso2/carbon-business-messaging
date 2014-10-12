@@ -16,8 +16,6 @@
  *   under the License.
  */
 
-
-
 package org.wso2.carbon.andes.admin.util;
 
 import org.wso2.carbon.andes.core.QueueManagerService;

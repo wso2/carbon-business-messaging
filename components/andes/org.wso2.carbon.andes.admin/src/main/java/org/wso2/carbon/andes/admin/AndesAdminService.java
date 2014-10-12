@@ -54,7 +54,7 @@ public class AndesAdminService extends AbstractAdmin {
     public org.wso2.carbon.andes.admin.internal.Queue[] getAllQueues() throws BrokerManagerAdminException {
         List<org.wso2.carbon.andes.admin.internal.Queue> allQueues
                 = new ArrayList<org.wso2.carbon.andes.admin.internal.Queue>();
-        org.wso2.carbon.andes.admin.internal.Queue[] queuesDTO = null;
+        org.wso2.carbon.andes.admin.internal.Queue[] queuesDTO;
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -78,7 +78,7 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws BrokerManagerAdminException {
-        long messageCount = 0;
+        long messageCount;
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -168,7 +168,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     public Subscription[] getAllSubscriptions() throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO = null;
+        Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -200,7 +200,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     public Subscription[] getAllDurableQueueSubscriptions() throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO = null;
+        Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -233,7 +233,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     public Subscription[] getAllLocalTempQueueSubscriptions() throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO = null;
+        Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -265,7 +265,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     public Subscription[] getAllDurableTopicSubscriptions() throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO = null;
+        Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -298,7 +298,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     public Subscription[] getAllLocalTempTopicSubscriptions() throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO = null;
+        Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -474,7 +474,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @param deliveryMode     - Delivery mode
      * @param priority         - Message priority
      * @param expireTime       - Message expire time
-     * @return
+     * @return true if send message successful and false otherwise
      * @throws BrokerManagerAdminException
      */
     public boolean sendMessage(String queueName, String jmsType, String jmsCorrelationID, int numberOfMessages,
@@ -493,12 +493,11 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     public String getAccessKey() {
-        String accessKey = AndesBrokerManagerAdminServiceDSHolder.getInstance().getAccessKey();
-        return accessKey;
+        return AndesBrokerManagerAdminServiceDSHolder.getInstance().getAccessKey();
     }
 
     private String getCurrentUser() {
-        String userName = "";
+        String userName;
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != 0) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
                     + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();

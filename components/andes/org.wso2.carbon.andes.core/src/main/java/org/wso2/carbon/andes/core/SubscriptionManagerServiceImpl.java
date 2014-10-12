@@ -22,7 +22,6 @@ import org.wso2.carbon.andes.core.internal.registry.SubscriptionManagementBeans;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Subscription;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SubscriptionManagerServiceImpl implements SubscriptionManagerService {

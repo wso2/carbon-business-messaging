@@ -61,13 +61,12 @@ public class QueueReceiverClient {
     }
 
     public int purgeQueue(Queue queue) throws JMSException {
-        Message message;
         int messageCount = 0;
-        while ((message = queueConsumer.receive(10000)) != null) {
+        while (queueConsumer.receive(10000) != null) {
             messageCount++;
         }
-        log.info("Executed purge queue operation for the queue: " + queue.getQueueName() + " and removed " +
-                messageCount + " messages");
+        log.info("Executed purge queue operation for the queue: " + queue.getQueueName() +
+                " and removed " + messageCount + " messages");
         return messageCount;
     }
 

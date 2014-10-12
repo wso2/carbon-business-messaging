@@ -198,7 +198,7 @@ public class UIUtils {
         Object[] messageArray;
         int resultSetSize = maxMsgCount;
 
-        ArrayList resultList = new ArrayList();
+        ArrayList<Object> resultList = new ArrayList<Object>();
         for (Object aMsg : msgArrayList) {
             resultList.add(aMsg);
         }
@@ -295,24 +295,15 @@ public class UIUtils {
             // ='{trust_store_path}'&trust_store_password='{trust_store_pwd}'&key_store='{keystore_path
             // }'&key_store_password='{key_store_pwd}''";
 
-            return new StringBuffer()
-                    .append("amqp://").append(userName).append(":").append(accessKey)
-                    .append("@").append(CARBON_CLIENT_ID)
-                    .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append
-                            (CARBON_SSL_PORT).append("?ssl='true'&trust_store='").append(TRUST_STORE_PATH)
-                    .append("'&trust_store_password='").append(SSL_TRUSTSTORE_PASSWORD).append("'&key_store='")
-                    .append(KEY_STORE_PATH)
-                    .append("'&key_store_password='").append(SSL_KEYSTORE_PASSWORD).append("''")
-                    .toString();
+            return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + TRUST_STORE_PATH +
+                    "'&trust_store_password='" + SSL_TRUSTSTORE_PASSWORD + "'&key_store='" +
+                    KEY_STORE_PATH + "'&key_store_password='" + SSL_KEYSTORE_PASSWORD + "''";
         } else {
-            return new StringBuffer()
-                    .append("amqp://").append(userName).append(":").append(accessKey)
-                    .append("@").append(CARBON_CLIENT_ID)
-                    .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                    .append("?brokerlist='tcp://").append(CARBON_DEFAULT_HOSTNAME).append(":").append(CARBON_PORT)
-                    .append("'")
-                    .toString();
+            return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_PORT + "'";
         }
     }
 
@@ -367,8 +358,6 @@ public class UIUtils {
         OMElement sslOnlyNode = sslNode.getFirstChildWithName(
                 new QName(QPID_CONF_SSL_ONLY_NODE));
 
-        boolean sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
-
-        return sslOnly;
+        return Boolean.parseBoolean(sslOnlyNode.getText());
     }
 }
