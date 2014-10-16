@@ -80,12 +80,6 @@ import java.util.Set;
  * policy="dynamic"
  * bind="setEventBundleNotificationService"
  * unbind="unsetEventBundleNotificationService"
- * @scr.reference name="cassandra.service"
- * interface="org.wso2.carbon.cassandra.server.service.CassandraServerService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setCassandraServerService"
- * unbind="unsetCassandraServerService"
  * @scr.reference name="hazelcast.instance.service"
  * interface="com.hazelcast.core.HazelcastInstance"
  * cardinality="0..1"
@@ -103,9 +97,9 @@ public class QpidServiceComponent {
     private static final Log log = LogFactory.getLog(QpidServiceComponent.class);
 
     private static final int CASSANDRA_THRIFT_PORT = 9160;
-    private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
-    private static String CARBON_CONFIG_HOST_NAME = "HostName";
-    private static int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+    private static final String CARBON_CONFIG_HOST_NAME = "HostName";
+    private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
     private ComponentContext componentContext;
 
     private ServiceRegistration qpidService = null;
@@ -191,18 +185,6 @@ public class QpidServiceComponent {
         // unsetting
     }
 
-
-    protected void setCassandraServerService(CassandraServerService cassandraServerService) {
-        if (QpidServiceDataHolder.getInstance().getCassandraServerService() == null) {
-            QpidServiceDataHolder.getInstance().registerCassandraServerService(cassandraServerService);
-        }
-    }
-
-    protected void unsetCassandraServerService(CassandraServerService cassandraServerService) {
-
-
-    }
-
     /**
      * Access Hazelcast Instance, which is exposed as an OSGI service.
      *
@@ -261,30 +243,6 @@ public class QpidServiceComponent {
         }
 
         return response;
-    }
-
-    private boolean isCassandraStarted() {
-        Socket socket = null;
-        boolean status = false;
-        try {
-            int listenPort = CASSANDRA_THRIFT_PORT + readPortOffset();
-            socket = new Socket(InetAddress.getByName(getCarbonHostName()), listenPort);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("Unexpected Error while Checking for Cassandra Startup", e);
-        } catch (IOException e) {
-            log.error("Error occurred while creating the socket to check if cassandra is running.", e);
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    log.error("Error occurred while closing the socket.", e);
-                }
-                status = true;
-            }
-        }
-        log.debug("Checking for Cassandra server started status - status :" + status);
-        return status;
     }
 
     private int readPortOffset() {

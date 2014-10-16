@@ -49,27 +49,27 @@ public class RegistryClient {
     private static final String CREATED_FROM = "createdFrom";
     private static final String CREATED_FROM_AMQP = "amqp";
     private static final String USER_COUNT = "userCount";
-    
+
     /**
-        * Create an entry for a queue in the Registry
-        *
-        * @param queueName
-        *               Name of the queue
-        * @param owner
-        *               Who creates the queue
-        * @throws RegistryClientException
-        */
+     * Create an entry for a queue in the Registry
+     *
+     * @param queueName Name of the queue
+     * @param owner     Who creates the queue
+     * @throws RegistryClientException
+     */
     public static void createQueue(String queueName, String owner)
             throws RegistryClientException {
         try {
 
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
-            UserRegistry registry =
-                    registryService.getGovernanceSystemRegistry(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() <=0 ?
-                            MultitenantConstants.SUPER_TENANT_ID:PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+            UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID :
+                            PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId()
+            );
 
             // Set queue properties
-            Collection queue = null;
+            Collection queue;
             String queueID = CommonsUtil.getQueueID(queueName);
 
             if (!registry.resourceExists(queueID)) { // Create queue
@@ -84,7 +84,7 @@ public class RegistryClient {
                 queue.setProperty(CREATED_FROM, CREATED_FROM_AMQP);
                 queue.setProperty(USER_COUNT, "1");
             } else { // Share queue
-                queue = (Collection)registry.get(queueID);
+                queue = (Collection) registry.get(queueID);
 
                 queue.setProperty(UPDATED_TIME, ConverterUtil.convertToString(
                         Calendar.getInstance()));
@@ -103,12 +103,11 @@ public class RegistryClient {
     }
 
     /**
-        * Delete the entry for a queue from the Registry
-        *
-        * @param queueName
-        *               Name of the queue to be deleted
-        * @throws RegistryClientException
-        */
+     * Delete the entry for a queue from the Registry
+     *
+     * @param queueName Name of the queue to be deleted
+     * @throws RegistryClientException
+     */
     public static void deleteQueue(String queueName)
             throws RegistryClientException {
         try {
@@ -146,30 +145,32 @@ public class RegistryClient {
     }
 
     /**
-        * Get queues saved in the Registry
-        *
-        * @return
-        *               Array of queues
-        * @throws RegistryClientException
-        */
+     * Get queues saved in the Registry
+     *
+     * @return Array of queues
+     * @throws RegistryClientException
+     */
     public static QueueDetails[] getQueues()
             throws RegistryClientException {
         try {
             QueueDetails[] queueDetailsArray = new QueueDetails[0];
 
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
-            UserRegistry registry = registryService.getGovernanceSystemRegistry(CarbonContext.getThreadLocalCarbonContext().getTenantId() <=0 ?
-                            MultitenantConstants.SUPER_TENANT_ID:CarbonContext.getThreadLocalCarbonContext().getTenantId());
+            UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                    CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID :
+                            CarbonContext.getThreadLocalCarbonContext().getTenantId()
+            );
 
             // Get queues
             String queuesID = CommonsUtil.getQueuesID();
             if (registry.resourceExists(queuesID)) {
-                Collection queueCollection = (Collection)registry.get(queuesID);
+                Collection queueCollection = (Collection) registry.get(queuesID);
                 queueDetailsArray = new QueueDetails[queueCollection.getChildCount()];
 
                 int index = 0;
                 for (String queueId : queueCollection.getChildren()) {
-                    Collection queue = (Collection)registry.get(queueId);
+                    Collection queue = (Collection) registry.get(queueId);
 
                     QueueDetails queueDetails = new QueueDetails();
                     queueDetails.setName(queue.getProperty(NAME));
@@ -187,16 +188,13 @@ public class RegistryClient {
     }
 
     /**
-        * Create an entry for a topic subscription in the Registry
-        *
-        * @param topic
-        *               Topic name
-        * @param subscriptionName
-        *               Queue name used for the subscription  
-        * @param owner
-        *               Who creates the subscription
-        * @throws RegistryClientException
-        */
+     * Create an entry for a topic subscription in the Registry
+     *
+     * @param topic            Topic name
+     * @param subscriptionName Queue name used for the subscription
+     * @param owner            Who creates the subscription
+     * @throws RegistryClientException
+     */
     public static void createSubscription(
             String topic, String subscriptionName, String owner)
             throws RegistryClientException {
@@ -204,12 +202,15 @@ public class RegistryClient {
 
 
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
-            UserRegistry registry = registryService.getGovernanceSystemRegistry(CarbonContext.getThreadLocalCarbonContext().getTenantId() <=0 ?
-                            MultitenantConstants.SUPER_TENANT_ID:CarbonContext.getThreadLocalCarbonContext().getTenantId());
+            UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                    CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID :
+                            CarbonContext.getThreadLocalCarbonContext().getTenantId()
+            );
 
             // Add new subscription and set properties
-            Collection subscription = null;
-            String tenantBasedTopicName =  getTenantBasedTopicName(topic);
+            Collection subscription;
+            String tenantBasedTopicName = getTenantBasedTopicName(topic);
             String subscriptionID = CommonsUtil.getSubscriptionID(tenantBasedTopicName, subscriptionName);
 
             if (!registry.resourceExists(subscriptionID)) {
@@ -231,10 +232,11 @@ public class RegistryClient {
     public static String getTenantBasedTopicName(String topicName) {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String tenantBasedTopicName = topicName;
-        if (tenantDomain != null && (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
-            String formattedTenantDomain =  tenantDomain + "/";
-            if(topicName.contains(formattedTenantDomain)){
-               tenantBasedTopicName =  topicName.substring(formattedTenantDomain.length());
+        if (tenantDomain != null && (!tenantDomain.equals(
+                org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
+            String formattedTenantDomain = tenantDomain + "/";
+            if (topicName.contains(formattedTenantDomain)) {
+                tenantBasedTopicName = topicName.substring(formattedTenantDomain.length());
             }
         }
         return tenantBasedTopicName;
@@ -242,21 +244,22 @@ public class RegistryClient {
 
 
     /**
-        * Delete the entry for a subscription from the Registry
-        *
-        * @param topic
-        *               Name of the topic that the subscription is made to
-        * @param subscriptionName
-        *               Name of the queue used for the subscription
-        * @throws RegistryClientException
-        */
+     * Delete the entry for a subscription from the Registry
+     *
+     * @param topic            Name of the topic that the subscription is made to
+     * @param subscriptionName Name of the queue used for the subscription
+     * @throws RegistryClientException
+     */
     public static void deleteSubscription(String topic, String subscriptionName)
             throws RegistryClientException {
         try {
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
             if (registryService != null) {
-                UserRegistry registry = registryService.getGovernanceSystemRegistry(CarbonContext.getThreadLocalCarbonContext().getTenantId() <=0 ?
-                            MultitenantConstants.SUPER_TENANT_ID:CarbonContext.getThreadLocalCarbonContext().getTenantId());
+                UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                        CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                                MultitenantConstants.SUPER_TENANT_ID :
+                                CarbonContext.getThreadLocalCarbonContext().getTenantId()
+                );
 
                 // Delete subscription
                 String subscriptionID = CommonsUtil.getSubscriptionID(topic, subscriptionName);
@@ -270,34 +273,34 @@ public class RegistryClient {
     }
 
     /**
-        * Get subscriptions saved in the Registry
-        *
-        * @param topic
-        *               Name of the topic
-        * @return
-        *               Array of subscriptions 
-        * @throws RegistryClientException
-        */
+     * Get subscriptions saved in the Registry
+     *
+     * @param topic Name of the topic
+     * @return Array of subscriptions
+     * @throws RegistryClientException
+     */
     public static SubscriptionDetails[] getSubscriptions(String topic)
             throws RegistryClientException {
         try {
             SubscriptionDetails[] subscriptionDetailsArray = new SubscriptionDetails[0];
 
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
-            UserRegistry registry =
-                    registryService.getGovernanceSystemRegistry(CarbonContext.getThreadLocalCarbonContext().getTenantId() <=0 ?
-                            MultitenantConstants.SUPER_TENANT_ID:CarbonContext.getThreadLocalCarbonContext().getTenantId());
+            UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                    CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID :
+                            CarbonContext.getThreadLocalCarbonContext().getTenantId()
+            );
 
             // Get subscriptions
             String subscriptionsID = CommonsUtil.getSubscriptonsID(topic);
             if (registry.resourceExists(subscriptionsID)) {
-                Collection subscriptionCollection = (Collection)registry.get(subscriptionsID);
+                Collection subscriptionCollection = (Collection) registry.get(subscriptionsID);
                 subscriptionDetailsArray =
                         new SubscriptionDetails[subscriptionCollection.getChildCount()];
 
                 int index = 0;
                 for (String subs : subscriptionCollection.getChildren()) {
-                    Collection subscription = (Collection)registry.get(subs);
+                    Collection subscription = (Collection) registry.get(subs);
 
                     SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
                     subscriptionDetails.setName(subscription.getProperty(NAME));

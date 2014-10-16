@@ -56,8 +56,7 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
             FACTORY = new SecurityPluginFactory<QpidAuthorizationPlugin>() {
         public QpidAuthorizationPlugin newInstance(ConfigurationPlugin config)
                 throws ConfigurationException {
-            QpidAuthorizationPlugin plugin = new QpidAuthorizationPlugin();
-            return plugin;
+            return new QpidAuthorizationPlugin();
         }
 
         public String getPluginName() {
@@ -91,8 +90,8 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
             if (objectType == ObjectType.VIRTUALHOST) {
                 return Result.ALLOWED;
             }
-        } catch (Exception ignore) {
-            // Do nothing
+        } catch (Exception e) {
+            logger.error("Authorising access to broker failed.", e);
         }
 
         return Result.DENIED;
@@ -127,7 +126,7 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
             // Get User Realm
             UserRealm userRealm = getUserRealm(username);
 
-            if (username.indexOf(DOMAIN_NAME_SEPARATOR) > -1) {
+            if (username.contains(DOMAIN_NAME_SEPARATOR)) {
                 String tenantDomain = username.substring(username.indexOf(DOMAIN_NAME_SEPARATOR) + 1);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
@@ -188,7 +187,6 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
             try {
                 // Get tenant ID
                 int tenantID = MultitenantConstants.SUPER_TENANT_ID;
-                ;
                 int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
                 if (-1 != domainNameSeparatorIndex) { // Service case
                     String domainName = username.substring(domainNameSeparatorIndex + 1);

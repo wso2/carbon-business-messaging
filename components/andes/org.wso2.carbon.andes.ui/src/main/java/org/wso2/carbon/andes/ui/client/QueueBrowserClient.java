@@ -97,7 +97,7 @@ public class QueueBrowserClient {
         if (propertiesEnu != null) {
             while (propertiesEnu.hasMoreElements()) {
                 String propName = (String) propertiesEnu.nextElement();
-                sb.append(propName + " = " + queueMessage.getStringProperty(propName));
+                sb.append(propName).append(" = ").append(queueMessage.getStringProperty(propName));
                 sb.append(", ");
             }
         }
@@ -166,7 +166,8 @@ public class QueueBrowserClient {
             while (mapEnu.hasMoreElements()) {
                 String mapName = (String) mapEnu.nextElement();
                 String mapVal = mapMessage.getObject(mapName).toString();
-                wholeMsg = StringEscapeUtils.escapeHtml(sb.append(mapName + ": " + mapVal + ", ").toString()).trim();
+                wholeMsg = StringEscapeUtils.escapeHtml(sb.append(mapName).append(": ")
+                        .append(mapVal).append(", ").toString()).trim();
 
             }
             if (wholeMsg.length() >= 15) {
@@ -191,7 +192,7 @@ public class QueueBrowserClient {
 
             int index = ((BytesMessage) queueMessage).readBytes(byteMsgArr);
             for (int i = 0; i < index; i++) {
-                wholeMsg = sb.append(byteMsgArr[i] + " ").toString().trim();
+                wholeMsg = sb.append(byteMsgArr[i]).append(" ").toString().trim();
             }
 
             if (wholeMsg.length() >= 15) {

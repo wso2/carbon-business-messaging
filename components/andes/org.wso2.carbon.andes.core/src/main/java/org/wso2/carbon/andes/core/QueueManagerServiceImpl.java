@@ -20,7 +20,6 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.AMQException;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
@@ -38,7 +37,6 @@ import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
-import org.wso2.carbon.user.core.Permission;
 import org.wso2.carbon.user.core.authorization.TreeNode;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
@@ -77,7 +75,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         try {
             String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
             String userName = getLoggedInUserName();
-            if (!QueueManagementBeans.getInstance().queueExists(tenantBasedQueueName)) {
+            if (!QueueManagementBeans.queueExists(tenantBasedQueueName)) {
                 RegistryClient.createQueue(tenantBasedQueueName, userName);
                 QueueManagementBeans.getInstance().createQueue(tenantBasedQueueName, userName);
 
@@ -105,8 +103,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 //
                 // the error message.
                 // Queue exists in the system.
-                throw new QueueManagerException("Queue with the name: " + queueName + " already exists!",
-                        new RuntimeException("Queue with the name: " + queueName + " already exists!"));
+                throw new QueueManagerException("Queue with the name: " + queueName + " already exists!");
             }
         } catch (UserStoreException e) {
             throw new QueueManagerException("Error in creating the queue : " + queueName, e);
@@ -164,7 +161,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         try {
             UserRegistry userRegistry = Utils.getUserRegistry();
             String resourcePath = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" + queueName;
-            if (QueueManagementBeans.getInstance().queueExists(queueName)) {
+            if (QueueManagementBeans.queueExists(queueName)) {
                 QueueManagementBeans.getInstance().deleteQueue(queueName);
                 userRegistry.delete(resourcePath);
             }
@@ -179,7 +176,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      *
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
@@ -192,7 +189,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param destination         The new destination queue for the messages in the same tenant
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination,
                                                                            String deadLetterQueueName) throws
@@ -206,7 +203,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      *
      * @param messageIDs          Browser Message Id / External Message Id list to be deleted
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
@@ -218,7 +215,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException {
-        long messageCount = 0;
+        long messageCount;
         messageCount = QueueManagementBeans.getInstance().getMessageCount(queueName, msgPattern);
         return messageCount;
     }
@@ -227,7 +224,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissions) throws
             QueueManagerException {
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
-        if (QueueManagementBeans.getInstance().queueExists(tenantBasedQueueName)) {
+        if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
             String queueID = CommonsUtil.getQueueID(queueName);
             UserRealm userRealm;
             String role;
@@ -293,7 +290,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                         adminRoleExistInAllRoles = true;
                     }
                 }
-                if (allRoles != null && allRoles.length > 1) {
+                if (allRoles.length > 1) {
                     if (adminRoleExistInAllRoles) {
                         rolesExceptAdminRole = new String[allRoles.length - 1];
                     } else {
@@ -330,7 +327,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     @Override
     public QueueRolePermission[] getQueueRolePermission(String queueName) throws QueueManagerException {
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
-        if (QueueManagementBeans.getInstance().queueExists(tenantBasedQueueName)) {
+        if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
             queueName = CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
                     queueName : queueName.replace(CarbonContext.getThreadLocalCarbonContext().getTenantDomain() +
                     "/", "");
@@ -361,8 +358,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 throw new QueueManagerException("Unable to retrieve permission of the queue.", e);
             }
         } else {
-            throw new QueueManagerException("Queue with the name: " + queueName + " not already exists!",
-                    new RuntimeException("Queue with the name: " + queueName + " not already exists!"));
+            throw new QueueManagerException("Queue with the name: " + queueName + " not already " +
+                    "exists!");
         }
     }
 
@@ -405,7 +402,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                             Destination destination = queueMessage.getJMSDestination();
                             if (destination != null && destination.toString().contains("routingkey=")) {
                                 String[] word = destination.toString().split("routingkey=");
-                                if (word != null && word.length > 0) {
+                                if (word.length > 0) {
                                     msg.setDlcMsgDestination(word[1]);
                                 }
                             }
@@ -413,8 +410,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                         }
                     }
                 } else {
-                    throw new QueueManagerException("Please increase the messageBatchSizeForBrowserSubscriptions in " +
-                            "andes-config.xml");
+                    throw new QueueManagerException("Please increase the " +
+                            "messageBatchSizeForBrowserSubscriptions in andes-config.xml");
                 }
             }
         } catch (NamingException e) {
@@ -428,10 +425,18 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         } finally {
             try {
                 queueConnection.close();
+            } catch (JMSException e) {
+                log.error("Unable to close queue connection", e);
+            }
+            try {
                 queueSession.close();
+            } catch (JMSException e) {
+                log.error("Unable to close queue session", e);
+            }
+            try {
                 queueBrowser.close();
-            } catch (Exception e) {
-                throw new QueueManagerException("Unable to browse queue.", e);
+            } catch (JMSException e) {
+                log.error("Unable to close queue browser", e);
             }
         }
         return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
@@ -439,8 +444,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
 
     @Override
     public long getTotalMessagesInQueue(String nameOfQueue) throws QueueManagerException {
-        long messageCount = QueueManagementBeans.getInstance().getMessageCount(nameOfQueue, "queue");
-        return messageCount;
+        return QueueManagementBeans.getInstance().getMessageCount(nameOfQueue, "queue");
     }
 
     @Override
@@ -482,10 +486,18 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         } finally {
             try {
                 queueConnection.close();
+            } catch (JMSException e) {
+                log.error("Unable to close queue connection", e);
+            }
+            try {
                 queueSession.close();
+            } catch (JMSException e) {
+                log.error("Unable to close queue session", e);
+            }
+            try {
                 queueSender.close();
-            } catch (Exception e) {
-                throw new QueueManagerException("Unable to send message.", e);
+            } catch (JMSException e) {
+                log.error("Unable to close queue sender", e);
             }
         }
     }
@@ -516,7 +528,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     private static String getLoggedInUserName() {
-        String userName = "";
+        String userName;
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != MultitenantConstants.SUPER_TENANT_ID) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
                     + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();

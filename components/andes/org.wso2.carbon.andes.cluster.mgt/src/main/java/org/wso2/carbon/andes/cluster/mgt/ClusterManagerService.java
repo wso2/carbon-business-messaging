@@ -21,7 +21,6 @@ package org.wso2.carbon.andes.cluster.mgt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.cluster.mgt.internal.ClusterManagementDataHolder;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
 import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 import org.wso2.carbon.andes.cluster.mgt.internal.managementBeans.ClusterManagementBeans;
@@ -36,74 +35,6 @@ public class ClusterManagerService {
 
 
     private static final Log log = LogFactory.getLog(ClusterManagerService.class);
-
-    /**
-     * @return number of available nodes in the cluster
-     */
-    public int getNumOfNodes() throws ClusterMgtAdminException {
-        try {
-            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<NodeDetail> nodeDetailList = clusterManagementBeans.getNodesWithZookeeperID();
-            return nodeDetailList.size();
-        } catch (ClusterMgtException e) {
-            throw new ClusterMgtAdminException("cannot access MBean information for node detail");
-        }
-    }
-
-    /**
-     * gives queues whose queue manager runs on the given node
-     *
-     * @param hostName
-     * @param startingIndex
-     * @param maxQueueCount
-     * @return Array of Queues
-     * @throws ClusterMgtAdminException
-     */
-    public Queue[] getAllGlobalQueuesForNode(String hostName, int startingIndex, int maxQueueCount)
-            throws ClusterMgtAdminException {
-
-        try {
-            Queue[] queueDetailsArray;
-            int resultSetSize = maxQueueCount;
-            ArrayList<Queue> resultList;
-
-            //get queues  whose queue manager runs on the given node
-            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<Queue> allGlobalQueuesRunningInNode = clusterManagementBeans.getGlobalQueuesRunningInNode
-                    (hostName);
-
-            //filter queues according to tenant
-            resultList = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(allGlobalQueuesRunningInNode);
-
-            if ((resultList.size() - startingIndex) < maxQueueCount) {
-                resultSetSize = (resultList.size() - startingIndex);
-            }
-            queueDetailsArray = new Queue[resultSetSize];
-            int index = 0;
-            int queueDetailsIndex = 0;
-            for (Queue queueDetail : resultList) {
-                if (startingIndex == index || startingIndex < index) {
-                    queueDetailsArray[queueDetailsIndex] = new Queue();
-
-                    queueDetailsArray[queueDetailsIndex].setQueueName(queueDetail.getQueueName());
-                    queueDetailsArray[queueDetailsIndex].setMessageCount(queueDetail.getMessageCount());
-
-                    queueDetailsIndex++;
-                    if (queueDetailsIndex == maxQueueCount) {
-                        break;
-                    }
-
-                }
-
-                index++;
-            }
-
-            return queueDetailsArray;
-
-        } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
-        }
-    }
 
     public Queue[] getAllDestinationQueuesDetailForNode(String hostName, int startingIndex, int maxQueueCount)
             throws ClusterMgtAdminException {
@@ -210,64 +141,6 @@ public class ClusterManagerService {
 
         } catch (Exception e) {
             throw new ClusterMgtAdminException("Can not access MBean information for topics.", e);
-        }
-    }
-
-    /**
-     * gives complete nodes list
-     *
-     * @param startingIndex
-     * @param maxNodesCount
-     * @return Array of nodes
-     */
-    public NodeDetail[] getAllNodeDetail(int startingIndex, int maxNodesCount) throws ClusterMgtAdminException {
-
-        try {
-            NodeDetail[] nodeDetailArray;
-            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            ArrayList<NodeDetail> nodeDetailList = clusterManagementBeans.getNodesWithZookeeperID();
-            int resultSetSize = maxNodesCount;
-            if ((nodeDetailList.size() - startingIndex) < maxNodesCount) {
-                resultSetSize = (nodeDetailList.size() - startingIndex);
-            }
-            nodeDetailArray = new NodeDetail[resultSetSize];
-            int index = 0;
-            int nodeDetailsIndex = 0;
-            for (NodeDetail nodeDetail : nodeDetailList) {
-                if (startingIndex == index || startingIndex < index) {
-                    nodeDetailArray[nodeDetailsIndex] = new NodeDetail();
-
-                    nodeDetailArray[nodeDetailsIndex].setNodeId(nodeDetail.getNodeId());
-                    nodeDetailArray[nodeDetailsIndex].setZookeeperID(nodeDetail.getZookeeperID());
-                    nodeDetailArray[nodeDetailsIndex].setHostName(nodeDetail.getHostName());
-                    nodeDetailArray[nodeDetailsIndex].setIpAddress(nodeDetail.getIpAddress());
-
-                    //to remove
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastFiveMin(nodeDetail
-                            .getMessagesReceivedLastFiveMin());
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHalfMin(nodeDetail
-                            .getMessagesReceivedLastHalfMin());
-                    nodeDetailArray[nodeDetailsIndex].setMessagesReceivedLastHour(nodeDetail
-                            .getMessagesReceivedLastHour());
-
-                    nodeDetailArray[nodeDetailsIndex].setMemoryUsage(nodeDetail.getMemoryUsage());
-                    nodeDetailArray[nodeDetailsIndex].setNumOfGlobalQueues(nodeDetail.getNumOfGlobalQueues());
-                    nodeDetailArray[nodeDetailsIndex].setNumOfTopics(nodeDetail.getNumOfTopics());
-
-
-                    nodeDetailsIndex++;
-                    if (nodeDetailsIndex == maxNodesCount) {
-                        break;
-                    }
-
-                }
-
-                index++;
-            }
-
-            return nodeDetailArray;
-        } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not access MBean information for nodes.", e);
         }
     }
 

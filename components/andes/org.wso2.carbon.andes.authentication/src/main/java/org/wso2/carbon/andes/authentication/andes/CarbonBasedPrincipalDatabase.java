@@ -42,7 +42,6 @@ import java.util.Map;
 /**
  * Carbon-based principal database for Apache Qpid. This uses Carbon user manager to handle authentication
  */
-
 public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
     private static final String DOMAIN_NAME_SEPARATOR = "!";

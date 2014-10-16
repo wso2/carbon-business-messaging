@@ -44,17 +44,17 @@ public class QpidAuthorizationHandler {
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
     private static final String ADMIN_ROLE = "admin";
     private static final String AT_REPLACE_CHAR = "_";
-    public static final String UI_EXECUTE = "ui.execute";
-    private static String ROLE_EVERY_ONE = "everyone";
-    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/addQueue";
-    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE_QUEUE =
+    private static final String UI_EXECUTE = "ui.execute";
+    private static final String ROLE_EVERY_ONE = "everyone";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/addQueue";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE_QUEUE =
             "/permission/admin/manage/queue/browseQueue";
-    public static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE =
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE =
             "/permission/admin/manage/queue/deleteQueue";
-    public static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC = "/permission/admin/manage/topic/addTopic";
-    public static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC =
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC = "/permission/admin/manage/topic/addTopic";
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC =
             "/permission/admin/manage/topic/deleteTopic";
-    public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
+    private static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
 
     /**
      * Handle creating queue
@@ -307,7 +307,7 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling publishe to exchange.", e);
+            throw new QpidAuthorizationHandlerException("Error handling publish to exchange.", e);
         }
 
         return Result.DENIED;
@@ -329,7 +329,7 @@ public class QpidAuthorizationHandler {
             String newQName = queueName.replace("@", AT_REPLACE_CHAR);
             if (TOPIC_EXCHANGE.equals(exchangeName)) {
                 // Delete subscription details
-                RegistryClient.deleteSubscription(routingKey, queueName);
+                RegistryClient.deleteSubscription(newRoutingKey, newQName);
             }
 
             return Result.ALLOWED;
@@ -358,7 +358,7 @@ public class QpidAuthorizationHandler {
                 // Delete queue details
 
                 String newQName = queueName.replace("@", AT_REPLACE_CHAR);
-                RegistryClient.deleteQueue(queueName);
+                RegistryClient.deleteQueue(newQName);
 
                 return Result.ALLOWED;
             }
@@ -378,7 +378,7 @@ public class QpidAuthorizationHandler {
      * @return Raw queue name
      */
     private static String getRawQueueName(String queueName) {
-        if (queueName.indexOf(";") > -1) {
+        if (queueName.contains(";")) {
             queueName = queueName.substring(0, queueName.indexOf(";"));
         }
         return queueName.substring(queueName.indexOf(":") + 1, queueName.length());
@@ -423,12 +423,12 @@ public class QpidAuthorizationHandler {
     }
 
     /**
-     * Check whether a queue/topic belongs to given domain in order to avoid other tenant domains' users operate on
-     * the given queue/topic
+     * Check whether a queue/topic belongs to given domain in order to avoid other tenant domains'
+     * users operate on the given queue/topic
      *
      * @param tenantDomain - domain name of tenant
      * @param routingKey   - queue/topic name to be verified against tenantDomain
-     * @return
+     * @return true if queue/topic belongs to given domain and false otherwise
      */
     private static boolean isOwnDomain(String tenantDomain, String routingKey) {
         boolean isOwnDomain = false;
@@ -457,7 +457,7 @@ public class QpidAuthorizationHandler {
      * whether a queue is such kind of one.
      *
      * @param queueName - topic subscriber's queue
-     * @return
+     * @return true if queue is a temporary queue for topics. false otherwise
      */
     private static boolean isTopicSubscriberQueue(String queueName) {
         return queueName.startsWith("tmp_");

@@ -65,8 +65,6 @@ public class QpidServiceImpl implements QpidService {
     private static final String QPID_CONF_PORT_NODE = "port";
     private static final String QPID_CONF_SSL_PORT_NODE = "sslport";
     private static final String QPID_CONF_CLUSTER_NODE = "clustering";
-    private static final String QPID_CONF_EXTERNAL_CASSANDRA_SERVER = "externalCassandraServerRequired";
-    private static final String QPID_CONF_EXTERNAL_ZOOKEEPER_SERVER = "externalZookeeperServerRequired";
 
     private static String CARBON_CONFIG_QPID_PORT_NODE = "Ports.EmbeddedQpid.BrokerPort";
     private static String CARBON_CONFIG_QPID_SSL_PORT_NODE = "Ports.EmbeddedQpid.BrokerSSLPort";
@@ -353,73 +351,6 @@ public class QpidServiceImpl implements QpidService {
         }
 
         return ((port != null) ? port.trim() : "");
-    }
-
-    /**
-     * Read port from andes-config.xml
-     *
-     * @return
-     */
-    private boolean readExternalZookeeperServerRequiredStatusFromQpidConfig() {
-        String required = "";
-
-        try {
-            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement statusNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_EXTERNAL_ZOOKEEPER_SERVER));
-            if (statusNode == null) {
-                return false;
-            }
-            required = statusNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
-        }
-
-        if ("true".equals(required)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean readCassandraServerRequirementStatusFromQpidConfig() {
-        String required = "";
-
-        try {
-            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement statusNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_EXTERNAL_CASSANDRA_SERVER));
-            if (statusNode == null) {
-                return false;
-            }
-            required = statusNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
-        }
-
-        if ("true".equals(required)) {
-            return true;
-        }
-
-        return false;
     }
 
     private String readSSLPortFromConfig() {
