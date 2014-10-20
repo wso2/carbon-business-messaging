@@ -28,7 +28,8 @@
     String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
 
     ClusterManagerClient client;
-    Queue[] queueList;
+    Queue[] globalQueueList;
+    Queue[] destinationQueueList;
     String requestedHostName = request.getParameter("hostName");
     String IPAddressOfHost = request.getParameter("IPAddress");
     boolean isClusteringEnabled = Boolean.parseBoolean(request.getParameter("isClusteringEnabled"));
@@ -46,9 +47,10 @@
 
     try {
         client = new ClusterManagerClient(configContext, serverURL, cookie);
-        totalQueueCount = client.updateQueueCountForNode(requestedHostName);
+        totalQueueCount = client.updateQueueCountForNode();
         numberOfPages = (int) Math.ceil(((float) totalQueueCount) / queueCountPerPage);
-        queueList = client.getQueuesOfNode(requestedHostName, pageNumber * queueCountPerPage, queueCountPerPage);
+        globalQueueList = client.getGlobalQueuesOfNode(requestedHostName, pageNumber * queueCountPerPage, queueCountPerPage);
+        destinationQueueList = client.getDestinationQueues(requestedHostName, pageNumber * queueCountPerPage, queueCountPerPage);
 
     } catch (Exception e) {
         CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
@@ -124,15 +126,13 @@
         request="<%=request%>"/>
 
 <div id="middle">
+
+    <h2><fmt:message key="node.host"/>: <%=IPAddressOfHost%> (<fmt:message key="node.id"/>: <%=requestedHostName%>)</h2>
     <h2><fmt:message key="queues.list"/></h2>
-
-    <h2><fmt:message key="node.id"/>: <%=requestedHostName%>
-    </h2>
-
     <div id="workArea">
 
         <%
-            if (queueList == null) {
+            if (globalQueueList == null) {
         %>
         No queues are created.
         <%
@@ -148,16 +148,16 @@
         <table class="styledLeft" style="width:100%">
             <thead>
             <tr>
-                <th><fmt:message key="queue.name"/></th>
-                <th><fmt:message key="queue.messageCount"/></th>
-                <th><fmt:message key="queue.worker"/></th>
+                <th><fmt:message key="global.queue.name"/></th>
+                <th><fmt:message key="global.queue.messageCount"/></th>
+                <th><fmt:message key="queue.worker.Location"/></th>
             </tr>
             </thead>
             <tbody>
             <%
-                if (queueList != null) {
+                if (globalQueueList != null) {
                     int index = 0;
-                    for (Queue queue : queueList) {
+                    for (Queue queue : globalQueueList) {
                         String queueName = queue.getQueueName();
                         long queueSize = queue.getQueueDepth();
                         String queueSizeWithPostFix;
@@ -178,29 +178,17 @@
                 </td>
                 <td><%=queue.getMessageCount()%>
                 </td>
-                <td>
-                    <select id="combo<%=index%>">
-                        <%
-                            NodeDetail[] nodeDetailArray = client.getAllNodeDetail(0, 1000);
-                            for (int count = 0; count < nodeDetailArray.length; count++) {
-                                String nodeName = nodeDetailArray[count].getHostName();
-                                if (nodeName.equals(requestedHostName)) {
-                        %>
-                        <option value="<%=nodeName%>" selected><%=nodeName%>
-                        </option>
-                        <%
-                        } else {
-                        %>
-                        <option value="<%=nodeName%>"><%=nodeName%>
-                        </option>
-                        <%
-                                }
-
-
-                            }
-                        %>
-                    </select>
-                </td>
+                <%
+                  if(requestedHostName != null){
+                %>
+                <td><%=requestedHostName%></td>
+                <%
+                    } else {
+                %>
+                <td></td>
+                <%
+                    }
+                %>
             </tr>
             <%
                     }
@@ -213,6 +201,63 @@
         <%
             }
         %>
+        <br/>
+        <br/>
+        <h2>Information On Queues Of Selected Node</h2>
+        <%
+            if (destinationQueueList == null) {
+        %>
+        No Queues are Created in Node or Cluster.
+        <%
+        } else {
+
+        %>
+        <input type="hidden" name="pageNumber" value="<%=pageNumber%>"/>
+        <carbon:paginator pageNumber="<%=pageNumber%>" numberOfPages="<%=numberOfPages%>"
+                          page="queue_List.jsp" pageNumberParameterName="pageNumber"
+                          resourceBundle="org.wso2.carbon.andes.cluster.mgt.ui.i18n.Resources"
+                          prevKey="prev" nextKey="next"
+                          parameters="<%=concatenatedParams%>"/>
+        <table class="styledLeft" style="width:100%">
+        <thead>
+        <tr>
+            <th><fmt:message key="destination.queue.name"/></th>
+            <th><fmt:message key="node.queue.messageCount"/></th>
+            <th><fmt:message key="node.queue.subscriber.count"/></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+            if (destinationQueueList != null) {
+                int index = 0;
+                for (Queue queue : destinationQueueList) {
+                    String queueName = queue.getQueueName();
+                    long messageCount = queue.getMessageCount();
+                    int subscriptionCount = queue.getSubscriberCount();
+        %>
+        <tr>
+            <td>
+                <%=queueName%>
+            </td>
+            <td>
+                <%=messageCount%>
+            </td>
+            <td>
+                <%=subscriptionCount%>
+            </td>
+        </tr>
+        <%
+                }
+
+                index++;
+            }
+        %>
+        </tbody>
+    </table>
+        <%
+            }
+        %>
+
     </div>
 </div>
 </fmt:bundle>

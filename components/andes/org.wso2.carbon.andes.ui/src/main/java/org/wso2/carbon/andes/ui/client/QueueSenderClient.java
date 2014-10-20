@@ -1,38 +1,33 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
 package org.wso2.carbon.andes.ui.client;
 
 
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
-import org.wso2.carbon.ui.CarbonUIMessage;
 
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 public class QueueSenderClient {
@@ -47,12 +42,15 @@ public class QueueSenderClient {
     private QueueSession queueSession;
     private QueueSender queueSender;
 
-    public QueueSenderClient(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException {
+    public QueueSenderClient(String nameOfQueue, String username, String accessKey) throws NamingException,
+            JMSException, FileNotFoundException, XMLStreamException {
         queueSender = registerQueueSender(nameOfQueue, username, accessKey);
 
     }
 
-    private QueueSender registerQueueSender(String nameOfQueue, String username, String accessKey) throws NamingException, JMSException {
+    private QueueSender registerQueueSender(String nameOfQueue, String username,
+                                            String accessKey) throws NamingException, JMSException,
+            FileNotFoundException, XMLStreamException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, UIUtils.getTCPConnectionURL(username, accessKey));
@@ -63,9 +61,9 @@ public class QueueSenderClient {
         // Lookup connection factory
         QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
         queueConnection = connFactory.createQueueConnection();
-        queueConnection.start();
         queueSession = queueConnection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
         Queue queue = (Queue) ctx.lookup(nameOfQueue);
+        queueConnection.start();
 
         return queueSession.createSender(queue);
 
@@ -74,8 +72,10 @@ public class QueueSenderClient {
     public boolean sendMessage(HttpServletRequest request) throws JMSException, NamingException {
 
         if (queueSender != null) {
-            // as a way of preventing sending a message on page load, before the 'submit' button clicked,  num. of messages field is
-            // used as the validation field here. That is valid message will be sent only if the num. of message count is 1 or above
+            // as a way of preventing sending a message on page load, before the 'submit' button clicked,
+            // num. of messages field is
+            // used as the validation field here. That is valid message will be sent only if the num. of message
+            // count is 1 or above
             if (request.getParameter("num_of_msgs") != null && !request.getParameter("num_of_msgs").equals("")) {
 
                 int delivery_mode = 2;
@@ -106,12 +106,11 @@ public class QueueSenderClient {
                     queueSender.send(message, delivery_mode, priority, time_to_live);
 
                 }
-               // CarbonUIMessage.sendCarbonUIMessage("Successful sent message to: " +request.getParameter("nameOfQueue"), CarbonUIMessage.INFO, request);
+
             }
-            queueSender.close();
-            queueSession.close();
-            queueConnection.stop();
             queueConnection.close();
+            queueSession.close();
+            queueSender.close();
 
             return true;
         } else {
@@ -121,7 +120,8 @@ public class QueueSenderClient {
     }
 
     /**
-     * create a new message, reads all the parameter values from request, set them into message, for the fields not defined, defaults values are taken
+     * create a new message, reads all the parameter values from request, set them into message,
+     * for the fields not defined, defaults values are taken
      *
      * @param request - http request object
      * @return newly created JMS text message

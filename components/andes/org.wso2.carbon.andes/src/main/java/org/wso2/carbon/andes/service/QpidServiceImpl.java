@@ -1,17 +1,19 @@
 /*
- *  Copyright (c) 2008, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
  */
 
 package org.wso2.carbon.andes.service;
@@ -20,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.configuration.VirtualHostsConfiguration;
 import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
@@ -31,10 +34,12 @@ import org.wso2.carbon.utils.ServerConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.SocketException;
+import java.util.Iterator;
 
 public class QpidServiceImpl implements QpidService {
 
@@ -45,30 +50,38 @@ public class QpidServiceImpl implements QpidService {
     private static String CARBON_DEFAULT_HOSTNAME = "localhost";
     private static String CARBON_DEFAULT_PORT = "5672";
     private static String CARBON_DEFAULT_SSL_PORT = "8672";
+    private static String CARBON_DEFAULT_MQTT_PORT = "1883";
     private static int CARBON_DEFAULT_PORT_OFFSET = 0;
 
+    private static String THRIFT_DEFAULT_SERVER_HOST = "localhost";
+    private static int THRIFT_DEFAULT_SERVER_PORT = 7611;
+
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
-    private static final String QPID_CONF_FILE = "qpid-config.xml";
-    private static final String QPID_VIRTUALHOST_CONF_FILE = "qpid-virtualhosts.xml";
+    private static final String ANDES_CONF_FILE = "andes-config.xml";
+    private static final String ANDES_VIRTUALHOST_CONF_FILE = "andes-virtualhosts.xml";
     private static final String QPID_CONF_CONNECTOR_NODE = "connector";
+    private static final String QPID_CONF_SSL_NODE = "ssl";
+    private static final String QPID_CONF_SSL_ONLY_NODE = "sslOnly";
     private static final String QPID_CONF_PORT_NODE = "port";
     private static final String QPID_CONF_SSL_PORT_NODE = "sslport";
-    private static final String QPID_CONF_CLUSTER_NODE="clustering";
-    private static final String QPID_CONF_CLUSTER_ENABLE_NODE="enabled";
-    private static final String QPID_CONF_CLUSTER_COORDINATION_NODE="coordination";
-    private static final String QPID_CONF_CLUSTER_ZK_CONNECTION_NODE="ZooKeeperConnection";
-    private static final String QPID_CONF_EXTERNAL_CASSANDRA_SERVER="externalCassandraServerRequired";
-    private static final String QPID_CONF_EXTERNAL_ZOOKEEPER_SERVER="externalZookeeperServerRequired";
+    private static final String QPID_CONF_CLUSTER_NODE = "clustering";
 
     private static String CARBON_CONFIG_QPID_PORT_NODE = "Ports.EmbeddedQpid.BrokerPort";
     private static String CARBON_CONFIG_QPID_SSL_PORT_NODE = "Ports.EmbeddedQpid.BrokerSSLPort";
     private static String CARBON_CONFIG_PORT_OFFSET_NODE = "Ports.Offset";
 
     private static final String QPID_VIRTUALHOST_NODE = "virtualhost";
-    private static final String QPID_VIRTUALHOST_CARBON_NODE = "carbon";
+    private static final String QPID_VIRTUALHOST_NAME_NODE = "name";
     private static final String QPID_VIRTUALHOST_STORE_NODE = "store";
-    private static final String QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE = "connectionString";
+    private static final String QPID_VIRTUALHOST_COORDINATION_NODE = "coordination";
+    private static final String QPID_VIRTUALHOST_MESSAGE_STORE_NODE = "messageStore";
+    private static final String QPID_VIRTUALHOST_CLASS_ATTRIBUTE = "class";
+    private static final String QPID_VIRTUALHOST_PROPERTY_NODE = "property";
+    private static final String QPID_VIRTUALHOST_NAME_ATTRIBUTE = "name";
+    private static final String QPID_VIRTUALHOST_CONTEXT_STORE_NODE = "andesContextStore";
 
+    private static final String QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_HOST_NODE = "thriftServerHost";
+    private static final String QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_PORT_NODE = "thriftServerPort";
 
     private static final String DOMAIN_NAME_SEPARATOR = "@";
     private static final String DOMAIN_NAME_SEPARATOR_INTERNAL = "!";
@@ -77,13 +90,12 @@ public class QpidServiceImpl implements QpidService {
     private String hostname = "";
     private String port = "";
     private String sslPort = "";
+    private String mqttPort = "";
     private int portOffset = 0;
-    private String cassandraConnection;
-    private String zkConnection;
+    private Boolean sslOnly;
 
-    private Boolean clsuterEnabled;
-    private Boolean externalCassandraRequired;
-    private Boolean externalZookeeperRequired;
+    private String thriftServerHost;
+    private int thriftServerPort;
 
     public QpidServiceImpl(String accessKey) {
         this.accessKey = accessKey;
@@ -103,6 +115,10 @@ public class QpidServiceImpl implements QpidService {
 
         // Read Qpid broker SSL port from configuration file
         sslPort = readSSLPortFromConfig();
+
+        // Read MQTT port from configuration file
+        mqttPort = readMQTTPortFromConfig();
+
     }
 
     public String getAccessKey() {
@@ -129,55 +145,36 @@ public class QpidServiceImpl implements QpidService {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{accessKey}@carbon/carbon?brokerlist='vm://:1'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(accessKey)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='vm://:1'").toString();
+        return "amqp://" + username + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='vm://:1'";
     }
 
     public String getTCPConnectionURL(String username, String password) {
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getTCPConnectionURL(String username, String password, String clientID) {
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(clientID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getInternalTCPConnectionURL(String username, String password) {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(CARBON_CLIENT_ID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getInternalTCPConnectionURL(String username, String password, String clientID) {
         username = getInternalTenantUsername(username);
-        
+
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{port}'
-        return new StringBuffer()
-                .append("amqp://").append(username).append(":").append(password)
-                .append("@").append(clientID)
-                .append("/").append(CARBON_VIRTUAL_HOST_NAME)
-                .append("?brokerlist='tcp://").append(hostname).append(":").append(port).append("'")
-                .toString();
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + port + "'";
     }
 
     public String getQpidHome() {
@@ -190,7 +187,7 @@ public class QpidServiceImpl implements QpidService {
         try {
             queueDetails = RegistryClient.getQueues();
         } catch (RegistryClientException e) {
-            log.warn("Erro while retrieving queue details : " + e.getMessage());
+            log.error("Error while retrieving queue details.", e);
         }
 
         return queueDetails;
@@ -202,51 +199,92 @@ public class QpidServiceImpl implements QpidService {
         try {
             subsDetails = RegistryClient.getSubscriptions(topic);
         } catch (RegistryClientException e) {
-            log.warn("Erro while retrieving subscription details : " + e.getMessage());
+            log.error("Error while retrieving subscription details", e);
         }
 
         return subsDetails;
     }
 
-    public String getSSLPort(){
+    public String getSSLPort() {
         return sslPort;
     }
 
-    public boolean isClusterEnabled() {
-
-        if(clsuterEnabled==null) {
-            clsuterEnabled = readClusterEnabledDisabledStatusFromQpidConfig();
-            return clsuterEnabled;
-        }
-
-        return clsuterEnabled;
-    }
-
-    @Override
-    public boolean isExternalCassandraServerRequired() {
-        if(externalCassandraRequired == null){
-            externalCassandraRequired = readCassandraServerRequirementStatusFromQpidConfig();
-        }
-        return externalCassandraRequired;
-    }
-
-    @Override
-    public boolean isExternalZookeeperServerRequired() {
-        if(externalZookeeperRequired == null) {
-            externalZookeeperRequired = readExternalZookeeperServerRequiredStatusFromQpidConfig();
-        }
-        return externalZookeeperRequired;
+    public String getMQTTPort() {
+        return mqttPort;
     }
 
     private int readPortOffset() {
         ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
-        String portOffset = carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET_NODE);
+        String portOffset = System.getProperty("portOffset",
+                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET_NODE));
 
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
             return CARBON_DEFAULT_PORT_OFFSET;
         }
+    }
+
+    public VirtualHostsConfiguration readVirtualHostConfig() {
+
+        VirtualHostsConfiguration virtualHostsConfiguration = new VirtualHostsConfiguration();
+        String vHostFilePath = getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE;
+        try {
+            File confFile = new File(vHostFilePath);
+
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement virtualHostNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText().trim();
+            OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
+                    new QName(virtualHostName));
+            OMElement storeElem = carbonVirtualHost.
+                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_STORE_NODE));
+
+            // get message store class name
+            OMElement storeClassElem = storeElem.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_MESSAGE_STORE_NODE));
+            String messageStoreClassName = storeClassElem.getAttributeValue(
+                    new QName(QPID_VIRTUALHOST_CLASS_ATTRIBUTE)).trim();
+            virtualHostsConfiguration.setMessageStoreClassName(messageStoreClassName);
+
+            // get properties for message store
+            Iterator itr = storeClassElem.getChildrenWithName(new QName
+                    (QPID_VIRTUALHOST_PROPERTY_NODE));
+            while (itr.hasNext()) {
+                OMElement propertyElem = (OMElement) itr.next();
+                String attribute = propertyElem.getAttributeValue(new QName(QPID_VIRTUALHOST_NAME_ATTRIBUTE));
+                String value = propertyElem.getText().trim();
+                virtualHostsConfiguration.addMessageStoreProperty(attribute, value);
+            }
+
+            // get andes context store class name
+            OMElement contextStoreElem = storeElem.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_CONTEXT_STORE_NODE));
+            String andesContextStoreClassName = contextStoreElem.getAttributeValue(
+                    new QName(QPID_VIRTUALHOST_CLASS_ATTRIBUTE)).trim();
+            virtualHostsConfiguration.setAndesContextStoreClassName(andesContextStoreClassName);
+
+            // get properties for andes context store
+            itr = contextStoreElem.getChildrenWithName(new QName(QPID_VIRTUALHOST_PROPERTY_NODE));
+            while (itr.hasNext()) {
+                OMElement propertyElem = (OMElement) itr.next();
+                String attribute = propertyElem.getAttributeValue(new QName(QPID_VIRTUALHOST_NAME_ATTRIBUTE));
+                String value = propertyElem.getText().trim();
+                virtualHostsConfiguration.addAndesContextStoreProperty(attribute, value);
+            }
+
+        } catch (FileNotFoundException e) {
+            log.error(vHostFilePath + " not found", e);
+        } catch (XMLStreamException e) {
+            log.error("Error while reading " + vHostFilePath, e);
+        } catch (NullPointerException e) {
+            log.error("Invalid configuration : " + vHostFilePath, e);
+        }
+        return virtualHostsConfiguration;
     }
 
     private String readPortFromConfig() {
@@ -263,7 +301,7 @@ public class QpidServiceImpl implements QpidService {
             }
         }
 
-        // Offset
+        // If the port offset is not valid set the default port value
         try {
             port = Integer.toString(Integer.parseInt(port) + portOffset);
         } catch (NumberFormatException e) {
@@ -274,10 +312,10 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-        * Read port from carbon.xml
-        *
-        * @return
-        */
+     * Read port from carbon.xml
+     *
+     * @return
+     */
     private String readPortFromCarbonConfig() {
         ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
         String port = carbonConfig.getFirstProperty(CARBON_CONFIG_QPID_PORT_NODE);
@@ -286,7 +324,7 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-     * Read port from qpid-config.xml
+     * Read port from andes-config.xml
      *
      * @return
      */
@@ -294,7 +332,7 @@ public class QpidServiceImpl implements QpidService {
         String port = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -305,119 +343,14 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
-    }
-
-    /**
-     * Read port from qpid-config.xml
-     *
-     * @return
-     */
-    private boolean readExternalZookeeperServerRequiredStatusFromQpidConfig() {
-        String required = "";
-
-        try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement statusNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_EXTERNAL_ZOOKEEPER_SERVER));
-            if(statusNode == null) {
-                return false;
-            }
-            required = statusNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
-        }
-
-        if("true".equals(required)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean readCassandraServerRequirementStatusFromQpidConfig() {
-        String required = "";
-
-        try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement statusNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_EXTERNAL_CASSANDRA_SERVER));
-            if(statusNode == null) {
-                return false;
-            }
-            required = statusNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
-        }
-
-        if("true".equals(required)) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-
-    private boolean readClusterEnabledDisabledStatusFromQpidConfig() {
-        String enabled = "";
-
-        try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
-
-            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                    getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement enabledNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_ENABLE_NODE));
-
-            if(enabledNode == null) {
-                return false;
-            }
-            enabled = enabledNode.getText();
-        } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
-        } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
-        }
-
-        if("true".equals(enabled)) {
-            return true;
-        }
-
-        return false;
     }
 
     private String readSSLPortFromConfig() {
@@ -444,11 +377,24 @@ public class QpidServiceImpl implements QpidService {
         return port;
     }
 
+    private String readMQTTPortFromConfig() {
+        String port = CARBON_DEFAULT_MQTT_PORT;
+
+        // Offset
+        try {
+            port = Integer.toString(Integer.parseInt(port) + portOffset);
+        } catch (NumberFormatException e) {
+            port = CARBON_DEFAULT_MQTT_PORT;
+        }
+
+        return port;
+    }
+
     /**
-        * Read port from carbon.xml
-        *
-        * @return
-        */
+     * Read port from carbon.xml
+     *
+     * @return
+     */
     private String readSSLPortFromCarbonConfig() {
         ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
         String port = carbonConfig.getFirstProperty(CARBON_CONFIG_QPID_SSL_PORT_NODE);
@@ -457,15 +403,15 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-        * Read port from qpid-config.xml
-        *
-        * @return
-        */
+     * Read port from andes-config.xml
+     *
+     * @return
+     */
     private String readSSLPortFromQpidConfig() {
         String port = "";
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
@@ -476,12 +422,11 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
@@ -495,68 +440,99 @@ public class QpidServiceImpl implements QpidService {
     }
 
     @Override
-    public String getCassandraConnectionString() {
-
-        if(cassandraConnection != null) {
-            return cassandraConnection.trim();
-        }
-         try {
-            File confFile = new File(getQpidHome() + QPID_VIRTUALHOST_CONF_FILE);
-
+    public String getThriftServerHost() {
+        try {
+            File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
             OMElement virtualHostNode = docRootNode.getFirstChildWithName(
                     new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText();
             OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
-                    new QName(QPID_VIRTUALHOST_CARBON_NODE));
-            OMElement storeElem  = carbonVirtualHost.
-                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_STORE_NODE));
-            OMElement connectionStr = storeElem.getFirstChildWithName(
-                    new QName(QPID_VIRTUALHOST_STORE_CONNECTION_STRING_NODE));
+                    new QName(virtualHostName));
+            OMElement coordinationElem = carbonVirtualHost.
+                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_COORDINATION_NODE));
+            OMElement thriftServerHostStr = coordinationElem.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_HOST_NODE));
 
-            cassandraConnection = connectionStr.getText();
+            thriftServerHost = thriftServerHostStr.getText();
+            if(thriftServerHost==null){
+              thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
+            }
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                      QPID_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
-        return ((cassandraConnection != null) ? cassandraConnection.trim() : "");
-
+        return thriftServerHost;
     }
 
     @Override
-    public String getZookeeperConnectionString() {
+    public int getThriftServerPort() {
+        try {
+            File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
+            OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
+                    getDocumentElement();
+            OMElement virtualHostNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NODE));
+            OMElement virtualHostNameNode = virtualHostNode.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_NAME_NODE));
+            String virtualHostName = virtualHostNameNode.getText();
+            OMElement carbonVirtualHost = virtualHostNode.getFirstChildWithName(
+                    new QName(virtualHostName));
+            OMElement coordinationElem = carbonVirtualHost.
+                    getFirstChildWithName(new QName(QPID_VIRTUALHOST_COORDINATION_NODE));
+            OMElement thriftServerPortStr = coordinationElem.getFirstChildWithName(
+                    new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_PORT_NODE));
 
-        if(zkConnection != null) {
-            return zkConnection.trim();
+            thriftServerPort = Integer.parseInt(thriftServerPortStr.getText()) + portOffset;
+            if(thriftServerHost==null){
+                thriftServerPort = THRIFT_DEFAULT_SERVER_PORT;
+            }
+        } catch (FileNotFoundException e) {
+            log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
+        } catch (XMLStreamException e) {
+            log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE , e);
+        } catch (NullPointerException e) {
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
+        }
+
+        return thriftServerPort;
+    }
+
+    public boolean getIfSSLOnly() {
+
+        if (sslOnly != null) {
+            return sslOnly;
         }
 
         try {
-            File confFile = new File(getQpidHome() + QPID_CONF_FILE);
+            File confFile = new File(getQpidHome() + ANDES_CONF_FILE);
 
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                     getDocumentElement();
-            OMElement clusteringNode = docRootNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_NODE));
-            OMElement coordinationNode = clusteringNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_COORDINATION_NODE));
-            OMElement zkConnectionNode = coordinationNode.getFirstChildWithName(
-                    new QName(QPID_CONF_CLUSTER_ZK_CONNECTION_NODE));
+            OMElement connectorNode = docRootNode.getFirstChildWithName(
+                    new QName(QPID_CONF_CONNECTOR_NODE));
+            OMElement sslNode = connectorNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_NODE));
+            OMElement sslOnlyNode = sslNode.getFirstChildWithName(
+                    new QName(QPID_CONF_SSL_ONLY_NODE));
 
-            zkConnection = zkConnectionNode.getText();
+            sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
+
         } catch (FileNotFoundException e) {
-            log.error(getQpidHome() + QPID_CONF_FILE + " not found");
+            log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            log.error("Error while reading " + getQpidHome() +
-                    QPID_CONF_FILE + " : " + e.getMessage());
+            log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         } catch (NullPointerException e) {
-            log.error("Invalid configuration : " + getQpidHome() + QPID_CONF_FILE);
+            log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
-        return (zkConnection != null) ? zkConnection.trim() : "";
+        return sslOnly;
     }
 }
