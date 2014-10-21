@@ -18,7 +18,7 @@
 package org.wso2.carbon.andes.core.internal.util;
 
 /***
- * This class holds the MBean related constants so that they can be reffered and modified from a single point within carbon-business-messaging.
+ * This class holds the MBean related constants so that they can be referred and modified from a single point within carbon-business-messaging.
  */
 public class SubscriptionManagementConstants {
 

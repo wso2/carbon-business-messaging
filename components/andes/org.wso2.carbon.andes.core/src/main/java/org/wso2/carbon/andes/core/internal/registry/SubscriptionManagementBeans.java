@@ -31,10 +31,6 @@ public class SubscriptionManagementBeans {
 
     public static SubscriptionManagementBeans self = new SubscriptionManagementBeans();
 
-    public static SubscriptionManagementBeans getInstance() {
-        return self;
-    }
-
     public static SubscriptionManagementBeans getInstance(){
         
         if(self == null){
