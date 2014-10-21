@@ -1,17 +1,19 @@
 /*
- *  Copyright (c) 2008, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
  */
 
 package org.wso2.carbon.andes.service;
@@ -166,35 +168,21 @@ public interface QpidService {
     public String getSSLPort();
 
     /**
-     * Returns the Whether the clustering is enabled
-     * @return  clustering enabled disabled status
+     * Return if <sslOnly> option is enabled for embedded-qpid
+     * @return
      */
-    public boolean isClusterEnabled();
-
+    public boolean getIfSSLOnly();
 
     /**
-     * Returns whether external cassandra server required
-     * @return required status of external cassandra server*/
-    public boolean isExternalCassandraServerRequired();
-
+     * Returns thrift server host name in the mb cluster
+     * @return  thrift server host name
+     */
+    public String getThriftServerHost();
 
     /**
-     * Returns weather external zookeeper server required
-     * @return required status of external
+     * Returns thrift Server port in mb cluster
+     * @return thrift server port
      */
-    public boolean isExternalZookeeperServerRequired();
-
-    /**
-     * Returns Cassandra Connection String used in the internal broker
-     * @return cassandra connection string
-     */
-    public String getCassandraConnectionString();
-
-
-    /**
-     * Returns Zookeeper Connection String used in the internal broker
-     * @return zookeeper connection string
-     */
-    public String getZookeeperConnectionString();
+    public int getThriftServerPort();
 
 }

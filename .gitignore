@@ -3,5 +3,8 @@ target
 .classpath
 .settings
 .project
-*.i??
 .idea
+.DS_Store
+*.iml
+*.ipr
+*.iws

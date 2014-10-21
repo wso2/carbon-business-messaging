@@ -1,14 +1,10 @@
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="carbon" uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" %>
-<%@ page import="org.wso2.carbon.andes.ui.client.QueueBrowserClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
-<%@ page import="javax.jms.JMSException" %>
-<%@ page import="javax.jms.Message" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="java.util.Enumeration" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
+<%@ page import="org.wso2.carbon.andes.stub.admin.types.Message" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
@@ -21,31 +17,33 @@
     <script type="text/javascript" src="../admin/js/main.js"></script>
     <link rel="stylesheet" href="../qpid/css/dsxmleditor.css"/>
 
-
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         String nameOfQueue = request.getParameter("nameOfQueue");
-        QueueBrowserClient queueBrowserClient = new QueueBrowserClient(nameOfQueue, stub.getCurrentUser(),stub.getAccessKey());
-        Enumeration queueEnu = queueBrowserClient.browseQueue();
-        ArrayList msgArrayList = Collections.list(queueEnu);
-        Object[] filteredMsgArray = null;
+        String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
+        String pageNumberAsStr = request.getParameter("pageNumber");
         int msgCountPerPage = 100;
         int pageNumber = 0;
         int numberOfPages = 1;
-        String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
         long totalMsgsInQueue;
-        String pageNumberAsStr = request.getParameter("pageNumber");
+        Message[] filteredMsgArray = null;
         if (pageNumberAsStr != null) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
         }
-
-        if (msgArrayList != null) {
-            totalMsgsInQueue = msgArrayList.size();
+        try {
+            totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
-            filteredMsgArray = UIUtils.getFilteredMsgsList(msgArrayList, pageNumber * msgCountPerPage, msgCountPerPage);
-        }
-
+            filteredMsgArray = stub.browseQueue(nameOfQueue, pageNumber * msgCountPerPage, msgCountPerPage);
+        } catch (AndesAdminServiceBrokerManagerAdminException e) {
     %>
+            <script type="text/javascript">CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
+                    () {
+                location.href = 'queue_details.jsp';
+            });</script>
+            <%
+        }
+    %>
+
     <carbon:breadcrumb
             label="queue.content"
             resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
@@ -80,31 +78,30 @@
                 </thead>
                 <tbody>
                 <%
-                    try {
-                        for (Object message : filteredMsgArray) {
-                            Message queueMessage = (Message) message;
+                    if(filteredMsgArray != null) {
+                        for (Message queueMessage : filteredMsgArray) {
                             if (queueMessage != null) {
-                                String msgProperties = queueBrowserClient.getMsgProperties(queueMessage);
-                                String contentType = queueBrowserClient.getMsgContentType(queueMessage);
-                                String[] messageContent = queueBrowserClient.getMessageContentAsString(queueMessage);
+                            String msgProperties = queueMessage.getMsgProperties();
+                            String contentType = queueMessage.getContentType();
+                            String[] messageContent = queueMessage.getMessageContent();
                 %>
                 <tr>
                     <td><img src="images/<%= contentType.toLowerCase()%>.png"
                              alt=""/>&nbsp;&nbsp;<%= contentType%>
                     </td>
-                    <td><%= queueMessage.getJMSMessageID()%>
+                    <td><%= queueMessage.getJMSMessageId()%>
                     </td>
-                    <td><%= queueMessage.getJMSCorrelationID()%>
+                    <td><%= queueMessage.getJMSCorrelationId()%>
                     </td>
                     <td><%= queueMessage.getJMSType()%>
                     </td>
-                    <td><%= queueMessage.getJMSRedelivered()%>
+                    <td><%= queueMessage.getJMSReDelivered()%>
                     </td>
-                    <td><%= queueMessage.getJMSDeliveryMode()%>
+                    <td><%= queueMessage.getJMSDeliveredMode()%>
                     </td>
                     <td><%= queueMessage.getJMSPriority()%>
                     </td>
-                    <td><%= queueMessage.getJMSTimestamp()%>
+                    <td><%= queueMessage.getJMSTimeStamp()%>
                     </td>
                     <td><%= queueMessage.getJMSExpiration()%>
                     </td>
@@ -114,25 +111,14 @@
                     </td>
                 </tr>
 
-                <% }
-                }
-
-                } catch (JMSException e) {
-                    CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-                    e.printStackTrace();
-                }
+                <%
+                            }
+                        }
+                    }
                 %>
                 </tbody>
             </table>
 
-            <%
-                try {
-                    queueBrowserClient.closeBrowser();
-                } catch (JMSException e) {
-                    CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-                    e.printStackTrace();
-                }
-            %>
         </div>
     </div>
 </fmt:bundle>
