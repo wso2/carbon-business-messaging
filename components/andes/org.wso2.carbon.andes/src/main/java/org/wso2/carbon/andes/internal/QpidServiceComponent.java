@@ -37,7 +37,6 @@ import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.cassandra.server.service.CassandraServerService;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
@@ -50,7 +49,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Set;
 
 /**
