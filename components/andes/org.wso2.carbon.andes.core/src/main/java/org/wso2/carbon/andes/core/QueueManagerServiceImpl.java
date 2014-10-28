@@ -48,17 +48,19 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 
 public class QueueManagerServiceImpl implements QueueManagerService {
 
-    private static int DEFAULT_ANDES_PORT = 5672;
     private static Log log = LogFactory.getLog(QueueManagerServiceImpl.class);
-    private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
-    private static int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+    private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private static final String URLEncodingFormat = "UTF-8";
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
-    private static String ROLE_EVERY_ONE = "everyone";
+    private static final String ROLE_EVERY_ONE = "everyone";
     public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
@@ -364,13 +366,23 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     @Override
-    public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue, String userName,
-                                                                  String accessKey, int startingIndex, int maxMsgCount)
-            throws QueueManagerException {
-        List<org.wso2.carbon.andes.core.types.Message> messageList = new ArrayList<org.wso2.carbon.andes.core.types
-                .Message>();
+    public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
+                                                                  String userName, String accessKey,
+                                                                  int startingIndex, int maxMsgCount
+    ) throws QueueManagerException {
+
+        List<org.wso2.carbon.andes.core.types.Message> messageList =
+                new ArrayList<org.wso2.carbon.andes.core.types.Message>();
+
         try {
-            javax.jms.Queue queue = getQueue(nameOfQueue, userName, accessKey);
+            javax.jms.Queue queue = getQueue(
+                    nameOfQueue,
+                    // User name may contain the domain name and the user name. eg: WSO2/admin
+                    // having this username with domain name containing '/' character violates the
+                    // amqp url user name. Therefore escaping it according to url standards
+                    URLEncoder.encode(userName, URLEncodingFormat),
+                    accessKey
+            );
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             queueBrowser = queueSession.createBrowser(queue);
             queueConnection.start();
@@ -422,21 +434,15 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to browse queue.", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new QueueManagerException("Unable to encode user name to url safe format", e);
         } finally {
             try {
+                // There is no need to close the sessions, producers, and consumers of a
+                // closed connection
                 queueConnection.close();
             } catch (JMSException e) {
-                log.error("Unable to close queue connection", e);
-            }
-            try {
-                queueSession.close();
-            } catch (JMSException e) {
-                log.error("Unable to close queue session", e);
-            }
-            try {
-                queueBrowser.close();
-            } catch (JMSException e) {
-                log.error("Unable to close queue browser", e);
+                log.error("Failed to close queue connection", e);
             }
         }
         return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
