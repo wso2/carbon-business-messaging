@@ -375,11 +375,11 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 new ArrayList<org.wso2.carbon.andes.core.types.Message>();
 
         try {
+            // User name may contain the domain name and the user name. eg: WSO2/admin
+            // having this username with domain name containing '/' character violates the
+            // amqp url user name. Therefore escaping it according to url standards
             javax.jms.Queue queue = getQueue(
                     nameOfQueue,
-                    // User name may contain the domain name and the user name. eg: WSO2/admin
-                    // having this username with domain name containing '/' character violates the
-                    // amqp url user name. Therefore escaping it according to url standards
                     URLEncoder.encode(userName, URLEncodingFormat),
                     accessKey
             );
@@ -426,6 +426,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                             "messageBatchSizeForBrowserSubscriptions in andes-config.xml");
                 }
             }
+            return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
         } catch (NamingException e) {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (JMSException e) {
@@ -445,7 +446,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 log.error("Failed to close queue connection", e);
             }
         }
-        return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
     }
 
     @Override
