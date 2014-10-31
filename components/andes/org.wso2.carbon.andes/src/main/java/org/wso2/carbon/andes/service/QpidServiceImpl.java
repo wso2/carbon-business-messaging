@@ -383,8 +383,11 @@ public class QpidServiceImpl implements QpidService {
         // Offset
         try {
             port = Integer.toString(Integer.parseInt(port) + portOffset);
-        } catch (NumberFormatException e) {
-            port = CARBON_DEFAULT_MQTT_PORT;
+        } catch (NumberFormatException exception) {
+            port = Integer.toString(Integer.parseInt(CARBON_DEFAULT_MQTT_PORT) + portOffset);
+            log.error(
+                    "Specified MQTT port is not in correct format. Using default MQTT port with " +
+                    "offset (" + port + "). Please check MQTT configurations.", exception);
         }
 
         return port;
