@@ -26,7 +26,7 @@
     <version>4.3.0-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.stat.publisher</artifactId>
 
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>WSO2 Carbon - Component -Stat Publisher</name>
     <url>http://wso2.org</url>
 
@@ -100,7 +100,7 @@
                     </execution>
                 </executions>
             </plugin>
-          <!--  <plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
@@ -118,7 +118,7 @@
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
