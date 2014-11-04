@@ -212,8 +212,39 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
     }
 
-    public void purgeMessagesOfQueue(String queueName) throws QueueManagerException {
-        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName);
+    /***
+     * {@inheritDoc}
+     * @param queueName
+     * @throws QueueManagerException
+     */
+    public void purgeMessagesOfQueue(String queueName) throws
+            QueueManagerException {
+
+        try {
+            //Fetch logged in user's realm
+            UserRealm userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService()
+                    .getTenantUserRealm
+                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                            .getTenantId());
+
+            UserStoreManager userStoreManager = userRealm.getUserStoreManager();
+            //Get all the roles of the logged in user
+            String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
+                    .getUsername());
+
+            String queueID = CommonsUtil.getQueueID(queueName);
+            for (String role : roleNames) {
+                // TODO We must add a new permission for Purging capability and use it here.
+                if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                        role, queueID, TreeNode.Permission.DELETE.toString().toLowerCase())) {
+                    QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName,CarbonContext.getThreadLocalCarbonContext()
+                            .getUsername());
+                }
+            }
+        } catch (UserStoreException use) {
+            throw new QueueManagerException("Unable to purge queue.",use);
+        }
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException {

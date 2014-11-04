@@ -297,7 +297,8 @@ public class QueueManagementBeans {
         }
     }
 
-    public void purgeMessagesFromQueue(String queueName) throws QueueManagerException {
+    public void purgeMessagesFromQueue(String queueName,
+                                       String userName) throws QueueManagerException {
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
@@ -305,8 +306,8 @@ public class QueueManagementBeans {
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
             String bindingOperationName = "deleteAllMessagesInQueue";
 
-            Object[] bindingParams = new Object[]{queueName};
-            String[] bpSignatures = new String[]{String.class.getName()};
+            Object[] bindingParams = new Object[]{queueName,userName};
+            String[] bpSignatures = new String[]{String.class.getName(),String.class.getName()};
 
             mBeanServer.invoke(
                     bindingMBeanObjectName,
