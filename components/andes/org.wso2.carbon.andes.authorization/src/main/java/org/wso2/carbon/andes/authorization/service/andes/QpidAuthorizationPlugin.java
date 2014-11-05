@@ -165,6 +165,9 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
                     } else if (ObjectType.QUEUE == objectType) {
                         return QpidAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
                     }
+                case PURGE:
+                    return QpidAuthorizationHandler.handlePurgeQueue(username,userRealm,
+                            properties);
             }
         } catch (QpidAuthorizationHandlerException e) {
             logger.error("Error while invoking QpidAuthorizationHandler", e);

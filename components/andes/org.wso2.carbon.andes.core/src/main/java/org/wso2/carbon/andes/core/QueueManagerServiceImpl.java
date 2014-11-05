@@ -66,7 +66,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
     public static final String UI_EXECUTE = "ui.execute";
+
     public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
+
     private Properties properties;
     private QueueConnection queueConnection;
     private QueueSession queueSession;
@@ -138,14 +140,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     String queueName = queue.getQueueName();
                     String queueID = CommonsUtil.getQueueID(queueName);
                     for (String role : roleNames) {
+
                         if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) || userRealm
-                                .getAuthorizationManager().isRoleAuthorized(
-                                        role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
-                                userRealm
-                                .getAuthorizationManager()
-                                .isUserAuthorized(CarbonContext.getThreadLocalCarbonContext().getUsername(),
-                                        PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
+                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isRoleAuthorized(
+                                role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isUserAuthorized(
+                                CarbonContext.getThreadLocalCarbonContext().getUsername(),
+                                PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
                             if (!filteredQueueByUser.contains(queue)) {
                                 filteredQueueByUser.add(queue);
                             }
@@ -212,39 +214,17 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
     }
 
-    /***
+    /**
      * {@inheritDoc}
+     *
      * @param queueName
      * @throws QueueManagerException
      */
     public void purgeMessagesOfQueue(String queueName) throws
             QueueManagerException {
 
-        try {
-            //Fetch logged in user's realm
-            UserRealm userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService()
-                    .getTenantUserRealm
-                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
-                            .getTenantId());
-
-            UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-            //Get all the roles of the logged in user
-            String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
-                    .getUsername());
-
-            String queueID = CommonsUtil.getQueueID(queueName);
-            for (String role : roleNames) {
-                // TODO We must add a new permission for Purging capability and use it here.
-                if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                        role, queueID, TreeNode.Permission.DELETE.toString().toLowerCase())) {
-                    QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName,CarbonContext.getThreadLocalCarbonContext()
-                            .getUsername());
-                }
-            }
-        } catch (UserStoreException use) {
-            throw new QueueManagerException("Unable to purge queue.",use);
-        }
+        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName, CarbonContext.getThreadLocalCarbonContext()
+                .getUsername());
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException {
