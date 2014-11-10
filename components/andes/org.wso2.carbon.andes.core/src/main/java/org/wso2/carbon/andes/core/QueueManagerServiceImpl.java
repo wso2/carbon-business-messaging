@@ -52,7 +52,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
-
+/**
+ * Works as the manager class for queue related tasks done from UI. (create queue, delete queue,
+ * browse queue, getAllQueues etc.)
+ */
 public class QueueManagerServiceImpl implements QueueManagerService {
 
     private static Log log = LogFactory.getLog(QueueManagerServiceImpl.class);
