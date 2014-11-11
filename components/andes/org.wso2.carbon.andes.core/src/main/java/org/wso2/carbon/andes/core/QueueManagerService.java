@@ -65,6 +65,11 @@ public interface QueueManagerService {
     public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException;
 
+    /***
+     * Request broker to clean all messages not awaiting acknowlegdment from the given queue.
+     * @param queueName
+     * @throws QueueManagerException
+     */
     public void purgeMessagesOfQueue(String queueName) throws QueueManagerException;
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException;

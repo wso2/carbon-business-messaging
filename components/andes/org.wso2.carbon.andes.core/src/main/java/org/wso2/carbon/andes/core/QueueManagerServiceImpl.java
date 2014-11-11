@@ -69,7 +69,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
     public static final String UI_EXECUTE = "ui.execute";
+
     public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
+
     private Properties properties;
     private QueueConnection queueConnection;
     private QueueSession queueSession;
@@ -141,14 +143,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     String queueName = queue.getQueueName();
                     String queueID = CommonsUtil.getQueueID(queueName);
                     for (String role : roleNames) {
+
                         if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) || userRealm
-                                .getAuthorizationManager().isRoleAuthorized(
-                                        role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
-                                userRealm
-                                .getAuthorizationManager()
-                                .isUserAuthorized(CarbonContext.getThreadLocalCarbonContext().getUsername(),
-                                        PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
+                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isRoleAuthorized(
+                                role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isUserAuthorized(
+                                CarbonContext.getThreadLocalCarbonContext().getUsername(),
+                                PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
                             if (!filteredQueueByUser.contains(queue)) {
                                 filteredQueueByUser.add(queue);
                             }
@@ -215,8 +217,17 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
     }
 
-    public void purgeMessagesOfQueue(String queueName) throws QueueManagerException {
-        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName);
+    /**
+     * {@inheritDoc}
+     *
+     * @param queueName
+     * @throws QueueManagerException
+     */
+    public void purgeMessagesOfQueue(String queueName) throws
+            QueueManagerException {
+
+        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName, CarbonContext.getThreadLocalCarbonContext()
+                .getUsername());
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException {

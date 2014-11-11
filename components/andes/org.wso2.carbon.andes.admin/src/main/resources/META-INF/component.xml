@@ -38,6 +38,10 @@
             <ResourceId>/permission/admin/manage/queue/deleteQueue</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
+            <DisplayName>Purge Queue</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/purgeQueue</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
             <DisplayName>Dead Letter Channel</DisplayName>
             <ResourceId>/permission/admin/manage/dlc</ResourceId>
         </ManagementPermission>
