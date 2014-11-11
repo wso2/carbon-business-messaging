@@ -39,7 +39,7 @@
                      NOTE: Update the master-datasources.xml file to connect to cassandra data source  
                      READ the documentation to set advanced cassandra tuning parameters. -->
  
-                <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
+                <!--messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
                     <property name="dataSource">CassandraRepo</property>
                 </messageStore-->
 
@@ -47,7 +47,7 @@
                      NOTE: Update the master-datasources.xml file to connect to cassandra data source.
                      READ the documentation to set advanced cassandra tuning parameters. -->
 
-                <!--andesContextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
+                <!--andesContextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
                     <property name="dataSource">CassandraRepo</property>
                 </andesContextStore-->
 
