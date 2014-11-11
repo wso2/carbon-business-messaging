@@ -122,7 +122,7 @@ public class QpidServiceComponent {
         try {
             QpidServiceImpl qpidServiceImpl =
                     new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-
+            qpidServiceImpl.readConfigurationDetails();
             // set message store and andes context store related configurations
 
             AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());

@@ -97,9 +97,14 @@ public class QpidServiceImpl implements QpidService {
     private String thriftServerHost;
     private int thriftServerPort;
 
-    public QpidServiceImpl(String accessKey) throws Exception {
+    public QpidServiceImpl(String accessKey) {
         this.accessKey = accessKey;
+    }
 
+    /**
+     * Read configuration files and set ports and host names
+     */
+    public void readConfigurationDetails() throws Exception {
         // Get the hostname that Carbon runs on
         try {
             hostname = NetworkUtils.getLocalHostname();
