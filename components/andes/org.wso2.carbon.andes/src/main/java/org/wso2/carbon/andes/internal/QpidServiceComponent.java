@@ -45,6 +45,8 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -117,27 +119,32 @@ public class QpidServiceComponent {
 
     protected void activate(ComponentContext ctx) {
         this.componentContext = ctx;
+        try {
+            QpidServiceImpl qpidServiceImpl =
+                    new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
 
-        QpidServiceImpl qpidServiceImpl =
-                new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+            // set message store and andes context store related configurations
 
-        // set message store and andes context store related configurations
-        AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
-
-        if (!AndesContext.getInstance().isClusteringEnabled()) {
-            // If clustering is disabled, broker starts without waiting for hazelcastInstance
-            this.startAndesBroker();
-        } else {
-            if (registeredHazelcast) {
-                // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
+            AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
+            if (!AndesContext.getInstance().isClusteringEnabled()) {
+                // If clustering is disabled, broker starts without waiting for hazelcastInstance
                 this.startAndesBroker();
-
             } else {
-                // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
-                // wait for hazelcastInstance to be registered.
-                this.brokerShouldBeStarted = true;
+                if (registeredHazelcast) {
+                    // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
+                    this.startAndesBroker();
+
+                } else {
+                    // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
+                    // wait for hazelcastInstance to be registered.
+                    this.brokerShouldBeStarted = true;
+                }
             }
+        } catch (Exception e) {
+            log.error("Invalid configuration found in a configuration file", e);
+            throw new RuntimeException("Invalid configuration found in a configuration file", e);
         }
+
     }
 
     protected void deactivate(ComponentContext ctx) {
@@ -195,7 +202,12 @@ public class QpidServiceComponent {
         if (brokerShouldBeStarted) {
             //Start the broker if the activate method of QpidServiceComponent is blocked until hazelcastInstance
             // getting registered
-            this.startAndesBroker();
+            try {
+                this.startAndesBroker();
+            } catch (Exception e) {
+                log.error("Invalid configuration found in a configuration file", e);
+                throw new RuntimeException("Invalid configuration found in a configuration file", e);
+            }
         }
     }
 
@@ -264,7 +276,7 @@ public class QpidServiceComponent {
 
     }
 
-    private void startAndesBroker() {
+    private void startAndesBroker() throws Exception {
         brokerShouldBeStarted = false;
 
         QpidServiceImpl qpidServiceImpl =
@@ -360,5 +372,6 @@ public class QpidServiceComponent {
                         qpidServiceImpl.getHostname(),
                         brokerPort, qpidServiceImpl.getIfSSLOnly());
         QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
+
     }
 }

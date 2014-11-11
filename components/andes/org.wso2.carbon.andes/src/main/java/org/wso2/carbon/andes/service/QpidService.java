@@ -21,6 +21,9 @@ package org.wso2.carbon.andes.service;
 import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
 
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
+
 /**
  * This is an interface that declares access methods for properties
  * exposed from the qpid component to other Carbon components.
@@ -171,18 +174,18 @@ public interface QpidService {
      * Return if <sslOnly> option is enabled for embedded-qpid
      * @return
      */
-    public boolean getIfSSLOnly();
+    public boolean getIfSSLOnly() throws Exception;
 
     /**
      * Returns thrift server host name in the mb cluster
      * @return  thrift server host name
      */
-    public String getThriftServerHost();
+    public String getThriftServerHost() throws Exception;
 
     /**
      * Returns thrift Server port in mb cluster
      * @return thrift server port
      */
-    public int getThriftServerPort();
+    public int getThriftServerPort() throws Exception;
 
 }
