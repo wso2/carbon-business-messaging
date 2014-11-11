@@ -281,7 +281,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(vHostFilePath + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + vHostFilePath, e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + vHostFilePath, e);
         }
         return virtualHostsConfiguration;
@@ -346,7 +346,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
@@ -428,7 +428,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
@@ -468,7 +468,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
@@ -501,7 +501,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE , e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
@@ -532,7 +532,7 @@ public class QpidServiceImpl implements QpidService {
             log.error(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
             log.error("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             log.error("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
