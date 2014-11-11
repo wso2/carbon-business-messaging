@@ -28,6 +28,7 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 
 import java.io.File;
@@ -118,11 +119,11 @@ public class Utils {
         boolean isAdmin = false;
 
         try {
-            String[] userRoles = QueueManagerServiceValueHolder.getInstance().getRealmService().
-                    getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId()).
-                    getUserStoreManager().getRoleListOfUser(username);
-            String adminRole = QueueManagerServiceValueHolder.getInstance().getRealmService().
-                    getBootstrapRealmConfiguration().getAdminUserName();
+            UserRealm userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService()
+                    .getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId());
+
+            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+            String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
             for (String userRole : userRoles) {
                 if (userRole.equals(adminRole)) {
                     isAdmin = true;
