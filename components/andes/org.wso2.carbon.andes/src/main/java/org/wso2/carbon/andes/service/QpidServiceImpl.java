@@ -27,6 +27,7 @@ import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
+import org.wso2.carbon.andes.exception.ConfigurationException;
 import org.wso2.carbon.andes.internal.QpidServiceDataHolder;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.utils.NetworkUtils;
@@ -104,7 +105,7 @@ public class QpidServiceImpl implements QpidService {
     /**
      * Read configuration files and set ports and host names
      */
-    public void readConfigurationDetails() throws Exception {
+    public void loadConfigurations() throws ConfigurationException {
         // Get the hostname that Carbon runs on
         try {
             hostname = NetworkUtils.getLocalHostname();
@@ -230,7 +231,7 @@ public class QpidServiceImpl implements QpidService {
         }
     }
 
-    public VirtualHostsConfiguration readVirtualHostConfig() throws Exception {
+    public VirtualHostsConfiguration readVirtualHostConfig() throws ConfigurationException {
 
         VirtualHostsConfiguration virtualHostsConfiguration = new VirtualHostsConfiguration();
         String vHostFilePath = getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE;
@@ -283,16 +284,14 @@ public class QpidServiceImpl implements QpidService {
             }
 
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(vHostFilePath + " not found" + e);
+            throw new ConfigurationException(vHostFilePath + " not found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + vHostFilePath, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + vHostFilePath, e);
+            throw new ConfigurationException("Error while reading " + vHostFilePath, e);
         }
         return virtualHostsConfiguration;
     }
 
-    private String readPortFromConfig() throws Exception {
+    private String readPortFromConfig() throws ConfigurationException {
         String port = CARBON_DEFAULT_PORT;
 
         // Port defined in carbon.xml overrides others
@@ -333,7 +332,7 @@ public class QpidServiceImpl implements QpidService {
      *
      * @return
      */
-    private String readPortFromQpidConfig() throws Exception {
+    private String readPortFromQpidConfig() throws ConfigurationException {
         String port = "";
 
         try {
@@ -348,17 +347,15 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(getQpidHome() + ANDES_CONF_FILE + " not found" + e);
+            throw new ConfigurationException(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
+            throw new ConfigurationException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
     }
 
-    private String readSSLPortFromConfig() throws Exception {
+    private String readSSLPortFromConfig() throws ConfigurationException {
         String port = CARBON_DEFAULT_SSL_PORT;
 
         // Port defined in carbon.xml overrides others
@@ -392,7 +389,7 @@ public class QpidServiceImpl implements QpidService {
             port = Integer.toString(Integer.parseInt(CARBON_DEFAULT_MQTT_PORT) + portOffset);
             log.error(
                     "Specified MQTT port is not in correct format. Using default MQTT port with " +
-                    "offset (" + port + "). Please check MQTT configurations.", exception);
+                            "offset (" + port + "). Please check MQTT configurations.", exception);
         }
 
         return port;
@@ -415,7 +412,7 @@ public class QpidServiceImpl implements QpidService {
      *
      * @return
      */
-    private String readSSLPortFromQpidConfig() throws Exception {
+    private String readSSLPortFromQpidConfig() throws ConfigurationException {
         String port = "";
 
         try {
@@ -430,11 +427,9 @@ public class QpidServiceImpl implements QpidService {
 
             port = portNode.getText();
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(getQpidHome() + ANDES_CONF_FILE + " not found" + e);
+            throw new ConfigurationException(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
+            throw new ConfigurationException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return ((port != null) ? port.trim() : "");
@@ -448,7 +443,7 @@ public class QpidServiceImpl implements QpidService {
     }
 
     @Override
-    public String getThriftServerHost() throws Exception {
+    public String getThriftServerHost() throws ConfigurationException {
         try {
             File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
@@ -466,24 +461,21 @@ public class QpidServiceImpl implements QpidService {
                     new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_HOST_NODE));
 
             thriftServerHost = thriftServerHostStr.getText();
-            if(thriftServerHost==null){
-              thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
+            if (thriftServerHost == null) {
+                thriftServerHost = THRIFT_DEFAULT_SERVER_HOST;
             }
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not " +
-                    "found" + e);
+            throw new ConfigurationException(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not " +
+                    "found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE,
-                    e);
+            throw new ConfigurationException("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
         return thriftServerHost;
     }
 
     @Override
-    public int getThriftServerPort() throws Exception {
+    public int getThriftServerPort() throws ConfigurationException {
         try {
             File confFile = new File(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE);
             OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
@@ -501,23 +493,20 @@ public class QpidServiceImpl implements QpidService {
                     new QName(QPID_VIRTUALHOST_COORDINATION_THRIFT_SERVER_PORT_NODE));
 
             thriftServerPort = Integer.parseInt(thriftServerPortStr.getText()) + portOffset;
-            if(thriftServerHost==null){
+            if (thriftServerHost == null) {
                 thriftServerPort = THRIFT_DEFAULT_SERVER_PORT;
             }
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not " +
-                    "found" + e);
+            throw new ConfigurationException(getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE + " not " +
+                    "found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE,
-                    e);
+            throw new ConfigurationException("Error while reading " + getQpidHome() + ANDES_VIRTUALHOST_CONF_FILE, e);
         }
 
         return thriftServerPort;
     }
 
-    public boolean getIfSSLOnly() throws Exception {
+    public boolean getIfSSLOnly() throws ConfigurationException {
 
         if (sslOnly != null) {
             return sslOnly;
@@ -534,15 +523,15 @@ public class QpidServiceImpl implements QpidService {
                     new QName(QPID_CONF_SSL_NODE));
             OMElement sslOnlyNode = sslNode.getFirstChildWithName(
                     new QName(QPID_CONF_SSL_ONLY_NODE));
-
+            if (sslOnlyNode == null) {
+                throw new ConfigurationException("Returned null for sslOnly");
+            }
             sslOnly = Boolean.parseBoolean(sslOnlyNode.getText());
 
         } catch (FileNotFoundException e) {
-           throw new FileNotFoundException(getQpidHome() + ANDES_CONF_FILE + " not found" + e);
+            throw new ConfigurationException(getQpidHome() + ANDES_CONF_FILE + " not found", e);
         } catch (XMLStreamException e) {
-            throw new XMLStreamException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
-        } catch (Exception e) {
-            throw new Exception("Invalid configuration : " + getQpidHome() + ANDES_CONF_FILE, e);
+            throw new ConfigurationException("Error while reading " + getQpidHome() + ANDES_CONF_FILE, e);
         }
 
         return sslOnly;
