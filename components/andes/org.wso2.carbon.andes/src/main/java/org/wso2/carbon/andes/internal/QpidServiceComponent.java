@@ -32,6 +32,7 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.exception.ConfigurationException;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -45,8 +46,6 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.xml.stream.XMLStreamException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -122,7 +121,7 @@ public class QpidServiceComponent {
         try {
             QpidServiceImpl qpidServiceImpl =
                     new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-            qpidServiceImpl.readConfigurationDetails();
+            qpidServiceImpl.loadConfigurations();
             // set message store and andes context store related configurations
 
             AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
@@ -140,7 +139,7 @@ public class QpidServiceComponent {
                     this.brokerShouldBeStarted = true;
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
             throw new RuntimeException("Invalid configuration found in a configuration file", e);
         }
@@ -204,7 +203,7 @@ public class QpidServiceComponent {
             // getting registered
             try {
                 this.startAndesBroker();
-            } catch (Exception e) {
+            } catch (ConfigurationException e) {
                 log.error("Invalid configuration found in a configuration file", e);
                 throw new RuntimeException("Invalid configuration found in a configuration file", e);
             }
@@ -276,7 +275,7 @@ public class QpidServiceComponent {
 
     }
 
-    private void startAndesBroker() throws Exception {
+    private void startAndesBroker() throws ConfigurationException {
         brokerShouldBeStarted = false;
 
         QpidServiceImpl qpidServiceImpl =
