@@ -27,7 +27,7 @@ import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
-import org.wso2.carbon.andes.exception.ConfigurationException;
+import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.internal.QpidServiceDataHolder;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.utils.NetworkUtils;
@@ -35,7 +35,6 @@ import org.wso2.carbon.utils.ServerConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
