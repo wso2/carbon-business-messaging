@@ -16,7 +16,7 @@
  *   under the License.
  */
 
-package org.wso2.carbon.andes.exception;
+package org.wso2.carbon.andes.service.exception;
 
 /**
  * Configuration exception will be thrown when there is an error in configuration files

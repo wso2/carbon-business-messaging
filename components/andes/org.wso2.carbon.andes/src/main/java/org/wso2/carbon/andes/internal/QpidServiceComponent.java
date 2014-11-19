@@ -32,10 +32,10 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
-import org.wso2.carbon.andes.exception.ConfigurationException;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
+import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
@@ -116,11 +116,16 @@ public class QpidServiceComponent {
      */
     private boolean registeredHazelcast = false;
 
+    /**
+     * This holds the configuration values
+     */
+    private QpidServiceImpl qpidServiceImpl;
+
     protected void activate(ComponentContext ctx) {
         this.componentContext = ctx;
         try {
-            QpidServiceImpl qpidServiceImpl =
-                    new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+            qpidServiceImpl
+                    = new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
             qpidServiceImpl.loadConfigurations();
             // set message store and andes context store related configurations
 
@@ -277,9 +282,6 @@ public class QpidServiceComponent {
 
     private void startAndesBroker() throws ConfigurationException {
         brokerShouldBeStarted = false;
-
-        QpidServiceImpl qpidServiceImpl =
-                new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
 
         // Start andes broker
         //set thrift server port and thrift server host in andes dependency
