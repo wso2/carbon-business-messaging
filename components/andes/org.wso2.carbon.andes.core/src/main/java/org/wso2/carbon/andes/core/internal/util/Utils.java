@@ -51,7 +51,7 @@ public class Utils {
     public static final String DIRECT_EXCHANGE = "amq.direct";
     public static final String TOPIC_EXCHANGE = "amq.topic";
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
-    private static final String ANDES_CONF_FILE = "andes-config.xml";
+    private static final String QPID_CONF_FILE = "qpid-config.xml";
     private static final String QPID_CONF_CONNECTOR_NODE = "connector";
     private static final String QPID_CONF_SSL_NODE = "ssl";
     private static final String QPID_CONF_SSL_ONLY_NODE = "sslOnly";
@@ -322,7 +322,7 @@ public class Utils {
         int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT) + portOffset;
         String CARBON_SSL_PORT = String.valueOf(carbonSslPort);
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(
@@ -499,32 +499,32 @@ public class Utils {
                     break;
                 } else {
                     if (obj instanceof Double) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Integer) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof String) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Character) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Long) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Short) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Byte) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
 
                     } else if (obj instanceof Boolean) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
                     } else if (obj instanceof Float) {
-                        sb.append(obj + ", ");
+                        sb.append(obj).append(", ");
                     } else {
-                        sb.append(obj.toString() + ", ");
+                        sb.append(obj.toString()).append(", ");
                     }
                 }
             } catch (MessageEOFException ex) {
@@ -538,7 +538,7 @@ public class Utils {
 
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(

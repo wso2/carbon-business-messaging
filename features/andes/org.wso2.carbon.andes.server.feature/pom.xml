@@ -146,11 +146,9 @@
                                 <resource>
                                     <directory>resources</directory>
                                     <includes>
-                                        <include>conf/andes-config.xml</include>
-                                        <include>conf/andes-virtualhosts.xml</include>
-                                        <include>conf/moquette.conf</include>
-                                        <include>conf/moquette-log.properties</include>
-                                        <include>conf/password_file.conf</include>
+                                        <include>conf/broker.xml</include>
+                                        <include>conf/qpid-config.xml</include>
+                                        <include>conf/qpid-virtualhosts.xml</include>
                                         <include>dbscripts/mssql-mb.sql</include>
                                         <include>dbscripts/mysql-mb.sql</include>
                                         <include>p2.inf</include>

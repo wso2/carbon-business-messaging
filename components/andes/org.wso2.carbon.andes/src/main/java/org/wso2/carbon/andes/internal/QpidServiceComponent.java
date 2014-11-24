@@ -26,6 +26,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.kernel.AndesContext;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
@@ -121,7 +122,7 @@ public class QpidServiceComponent {
      */
     private QpidServiceImpl qpidServiceImpl;
 
-    protected void activate(ComponentContext ctx) {
+    protected void activate(ComponentContext ctx) throws AndesException {
         this.componentContext = ctx;
         try {
             qpidServiceImpl
@@ -129,7 +130,7 @@ public class QpidServiceComponent {
             qpidServiceImpl.loadConfigurations();
             // set message store and andes context store related configurations
 
-            AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
+            AndesContext.getInstance().constructStoreConfiguration();
             if (!AndesContext.getInstance().isClusteringEnabled()) {
                 // If clustering is disabled, broker starts without waiting for hazelcastInstance
                 this.startAndesBroker();
@@ -284,11 +285,6 @@ public class QpidServiceComponent {
         brokerShouldBeStarted = false;
 
         // Start andes broker
-        //set thrift server port and thrift server host in andes dependency
-        String thriftServerHost = qpidServiceImpl.getThriftServerHost();
-        int thriftServerPort = qpidServiceImpl.getThriftServerPort();
-        AndesContext.getInstance().setThriftServerHost(thriftServerHost);
-        AndesContext.getInstance().setThriftServerPort(thriftServerPort);
 
         //register coordinatedActivityImpl to get coordinator changes notification.
         //When is node is appointed as the coordinator execute method of coordinatedActivityImpl will be called
@@ -299,8 +295,8 @@ public class QpidServiceComponent {
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-        String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(),
-                "-q" + qpidServiceImpl.getMQTTPort()};
+        String[] args = {"-p" + qpidServiceImpl.getAMQPPort(), "-s" + qpidServiceImpl.getAMQPSSLPort(),
+                "-q" + qpidServiceImpl.getMqttPort()};
 
         //TODO: Change the functionality in andes main method to an API
         //Main.setStandaloneMode(false);
@@ -324,22 +320,24 @@ public class QpidServiceComponent {
         boolean isServerStarted = false;
         int port;
         if (qpidServiceImpl.getIfSSLOnly()) {
-            port = Integer.parseInt(qpidServiceImpl.getSSLPort());
+            port = qpidServiceImpl.getAMQPSSLPort();
         } else {
-            port = Integer.parseInt(qpidServiceImpl.getPort());
+            port = qpidServiceImpl.getAMQPPort();
         }
         while (!isServerStarted) {
             Socket socket = null;
             try {
+                log.info("Carbon Host Name : " + getCarbonHostName());
                 InetAddress address = InetAddress.getByName(getCarbonHostName());
                 socket = new Socket(address, port);
+                log.info("Host : " + address.getHostAddress() + " port : " + port);
                 isServerStarted = socket.isConnected();
                 if (isServerStarted) {
                     log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
                             port);
                 }
             } catch (IOException e) {
-                log.info("Wait until Qpid server starts on port " + port);
+                log.error("Wait until Qpid server starts on port " + port,e);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ignore) {
@@ -360,18 +358,18 @@ public class QpidServiceComponent {
         // Publish Qpid properties
         qpidService = this.componentContext.getBundleContext().registerService(
                 QpidService.class.getName(), qpidServiceImpl, null);
-        String brokerPort;
+        Integer brokerPort;
         if (qpidServiceImpl.getIfSSLOnly()) {
-            brokerPort = qpidServiceImpl.getSSLPort();
+            brokerPort = qpidServiceImpl.getAMQPSSLPort();
         } else {
-            brokerPort = qpidServiceImpl.getPort();
+            brokerPort = qpidServiceImpl.getAMQPPort();
         }
         QpidServerDetails qpidServerDetails =
                 new QpidServerDetails(qpidServiceImpl.getAccessKey(),
                         qpidServiceImpl.getClientID(),
                         qpidServiceImpl.getVirtualHostName(),
                         qpidServiceImpl.getHostname(),
-                        brokerPort, qpidServiceImpl.getIfSSLOnly());
+                        brokerPort.toString(), qpidServiceImpl.getIfSSLOnly());
         QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
 
     }

@@ -20,8 +20,8 @@ package org.wso2.carbon.andes.authorization.service.andes;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.wso2.andes.server.configuration.plugins.ConfigurationPlugin;
-import org.wso2.andes.server.configuration.plugins.ConfigurationPluginFactory;
+import org.wso2.andes.configuration.qpid.configuration.plugins.ConfigurationPlugin;
+import org.wso2.andes.configuration.qpid.configuration.plugins.ConfigurationPluginFactory;
 import java.util.Arrays;
 import java.util.List;
 

@@ -64,13 +64,21 @@ public interface QpidService {
         */
     public String getHostname();
 
-    /**
-        * Get TCP port of the broker
-        *
-        * @return
-        *           Broker TCP port
-        */
-    public String getPort();
+    public Integer getAMQPPort();
+
+    public void setAMQPPort(Integer amqpPort);
+
+    public Integer getAMQPSSLPort();
+
+    public void setAMQPSSLPort(Integer amqpSSLPort);
+
+    public Integer getMqttPort();
+
+    public void setMqttPort(Integer mqttPort);
+
+    public Integer getMqttSSLPort();
+
+    public void setMqttSSLPort(Integer mqttSSLPort);
 
     /**
         * Get In-VM AMQP connection URL for internal components
@@ -165,27 +173,9 @@ public interface QpidService {
     public SubscriptionDetails[] getSubscriptions(String topic, boolean isDurable);
 
     /**
-     * Returns the SSL port that a client can use to comminicate with the broker over SSL
-     * @return the SSL port 
-     */
-    public String getSSLPort();
-
-    /**
      * Return if <sslOnly> option is enabled for embedded-qpid
      * @return
      */
     public boolean getIfSSLOnly() throws Exception;
-
-    /**
-     * Returns thrift server host name in the mb cluster
-     * @return  thrift server host name
-     */
-    public String getThriftServerHost() throws Exception;
-
-    /**
-     * Returns thrift Server port in mb cluster
-     * @return thrift server port
-     */
-    public int getThriftServerPort() throws Exception;
 
 }
