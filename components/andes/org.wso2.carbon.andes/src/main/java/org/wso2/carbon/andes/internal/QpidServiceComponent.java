@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
@@ -125,11 +126,16 @@ public class QpidServiceComponent {
     protected void activate(ComponentContext ctx) throws AndesException {
         this.componentContext = ctx;
         try {
+
+            //Initialize AndesConfigurationManager
+            AndesConfigurationManager.Initialize();
+
+            //Load qpid specific configurations
             qpidServiceImpl
                     = new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
             qpidServiceImpl.loadConfigurations();
-            // set message store and andes context store related configurations
 
+            // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
             if (!AndesContext.getInstance().isClusteringEnabled()) {
                 // If clustering is disabled, broker starts without waiting for hazelcastInstance
@@ -337,7 +343,7 @@ public class QpidServiceComponent {
                             port);
                 }
             } catch (IOException e) {
-                log.error("Wait until Qpid server starts on port " + port,e);
+                log.error("Wait until Qpid server starts on port " + port, e);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ignore) {

@@ -20,7 +20,7 @@ package org.wso2.carbon.andes.authorization.internal;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.wso2.andes.configuration.qpid.configuration.plugins.ConfigurationPluginFactory;
+import org.wso2.andes.configuration.qpid.plugins.ConfigurationPluginFactory;
 import org.wso2.andes.server.security.SecurityPluginFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
