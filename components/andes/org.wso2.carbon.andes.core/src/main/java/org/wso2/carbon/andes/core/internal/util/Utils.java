@@ -490,18 +490,18 @@ public class Utils {
     private static String getContentFromStreamMessage(StreamMessage queueMessage,
                                                       StringBuilder sb) throws JMSException {
 
-        while (true) {
+        boolean eofReached = false;
+
+        while (!eofReached) {
 
             try {
                 Object obj = queueMessage.readObject();
-                if (obj == null) {
-                    break;
-                } else {
-                    // This does not handle the byte[] scenario for now.
+                // obj could be null if the wire type is AbstractBytesTypedMessage.NULL_STRING_TYPE
+                if (null != obj) {
                     sb.append(obj.toString()).append(", ");
                 }
             } catch (MessageEOFException ex) {
-                return StringEscapeUtils.escapeHtml(sb.toString());
+                eofReached = true;
             }
 
         }
