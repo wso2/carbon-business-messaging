@@ -128,7 +128,7 @@ public class QpidServiceComponent {
         try {
 
             //Initialize AndesConfigurationManager
-            AndesConfigurationManager.Initialize();
+            AndesConfigurationManager.initialize();
 
             //Load qpid specific configurations
             qpidServiceImpl
