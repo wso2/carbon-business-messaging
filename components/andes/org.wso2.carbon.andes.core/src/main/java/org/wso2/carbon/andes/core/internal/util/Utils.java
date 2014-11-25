@@ -490,7 +490,6 @@ public class Utils {
     private static String getContentFromStreamMessage(StreamMessage queueMessage,
                                                       StringBuilder sb) throws JMSException {
 
-        // todo: Need to find a better way to convert to String
         while (true) {
 
             try {
@@ -498,37 +497,11 @@ public class Utils {
                 if (obj == null) {
                     break;
                 } else {
-                    if (obj instanceof Double) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Integer) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof String) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Character) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Long) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Short) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Byte) {
-                        sb.append(obj).append(", ");
-
-                    } else if (obj instanceof Boolean) {
-                        sb.append(obj).append(", ");
-                    } else if (obj instanceof Float) {
-                        sb.append(obj).append(", ");
-                    } else {
-                        sb.append(obj.toString()).append(", ");
-                    }
+                    // This does not handle the byte[] scenario for now.
+                    sb.append(obj.toString()).append(", ");
                 }
             } catch (MessageEOFException ex) {
-                return sb.toString();
+                return StringEscapeUtils.escapeHtml(sb.toString());
             }
 
         }
