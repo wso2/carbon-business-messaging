@@ -20,6 +20,9 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
@@ -403,9 +406,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             if (queueBrowser != null) {
                 Enumeration queueContentsEnu = queueBrowser.getEnumeration();
                 ArrayList msgArrayList = Collections.list(queueContentsEnu);
-                int messageBatchSizeForBrowserSubscriptions = ClusterResourceHolder.getInstance()
-                        .getClusterConfiguration().
-                                getMessageBatchSizeForBrowserSubscriptions();
+                Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager
+                        .getInstance().readConfigurationValue(AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
                 if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
                     Object[] filteredMsgArray = Utils.getFilteredMsgsList(msgArrayList, startingIndex, maxMsgCount);
                     for (Object message : filteredMsgArray) {
@@ -437,7 +439,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     }
                 } else {
                     throw new QueueManagerException("Please increase the " +
-                            "messageBatchSizeForBrowserSubscriptions in andes-config.xml");
+                            "messageBatchSizeForBrowserSubscriptions in broker.xml");
                 }
             }
             return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
@@ -451,6 +453,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (UnsupportedEncodingException e) {
             throw new QueueManagerException("Unable to encode user name to url safe format", e);
+        } catch (AndesException e) {
+            throw new QueueManagerException(AndesConfigurationManager
+                    .GENERIC_CONFIGURATION_PARSE_ERROR + AndesConfiguration
+                    .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS.toString(), e);
         } finally {
             try {
                 // There is no need to close the sessions, producers, and consumers of a

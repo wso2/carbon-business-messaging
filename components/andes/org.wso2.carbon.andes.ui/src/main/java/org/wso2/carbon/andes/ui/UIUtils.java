@@ -47,7 +47,7 @@ import java.util.ArrayList;
 public class UIUtils {
 
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
-    private static final String ANDES_CONF_FILE = "andes-config.xml";
+    private static final String QPID_CONF_FILE = "qpid-config.xml";
     private static final String QPID_CONF_CONNECTOR_NODE = "connector";
     private static final String QPID_CONF_SSL_NODE = "ssl";
     private static final String QPID_CONF_SSL_ONLY_NODE = "sslOnly";
@@ -266,7 +266,7 @@ public class UIUtils {
         int carbonSslPort = Integer.valueOf(CARBON_DEFAULT_SSL_PORT) + portOffset;
         String CARBON_SSL_PORT = String.valueOf(carbonSslPort);
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(
@@ -348,7 +348,7 @@ public class UIUtils {
 
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  ~ Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!-- This is the root configuration file of WSO2 MB. Links to configurations of associated libraries are also specified here.
+[dev-advice] - If you intend to rename or modify a property, remember to search in the code using the Xpath expression of the property. -->
+<broker>
+
+    <!--Paths of externally organized configurations specific to andes component (qpid cofigurations are referred by qpid component seperately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
+    <links>
+    </links>
+
+    <coordination>
+        <!-- You can override the cluster node identifier of this MB node using the nodeID. If it is left as "default",
+       the default node ID will be generated for it. (Using IP + UUID).
+       The node ID of each member should ALWAYS be unique.-->
+        <nodeID>node1</nodeID>
+
+        <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
+        <thriftServerHost>localhost</thriftServerHost>
+        <thriftServerPort>7611</thriftServerPort>
+    </coordination>
+
+    <!-- You can enable/disable specific messaging transports in this section. By default all transports are enabled.This section also allows you to customize the messaging flows used within WSO2 MB. NOT performance reated, but logic related. -->
+    <transports>
+        <!-- If you need to provide a specific IP with which the messaging transports should happen, change this.
+        By default, this takes the IP of the resident node. -->
+        <bindAddress>*</bindAddress>
+
+        <amqp enabled="true">
+            <!-- most of the amqp configurations reside in qpid-config.xml since we inherit the qpid messaging model during AMQP.-->
+            <port>5672</port>
+            <sslPort>8762</sslPort>
+            <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
+            <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
+        </amqp>
+        <mqtt enabled="true">
+            <port>1883</port>
+            <sslPort>8883</sslPort> <!-- put proper default ssl port -->
+
+            <!-- These two properties are temporary. Ideally, mqtt should use carbon users. -->
+            <users>
+                <user userName="testuser1" password="password1" />
+                <user userName="testuser2" password="password2" />
+            </users>
+        </mqtt>
+
+    </transports>
+
+    <!-- Depending on the database type selected in master-datasources.xml, you must enable the relevant Data access classes here.
+    Currently supported stores are JDBC(any rdbms store) and Cassandra(cql,hector).
+    Any data store is accessed for 2 purposes. 1. For message persistence ("messageStore")
+    2. To persist and access other information relevant to messaging protocols.("contextStore").-->
+
+    <!-- By default WSO2 MB runs with full in memory store using H2. If you plan to use a different store, set "inMemory" to "false"-->
+    <persistence isInMemory="true">
+        <!-- JDBC Message Store configurations -->
+        <!--messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
+            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
+        </messageStore-->
+
+        <!-- JDBC Andes Context Store configurations -->
+        <!--contextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
+            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
+        </contextStore-->
+
+        <!-- In memory message store running on H2 -->
+        <messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
+            <property name="asyncStoring">false</property>
+        </messageStore>
+
+        <!-- In memory context store running on H2 -->
+        <contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
+        </contextStore>
+
+
+        <!-- Configurations related to external Cassandra data source -->
+        <!-- Uncomment the following 2 stores to use the external Cassandra for Message Store Implementation.
+             NOTE: Update the master-datasources.xml file to connect to cassandra data source
+             READ the documentation to set advanced cassandra tuning parameters. -->
+        <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
+            <property name="dataSource">CassandraRepo</property>
+            <property name="asyncStoring">true</property>
+        </messageStore>
+
+        <contextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
+            <property name="dataSource">CassandraRepo</property>
+        </contextStore-->
+
+        <!-- This class decides how unique IDs are generated for messages that are persisted -->
+        <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
+    </persistence>
+
+    <!-- Alter the flow that is triggered during a node fail -->
+    <failoverBehaviour>
+
+    </failoverBehaviour>
+
+    <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
+    Broken down by critical processes so you have a clear view of which parameters to change in different scenarios.  -->
+    <performanceTuning>
+
+        <slots>
+            <!--maximum time interval where slot can be retain in memory before updating to the cluster(in milliseconds)-->
+            <slotRetainTimeInMemory>1000</slotRetainTimeInMemory>
+
+            <!--rough estimate for size of a slot-->
+            <windowSize>1000</windowSize>
+
+            <!--Number of SlotDeliveryWorker threads that should be started-->
+            <workerThreadCount>5</workerThreadCount>
+        </slots>
+
+        <messageRouting>
+             <!-- number of parallel threads that will handle routing the messages received at the broker. -->
+             <workerThreadCount>5</workerThreadCount>
+        </messageRouting>
+
+        <delivery>
+            <!-- Maximum number of undelivered messages that can have in memory. Increasing this value
+                increase the possibility of out of memory scenario but performance will be improved-->
+            <maxNumberOfReadButUndeliveredMessages>1000</maxNumberOfReadButUndeliveredMessages>
+
+            <!-- This is the Thread pool size which will be used by the queue delivery workers.
+             Make this to a higher number if there are lots of unique queues to the system at a given time. -->
+            <publisherPoolSize>50</publisherPoolSize>
+        </delivery>
+
+        <!-- Add any store access related tuning parameters. This should ideally be empty since we handle database level tuning in master-datasources.xml. But in case we have generic aspects to tune, add here. -->
+        <storeOperations>
+            <!-- This property. are we using it ? the class that uses this property is unused. -->
+            <messageContentCache>100</messageContentCache>
+        </storeOperations>
+
+        <ackHandling>
+            <!-- message delivery from server to the client will be paused temporarily if number of delivered but unacknowledged message count reaches this size.
+                Should be set considering message consume rate-->
+            <maxUnackedMessages>1000</maxUnackedMessages>
+
+            <!-- This is the Thread pool size which will be used by the Andes core to schedule its internal parallel tasks -->
+            <workerThreadCount>50</workerThreadCount>
+
+        </ackHandling>
+
+        <failover>
+            <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will sync the
+                Virtual host details across the cluster -->
+            <vHostSyncTaskInterval>3600</vHostSyncTaskInterval>
+        </failover>
+
+        <messageExpiration>
+            <checkInterval>10000</checkInterval>
+            <messageBatchSize>1000</messageBatchSize>
+        </messageExpiration>
+
+        <subscriptions>
+
+        </subscriptions>
+
+        <!-- Code specific parameters to ensure messages get deleted as fast as possible without disturbing other processes.-->
+        <messageDeletion>
+
+            <!-- This is the Task interval (seconds) for the content removal task which will remove
+                    the actual message content from the store in the background. If the message rate is very high users
+                    can set this to a lower value -->
+            <contentRemovalTaskInterval>4</contentRemovalTaskInterval>
+
+            <!--Time to wait before removing a message from the store in PubSub implementation (in milliseconds)-->
+            <contentRemovalTimeDifference>600000</contentRemovalTimeDifference>
+
+        </messageDeletion>
+    </performanceTuning>
+
+    <!-- This section is about how you want to view messaging statistics from the admin console and how you plan to interact with it. -->
+    <managementConsole>
+        <!--Maximum number of messages to be fetched using andes message browser when browsing queues-->
+        <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
+    </managementConsole>
+
+    <!-- Memory and resource exhaustion is something we should prevent and recover from.
+    This section allows you to specify the threshold at which to reduce/stop frequently intensive operations within MB temporarily. -->
+    <flowControl>
+        <memoryBased>
+            <memoryCheckInterval>20000</memoryCheckInterval>
+            <globalMemoryThresholdRatio>0.4</globalMemoryThresholdRatio>
+            <globalMemoryRecoveryThresholdRatio>0.5</globalMemoryRecoveryThresholdRatio>
+        </memoryBased>
+        <connectionBased>
+            <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
+        </connectionBased>
+    </flowControl>
+
+</broker>
+
+
