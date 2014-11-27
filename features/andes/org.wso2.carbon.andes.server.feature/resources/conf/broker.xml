@@ -93,12 +93,12 @@
         <!-- Uncomment the following 2 stores to use the external Cassandra for Message Store Implementation.
              NOTE: Update the master-datasources.xml file to connect to cassandra data source
              READ the documentation to set advanced cassandra tuning parameters. -->
-        <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
+        <!--messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
             <property name="dataSource">CassandraRepo</property>
             <property name="asyncStoring">true</property>
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
             <property name="dataSource">CassandraRepo</property>
         </contextStore-->
 
