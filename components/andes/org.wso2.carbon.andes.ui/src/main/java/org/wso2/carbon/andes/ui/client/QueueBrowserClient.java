@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.ui.client;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
@@ -52,7 +53,7 @@ public class QueueBrowserClient {
 
 
     public QueueBrowserClient(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException {
+            XMLStreamException, AndesException {
         this.nameOfQueue = nameOfQueue;
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);

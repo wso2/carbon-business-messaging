@@ -128,7 +128,7 @@ public class QpidServiceComponent {
         try {
 
             //Initialize AndesConfigurationManager
-            AndesConfigurationManager.initialize();
+            AndesConfigurationManager.initialize(readPortOffset());
 
             //Load qpid specific configurations
             qpidServiceImpl

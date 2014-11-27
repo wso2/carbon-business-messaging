@@ -57,7 +57,6 @@ public class QpidServiceImpl implements QpidService {
     private Integer amqpSSLPort = 8672;
     private Integer mqttPort = 1883;
     private Integer mqttSSLPort = 8883;
-    private int portOffset = 0;
 
     public  QpidServiceImpl(String accessKey) {
         this.accessKey = accessKey;
@@ -73,9 +72,6 @@ public class QpidServiceImpl implements QpidService {
         } catch (SocketException e) {
             hostname = CARBON_DEFAULT_HOSTNAME;
         }
-
-        // Read Port Offset
-        portOffset = readPortOffset();
 
         // Read Qpid broker amqpPort from configuration file
         amqpPort = readPortFromConfig();
@@ -203,50 +199,27 @@ public class QpidServiceImpl implements QpidService {
         return subsDetails;
     }
 
-    private int readPortOffset() {
-        ServerConfigurationService carbonConfig = QpidServiceDataHolder.getInstance().getCarbonConfiguration();
-        String portOffset = System.getProperty("portOffset",
-                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET_NODE));
-
-        try {
-            return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
-        } catch (NumberFormatException e) {
-            return CARBON_DEFAULT_PORT_OFFSET;
-        }
-    }
-
     /***
      * Reads the AMQP amqpPort fro configuration and calculates the offset amqpPort that should be used in the pack.
      * @return Port used for AMQP transports with offset if specified.
      * @throws AndesException
      */
     private Integer readPortFromConfig() throws AndesException {
-        Integer port = AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
-                .TRANSPORTS_AMQP_PORT);
-
-        // return with amqpPort Offset
-        return port + portOffset;
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
     }
 
     private Integer readSSLPortFromConfig() throws AndesException {
-        Integer port = AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
-
-        //Return with offset
-        return port + portOffset;
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
     }
 
     private Integer readMQTTPortFromConfig() throws AndesException {
-        Integer port = AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_PORT);
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_PORT);
 
-        //Return with Offset
-        return port + portOffset;
     }
 
     private Integer readMQTTSSLPortFromConfig() throws AndesException {
-        Integer port = AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_PORT);
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_PORT);
 
-        //Return with Offset
-        return port + portOffset;
     }
 
     private String getInternalTenantUsername(String username) {

@@ -509,6 +509,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to send message.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to send message.", e);
+        } catch (AndesException e) {
+            throw new QueueManagerException(AndesConfigurationManager.GENERIC_CONFIGURATION_PARSE_ERROR + " amqp ports",e);
         } finally {
             try {
                 queueConnection.close();
@@ -529,7 +531,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     private Queue getQueue(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException, NamingException, JMSException {
+            XMLStreamException, NamingException, JMSException, AndesException {
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
@@ -539,18 +541,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
         queueConnection = connFactory.createQueueConnection();
         return (Queue) ctx.lookup(nameOfQueue);
-    }
-
-    private int readPortOffset() {
-        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = System.getProperty("portOffset",
-                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
-
-        try {
-            return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
-        } catch (NumberFormatException e) {
-            return CARBON_DEFAULT_PORT_OFFSET;
-        }
     }
 
     private static String getLoggedInUserName() {

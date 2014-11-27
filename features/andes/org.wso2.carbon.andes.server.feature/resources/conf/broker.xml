@@ -21,7 +21,7 @@
 [dev-advice] - If you intend to rename or modify a property, remember to search in the code using the Xpath expression of the property. -->
 <broker>
 
-    <!--Paths of externally organized configurations specific to andes component (qpid cofigurations are referred by qpid component seperately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
+    <!--Paths of externally organized configurations specific to andes component (qpid configurations are referred by qpid component separately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
     <links>
     </links>
 
@@ -29,7 +29,7 @@
         <!-- You can override the cluster node identifier of this MB node using the nodeID. If it is left as "default",
        the default node ID will be generated for it. (Using IP + UUID).
        The node ID of each member should ALWAYS be unique.-->
-        <nodeID>node1</nodeID>
+        <nodeID>default</nodeID>
 
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
@@ -40,7 +40,7 @@
     <transports>
         <!-- If you need to provide a specific IP with which the messaging transports should happen, change this.
         By default, this takes the IP of the resident node. -->
-        <bindAddress>*</bindAddress>
+        <bindAddress>localhost</bindAddress>
 
         <amqp enabled="true">
             <!-- most of the amqp configurations reside in qpid-config.xml since we inherit the qpid messaging model during AMQP.-->
@@ -68,37 +68,37 @@
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
     <!-- By default WSO2 MB runs with full in memory store using H2. If you plan to use a different store, set "inMemory" to "false"-->
-    <persistence isInMemory="true">
+    <persistence>
         <!-- JDBC Message Store configurations -->
-        <!--messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
+        <messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
             <property name="dataSource">jdbc/WSO2MBStoreDB</property>
-        </messageStore-->
-
-        <!-- JDBC Andes Context Store configurations -->
-        <!--contextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
-            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
-        </contextStore-->
-
-        <!-- In memory message store running on H2 -->
-        <messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
-            <property name="asyncStoring">false</property>
         </messageStore>
 
-        <!-- In memory context store running on H2 -->
-        <contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
+        <!-- JDBC Andes Context Store configurations -->
+        <contextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
+            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
         </contextStore>
+
+        <!-- In memory message store running on H2 -->
+        <!--messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
+            <property name="asyncStoring">false</property>
+        </messageStore-->
+
+        <!-- In memory context store running on H2 -->
+        <!--contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
+        </contextStore-->
 
 
         <!-- Configurations related to external Cassandra data source -->
         <!-- Uncomment the following 2 stores to use the external Cassandra for Message Store Implementation.
              NOTE: Update the master-datasources.xml file to connect to cassandra data source
              READ the documentation to set advanced cassandra tuning parameters. -->
-        <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
+        <!--messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
             <property name="dataSource">CassandraRepo</property>
             <property name="asyncStoring">true</property>
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
             <property name="dataSource">CassandraRepo</property>
         </contextStore-->
 

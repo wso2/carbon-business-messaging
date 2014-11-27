@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.ui.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
@@ -41,7 +42,7 @@ public class QueueReceiverClient {
     private MessageConsumer queueConsumer;
 
     public Queue registerReceiver(String nameOfQueue, String username, String accesskey) throws NamingException,
-            JMSException, FileNotFoundException, XMLStreamException {
+            JMSException, FileNotFoundException, XMLStreamException, AndesException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, UIUtils.getTCPConnectionURL(username, accesskey));
