@@ -209,7 +209,8 @@ public class QpidServiceImpl implements QpidService {
     }
 
     private Integer readSSLPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
+                .TRANSPORTS_AMQP_SSL_PORT);
     }
 
     private Integer readMQTTPortFromConfig() throws AndesException {
@@ -218,7 +219,8 @@ public class QpidServiceImpl implements QpidService {
     }
 
     private Integer readMQTTSSLPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_PORT);
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
+                .TRANSPORTS_MQTT_SSL_PORT);
 
     }
 

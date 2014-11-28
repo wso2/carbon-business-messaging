@@ -30,7 +30,7 @@
      and set enabled to true.
              To disasble Non-SSL port set sslOnly to true -->
         <ssl>
-            <enabled>false</enabled>
+            <enabled>true</enabled>
             <sslOnly>false</sslOnly>
             <keystorePath>repository/resources/security/wso2carbon.jks</keystorePath>
             <keystorePassword>wso2carbon</keystorePassword>

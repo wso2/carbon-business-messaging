@@ -40,12 +40,12 @@
     <transports>
         <!-- If you need to provide a specific IP with which the messaging transports should happen, change this.
         By default, this takes the IP of the resident node. -->
-        <bindAddress>localhost</bindAddress>
+        <bindAddress>127.0.0.1</bindAddress>
 
         <amqp enabled="true">
             <!-- most of the amqp configurations reside in qpid-config.xml since we inherit the qpid messaging model during AMQP.-->
             <port>5672</port>
-            <sslPort>8762</sslPort>
+            <sslPort>8672</sslPort>
             <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
         </amqp>
