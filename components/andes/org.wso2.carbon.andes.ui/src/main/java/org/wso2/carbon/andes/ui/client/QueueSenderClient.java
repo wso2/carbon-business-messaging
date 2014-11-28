@@ -18,6 +18,7 @@
 package org.wso2.carbon.andes.ui.client;
 
 
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.ui.UIUtils;
 
@@ -43,14 +44,14 @@ public class QueueSenderClient {
     private QueueSender queueSender;
 
     public QueueSenderClient(String nameOfQueue, String username, String accessKey) throws NamingException,
-            JMSException, FileNotFoundException, XMLStreamException {
+            JMSException, FileNotFoundException, XMLStreamException, AndesException {
         queueSender = registerQueueSender(nameOfQueue, username, accessKey);
 
     }
 
     private QueueSender registerQueueSender(String nameOfQueue, String username,
                                             String accessKey) throws NamingException, JMSException,
-            FileNotFoundException, XMLStreamException {
+            FileNotFoundException, XMLStreamException, AndesException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, UIUtils.getTCPConnectionURL(username, accessKey));
