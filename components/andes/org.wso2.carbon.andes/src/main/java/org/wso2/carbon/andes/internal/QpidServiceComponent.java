@@ -26,6 +26,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
@@ -206,7 +207,7 @@ public class QpidServiceComponent {
      *
      * @param hazelcastInstance hazelcastInstance found from the OSGI service
      */
-    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) throws AndesException {
         HazelcastAgent.getInstance().init(hazelcastInstance);
         registeredHazelcast = true;
 
@@ -278,16 +279,16 @@ public class QpidServiceComponent {
     }
 
 
-    private String getCarbonHostName() {
-        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-
-        String hostName = carbonConfig.getFirstProperty(CARBON_CONFIG_HOST_NAME);
-
-        return hostName != null ? hostName : "localhost";
+    /***
+     * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
+     * @return host name as derived from broker.xml
+     */
+    private String getCarbonHostName() throws AndesException {
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
 
     }
 
-    private void startAndesBroker() throws ConfigurationException {
+    private void startAndesBroker() throws ConfigurationException, AndesException {
         brokerShouldBeStarted = false;
 
         // Start andes broker

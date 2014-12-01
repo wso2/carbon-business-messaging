@@ -39,7 +39,8 @@
     <!-- You can enable/disable specific messaging transports in this section. By default all transports are enabled.This section also allows you to customize the messaging flows used within WSO2 MB. NOT performance reated, but logic related. -->
     <transports>
         <!-- If you need to provide a specific IP with which the messaging transports should happen, change this.
-        By default, this takes the IP of the resident node. -->
+        By default, this takes the IP of the resident node. Please note that this is the address exposed by
+        the server. NOT the hostname inferred from carbon.xml -->
         <bindAddress>127.0.0.1</bindAddress>
 
         <amqp enabled="true">
