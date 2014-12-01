@@ -20,7 +20,7 @@ package org.wso2.carbon.andes.authorization.service.andes;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-import org.wso2.andes.server.configuration.plugins.ConfigurationPlugin;
+import org.wso2.andes.configuration.qpid.plugins.ConfigurationPlugin;
 import org.wso2.andes.server.security.AbstractPlugin;
 import org.wso2.andes.server.security.Result;
 import org.wso2.andes.server.security.SecurityManager;
@@ -165,6 +165,9 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
                     } else if (ObjectType.QUEUE == objectType) {
                         return QpidAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
                     }
+                case PURGE:
+                    return QpidAuthorizationHandler.handlePurgeQueue(username,userRealm,
+                            properties);
             }
         } catch (QpidAuthorizationHandlerException e) {
             logger.error("Error while invoking QpidAuthorizationHandler", e);

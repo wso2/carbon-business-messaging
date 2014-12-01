@@ -25,7 +25,10 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.kernel.AndesContext;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
@@ -35,6 +38,7 @@ import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
+import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
@@ -115,29 +119,44 @@ public class QpidServiceComponent {
      */
     private boolean registeredHazelcast = false;
 
-    protected void activate(ComponentContext ctx) {
+    /**
+     * This holds the configuration values
+     */
+    private QpidServiceImpl qpidServiceImpl;
+
+    protected void activate(ComponentContext ctx) throws AndesException {
         this.componentContext = ctx;
+        try {
 
-        QpidServiceImpl qpidServiceImpl =
-                new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+            //Initialize AndesConfigurationManager
+            AndesConfigurationManager.initialize(readPortOffset());
 
-        // set message store and andes context store related configurations
-        AndesContext.getInstance().setVirtualHostConfiguration(qpidServiceImpl.readVirtualHostConfig());
+            //Load qpid specific configurations
+            qpidServiceImpl
+                    = new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
+            qpidServiceImpl.loadConfigurations();
 
-        if (!AndesContext.getInstance().isClusteringEnabled()) {
-            // If clustering is disabled, broker starts without waiting for hazelcastInstance
-            this.startAndesBroker();
-        } else {
-            if (registeredHazelcast) {
-                // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
+            // set message store and andes context store related configurations
+            AndesContext.getInstance().constructStoreConfiguration();
+            if (!AndesContext.getInstance().isClusteringEnabled()) {
+                // If clustering is disabled, broker starts without waiting for hazelcastInstance
                 this.startAndesBroker();
-
             } else {
-                // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
-                // wait for hazelcastInstance to be registered.
-                this.brokerShouldBeStarted = true;
+                if (registeredHazelcast) {
+                    // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
+                    this.startAndesBroker();
+
+                } else {
+                    // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
+                    // wait for hazelcastInstance to be registered.
+                    this.brokerShouldBeStarted = true;
+                }
             }
+        } catch (ConfigurationException e) {
+            log.error("Invalid configuration found in a configuration file", e);
+            throw new RuntimeException("Invalid configuration found in a configuration file", e);
         }
+
     }
 
     protected void deactivate(ComponentContext ctx) {
@@ -188,14 +207,19 @@ public class QpidServiceComponent {
      *
      * @param hazelcastInstance hazelcastInstance found from the OSGI service
      */
-    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) throws AndesException {
         HazelcastAgent.getInstance().init(hazelcastInstance);
         registeredHazelcast = true;
 
         if (brokerShouldBeStarted) {
             //Start the broker if the activate method of QpidServiceComponent is blocked until hazelcastInstance
             // getting registered
-            this.startAndesBroker();
+            try {
+                this.startAndesBroker();
+            } catch (ConfigurationException e) {
+                log.error("Invalid configuration found in a configuration file", e);
+                throw new RuntimeException("Invalid configuration found in a configuration file", e);
+            }
         }
     }
 
@@ -255,27 +279,19 @@ public class QpidServiceComponent {
     }
 
 
-    private String getCarbonHostName() {
-        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-
-        String hostName = carbonConfig.getFirstProperty(CARBON_CONFIG_HOST_NAME);
-
-        return hostName != null ? hostName : "localhost";
+    /***
+     * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
+     * @return host name as derived from broker.xml
+     */
+    private String getCarbonHostName() throws AndesException {
+        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
 
     }
 
-    private void startAndesBroker() {
+    private void startAndesBroker() throws ConfigurationException, AndesException {
         brokerShouldBeStarted = false;
 
-        QpidServiceImpl qpidServiceImpl =
-                new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-
         // Start andes broker
-        //set thrift server port and thrift server host in andes dependency
-        String thriftServerHost = qpidServiceImpl.getThriftServerHost();
-        int thriftServerPort = qpidServiceImpl.getThriftServerPort();
-        AndesContext.getInstance().setThriftServerHost(thriftServerHost);
-        AndesContext.getInstance().setThriftServerPort(thriftServerPort);
 
         //register coordinatedActivityImpl to get coordinator changes notification.
         //When is node is appointed as the coordinator execute method of coordinatedActivityImpl will be called
@@ -286,8 +302,8 @@ public class QpidServiceComponent {
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-        String[] args = {"-p" + qpidServiceImpl.getPort(), "-s" + qpidServiceImpl.getSSLPort(),
-                "-q" + qpidServiceImpl.getMQTTPort()};
+        String[] args = {"-p" + qpidServiceImpl.getAMQPPort(), "-s" + qpidServiceImpl.getAMQPSSLPort(),
+                "-q" + qpidServiceImpl.getMqttPort()};
 
         //TODO: Change the functionality in andes main method to an API
         //Main.setStandaloneMode(false);
@@ -311,22 +327,24 @@ public class QpidServiceComponent {
         boolean isServerStarted = false;
         int port;
         if (qpidServiceImpl.getIfSSLOnly()) {
-            port = Integer.parseInt(qpidServiceImpl.getSSLPort());
+            port = qpidServiceImpl.getAMQPSSLPort();
         } else {
-            port = Integer.parseInt(qpidServiceImpl.getPort());
+            port = qpidServiceImpl.getAMQPPort();
         }
         while (!isServerStarted) {
             Socket socket = null;
             try {
+                log.info("Carbon Host Name : " + getCarbonHostName());
                 InetAddress address = InetAddress.getByName(getCarbonHostName());
                 socket = new Socket(address, port);
+                log.info("Host : " + address.getHostAddress() + " port : " + port);
                 isServerStarted = socket.isConnected();
                 if (isServerStarted) {
                     log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
                             port);
                 }
             } catch (IOException e) {
-                log.info("Wait until Qpid server starts on port " + port);
+                log.error("Wait until Qpid server starts on port " + port, e);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ignore) {
@@ -347,18 +365,19 @@ public class QpidServiceComponent {
         // Publish Qpid properties
         qpidService = this.componentContext.getBundleContext().registerService(
                 QpidService.class.getName(), qpidServiceImpl, null);
-        String brokerPort;
+        Integer brokerPort;
         if (qpidServiceImpl.getIfSSLOnly()) {
-            brokerPort = qpidServiceImpl.getSSLPort();
+            brokerPort = qpidServiceImpl.getAMQPSSLPort();
         } else {
-            brokerPort = qpidServiceImpl.getPort();
+            brokerPort = qpidServiceImpl.getAMQPPort();
         }
         QpidServerDetails qpidServerDetails =
                 new QpidServerDetails(qpidServiceImpl.getAccessKey(),
                         qpidServiceImpl.getClientID(),
                         qpidServiceImpl.getVirtualHostName(),
                         qpidServiceImpl.getHostname(),
-                        brokerPort, qpidServiceImpl.getIfSSLOnly());
+                        brokerPort.toString(), qpidServiceImpl.getIfSSLOnly());
         QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
+
     }
 }

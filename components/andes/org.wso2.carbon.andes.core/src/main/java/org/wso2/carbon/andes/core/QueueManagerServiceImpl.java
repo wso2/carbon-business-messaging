@@ -20,6 +20,9 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
@@ -48,23 +51,30 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
-
+/**
+ * Works as the manager class for queue related tasks done from UI. (create queue, delete queue,
+ * browse queue, getAllQueues etc.)
+ */
 public class QueueManagerServiceImpl implements QueueManagerService {
 
-    private static int DEFAULT_ANDES_PORT = 5672;
     private static Log log = LogFactory.getLog(QueueManagerServiceImpl.class);
-    private static String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
-    private static int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+    private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
+    private static final String URLEncodingFormat = "UTF-8";
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
-    private static String ROLE_EVERY_ONE = "everyone";
+    private static final String ROLE_EVERY_ONE = "everyone";
     public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
     public static final String UI_EXECUTE = "ui.execute";
+
     public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
+
     private Properties properties;
     private QueueConnection queueConnection;
     private QueueSession queueSession;
@@ -136,14 +146,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     String queueName = queue.getQueueName();
                     String queueID = CommonsUtil.getQueueID(queueName);
                     for (String role : roleNames) {
+
                         if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) || userRealm
-                                .getAuthorizationManager().isRoleAuthorized(
-                                        role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
-                                userRealm
-                                .getAuthorizationManager()
-                                .isUserAuthorized(CarbonContext.getThreadLocalCarbonContext().getUsername(),
-                                        PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
+                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isRoleAuthorized(
+                                role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
+                            userRealm.getAuthorizationManager().isUserAuthorized(
+                                CarbonContext.getThreadLocalCarbonContext().getUsername(),
+                                PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
                             if (!filteredQueueByUser.contains(queue)) {
                                 filteredQueueByUser.add(queue);
                             }
@@ -210,8 +220,17 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
     }
 
-    public void purgeMessagesOfQueue(String queueName) throws QueueManagerException {
-        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName);
+    /**
+     * {@inheritDoc}
+     *
+     * @param queueName
+     * @throws QueueManagerException
+     */
+    public void purgeMessagesOfQueue(String queueName) throws
+            QueueManagerException {
+
+        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName, CarbonContext.getThreadLocalCarbonContext()
+                .getUsername());
     }
 
     public long getMessageCountForQueue(String queueName, String msgPattern) throws QueueManagerException {
@@ -364,22 +383,31 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     @Override
-    public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue, String userName,
-                                                                  String accessKey, int startingIndex, int maxMsgCount)
-            throws QueueManagerException {
-        List<org.wso2.carbon.andes.core.types.Message> messageList = new ArrayList<org.wso2.carbon.andes.core.types
-                .Message>();
+    public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
+                                                                  String userName, String accessKey,
+                                                                  int startingIndex, int maxMsgCount
+    ) throws QueueManagerException {
+
+        List<org.wso2.carbon.andes.core.types.Message> messageList =
+                new ArrayList<org.wso2.carbon.andes.core.types.Message>();
+
         try {
-            javax.jms.Queue queue = getQueue(nameOfQueue, userName, accessKey);
+            // User name may contain the domain name and the user name. eg: WSO2/admin
+            // having this username with domain name containing '/' character violates the
+            // amqp url user name. Therefore escaping it according to url standards
+            javax.jms.Queue queue = getQueue(
+                    nameOfQueue,
+                    URLEncoder.encode(userName, URLEncodingFormat),
+                    accessKey
+            );
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             queueBrowser = queueSession.createBrowser(queue);
             queueConnection.start();
             if (queueBrowser != null) {
                 Enumeration queueContentsEnu = queueBrowser.getEnumeration();
                 ArrayList msgArrayList = Collections.list(queueContentsEnu);
-                int messageBatchSizeForBrowserSubscriptions = ClusterResourceHolder.getInstance()
-                        .getClusterConfiguration().
-                                getMessageBatchSizeForBrowserSubscriptions();
+                Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager
+                        .getInstance().readConfigurationValue(AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
                 if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
                     Object[] filteredMsgArray = Utils.getFilteredMsgsList(msgArrayList, startingIndex, maxMsgCount);
                     for (Object message : filteredMsgArray) {
@@ -411,9 +439,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     }
                 } else {
                     throw new QueueManagerException("Please increase the " +
-                            "messageBatchSizeForBrowserSubscriptions in andes-config.xml");
+                            "messageBatchSizeForBrowserSubscriptions in broker.xml");
                 }
             }
+            return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
         } catch (NamingException e) {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (JMSException e) {
@@ -422,24 +451,21 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to browse queue.", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new QueueManagerException("Unable to encode user name to url safe format", e);
+        } catch (AndesException e) {
+            throw new QueueManagerException(AndesConfigurationManager
+                    .GENERIC_CONFIGURATION_PARSE_ERROR + AndesConfiguration
+                    .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS.toString(), e);
         } finally {
             try {
+                // There is no need to close the sessions, producers, and consumers of a
+                // closed connection
                 queueConnection.close();
             } catch (JMSException e) {
-                log.error("Unable to close queue connection", e);
-            }
-            try {
-                queueSession.close();
-            } catch (JMSException e) {
-                log.error("Unable to close queue session", e);
-            }
-            try {
-                queueBrowser.close();
-            } catch (JMSException e) {
-                log.error("Unable to close queue browser", e);
+                log.error("Failed to close queue connection", e);
             }
         }
-        return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
     }
 
     @Override
@@ -483,6 +509,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to send message.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to send message.", e);
+        } catch (AndesException e) {
+            throw new QueueManagerException(AndesConfigurationManager.GENERIC_CONFIGURATION_PARSE_ERROR + " amqp ports",e);
         } finally {
             try {
                 queueConnection.close();
@@ -503,7 +531,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     private Queue getQueue(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException, NamingException, JMSException {
+            XMLStreamException, NamingException, JMSException, AndesException {
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
@@ -513,18 +541,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
         queueConnection = connFactory.createQueueConnection();
         return (Queue) ctx.lookup(nameOfQueue);
-    }
-
-    private int readPortOffset() {
-        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = System.getProperty("portOffset",
-                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
-
-        try {
-            return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
-        } catch (NumberFormatException e) {
-            return CARBON_DEFAULT_PORT_OFFSET;
-        }
     }
 
     private static String getLoggedInUserName() {

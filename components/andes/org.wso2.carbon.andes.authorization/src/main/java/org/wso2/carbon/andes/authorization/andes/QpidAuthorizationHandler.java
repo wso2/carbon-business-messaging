@@ -42,18 +42,20 @@ public class QpidAuthorizationHandler {
     private static final String DIRECT_EXCHANGE = "amq.direct";
     private static final String TOPIC_EXCHANGE = "amq.topic";
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
-    private static final String ADMIN_ROLE = "admin";
     private static final String AT_REPLACE_CHAR = "_";
     private static final String UI_EXECUTE = "ui.execute";
-    private static final String ROLE_EVERY_ONE = "everyone";
     private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/addQueue";
     private static final String PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE_QUEUE =
             "/permission/admin/manage/queue/browseQueue";
     private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE =
             "/permission/admin/manage/queue/deleteQueue";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE =
+            "/permission/admin/manage/queue/purgeQueue";
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC = "/permission/admin/manage/topic/addTopic";
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC =
             "/permission/admin/manage/topic/deleteTopic";
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC =
+            "/permission/admin/manage/topic/purgeTopic";
     private static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
 
     /**
@@ -86,9 +88,10 @@ public class QpidAuthorizationHandler {
 
                     if (isOwnDomain(tenantDomain, queueName) || isTopicSubscriberQueue(queueName)) {
                         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
+                        String everyoneRole = userRealm.getRealmConfiguration().getEveryOneRoleName();
                         String[] roleNames = userStoreManager.getRoleListOfUser(username);
                         for (String role : roleNames) {
-                            if (!role.equalsIgnoreCase(ROLE_EVERY_ONE) && userStoreManager.isExistingRole(role)) {
+                            if (!role.equals(everyoneRole) && userStoreManager.isExistingRole(role)) {
                                 userRealm.getAuthorizationManager().authorizeRole(
                                         role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase());
                                 userRealm.getAuthorizationManager().authorizeRole(
@@ -370,6 +373,32 @@ public class QpidAuthorizationHandler {
         return Result.DENIED;
     }
 
+    /***
+     * Handle purging a queue
+     *
+     * @param username
+     * @param userRealm
+     * @param properties - NAME, OWNER, DURABLE
+     * @return
+     * @throws QpidAuthorizationHandlerException
+     */
+    public static Result handlePurgeQueue(String username, UserRealm userRealm,
+                                      ObjectProperties properties)
+            throws QpidAuthorizationHandlerException {
+        try {
+            if (isAdminUser(username, userRealm) || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE,
+                            UI_EXECUTE) || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE)) {
+
+                return Result.ALLOWED;
+            }
+        } catch (UserStoreException e) {
+            throw new QpidAuthorizationHandlerException("Error handling purge queue.", e);
+        }
+        return Result.DENIED;
+    }
+
     /**
      * Internally durable queue names have the format [client id]:[raw queue name]. This method
      * extracts raw name from it's internal name..
@@ -406,19 +435,25 @@ public class QpidAuthorizationHandler {
         return exchangeName.equals("<<default>>") ? DEFAULT_EXCHANGE : exchangeName;
     }
 
+    /**
+     * Check whether the user has admin privileges
+     * @param username username
+     * @param userRealm userRealm of the user
+     * @return true if user has admin privileges and false otherwise
+     */
     private static boolean isAdminUser(String username, UserRealm userRealm) {
         try {
             String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+            String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
 
             for (String userRole : userRoles) {
-                if (ADMIN_ROLE.equals(userRole)) {
+                if (adminRole.equals(userRole)) {
                     return true;
                 }
             }
-        } catch (UserStoreException ignore) {
-            // do nothing
+        } catch (UserStoreException e) {
+            log.error("Error while retrieving roles for user " + username, e);
         }
-
         return false;
     }
 

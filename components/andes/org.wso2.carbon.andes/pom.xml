@@ -95,6 +95,8 @@
                             org.wso2.carbon.andes.authentication.service,
                             org.wso2.carbon.andes.commons,
                             org.wso2.carbon.andes.commons.registry,
+                            org.wso2.andes.configuration.*,
+                            org.apache.commons.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

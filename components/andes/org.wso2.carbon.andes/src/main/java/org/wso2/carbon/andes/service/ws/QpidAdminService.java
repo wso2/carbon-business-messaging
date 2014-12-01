@@ -71,7 +71,7 @@ public class QpidAdminService {
     public String getPort() {
         QpidServiceImpl qpidServiceImpl =
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-        return qpidServiceImpl.getPort();
+        return qpidServiceImpl.getAMQPPort().toString();
     }
 
 
@@ -83,6 +83,6 @@ public class QpidAdminService {
     public String getSSLPort() {
         QpidServiceImpl qpidServiceImpl =
                 new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
-        return qpidServiceImpl.getSSLPort();
+        return qpidServiceImpl.getAMQPSSLPort().toString();
     }
 }

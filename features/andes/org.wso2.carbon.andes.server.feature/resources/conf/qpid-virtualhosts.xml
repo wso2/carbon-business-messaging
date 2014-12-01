@@ -22,41 +22,6 @@
     <virtualhost>
         <name>carbon</name>
         <carbon>
-            <store>
-                <!-- JDBC Message Store configurations -->
-                <messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
-                    <property name="dataSource">jdbc/WSO2MBStoreDB</property>
-                </messageStore>
-
-                <!-- JDBC Andes Context Store configurations -->
-                <andesContextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
-                    <property name="dataSource">jdbc/WSO2MBStoreDB</property>
-                </andesContextStore>
-
-                <!-- Configurations related to external Cassandra data source -->
-
-                <!-- Uncomment the following to use the external Cassandra for Message Store Implementation. 
-                     NOTE: Update the master-datasources.xml file to connect to cassandra data source  
-                     READ the documentation to set advanced cassandra tuning parameters. -->
- 
-                <!--messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
-                    <property name="dataSource">CassandraRepo</property>
-                </messageStore-->
-
-                <!-- Uncomment the following to use the external Cassandra for Andes Context Store Implementation  
-                     NOTE: Update the master-datasources.xml file to connect to cassandra data source.
-                     READ the documentation to set advanced cassandra tuning parameters. -->
-
-                <!--andesContextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
-                    <property name="dataSource">CassandraRepo</property>
-                </andesContextStore-->
-
-                <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
-            </store>
-            <coordination>
-                <thriftServerHost>localhost</thriftServerHost>
-                <thriftServerPort>7611</thriftServerPort>
-            </coordination>
             <housekeeping>
                 <threadCount>2</threadCount>
                 <expiredMessageCheckPeriod>20000</expiredMessageCheckPeriod>
