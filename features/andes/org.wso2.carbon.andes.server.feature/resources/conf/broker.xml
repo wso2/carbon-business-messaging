@@ -140,6 +140,14 @@
             <!-- This is the Thread pool size which will be used by the queue delivery workers.
              Make this to a higher number if there are lots of unique queues to the system at a given time. -->
             <publisherPoolSize>50</publisherPoolSize>
+
+            <!-- This is the ring buffer size of the delivery disruptor. This value should be a power of 2 (E.g. 1024, 2048, 4096).
+                 Use a small ring size if you want to reduce the memory usage. -->
+            <ringBufferSize>4096</ringBufferSize>
+
+            <!--Number of parallel readers used to used to read content from message store. Increasing this value will
+                speedup the message sending mechanism. But the load on the data store will increase. -->
+            <parallelContentReaders>5</parallelContentReaders>
         </delivery>
 
         <!-- Add any store access related tuning parameters. This should ideally be empty since we handle database level tuning in master-datasources.xml. But in case we have generic aspects to tune, add here. -->
