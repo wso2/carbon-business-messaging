@@ -283,7 +283,7 @@ public class QpidServiceComponent {
      * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
      * @return host name as derived from broker.xml
      */
-    private String getCarbonHostName() throws AndesException {
+    private String getTransportBindAddress() throws AndesException {
         return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
 
     }
@@ -334,8 +334,8 @@ public class QpidServiceComponent {
         while (!isServerStarted) {
             Socket socket = null;
             try {
-                log.info("Carbon Host Name : " + getCarbonHostName());
-                InetAddress address = InetAddress.getByName(getCarbonHostName());
+                log.info("Carbon Host Name : " + getTransportBindAddress());
+                InetAddress address = InetAddress.getByName(getTransportBindAddress());
                 socket = new Socket(address, port);
                 log.info("Host : " + address.getHostAddress() + " port : " + port);
                 isServerStarted = socket.isConnected();
