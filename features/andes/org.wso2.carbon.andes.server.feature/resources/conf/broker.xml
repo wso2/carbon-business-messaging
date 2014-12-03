@@ -49,6 +49,7 @@
             <sslPort>8672</sslPort>
             <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
+            <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
         </amqp>
         <mqtt enabled="true">
             <port>1883</port>
