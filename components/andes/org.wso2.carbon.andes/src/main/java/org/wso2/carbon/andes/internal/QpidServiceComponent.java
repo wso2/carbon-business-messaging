@@ -28,6 +28,7 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
+import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
@@ -164,7 +165,12 @@ public class QpidServiceComponent {
             qpidService.unregister();
         }
 
-        // Shutdown the Qpid broker
+        // Shut down the Andes broker
+        try {
+            AndesKernelBoot.shutDownAndesKernel();
+        } catch (Exception e) {
+            log.error("Error while shutting down Andes kernel. ", e);
+        }
         ApplicationRegistry.remove();
     }
 
