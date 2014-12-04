@@ -93,15 +93,44 @@
 
         <!-- Configurations related to external Cassandra data source -->
         <!-- Uncomment the following 2 stores to use the external Cassandra for Message Store Implementation.
-             NOTE: Update the master-datasources.xml file to connect to cassandra data source
-             READ the documentation to set advanced cassandra tuning parameters. -->
+             NOTE: Update the master-datasources.xml file to connect to Cassandra data source
+             READ the documentation to set advanced Cassandra tuning parameters. -->
         <!--messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
-            <property name="dataSource">CassandraRepo</property>
-            <property name="asyncStoring">true</property>
+            <property name="dataSource">CassandraRepo</property-->
+
+            <!-- replication is the process of storing copies of data on multiple nodes to ensure reliability and fault tolerance.
+            replication strategy class -->
+            <!--property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property-->
+
+            <!-- replication factor-->
+            <!--property name="replicationFactor">1</property-->
+
+            <!-- read consistency level specifies how many replicas must respond to a read request before returning
+            data ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
+            <!--property name="readConsistencyLevel">ONE</property-->
+
+            <!-- write consistency level determines the number of replicas on which the write must succeed before returning
+            an acknowledgment ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
+            <!--property name="writeConsistencyLevel">ONE</property>
         </messageStore>
 
         <contextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
-            <property name="dataSource">CassandraRepo</property>
+            <property name="dataSource">CassandraRepo</property-->
+
+            <!-- replication is the process of storing copies of data on multiple nodes to ensure reliability and fault tolerance.
+            replication strategy class -->
+            <!--property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property-->
+
+            <!-- replication factor-->
+            <!--property name="replicationFactor">1</property-->
+
+            <!-- read consistency level specifies how many replicas must respond to a read request before returning
+             data ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
+            <!--property name="readConsistencyLevel">ONE</property-->
+
+            <!-- write consistency level determines the number of replicas on which the write must succeed before returning
+            an acknowledgment ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
+            <!--property name="writeConsistencyLevel">ONE</property>
         </contextStore-->
 
         <!-- This class decides how unique IDs are generated for messages that are persisted -->
