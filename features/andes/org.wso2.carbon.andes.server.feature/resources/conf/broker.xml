@@ -148,6 +148,10 @@
             <!--Number of parallel readers used to used to read content from message store. Increasing this value will
                 speedup the message sending mechanism. But the load on the data store will increase. -->
             <parallelContentReaders>5</parallelContentReaders>
+
+            <!-- Number of parallel delivery handlers used to send messages to subscribers. Increasing this value will
+                 speedup the message sending mechanism. But the system load will increase. -->
+            <parallelDeliveryHandlers>10</parallelDeliveryHandlers>
         </delivery>
 
         <!-- Add any store access related tuning parameters. This should ideally be empty since we handle database level tuning in master-datasources.xml. But in case we have generic aspects to tune, add here. -->
