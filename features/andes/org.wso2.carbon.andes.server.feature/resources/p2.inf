@@ -1,5 +1,5 @@
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/broker.xml,target:${installFolder}/../../conf/advanced/broker.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/broker.xml,target:${installFolder}/../../conf/broker.xml,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/qpid-config.xml,target:${installFolder}/../../conf/advanced/qpid-config.xml,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/qpid-virtualhosts.xml,target:${installFolder}/../../conf/advanced/qpid-virtualhosts.xml,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/mssql-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/mssql-mb.sql,overwrite:true);\
