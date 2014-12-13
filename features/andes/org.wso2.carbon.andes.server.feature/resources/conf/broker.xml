@@ -17,11 +17,12 @@
   ~ under the License.
   -->
 
-<!-- This is the root configuration file of WSO2 MB. Links to configurations of associated libraries are also specified here.
-[dev-advice] - If you intend to rename or modify a property, remember to search in the code using the Xpath expression of the property. -->
+<!-- This is the root configuration file of WSO2 Message Broker. Links to configurations of associated libraries are also specified here.
+[developer-advice] - If you intend to rename or modify a property, remember to search in the code using the Xpath expression of the property. -->
 <broker>
 
-    <!--Paths of externally organized configurations specific to andes component (qpid configurations are referred by qpid component separately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
+    <!--Paths of externally organized configurations specific to Andes component (Qpid configurations are referred 
+    by Qpid component separately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
     <links>
     </links>
 
@@ -36,7 +37,8 @@
         <thriftServerPort>7611</thriftServerPort>
     </coordination>
 
-    <!-- You can enable/disable specific messaging transports in this section. By default all transports are enabled.This section also allows you to customize the messaging flows used within WSO2 MB. NOT performance reated, but logic related. -->
+    <!-- You can enable/disable specific messaging transports in this section. By default all transports are enabled.
+    This section also allows you to customize the messaging flows used within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
         <!-- If you need to provide a specific IP with which the messaging transports should happen, change this.
         By default, this takes the IP of the resident node. Please note that this is the address exposed by
@@ -44,7 +46,7 @@
         <bindAddress>127.0.0.1</bindAddress>
 
         <amqp enabled="true">
-            <!-- most of the amqp configurations reside in qpid-config.xml since we inherit the qpid messaging model during AMQP.-->
+            <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid messaging model during AMQP.-->
             <port>5672</port>
             <sslPort>8672</sslPort>
             <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
@@ -55,7 +57,7 @@
             <port>1883</port>
             <sslPort>8883</sslPort> <!-- put proper default ssl port -->
 
-            <!-- These two properties are temporary. Ideally, mqtt should use carbon users. -->
+            <!-- These two properties are temporary. Ideally, MQTT should use carbon users. -->
             <users>
                 <user userName="testuser1" password="password1" />
                 <user userName="testuser2" password="password2" />
@@ -65,73 +67,92 @@
     </transports>
 
     <!-- Depending on the database type selected in master-datasources.xml, you must enable the relevant Data access classes here.
-    Currently supported stores are JDBC(any rdbms store) and Cassandra(cql,hector).
+    Currently supported stores are JDBC(any RDBMS store) and Cassandra(CQL, Hector).
     Any data store is accessed for 2 purposes. 1. For message persistence ("messageStore")
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
     <!-- By default WSO2 MB runs with full in memory store using H2. If you plan to use a different store, set "inMemory" to "false"-->
     <persistence>
-        <!-- JDBC Message Store configurations -->
+
+        <!-- H2 Based MB Store Configuration -->
+
         <messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
-            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
+            <property name="dataSource">WSO2MBStoreDB</property>
         </messageStore>
 
-        <!-- JDBC Andes Context Store configurations -->
         <contextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
-            <property name="dataSource">jdbc/WSO2MBStoreDB</property>
+            <property name="dataSource">WSO2MBStoreDB</property>
         </contextStore>
 
-        <!-- In memory message store running on H2 -->
-        <!--messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
-            <property name="asyncStoring">false</property>
-        </messageStore-->
 
-        <!-- In memory context store running on H2 -->
-        <!--contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
-        </contextStore-->
+        <!-- H2 Based In-Memory Store Configuration -->
+<!--         
+        <messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
+        </messageStore>
 
+        <contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
+        </contextStore>
 
-        <!-- Configurations related to external Cassandra data source -->
-        <!-- Uncomment the following 2 stores to use the external Cassandra for Message Store Implementation.
-             NOTE: Update the master-datasources.xml file to connect to Cassandra data source
-             READ the documentation to set advanced Cassandra tuning parameters. -->
-        <!--messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
-            <property name="dataSource">CassandraRepo</property-->
+-->
 
-            <!-- replication is the process of storing copies of data on multiple nodes to ensure reliability and fault tolerance.
-            replication strategy class -->
-            <!--property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property-->
+        <!-- External Cassandra Store Configuration -->
 
-            <!-- replication factor-->
-            <!--property name="replicationFactor">1</property-->
+        <!-- NOTE: Update the master-datasources.xml file to connect to Cassandra data source
+             READ the documentation to set advanced Cassandra tuning parameters.
 
-            <!-- read consistency level specifies how many replicas must respond to a read request before returning
-            data ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
-            <!--property name="readConsistencyLevel">ONE</property-->
+            Advanced Tuning Parameters
 
-            <!-- write consistency level determines the number of replicas on which the write must succeed before returning
-            an acknowledgment ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
-            <!--property name="writeConsistencyLevel">ONE</property>
+            Replication strategy class:
+            Strategy to determines the physical location of nodes to replication and their proximity to each other
+
+            Replication factor:
+            replication is the process of storing copies of data on multiple nodes to ensure reliability and fault tolerance.
+
+            Read consistency level:
+            Specifies how many replicas must respond to a read request before returning data
+            Valid values are 'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY'
+
+            Write consistency level:
+            Determines the number of replicas on which the write must succeed before returning an acknowledgement
+            Valid values are 'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY' -->
+
+        <!--CQL Based MB stores-->
+<!--
+        <messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
+            <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
+            <property name="replicationFactor">1</property>
+            <property name="readConsistencyLevel">ONE</property>
+            <property name="writeConsistencyLevel">ONE</property>
         </messageStore>
 
         <contextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
-            <property name="dataSource">CassandraRepo</property-->
+            <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
+            <property name="replicationFactor">1</property>
+            <property name="readConsistencyLevel">ONE</property>
+            <property name="writeConsistencyLevel">ONE</property>
+        </contextStore>
+-->
 
-            <!-- replication is the process of storing copies of data on multiple nodes to ensure reliability and fault tolerance.
-            replication strategy class -->
-            <!--property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property-->
+        <!--Hector based MB stores-->
+<!--
+        <messageStore class="org.wso2.andes.store.cassandra.hector.HectorBasedMessageStoreImpl">
+            <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
+            <property name="replicationFactor">1</property>
+            <property name="readConsistencyLevel">ONE</property>
+            <property name="writeConsistencyLevel">ONE</property>
+        </messageStore>
 
-            <!-- replication factor-->
-            <!--property name="replicationFactor">1</property-->
-
-            <!-- read consistency level specifies how many replicas must respond to a read request before returning
-             data ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
-            <!--property name="readConsistencyLevel">ONE</property-->
-
-            <!-- write consistency level determines the number of replicas on which the write must succeed before returning
-            an acknowledgment ('ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY') -->
-            <!--property name="writeConsistencyLevel">ONE</property>
-        </contextStore-->
+        <contextStore class="org.wso2.andes.store.cassandra.hector.HectorBasedAndesContextStoreImpl">
+            <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
+            <property name="replicationFactor">1</property>
+            <property name="readConsistencyLevel">ONE</property>
+            <property name="writeConsistencyLevel">ONE</property>
+        </contextStore>
+-->
 
         <!-- This class decides how unique IDs are generated for messages that are persisted -->
         <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
@@ -157,11 +178,6 @@
             <workerThreadCount>5</workerThreadCount>
         </slots>
 
-        <messageRouting>
-             <!-- number of parallel threads that will handle routing the messages received at the broker. -->
-             <workerThreadCount>5</workerThreadCount>
-        </messageRouting>
-
         <delivery>
             <!-- Maximum number of undelivered messages that can have in memory. Increasing this value
                 increase the possibility of out of memory scenario but performance will be improved-->
@@ -176,29 +192,57 @@
             <ringBufferSize>4096</ringBufferSize>
 
             <!--Number of parallel readers used to used to read content from message store. Increasing this value will
-                speedup the message sending mechanism. But the load on the data store will increase. -->
+                speed-up the message sending mechanism. But the load on the data store will increase. -->
             <parallelContentReaders>5</parallelContentReaders>
 
             <!-- Number of parallel delivery handlers used to send messages to subscribers. Increasing this value will
-                 speedup the message sending mechanism. But the system load will increase. -->
+                 speed-up the message sending mechanism. But the system load will increase. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
         </delivery>
 
-        <!-- Add any store access related tuning parameters. This should ideally be empty since we handle database level tuning in master-datasources.xml. But in case we have generic aspects to tune, add here. -->
+        <!-- Add any store access related tuning parameters. This should ideally be empty since we handle database level 
+        tuning in master-datasources.xml. But in case we have generic aspects to tune, add here. -->
         <storeOperations>
             <!-- This property. are we using it ? the class that uses this property is unused. -->
             <messageContentCache>100</messageContentCache>
         </storeOperations>
 
         <ackHandling>
-            <!-- message delivery from server to the client will be paused temporarily if number of delivered but unacknowledged message count reaches this size.
-                Should be set considering message consume rate-->
+            <!-- message delivery from server to the client will be paused temporarily if number of delivered but unacknowledged 
+            message count reaches this size. Should be set considering message consume rate-->
             <maxUnackedMessages>1000</maxUnackedMessages>
 
             <!-- This is the Thread pool size which will be used by the Andes core to schedule its internal parallel tasks -->
             <workerThreadCount>50</workerThreadCount>
 
+            <!--Average batch size of the acknowledgement handler. Andes will batch and process acknowledgements -->
+            <ackHandlerBatchSize>100</ackHandlerBatchSize>
+
+            <!--Number of message acknowledgement handlers to process acknowledgements concurrently. These acknowledgement handlers will -->
+            <!--batch and process acknowledgements. -->
+            <ackHandlerCount>5</ackHandlerCount>
+
         </ackHandling>
+
+        <inboundEvents>
+            <!--Number of parallel writers used to write content to message store. Increasing this value will speed-up-->
+            <!--the message receiving mechanism. But the load on the data store will increase.-->
+            <parallelMessageWriters>1</parallelMessageWriters>
+
+            <!--Size of the Disruptor ring buffer for inbound event handling. Buffer size should be a value of power -->
+            <!--of two. For publishing at higher rates increasing the buffer size may give some advantage -->
+            <!--keep messages in memory and write.-->
+            <bufferSize>65536</bufferSize>
+
+            <!--Batch size of the state event handler for message written state update -->.
+            <!--State events will be handled in batches when updating inbound messages.-->
+            <stateHandlerBatchSize>50</stateHandlerBatchSize>
+
+            <!--Average batch size of the batch write operation for inbound messages. Batch write of a message will-->
+            <!--vary around this number-->
+            <messageWriterBatchSize>70</messageWriterBatchSize>
+
+        </inboundEvents>
 
         <failover>
             <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will sync the
@@ -223,15 +267,12 @@
                     can set this to a lower value -->
             <contentRemovalTaskInterval>4</contentRemovalTaskInterval>
 
-            <!--Time to wait before removing a message from the store in PubSub implementation (in milliseconds)-->
-            <contentRemovalTimeDifference>600000</contentRemovalTimeDifference>
-
         </messageDeletion>
     </performanceTuning>
 
     <!-- This section is about how you want to view messaging statistics from the admin console and how you plan to interact with it. -->
     <managementConsole>
-        <!--Maximum number of messages to be fetched using andes message browser when browsing queues-->
+        <!--Maximum number of messages to be fetched using Andes message browser when browsing queues-->
         <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
     </managementConsole>
 
@@ -249,5 +290,3 @@
     </flowControl>
 
 </broker>
-
-
