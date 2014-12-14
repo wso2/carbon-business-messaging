@@ -289,8 +289,8 @@ public class QpidServiceComponent {
      * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
      * @return host name as derived from broker.xml
      */
-    private String getTransportBindAddress() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
+    private String getTransportBindAddress() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
 
     }
 

@@ -406,9 +406,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             if (queueBrowser != null) {
                 Enumeration queueContentsEnu = queueBrowser.getEnumeration();
                 ArrayList msgArrayList = Collections.list(queueContentsEnu);
-                Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager
-                        .getInstance().readConfigurationValue(AndesConfiguration
-                                .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
+                Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager.readValue
+                        (AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
                 if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
                     Object[] filteredMsgArray = Utils.getFilteredMsgsList(msgArrayList, startingIndex, maxMsgCount);
                     for (Object message : filteredMsgArray) {
@@ -454,10 +453,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (UnsupportedEncodingException e) {
             throw new QueueManagerException("Unable to encode user name to url safe format", e);
-        } catch (AndesException e) {
-            throw new QueueManagerException(AndesConfigurationManager
-                    .GENERIC_CONFIGURATION_PARSE_ERROR + AndesConfiguration
-                    .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS, e);
         } finally {
             try {
                 // There is no need to close the sessions, producers, and consumers of a
@@ -510,8 +505,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to send message.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to send message.", e);
-        } catch (AndesException e) {
-            throw new QueueManagerException(AndesConfigurationManager.GENERIC_CONFIGURATION_PARSE_ERROR + " amqp ports",e);
         } finally {
             try {
                 queueConnection.close();
@@ -532,7 +525,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     }
 
     private Queue getQueue(String nameOfQueue, String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException, NamingException, JMSException, AndesException {
+            XMLStreamException, NamingException, JMSException {
         this.properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
