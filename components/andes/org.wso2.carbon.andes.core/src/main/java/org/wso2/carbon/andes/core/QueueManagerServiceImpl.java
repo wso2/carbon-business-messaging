@@ -407,7 +407,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 Enumeration queueContentsEnu = queueBrowser.getEnumeration();
                 ArrayList msgArrayList = Collections.list(queueContentsEnu);
                 Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager
-                        .getInstance().readConfigurationValue(AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
+                        .getInstance().readConfigurationValue(AndesConfiguration
+                                .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
                 if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
                     Object[] filteredMsgArray = Utils.getFilteredMsgsList(msgArrayList, startingIndex, maxMsgCount);
                     for (Object message : filteredMsgArray) {
@@ -456,7 +457,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         } catch (AndesException e) {
             throw new QueueManagerException(AndesConfigurationManager
                     .GENERIC_CONFIGURATION_PARSE_ERROR + AndesConfiguration
-                    .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS.toString(), e);
+                    .MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS, e);
         } finally {
             try {
                 // There is no need to close the sessions, producers, and consumers of a

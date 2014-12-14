@@ -309,24 +309,6 @@ public class UIUtils {
         return messageCount;
     }
 
-    public static void purgeQueue(String queuename, String username, String accesskey,
-                                  Queue[] queueList) throws NamingException, JMSException, FileNotFoundException,
-            XMLStreamException, AndesException {
-        QueueReceiverClient qrClient;
-        int purgedMessageCount;
-        long currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
-        int time_out = 0;
-        while (currentMsgCount != 0 && time_out != 15) {
-            qrClient = new QueueReceiverClient();
-            javax.jms.Queue queue = qrClient.registerReceiver(queuename, username, accesskey);
-            purgedMessageCount = qrClient.purgeQueue(queue);
-            currentMsgCount = currentMsgCount - purgedMessageCount;
-            qrClient.closeReceiver();
-            time_out++;
-
-        }
-    }
-
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
