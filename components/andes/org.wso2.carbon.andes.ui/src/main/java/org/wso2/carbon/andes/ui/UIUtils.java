@@ -240,12 +240,10 @@ public class UIUtils {
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
         String CARBON_DEFAULT_HOSTNAME = "localhost";
 
-        String CARBON_PORT = String.valueOf(AndesConfigurationManager.getInstance().readConfigurationValue
-                (AndesConfiguration.TRANSPORTS_AMQP_PORT));
+        String CARBON_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT));
 
         // these are the properties which needs to be passed when ssl is enabled
-        String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.getInstance().readConfigurationValue
-                (AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT));
+        String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT));
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
@@ -307,24 +305,6 @@ public class UIUtils {
         }
 
         return messageCount;
-    }
-
-    public static void purgeQueue(String queuename, String username, String accesskey,
-                                  Queue[] queueList) throws NamingException, JMSException, FileNotFoundException,
-            XMLStreamException, AndesException {
-        QueueReceiverClient qrClient;
-        int purgedMessageCount;
-        long currentMsgCount = UIUtils.getCurrentMessageCountInQueue(queueList, queuename);
-        int time_out = 0;
-        while (currentMsgCount != 0 && time_out != 15) {
-            qrClient = new QueueReceiverClient();
-            javax.jms.Queue queue = qrClient.registerReceiver(queuename, username, accesskey);
-            purgedMessageCount = qrClient.purgeQueue(queue);
-            currentMsgCount = currentMsgCount - purgedMessageCount;
-            qrClient.closeReceiver();
-            time_out++;
-
-        }
     }
 
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
