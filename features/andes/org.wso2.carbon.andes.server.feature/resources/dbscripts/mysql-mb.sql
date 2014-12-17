@@ -3,19 +3,19 @@ CREATE TABLE IF NOT EXISTS messages (
                 offset INTEGER,
                 content VARBINARY(65500),
                 PRIMARY KEY (message_id,offset)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS queues (
                 queue_id INTEGER AUTO_INCREMENT,
                 name VARCHAR(512) NOT NULL,
                 PRIMARY KEY (queue_id, name)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS reference_counts (
                 message_id BIGINT,
                 reference_count INTEGER,
                 PRIMARY KEY (message_id)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS metadata (
                 message_id BIGINT,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS metadata (
                 PRIMARY KEY (message_id, queue_id),
                 FOREIGN KEY (queue_id)
                 REFERENCES queues (queue_id)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS expiration_data (
                 message_id BIGINT UNIQUE,
@@ -32,32 +32,32 @@ CREATE TABLE IF NOT EXISTS expiration_data (
                 destination VARCHAR(512) NOT NULL,
                 FOREIGN KEY (message_id)
                 REFERENCES metadata (message_id)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
  
 CREATE TABLE IF NOT EXISTS durable_subscriptions (
                         sub_id VARCHAR(512) NOT NULL, 
                         destination_identifier VARCHAR(512) NOT NULL,
                         data VARCHAR(2048) NOT NULL
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS node_info (
                         node_id VARCHAR(512) NOT NULL,
                         data VARCHAR(2048) NOT NULL,
                         PRIMARY KEY(node_id)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS exchanges (
                         name VARCHAR(512) NOT NULL,
                         data VARCHAR(2048) NOT NULL,
                         PRIMARY KEY(name)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS queue_info (
                         name VARCHAR(512) NOT NULL,
                         data VARCHAR(2048) NOT NULL,
                         PRIMARY KEY(name)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS bindings (
                         exchange_name VARCHAR(512) NOT NULL,
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS bindings (
                         binding_info VARCHAR(2048) NOT NULL,
                         FOREIGN KEY (exchange_name) REFERENCES exchanges (name),
                         FOREIGN KEY (queue_name) REFERENCES queue_info (name)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS queue_counter (
                         name VARCHAR(512) NOT NULL,
                         count BIGINT, 
                         PRIMARY KEY (name) 
-);
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
