@@ -298,10 +298,22 @@ expression of the property. -->
     This section allows you to specify the threshold at which to reduce/stop frequently intensive 
     operations within MB temporarily. -->
     <flowControl>
+        <!-- This is the global buffer limits which enable/disable the flow control globally -->
+        <global>
+            <lowLimit>800</lowLimit>
+            <highLimit>8000</highLimit>
+        </global>
+
+        <!-- This is the channel specific buffer limits which enable/disable the flow control locally -->
+        <bufferBased>
+            <lowLimit>100</lowLimit>
+            <highLimit>1000</highLimit>
+        </bufferBased>
+
         <memoryBased>
             <memoryCheckInterval>20000</memoryCheckInterval>
-            <globalMemoryThresholdRatio>0.4</globalMemoryThresholdRatio>
-            <globalMemoryRecoveryThresholdRatio>0.5</globalMemoryRecoveryThresholdRatio>
+            <globalMemoryThresholdRatio>1.0</globalMemoryThresholdRatio>
+            <globalMemoryRecoveryThresholdRatio>1.0</globalMemoryRecoveryThresholdRatio>
         </memoryBased>
         <connectionBased>
             <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
