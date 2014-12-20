@@ -1,80 +1,104 @@
-CREATE TABLE messages (
-	message_id NUMBER(19),
-	offset INT,
-	content BLOB,
-	CONSTRAINT pk_messages PRIMARY KEY (message_id,offset))
-/
-CREATE TABLE queues (
-	queue_id INT,
-	name VARCHAR2(512) UNIQUE,
-        CONSTRAINT pk_queues PRIMARY KEY (queue_id))
-/
-CREATE SEQUENCE queues_sequence START WITH 1 INCREMENT BY 1 NOCACHE
-/
-CREATE OR REPLACE TRIGGER queues_trigger 
-	BEFORE INSERT ON queues
-	REFERENCING NEW AS NEW
-	FOR EACH ROW
-	BEGIN
-		SELECT queues_sequence.nextval INTO :NEW.queue_id FROM dual;
-	END;
-/	         
-CREATE TABLE reference_counts (
-	message_id NUMBER(19),
-        reference_count INT,
-        CONSTRAINT pk_reference_counts PRIMARY KEY (message_id)
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+-- WSO2 Message Broker Oracle Database schema --
+
+-- Start of Message Store Tables --
+
+CREATE TABLE MB_CONTENT (
+    MESSAGE_ID NUMBER(19),
+    CONTENT_OFFSET INT,
+    MESSAGE_CONTENT BLOB,
+    CONSTRAINT pk_messages PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
 )
 /
-CREATE TABLE metadata (
-	message_id NUMBER(19),
-	queue_id INT,
-        data RAW(2000),
-        CONSTRAINT pk_metadata PRIMARY KEY (message_id),
-        CONSTRAINT fk_metadata_queues FOREIGN KEY (queue_id) REFERENCES queues (queue_id)
+CREATE TABLE MB_QUEUE_MAPPING (
+    QUEUE_ID INT,
+    QUEUE_NAME VARCHAR2(512) UNIQUE,
+    CONSTRAINT PK_MB_QUEUE_MAPPING PRIMARY KEY (QUEUE_ID))
+/
+CREATE SEQUENCE queue_mapping_sequence START WITH 1 INCREMENT BY 1 NOCACHE
+/
+CREATE OR REPLACE TRIGGER MB_QUEUE_MAPPING_TRIGGER 
+    BEFORE INSERT ON MB_QUEUE_MAPPING
+    REFERENCING NEW AS NEW
+    FOR EACH ROW
+    BEGIN
+        SELECT queue_mapping_sequence.nextval INTO :NEW.QUEUE_ID FROM dual;
+    END;
+/
+CREATE TABLE MB_METADATA (
+    MESSAGE_ID NUMBER(19),
+    QUEUE_ID INT,
+    MESSAGE_METADATA RAW(2000),
+    CONSTRAINT PK_MB_METADATA PRIMARY KEY (MESSAGE_ID),
+    CONSTRAINT FK_MB_METADATA_QUEUE_MAPPING FOREIGN KEY (QUEUE_ID) REFERENCES MB_QUEUE_MAPPING (QUEUE_ID)
 )
 /
 CREATE TABLE expiration_data (
-	message_id NUMBER(19) UNIQUE,
-	expiration_time NUMBER(19),
-        destination VARCHAR2(512) NOT NULL,
-        CONSTRAINT fk_expiration_data FOREIGN KEY (message_id) REFERENCES metadata (message_id)
+    MESSAGE_ID NUMBER(19) UNIQUE,
+    EXPIRATION_TIME NUMBER(19),
+    MESSAGE_DESTINATION VARCHAR2(512) NOT NULL,
+    CONSTRAINT FK_EXPIRATION_DATA FOREIGN KEY (MESSAGE_ID) REFERENCES MB_METADATA (MESSAGE_ID)
+)
+
+-- End of Message Store Tables --
+
+-- Start of Andes Context Store Tables --
+
+/
+CREATE TABLE MB_DURABLE_SUBSCRIPTION (
+    SUBSCRIPTION_ID VARCHAR2(512) NOT NULL, 
+    DESTINATION_IDENTIFIER VARCHAR2(512) NOT NULL,
+    SUBSCRIPTION_DATA VARCHAR2(2048) NOT NULL
 )
 /
-CREATE TABLE durable_subscriptions (
-	sub_id VARCHAR2(512) NOT NULL, 
-	destination_identifier VARCHAR2(512) NOT NULL,
-        data VARCHAR2(2048) NOT NULL
+CREATE TABLE MB_NODE (
+    NODE_ID VARCHAR2(512) NOT NULL,
+    NODE_DATA VARCHAR2(2048) NOT NULL,
+        CONSTRAINT PK_MB_NODE PRIMARY KEY (NODE_ID)
 )
 /
-CREATE TABLE node_info (
-	node_id VARCHAR2(512) NOT NULL,
-	data VARCHAR2(2048) NOT NULL,
-        CONSTRAINT pk_node_info PRIMARY KEY (node_id)
+CREATE TABLE MB_EXCHANGE (
+    EXCHANGE_NAME VARCHAR2(512) NOT NULL,
+    EXCHANGE_DATA VARCHAR2(2048) NOT NULL,
+    CONSTRAINT PK_MB_EXCHANGE PRIMARY KEY (EXCHANGE_NAME)
 )
 /
-CREATE TABLE exchanges (
-	name VARCHAR2(512) NOT NULL,
-	data VARCHAR2(2048) NOT NULL,
-        CONSTRAINT pk_exchanges PRIMARY KEY (name)
+CREATE TABLE MB_QUEUE (
+    QUEUE_NAME VARCHAR2(512) NOT NULL,
+    QUEUE_DATA VARCHAR2(2048) NOT NULL,
+    CONSTRAINT PK_MB_QUEUE PRIMARY KEY (QUEUE_NAME)
 )
 /
-CREATE TABLE queue_info (
-	name VARCHAR2(512) NOT NULL,
-	data VARCHAR2(2048) NOT NULL,
-        CONSTRAINT pk_queue_info PRIMARY KEY (name)
+CREATE TABLE MB_BINDING (
+    EXCHANGE_NAME VARCHAR2(512) NOT NULL,
+    QUEUE_NAME VARCHAR2(512) NOT NULL,
+    BINDING_DETAILS VARCHAR2(2048) NOT NULL,
+    CONSTRAINT FK_MB_BINDING_EXCHANGE FOREIGN KEY (EXCHANGE_NAME) REFERENCES MB_EXCHANGE (EXCHANGE_NAME),
+    CONSTRAINT FK_MB_BINDING_QUEUE FOREIGN KEY (QUEUE_NAME) REFERENCES MB_QUEUE (QUEUE_NAME)
 )
 /
-CREATE TABLE bindings (
-	exchange_name VARCHAR2(512) NOT NULL,
-	queue_name VARCHAR2(512) NOT NULL,
-        binding_info VARCHAR2(2048) NOT NULL,
-        CONSTRAINT fk_bindings_exchanges FOREIGN KEY (exchange_name) REFERENCES exchanges (name),
-        CONSTRAINT fk_bindings_queue_info FOREIGN KEY (queue_name) REFERENCES queue_info (name)
+CREATE TABLE MB_QUEUE_COUNTER (
+    QUEUE_NAME VARCHAR2(512) NOT NULL,
+    MESSAGE_COUNT NUMBER(19), 
+    CONSTRAINT PK_QUEUE_COUNTER PRIMARY KEY (QUEUE_NAME) 
 )
 /
-CREATE TABLE queue_counter (
-	name VARCHAR2(512) NOT NULL,
-        count NUMBER(19), 
-        CONSTRAINT pk_queue_counter PRIMARY KEY (name) 
-)
-/
+
+-- End of Andes Context Store Tables --

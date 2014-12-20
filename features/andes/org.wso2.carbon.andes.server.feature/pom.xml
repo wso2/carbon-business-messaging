@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ WSO2 Inc. licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file except
@@ -151,6 +151,7 @@
                                         <include>conf/qpid-virtualhosts.xml</include>
                                         <include>dbscripts/mssql-mb.sql</include>
                                         <include>dbscripts/mysql-mb.sql</include>
+                                        <include>dbscripts/h2-mb.sql</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
                                     </includes>
