@@ -151,6 +151,7 @@
                                         <include>conf/qpid-virtualhosts.xml</include>
                                         <include>dbscripts/mssql-mb.sql</include>
                                         <include>dbscripts/mysql-mb.sql</include>
+                                        <include>dbscripts/oracle-mb.sql</include>
                                         <include>dbscripts/h2-mb.sql</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>

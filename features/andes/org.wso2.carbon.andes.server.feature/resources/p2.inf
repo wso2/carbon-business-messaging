@@ -4,5 +4,6 @@ org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../featur
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/qpid-virtualhosts.xml,target:${installFolder}/../../conf/advanced/qpid-virtualhosts.xml,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/mssql-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/mssql-mb.sql,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/mysql-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/mysql-mb.sql,overwrite:true);\
-
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/oracle-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/oracle-mb.sql,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/h2-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/h2-mb.sql,overwrite:true);\
 
