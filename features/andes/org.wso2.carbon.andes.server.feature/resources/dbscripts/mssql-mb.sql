@@ -100,7 +100,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB
 CREATE TABLE MB_BINDING (
                         EXCHANGE_NAME VARCHAR(512) NOT NULL,
                         QUEUE_NAME VARCHAR(512) NOT NULL,
-                        binding_info VARCHAR(2048) NOT NULL,
+                        BINDING_DETAILS VARCHAR(2048) NOT NULL,
                         FOREIGN KEY (EXCHANGE_NAME) REFERENCES MB_EXCHANGE (EXCHANGE_NAME),
                         FOREIGN KEY (QUEUE_NAME) REFERENCES MB_QUEUE (QUEUE_NAME)       
 );
