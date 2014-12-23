@@ -84,21 +84,21 @@ expression of the property. -->
 
         <!-- H2 Based MB Store Configuration -->
 
-        <messageStore class="org.wso2.andes.store.jdbc.JDBCMessageStoreImpl">
+        <messageStore class="org.wso2.andes.store.rdbms.RDBMSMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.jdbc.JDBCAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.rdbms.RDBMSAndesContextStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
         </contextStore>
 
 
         <!-- H2 Based In-Memory Store Configuration -->
 <!--         
-        <messageStore class="org.wso2.andes.store.jdbc.h2.H2MemMessageStoreImpl">
+        <messageStore class="org.wso2.andes.store.rdbms.h2.H2MemMessageStoreImpl">
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.jdbc.h2.H2MemAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.rdbms.h2.H2MemAndesContextStoreImpl">
         </contextStore>
 
 -->
