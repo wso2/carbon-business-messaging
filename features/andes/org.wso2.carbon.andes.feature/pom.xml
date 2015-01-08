@@ -73,7 +73,7 @@
                                 </properties>
                             </adviceFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:4.3.0-SNAPSHOT
+                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                             <includedFeatures>

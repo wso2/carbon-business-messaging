@@ -118,7 +118,7 @@
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.ui</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.ui:4.3.0-SNAPSHOT
+                                <importFeatureDef>org.wso2.carbon.core.ui:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                         </configuration>
