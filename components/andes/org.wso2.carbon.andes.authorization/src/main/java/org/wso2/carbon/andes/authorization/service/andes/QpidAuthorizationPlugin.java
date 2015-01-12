@@ -105,7 +105,8 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
      * @param properties Properties attached to the operation
      * @return ALLOWED/DENIED
      */
-    public Result authorise(Operation operation, ObjectType objectType, ObjectProperties properties) {
+    public Result authorise(Operation operation, ObjectType objectType,
+                            ObjectProperties properties) {
         try {
 
             // Get username from tenant username
@@ -133,7 +134,7 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
             } else {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(MultitenantConstants
-                        .SUPER_TENANT_DOMAIN_NAME);
+                                                                                              .SUPER_TENANT_DOMAIN_NAME);
             }
 
             int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
@@ -166,8 +167,8 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
                         return QpidAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
                     }
                 case PURGE:
-                    return QpidAuthorizationHandler.handlePurgeQueue(username,userRealm,
-                            properties);
+                    return QpidAuthorizationHandler.handlePurgeQueue(username, userRealm
+                    );
             }
         } catch (QpidAuthorizationHandlerException e) {
             logger.error("Error while invoking QpidAuthorizationHandler", e);
