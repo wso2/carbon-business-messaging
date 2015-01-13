@@ -506,7 +506,7 @@ public class QpidAuthorizationHandler {
      * @return Raw queue name
      */
     private static String getRawQueueName(String queueName) {
-        if (queueName.indexOf(";") > -1) {
+        if (queueName.contains(";")) {
             queueName = queueName.substring(0, queueName.indexOf(";"));
         }
         return queueName.substring(queueName.indexOf(":") + 1, queueName.length());
