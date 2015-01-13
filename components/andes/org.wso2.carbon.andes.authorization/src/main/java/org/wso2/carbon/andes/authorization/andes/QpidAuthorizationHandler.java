@@ -124,7 +124,6 @@ public class QpidAuthorizationHandler {
         String queueName =
                 getRawQueueName(properties.get(ObjectProperties.Property.NAME));
 
-
         //For registry we use a modified queue name
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
         // Store queue details
