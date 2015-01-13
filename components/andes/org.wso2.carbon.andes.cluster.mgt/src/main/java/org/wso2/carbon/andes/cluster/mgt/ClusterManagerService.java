@@ -19,14 +19,20 @@
 package org.wso2.carbon.andes.cluster.mgt;
 
 
+import com.hazelcast.core.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesContext;
+import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
 import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 import org.wso2.carbon.andes.cluster.mgt.internal.managementBeans.ClusterManagementBeans;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Admin service class for cluster management
@@ -36,7 +42,31 @@ public class ClusterManagerService {
 
     private static final Log log = LogFactory.getLog(ClusterManagerService.class);
 
-    public Queue[] getAllDestinationQueuesDetailForNode(String hostName, int startingIndex, int maxQueueCount)
+
+    public String[] getAllClusterNodeAddresses()
+            throws ClusterMgtException, ClusterMgtAdminException {
+        try {
+            log.info("AT getAllClusterNodeAddresses");
+            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+            List<String> addresses = clusterManagementBeans.getAllClusterNodeAddresses();
+            return addresses.toArray(new String[addresses.size()]);
+        } catch (Exception e) {
+            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
+        }
+    }
+
+    public String getCoordinatorNodeAddress() throws ClusterMgtAdminException {
+        try {
+            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+            String address = clusterManagementBeans.getCoordinatorNodeAddress();
+            return address;
+        } catch (Exception e) {
+            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
+        }
+    }
+
+    public Queue[] getAllDestinationQueuesDetailForNode(String hostName, int startingIndex,
+                                                        int maxQueueCount)
             throws ClusterMgtAdminException {
 
         try {
@@ -107,7 +137,8 @@ public class ClusterManagerService {
      * @param maxTopicCount
      * @return array of Topic
      */
-    public Topic[] getAllTopicsForNode(int startingIndex, int maxTopicCount) throws ClusterMgtAdminException {
+    public Topic[] getAllTopicsForNode(int startingIndex, int maxTopicCount)
+            throws ClusterMgtAdminException {
         try {
             Topic[] topicDetailsArray;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
@@ -125,7 +156,7 @@ public class ClusterManagerService {
                 if (startingIndex == index || startingIndex < index) {
                     topicDetailsArray[topicDetailDetailsIndex] = new Topic();
                     topicDetailsArray[topicDetailDetailsIndex].setNumberOfSubscribers(topicDetail
-                            .getNumberOfSubscribers());
+                                                                                              .getNumberOfSubscribers());
                     topicDetailsArray[topicDetailDetailsIndex].setName(topicDetail.getName());
                     topicDetailDetailsIndex++;
                     if (topicDetailDetailsIndex == maxTopicCount) {
@@ -253,7 +284,8 @@ public class ClusterManagerService {
      * @param newNodeToAssign
      * @return success if assign was successful
      */
-    public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign) throws ClusterMgtException {
+    public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
+            throws ClusterMgtException {
         boolean result = false;
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
         result = clusterManagementBeans.updateWorkerForQueue(queueToUpdate, newNodeToAssign);

@@ -24,7 +24,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceClusterMgtAdminExceptionException;
 import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceClusterMgtExceptionException;
 import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub;
-import org.wso2.carbon.andes.mgt.stub.types.carbon.NodeDetail;
 import org.wso2.carbon.andes.mgt.stub.types.carbon.Queue;
 import org.wso2.carbon.andes.mgt.stub.types.carbon.Topic;
 
@@ -56,46 +55,29 @@ public class ClusterManagerClient {
     }
 
     /**
-     * gives complete nodes list
+     * Return address of the nodes in a cluster
      *
-     * @param startingIndex
-     * @param maxMessageBoxesCount
-     * @return
-     * @throws RemoteException
+     * @return the addresses
      */
-    public NodeDetail[] getAllNodeDetail(int startingIndex, int maxMessageBoxesCount)
-            throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
+    public String[] getAllClusterNodeAddresses()
+            throws AndesManagerServiceClusterMgtAdminExceptionException, RemoteException,
+                   AndesManagerServiceClusterMgtExceptionException {
 
-        NodeDetail[] result = stub.getAllNodeDetail(startingIndex, maxMessageBoxesCount);
-        return result;
+        String[] addresses = stub.getAllClusterNodeAddresses();
+        return addresses;
     }
 
     /**
-     * returns number of nodes in the cluster
+     *  Returns the coordinator node address
      *
-     * @return int
-     * @throws RemoteException
+     * @return the address
      */
-    public int getNumOfNodes() throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
-        return stub.getNumOfNodes();
+    public String getCoordinatorNodeAddress()
+            throws AndesManagerServiceClusterMgtAdminExceptionException, RemoteException {
+        String address = stub.getCoordinatorNodeAddress();
+        return address;
     }
 
-    /**
-     * get global queues whose workers running in given host
-     *
-     * @param hostName      node ID
-     * @param startingIndex starting index of queues
-     * @param maxQueueCount max num of queues to fetch
-     * @return Array of Queues
-     * @throws RemoteException
-     * @throws AndesManagerServiceClusterMgtAdminExceptionException
-     */
-    public Queue[] getGlobalQueuesOfNode(String hostName, int startingIndex, int maxQueueCount)
-            throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
-
-        Queue[] result = stub.getAllGlobalQueuesForNode(hostName, startingIndex, maxQueueCount);
-        return result;
-    }
 
     public Queue[] getDestinationQueues(String hostName, int startingIndex, int maxQueueCount)
             throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
@@ -112,13 +94,13 @@ public class ClusterManagerClient {
      * @throws RemoteException
      */
     public Topic[] getAllTopics(int startingIndex, int maxTopicCount) throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
+                                                                             AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getAllTopicsForNode(startingIndex, maxTopicCount);
     }
 
     //TO DELETE
     public long updateNumOfSubscriptionsForTopic(String topicName) throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
+                                                                          AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getNumberofSubscriptionsForTopic(topicName);
     }
 
@@ -130,7 +112,7 @@ public class ClusterManagerClient {
      * @throws RemoteException
      */
     public long updateMemoryUsage(String hostName) throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
+                                                          AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getMemoryUsage(hostName);
     }
 
@@ -140,12 +122,14 @@ public class ClusterManagerClient {
      * @return long
      * @throws RemoteException
      */
-    public long updateTopicCount() throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
+    public long updateTopicCount()
+            throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getNumberOfTopics();
     }
 
     public long updateNumOfMessagesForQueue(String queueName) throws
-            AndesManagerServiceClusterMgtAdminExceptionException, RemoteException {
+                                                              AndesManagerServiceClusterMgtAdminExceptionException,
+                                                              RemoteException {
         return stub.getNumberOfMessagesForQueue(queueName);
     }
 
@@ -157,7 +141,7 @@ public class ClusterManagerClient {
      * @throws AndesManagerServiceClusterMgtAdminExceptionException
      */
     public long updateQueueCountForNode() throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
+                                                 AndesManagerServiceClusterMgtAdminExceptionException {
 
         return stub.getNumberOfQueues();
     }
@@ -170,7 +154,7 @@ public class ClusterManagerClient {
      * @throws RemoteException
      */
     public long updateThroughputForNode(String hostName) throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
+                                                                AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getThroughputForNode(hostName);
     }
 
@@ -185,36 +169,15 @@ public class ClusterManagerClient {
     }
 
     /**
-     * Get current cassandra connection ip:port
-     *
-     * @return
-     * @throws RemoteException
-     */
-    public String getCassandraConnection() throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
-        return stub.getCassandraConnection();
-    }
-
-    /**
-     * Get current zookeeper connection ip:port
-     *
-     * @return
-     * @throws RemoteException
-     */
-    public String getZookeeperConnection() throws RemoteException,
-            AndesManagerServiceClusterMgtAdminExceptionException {
-        return stub.getZookeeperConnection();
-    }
-
-    /**
      * Reassign worker of a particular queue to another node
      *
      * @param queueToUpdate
      * @param newNodeToAssign
      * @return
      */
-    public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign) throws RemoteException,
-            AndesManagerServiceClusterMgtExceptionException {
+    public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
+            throws RemoteException,
+                   AndesManagerServiceClusterMgtExceptionException {
         boolean result = stub.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
         return result;
     }
@@ -226,7 +189,8 @@ public class ClusterManagerClient {
      * @throws AndesManagerServiceClusterMgtExceptionException
      * @throws RemoteException
      */
-    public boolean isClusteringEnabled() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
+    public boolean isClusteringEnabled()
+            throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         boolean result = stub.isClusteringEnabled();
         return result;
     }
@@ -238,7 +202,8 @@ public class ClusterManagerClient {
      * @throws AndesManagerServiceClusterMgtExceptionException
      * @throws RemoteException
      */
-    public String getMyNodeID() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
+    public String getMyNodeID()
+            throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         return stub.getMyNodeID();
     }
 
@@ -251,7 +216,8 @@ public class ClusterManagerClient {
      * @throws RemoteException
      */
     public int getTotalSubscriptionCountForNode(String hostName) throws
-            AndesManagerServiceClusterMgtAdminExceptionException, RemoteException {
+                                                                 AndesManagerServiceClusterMgtAdminExceptionException,
+                                                                 RemoteException {
         int totalSubscriptionCount = 0;
         Queue[] queueList = stub.getAllDestinationQueuesDetailForNode(hostName, 0, Integer.MAX_VALUE);
         if (queueList == null) {
