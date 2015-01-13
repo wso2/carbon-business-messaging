@@ -18,12 +18,10 @@
 package org.wso2.carbon.andes.cluster.mgt.internal.managementBeans;
 
 import org.apache.commons.lang.StringUtils;
-import org.wso2.carbon.andes.cluster.mgt.NodeDetail;
 import org.wso2.carbon.andes.cluster.mgt.Queue;
 import org.wso2.carbon.andes.cluster.mgt.Topic;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtConstants;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
-import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 
 
 import javax.management.*;
@@ -379,6 +377,12 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Gets the coordinator node's host address and port in a cluster
+     *
+     * @return The coordinator node's host address and port
+     * @throws ClusterMgtException
+     */
     public String getCoordinatorNodeAddress() throws ClusterMgtException {
         String coordinatorNodeAddress = StringUtils.EMPTY;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -401,7 +405,6 @@ public class ClusterManagementBeans {
         } catch (InstanceNotFoundException e) {
             throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         } catch (AttributeNotFoundException e) {
-            e.printStackTrace();
             throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         }
     }
@@ -409,7 +412,7 @@ public class ClusterManagementBeans {
     /**
      * Gets the IP addresses and ports of the nodes in a cluster
      *
-     * @return
+     * @return A list of addresses of the nodes in a cluster
      * @throws ClusterMgtException
      */
     public List<String> getAllClusterNodeAddresses() throws ClusterMgtException {
@@ -428,20 +431,15 @@ public class ClusterManagementBeans {
             return allClusterNodeAddresses;
 
         } catch (MalformedObjectNameException e) {
-            e.printStackTrace();
-            throw new ClusterMgtException("Cannot cluster node addresses.Check if clustering is enabled.", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (ReflectionException e) {
-            e.printStackTrace();
-            throw new ClusterMgtException("Cannot cluster node addresses.Check if clustering is enabled.", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (MBeanException e) {
-            e.printStackTrace();
-            throw new ClusterMgtException("Cannot cluster node addresses.Check if clustering is enabled.", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (InstanceNotFoundException e) {
-            e.printStackTrace();
-            throw new ClusterMgtException("Cannot cluster node addresses.Check if clustering is enabled.", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (AttributeNotFoundException e) {
-            e.printStackTrace();
-            throw new ClusterMgtException("Cannot cluster node addresses.Check if clustering is enabled.", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         }
     }
 }

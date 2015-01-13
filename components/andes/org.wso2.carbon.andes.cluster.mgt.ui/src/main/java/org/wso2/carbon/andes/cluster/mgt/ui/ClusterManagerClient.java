@@ -39,9 +39,9 @@ public class ClusterManagerClient {
     /**
      * Constructor for ClusterManagerClient
      *
-     * @param configCtx
-     * @param backendServerURL
-     * @param cookie
+     * @param configCtx configuration context for server
+     * @param backendServerURL server backend url
+     * @param cookie session cookie
      * @throws Exception
      */
     public ClusterManagerClient(ConfigurationContext configCtx, String backendServerURL,
@@ -68,7 +68,7 @@ public class ClusterManagerClient {
     }
 
     /**
-     *  Returns the coordinator node address
+     * Returns the coordinator node address
      *
      * @return the address
      */
@@ -78,7 +78,43 @@ public class ClusterManagerClient {
         return address;
     }
 
+    /**
+     * get global queues whose workers running in given host
+     *
+     * suppressed 'UnusedDeclaration' warning as it is used by queue_List.jsp
+     *
+     * @param hostName      node ID
+     * @param startingIndex starting index of queues
+     * @param maxQueueCount max num of queues to fetch
+     *
+     * @param hostName
+     * @param startingIndex
+     * @param maxQueueCount
+     * @return
+     * @throws RemoteException
+     * @throws AndesManagerServiceClusterMgtAdminExceptionException
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public Queue[] getGlobalQueuesOfNode(String hostName, int startingIndex, int maxQueueCount)
+            throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
 
+        Queue[] result = stub.getAllGlobalQueuesForNode(hostName, startingIndex, maxQueueCount);
+        return result;
+    }
+
+    /**
+     * gets all the destination queues
+     *
+     * suppressed 'UnusedDeclaration' warning as it is used by queue_List.jsp
+     *
+     * @param hostName node ID
+     * @param startingIndex starting index of queues
+     * @param maxQueueCount max num of queues to fetch
+     * @return Array of queues
+     * @throws RemoteException
+     * @throws AndesManagerServiceClusterMgtAdminExceptionException
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public Queue[] getDestinationQueues(String hostName, int startingIndex, int maxQueueCount)
             throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
         Queue[] result = stub.getAllDestinationQueuesDetailForNode(hostName, startingIndex, maxQueueCount);
@@ -88,11 +124,14 @@ public class ClusterManagerClient {
     /**
      * gives all the topics residing in the cluster
      *
+     * suppressed 'UnusedDeclaration' warning as it is used by topic_List.jsp
+     *
      * @param startingIndex
      * @param maxTopicCount
      * @return
      * @throws RemoteException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public Topic[] getAllTopics(int startingIndex, int maxTopicCount) throws RemoteException,
                                                                              AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getAllTopicsForNode(startingIndex, maxTopicCount);

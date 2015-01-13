@@ -19,49 +19,54 @@
 package org.wso2.carbon.andes.cluster.mgt;
 
 
-import com.hazelcast.core.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.kernel.AndesContext;
-import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
 import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 import org.wso2.carbon.andes.cluster.mgt.internal.managementBeans.ClusterManagementBeans;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Admin service class for cluster management
  */
 public class ClusterManagerService {
 
-
+    /**
+     * Logging service
+     */
     private static final Log log = LogFactory.getLog(ClusterManagerService.class);
 
-
-    public String[] getAllClusterNodeAddresses()
-            throws ClusterMgtException, ClusterMgtAdminException {
-        try {
-            log.info("AT getAllClusterNodeAddresses");
+    /**
+     * Gets the IP addresses and ports of the nodes in a cluster
+     *
+     * @return A list of addresses of the nodes in a cluster
+     * @throws ClusterMgtAdminException
+     */
+    public String[] getAllClusterNodeAddresses() throws ClusterMgtAdminException {
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            List<String> addresses = clusterManagementBeans.getAllClusterNodeAddresses();
-            return addresses.toArray(new String[addresses.size()]);
-        } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
+        List<String> addresses = null;
+        try {
+            addresses = clusterManagementBeans.getAllClusterNodeAddresses();
+        } catch (ClusterMgtException e) {
+            e.printStackTrace();
         }
+        return addresses.toArray(new String[addresses.size()]);
     }
 
+    /**
+     * Gets the coordinator node's host address and port in a cluster
+     *
+     * @return The coordinator node's host address and port
+     * @throws ClusterMgtAdminException
+     */
     public String getCoordinatorNodeAddress() throws ClusterMgtAdminException {
         try {
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            String address = clusterManagementBeans.getCoordinatorNodeAddress();
-            return address;
+            return clusterManagementBeans.getCoordinatorNodeAddress();
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
+            throw new ClusterMgtAdminException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         }
     }
 
@@ -280,8 +285,8 @@ public class ClusterManagerService {
     /**
      * Reassign worker of a particular queue to another node
      *
-     * @param queueToUpdate
-     * @param newNodeToAssign
+     * @param queueToUpdate name of the queue to update
+     * @param newNodeToAssign  the new node to assign to
      * @return success if assign was successful
      */
     public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
@@ -314,5 +319,61 @@ public class ClusterManagerService {
         return clusterManagementBeans.getMyNodeID();
     }
 
+    /**
+     * gives queues whose queue manager runs on the given node
+     *
+     * @param hostName the host name
+     * @param startingIndex the starting index
+     * @param maxQueueCount maximum queue count
+     * @return Array of Queues
+     * @throws ClusterMgtAdminException
+     */
+    public Queue[] getAllGlobalQueuesForNode(String hostName, int startingIndex, int maxQueueCount)
+            throws ClusterMgtAdminException {
 
+        try {
+            Queue[] queueDetailsArray;
+            int resultSetSize = maxQueueCount;
+            ArrayList<Queue> resultList;
+
+            //get queues  whose queue manager runs on the given node
+            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+            ArrayList<Queue> allGlobalQueuesRunningInNode = clusterManagementBeans.getGlobalQueuesRunningInNode(hostName);
+
+            //filter queues according to tenant
+            resultList = (ArrayList<Queue>) Utils.filterDomainSpecificQueues(allGlobalQueuesRunningInNode);
+
+            if ((resultList.size() - startingIndex) < maxQueueCount) {
+                resultSetSize = (resultList.size() - startingIndex);
+            }
+            queueDetailsArray = new Queue[resultSetSize];
+            int index = 0;
+            int queueDetailsIndex = 0;
+            for (Queue queueDetail : resultList) {
+                if (startingIndex == index || startingIndex < index) {
+                    queueDetailsArray[queueDetailsIndex] = new Queue();
+
+                    queueDetailsArray[queueDetailsIndex].setQueueName(queueDetail.getQueueName());
+                    queueDetailsArray[queueDetailsIndex].setMessageCount(queueDetail.getMessageCount());
+
+                    //queueDetailsArray[queueDetailsIndex].setQueueDepth(queueDetail.getQueueDepth());
+                    //queueDetailsArray[queueDetailsIndex].setUpdatedTime(queueDetail.getUpdatedTime());
+                    //queueDetailsArray[queueDetailsIndex].setCreatedTime(queueDetail.getCreatedTime());
+
+                    queueDetailsIndex++;
+                    if (queueDetailsIndex == maxQueueCount) {
+                        break;
+                    }
+
+                }
+
+                index++;
+            }
+
+            return queueDetailsArray;
+
+        } catch (Exception e) {
+            throw new ClusterMgtAdminException("Can not get the queue manager ", e);
+        }
+    }
 }

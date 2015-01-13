@@ -86,6 +86,18 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="getAllClusterNodeAddresses">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllClusterNodeAddressesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getAllTopicsForNode">
                 <xs:complexType>
                     <xs:sequence>
@@ -213,43 +225,50 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllClusterNodeAddresses">
-                <xs:complexType>
-                    <xs:sequence></xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllClusterNodeAddressesResponse">
+            <xs:element name="getAllGlobalQueuesForNode">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="hostName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="startingIndex" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="maxQueueCount" type="xs:int"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllGlobalQueuesForNodeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Queue"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="getAllClusterNodeAddressesRequest">
-        <wsdl:part name="parameters" element="ns:getAllClusterNodeAddresses"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getAllClusterNodeAddressesResponse">
-        <wsdl:part name="parameters" element="ns:getAllClusterNodeAddressesResponse"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="AndesManagerServiceClusterMgtException">
-        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtException"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="AndesManagerServiceClusterMgtAdminException">
-        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtAdminException"></wsdl:part>
-    </wsdl:message>
     <wsdl:message name="getNumberOfQueuesRequest">
         <wsdl:part name="parameters" element="ns:getNumberOfQueues"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getNumberOfQueuesResponse">
         <wsdl:part name="parameters" element="ns:getNumberOfQueuesResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="AndesManagerServiceClusterMgtAdminException">
+        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtAdminException"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllClusterNodeAddressesRequest">
+        <wsdl:part name="parameters" element="ns:getAllClusterNodeAddresses"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllClusterNodeAddressesResponse">
+        <wsdl:part name="parameters" element="ns:getAllClusterNodeAddressesResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="getNumberOfTopicsRequest">
         <wsdl:part name="parameters" element="ns:getNumberOfTopics"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getNumberOfTopicsResponse">
         <wsdl:part name="parameters" element="ns:getNumberOfTopicsResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllGlobalQueuesForNodeRequest">
+        <wsdl:part name="parameters" element="ns:getAllGlobalQueuesForNode"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllGlobalQueuesForNodeResponse">
+        <wsdl:part name="parameters" element="ns:getAllGlobalQueuesForNodeResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getThroughputForNodeRequest">
         <wsdl:part name="parameters" element="ns:getThroughputForNode"></wsdl:part>
@@ -280,6 +299,9 @@
     </wsdl:message>
     <wsdl:message name="getMyNodeIDResponse">
         <wsdl:part name="parameters" element="ns:getMyNodeIDResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="AndesManagerServiceClusterMgtException">
+        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtException"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="isClusteringEnabledRequest">
         <wsdl:part name="parameters" element="ns:isClusteringEnabled"></wsdl:part>
@@ -312,21 +334,25 @@
         <wsdl:part name="parameters" element="ns:getNumberOfMessagesForQueueResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:portType name="AndesManagerServicePortType">
-        <wsdl:operation name="getAllClusterNodeAddresses">
-            <wsdl:input message="ns:getAllClusterNodeAddressesRequest" wsaw:Action="urn:getAllClusterNodeAddresses"></wsdl:input>
-            <wsdl:output message="ns:getAllClusterNodeAddressesResponse" wsaw:Action="urn:getAllClusterNodeAddressesResponse"></wsdl:output>
-            <wsdl:fault message="ns:AndesManagerServiceClusterMgtException" name="AndesManagerServiceClusterMgtException" wsaw:Action="urn:getAllClusterNodeAddressesAndesManagerServiceClusterMgtException"></wsdl:fault>
-            <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getAllClusterNodeAddressesAndesManagerServiceClusterMgtAdminException"></wsdl:fault>
-        </wsdl:operation>
         <wsdl:operation name="getNumberOfQueues">
             <wsdl:input message="ns:getNumberOfQueuesRequest" wsaw:Action="urn:getNumberOfQueues"></wsdl:input>
             <wsdl:output message="ns:getNumberOfQueuesResponse" wsaw:Action="urn:getNumberOfQueuesResponse"></wsdl:output>
             <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getNumberOfQueuesAndesManagerServiceClusterMgtAdminException"></wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getAllClusterNodeAddresses">
+            <wsdl:input message="ns:getAllClusterNodeAddressesRequest" wsaw:Action="urn:getAllClusterNodeAddresses"></wsdl:input>
+            <wsdl:output message="ns:getAllClusterNodeAddressesResponse" wsaw:Action="urn:getAllClusterNodeAddressesResponse"></wsdl:output>
+            <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getAllClusterNodeAddressesAndesManagerServiceClusterMgtAdminException"></wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getNumberOfTopics">
             <wsdl:input message="ns:getNumberOfTopicsRequest" wsaw:Action="urn:getNumberOfTopics"></wsdl:input>
             <wsdl:output message="ns:getNumberOfTopicsResponse" wsaw:Action="urn:getNumberOfTopicsResponse"></wsdl:output>
             <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getNumberOfTopicsAndesManagerServiceClusterMgtAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllGlobalQueuesForNode">
+            <wsdl:input message="ns:getAllGlobalQueuesForNodeRequest" wsaw:Action="urn:getAllGlobalQueuesForNode"></wsdl:input>
+            <wsdl:output message="ns:getAllGlobalQueuesForNodeResponse" wsaw:Action="urn:getAllGlobalQueuesForNodeResponse"></wsdl:output>
+            <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getAllGlobalQueuesForNodeAndesManagerServiceClusterMgtAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getThroughputForNode">
             <wsdl:input message="ns:getThroughputForNodeRequest" wsaw:Action="urn:getThroughputForNode"></wsdl:input>
@@ -381,6 +407,18 @@
     </wsdl:portType>
     <wsdl:binding name="AndesManagerServiceSoap11Binding" type="ns:AndesManagerServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <wsdl:operation name="getAllClusterNodeAddresses">
+            <soap:operation soapAction="urn:getAllClusterNodeAddresses" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
+                <soap:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getNumberOfQueues">
             <soap:operation soapAction="urn:getNumberOfQueues" style="document"></soap:operation>
             <wsdl:input>
@@ -393,8 +431,8 @@
                 <soap:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getAllClusterNodeAddresses">
-            <soap:operation soapAction="urn:getAllClusterNodeAddresses" style="document"></soap:operation>
+        <wsdl:operation name="getNumberOfTopics">
+            <soap:operation soapAction="urn:getNumberOfTopics" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -404,12 +442,9 @@
             <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
                 <soap:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap:fault>
             </wsdl:fault>
-            <wsdl:fault name="AndesManagerServiceClusterMgtException">
-                <soap:fault use="literal" name="AndesManagerServiceClusterMgtException"></soap:fault>
-            </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getNumberOfTopics">
-            <soap:operation soapAction="urn:getNumberOfTopics" style="document"></soap:operation>
+        <wsdl:operation name="getAllGlobalQueuesForNode">
+            <soap:operation soapAction="urn:getAllGlobalQueuesForNode" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -543,6 +578,18 @@
     </wsdl:binding>
     <wsdl:binding name="AndesManagerServiceSoap12Binding" type="ns:AndesManagerServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
+        <wsdl:operation name="getAllClusterNodeAddresses">
+            <soap12:operation soapAction="urn:getAllClusterNodeAddresses" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
+                <soap12:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getNumberOfQueues">
             <soap12:operation soapAction="urn:getNumberOfQueues" style="document"></soap12:operation>
             <wsdl:input>
@@ -555,8 +602,8 @@
                 <soap12:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getAllClusterNodeAddresses">
-            <soap12:operation soapAction="urn:getAllClusterNodeAddresses" style="document"></soap12:operation>
+        <wsdl:operation name="getNumberOfTopics">
+            <soap12:operation soapAction="urn:getNumberOfTopics" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -566,12 +613,9 @@
             <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
                 <soap12:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"></soap12:fault>
             </wsdl:fault>
-            <wsdl:fault name="AndesManagerServiceClusterMgtException">
-                <soap12:fault use="literal" name="AndesManagerServiceClusterMgtException"></soap12:fault>
-            </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getNumberOfTopics">
-            <soap12:operation soapAction="urn:getNumberOfTopics" style="document"></soap12:operation>
+        <wsdl:operation name="getAllGlobalQueuesForNode">
+            <soap12:operation soapAction="urn:getAllGlobalQueuesForNode" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -705,15 +749,6 @@
     </wsdl:binding>
     <wsdl:binding name="AndesManagerServiceHttpBinding" type="ns:AndesManagerServicePortType">
         <http:binding verb="POST"></http:binding>
-        <wsdl:operation name="getNumberOfQueues">
-            <http:operation location="getNumberOfQueues"></http:operation>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getAllClusterNodeAddresses">
             <http:operation location="getAllClusterNodeAddresses"></http:operation>
             <wsdl:input>
@@ -723,8 +758,26 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getNumberOfQueues">
+            <http:operation location="getNumberOfQueues"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getNumberOfTopics">
             <http:operation location="getNumberOfTopics"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllGlobalQueuesForNode">
+            <http:operation location="getAllGlobalQueuesForNode"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -825,13 +878,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesManagerService">
         <wsdl:port name="AndesManagerServiceHttpsSoap11Endpoint" binding="ns:AndesManagerServiceSoap11Binding">
-            <soap:address location="https://192.168.0.104:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://10.100.5.197:9455/services/AndesManagerService.AndesManagerServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="AndesManagerServiceHttpsSoap12Endpoint" binding="ns:AndesManagerServiceSoap12Binding">
-            <soap12:address location="https://192.168.0.104:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://10.100.5.197:9455/services/AndesManagerService.AndesManagerServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="AndesManagerServiceHttpsEndpoint" binding="ns:AndesManagerServiceHttpBinding">
-            <http:address location="https://192.168.0.104:9443/services/AndesManagerService.AndesManagerServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://10.100.5.197:9455/services/AndesManagerService.AndesManagerServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

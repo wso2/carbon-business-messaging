@@ -34,18 +34,11 @@
     String nodeID = "";
 
     try {
-        System.out.println("SETTING CLUSTER MANAGER");
         client = new ClusterManagerClient(configContext, serverURL, cookie);
-        System.out.println("GETTING isClusteringEnabled");
         isClusteringEnabled = client.isClusteringEnabled();
-        System.out.println("GETTING getAllClusterNodeAddresses");
         allClusterNodeAddresses = client.getAllClusterNodeAddresses();
-        System.out.println("GETTING getCoordinatorNodeAddress");
         coordinatorAddress = client.getCoordinatorNodeAddress();
-        System.out.println("GETTING getMyNodeID");
         nodeID = client.getMyNodeID();
-
-        System.out.println("COORDINATOR : " + coordinatorAddress);
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -90,14 +83,13 @@
                         </thead>
                         <% for(int i = 0; i < allClusterNodeAddresses.length; i++){ %>
                          <tr>
-                            <% System.out.println("NODE ADDRESS : " + allClusterNodeAddresses[i]); %>
                             <td><%=allClusterNodeAddresses[i].split(":")[0]%></td>
                             <td><%=allClusterNodeAddresses[i].split(":")[1]%></td>
                             <td>
                                 <% if(allClusterNodeAddresses[i].equals(coordinatorAddress)){%>
-                                    True
+                                    Yes
                                 <% }else{ %>
-                                    False
+                                    No
                                 <% } %>
                             </td>
                         </tr>
