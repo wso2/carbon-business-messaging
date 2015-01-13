@@ -45,14 +45,18 @@ public class ClusterManagerService {
      * @throws ClusterMgtAdminException
      */
     public String[] getAllClusterNodeAddresses() throws ClusterMgtAdminException {
-            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+        ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
         List<String> addresses = null;
         try {
             addresses = clusterManagementBeans.getAllClusterNodeAddresses();
         } catch (ClusterMgtException e) {
             e.printStackTrace();
         }
-        return addresses.toArray(new String[addresses.size()]);
+        if (addresses != null) {
+            return addresses.toArray(new String[addresses.size()]);
+        } else {
+            return new String[]{};
+        }
     }
 
     /**
@@ -70,6 +74,18 @@ public class ClusterManagerService {
         }
     }
 
+    /**
+     * Gets all the details of destination queues for a node
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
+     *
+     * @param hostName      the host name
+     * @param startingIndex starting index of details
+     * @param maxQueueCount maximum queues to return
+     * @return array of queues
+     * @throws ClusterMgtAdminException
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public Queue[] getAllDestinationQueuesDetailForNode(String hostName, int startingIndex,
                                                         int maxQueueCount)
             throws ClusterMgtAdminException {
@@ -77,7 +93,6 @@ public class ClusterManagerService {
         try {
             Queue[] queueDetailsArray;
             int resultSetSize = maxQueueCount;
-            ArrayList<Queue> resultList;
 
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             List<String> queuesOfCluster = clusterManagementBeans.queuesOfCluster();
@@ -114,34 +129,31 @@ public class ClusterManagerService {
                     queueDetailsArray[queueDetailsIndex].setMessageCount(queueDetail.getMessageCount());
                     queueDetailsArray[queueDetailsIndex].setSubscriberCount(queueDetail.getSubscriberCount());
 
-                    //queueDetailsArray[queueDetailsIndex].setQueueDepth(queueDetail.getQueueDepth());
-                    //queueDetailsArray[queueDetailsIndex].setUpdatedTime(queueDetail.getUpdatedTime());
-                    //queueDetailsArray[queueDetailsIndex].setCreatedTime(queueDetail.getCreatedTime());
-
                     queueDetailsIndex++;
                     if (queueDetailsIndex == maxQueueCount) {
                         break;
                     }
 
                 }
-
                 index++;
             }
-
             return queueDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager.", e);
+            throw new ClusterMgtAdminException("Cannot get all the details of destination queues for a node.", e);
         }
     }
 
     /**
-     * gives topics whole list of topics in the cluster
+     * Gets topics whole list of topics in the cluster
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
      *
-     * @param startingIndex
-     * @param maxTopicCount
-     * @return array of Topic
+     * @param startingIndex starting index of details
+     * @param maxTopicCount maximum number of topics to return
+     * @return array of topics
      */
+    @SuppressWarnings("UnusedDeclaration")
     public Topic[] getAllTopicsForNode(int startingIndex, int maxTopicCount)
             throws ClusterMgtAdminException {
         try {
@@ -167,38 +179,41 @@ public class ClusterManagerService {
                     if (topicDetailDetailsIndex == maxTopicCount) {
                         break;
                     }
-
                 }
-
                 index++;
             }
 
             return topicDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not access MBean information for topics.", e);
+            throw new ClusterMgtAdminException("Cannot access MBean information for topics.", e);
         }
     }
 
     /**
      * get throughput for the requested node
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
      *
-     * @param hostname
+     * @param hostname the host name
      * @return long
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long getThroughputForNode(String hostname) throws ClusterMgtAdminException {
-
+        // TODO : to be implemented
         return 0;
     }
 
     /**
      * get memory usage for the requested node
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
      *
-     * @param hostname
+     * @param hostname the host name
      * @return long
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long getMemoryUsage(String hostname) throws ClusterMgtAdminException {
-
         return 0;
     }
 
@@ -210,7 +225,7 @@ public class ClusterManagerService {
      */
     public long getNumberOfTopics() throws ClusterMgtAdminException {
         try {
-            long result = 0;
+            long result;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             ArrayList<Topic> topicList = clusterManagementBeans.getTopicList();
             result = topicList.size();
@@ -223,12 +238,12 @@ public class ClusterManagerService {
     /**
      * gives number queues whose queue manager runs on the given node
      *
-     * @return long
+     * @return the number of queues
      * @throws ClusterMgtAdminException
      */
     public long getNumberOfQueues() throws ClusterMgtAdminException {
         try {
-            long result = 0;
+            long result;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             List<String> queuesOfCluster = clusterManagementBeans.queuesOfCluster();
             List<Queue> queueObjectList = new ArrayList<Queue>();
@@ -250,14 +265,18 @@ public class ClusterManagerService {
 
     /**
      * Returns number of subscriptions for the topic
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
      *
-     * @param topicName
-     * @return long
+     * @param topicName topic name
+     * @return the number of subscriptions
+     * @throws ClusterMgtAdminException
      */
-    public long getNumberofSubscriptionsForTopic(String topicName) throws ClusterMgtAdminException {
+    @SuppressWarnings("UnusedDeclaration")
+    public long getNumberOfSubscriptionsForTopic(String topicName) throws ClusterMgtAdminException {
 
         try {
-            long numOfSubscribers = 0;
+            long numOfSubscribers;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             numOfSubscribers = clusterManagementBeans.getNumOfSubscribersForTopic(topicName);
             return numOfSubscribers;
@@ -267,13 +286,18 @@ public class ClusterManagerService {
     }
 
     /**
-     * @param queueName
+     * Gets the number of messages for a queue
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
+     *
+     * @param queueName queue name
      * @return long number of messages
      * @throws ClusterMgtAdminException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long getNumberOfMessagesForQueue(String queueName) throws ClusterMgtAdminException {
         try {
-            long numOfMessages = 0;
+            long numOfMessages;
             ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
             numOfMessages = clusterManagementBeans.getNumberOfAllMessagesForQueue(queueName);
             return numOfMessages;
@@ -285,15 +309,21 @@ public class ClusterManagerService {
     /**
      * Reassign worker of a particular queue to another node
      *
-     * @param queueToUpdate name of the queue to update
-     * @param newNodeToAssign  the new node to assign to
+     * @param queueToUpdate   name of the queue to update
+     * @param newNodeToAssign the new node to assign to
      * @return success if assign was successful
+     * @throws ClusterMgtAdminException
      */
     public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
-            throws ClusterMgtException {
-        boolean result = false;
-        ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-        result = clusterManagementBeans.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
+            throws ClusterMgtAdminException {
+        boolean result;
+        try {
+            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+            result = clusterManagementBeans.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
+            log.info("Updated worker for " + queueToUpdate);
+        } catch (ClusterMgtException e) {
+            throw new ClusterMgtAdminException("Cannot access MBean information for queues.", e);
+        }
         return result;
     }
 
@@ -321,13 +351,16 @@ public class ClusterManagerService {
 
     /**
      * gives queues whose queue manager runs on the given node
+     * <p/>
+     * suppressed 'UnusedDeclaration' warning as it is invoked by a service
      *
-     * @param hostName the host name
+     * @param hostName      the host name
      * @param startingIndex the starting index
      * @param maxQueueCount maximum queue count
      * @return Array of Queues
      * @throws ClusterMgtAdminException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public Queue[] getAllGlobalQueuesForNode(String hostName, int startingIndex, int maxQueueCount)
             throws ClusterMgtAdminException {
 
@@ -373,7 +406,7 @@ public class ClusterManagerService {
             return queueDetailsArray;
 
         } catch (Exception e) {
-            throw new ClusterMgtAdminException("Can not get the queue manager ", e);
+            throw new ClusterMgtAdminException("Cannot get the queue manager ", e);
         }
     }
 }

@@ -32,6 +32,7 @@ import java.rmi.RemoteException;
 /**
  * This class is used to call MB Cluster Manager service from client side
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ClusterManagerClient {
 
     private AndesManagerServiceStub stub;
@@ -44,6 +45,7 @@ public class ClusterManagerClient {
      * @param cookie session cookie
      * @throws Exception
      */
+    @SuppressWarnings("UnusedDeclaration")
     public ClusterManagerClient(ConfigurationContext configCtx, String backendServerURL,
                                 String cookie) throws Exception {
         String serviceURL = backendServerURL + "AndesManagerService";
@@ -63,8 +65,7 @@ public class ClusterManagerClient {
             throws AndesManagerServiceClusterMgtAdminExceptionException, RemoteException,
                    AndesManagerServiceClusterMgtExceptionException {
 
-        String[] addresses = stub.getAllClusterNodeAddresses();
-        return addresses;
+        return stub.getAllClusterNodeAddresses();
     }
 
     /**
@@ -74,8 +75,7 @@ public class ClusterManagerClient {
      */
     public String getCoordinatorNodeAddress()
             throws AndesManagerServiceClusterMgtAdminExceptionException, RemoteException {
-        String address = stub.getCoordinatorNodeAddress();
-        return address;
+        return stub.getCoordinatorNodeAddress();
     }
 
     /**
@@ -86,11 +86,7 @@ public class ClusterManagerClient {
      * @param hostName      node ID
      * @param startingIndex starting index of queues
      * @param maxQueueCount max num of queues to fetch
-     *
-     * @param hostName
-     * @param startingIndex
-     * @param maxQueueCount
-     * @return
+     * @return array of queues
      * @throws RemoteException
      * @throws AndesManagerServiceClusterMgtAdminExceptionException
      */
@@ -98,8 +94,7 @@ public class ClusterManagerClient {
     public Queue[] getGlobalQueuesOfNode(String hostName, int startingIndex, int maxQueueCount)
             throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
 
-        Queue[] result = stub.getAllGlobalQueuesForNode(hostName, startingIndex, maxQueueCount);
-        return result;
+        return stub.getAllGlobalQueuesForNode(hostName, startingIndex, maxQueueCount);
     }
 
     /**
@@ -117,8 +112,7 @@ public class ClusterManagerClient {
     @SuppressWarnings("UnusedDeclaration")
     public Queue[] getDestinationQueues(String hostName, int startingIndex, int maxQueueCount)
             throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
-        Queue[] result = stub.getAllDestinationQueuesDetailForNode(hostName, startingIndex, maxQueueCount);
-        return result;
+        return stub.getAllDestinationQueuesDetailForNode(hostName, startingIndex, maxQueueCount);
     }
 
     /**
@@ -126,9 +120,9 @@ public class ClusterManagerClient {
      *
      * suppressed 'UnusedDeclaration' warning as it is used by topic_List.jsp
      *
-     * @param startingIndex
-     * @param maxTopicCount
-     * @return
+     * @param startingIndex starting index of topics
+     * @param maxTopicCount maximum number of topics to capture
+     * @return array of topics
      * @throws RemoteException
      */
     @SuppressWarnings("UnusedDeclaration")
@@ -137,19 +131,16 @@ public class ClusterManagerClient {
         return stub.getAllTopicsForNode(startingIndex, maxTopicCount);
     }
 
-    //TO DELETE
-    public long updateNumOfSubscriptionsForTopic(String topicName) throws RemoteException,
-                                                                          AndesManagerServiceClusterMgtAdminExceptionException {
-        return stub.getNumberofSubscriptionsForTopic(topicName);
-    }
-
     /**
      * Update memory usage of the node to current
      *
-     * @param hostName
+     * suppressed 'UnusedDeclaration' warning as it is used by nodeUpdateQueries.jsp
+     *
+     * @param hostName the host name
      * @return long
      * @throws RemoteException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long updateMemoryUsage(String hostName) throws RemoteException,
                                                           AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getMemoryUsage(hostName);
@@ -157,28 +148,26 @@ public class ClusterManagerClient {
 
     /**
      * update number of topics in the cluster
-     *
+     * suppressed 'UnusedDeclaration' warning as it is used by nodeUpdateQueries.jsp
      * @return long
      * @throws RemoteException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long updateTopicCount()
             throws RemoteException, AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getNumberOfTopics();
     }
 
-    public long updateNumOfMessagesForQueue(String queueName) throws
-                                                              AndesManagerServiceClusterMgtAdminExceptionException,
-                                                              RemoteException {
-        return stub.getNumberOfMessagesForQueue(queueName);
-    }
-
     /**
      * update number of queues whose queue manager runs on the given node
      *
-     * @return
+     * suppressed 'UnusedDeclaration' warning as it is used by queue_List.jsp, topic_List.jsp and nodeUpdateQueries.jsp
+     *
+     * @return the number of queues for a node
      * @throws RemoteException
      * @throws AndesManagerServiceClusterMgtAdminExceptionException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long updateQueueCountForNode() throws RemoteException,
                                                  AndesManagerServiceClusterMgtAdminExceptionException {
 
@@ -188,84 +177,53 @@ public class ClusterManagerClient {
     /**
      * update the throughput for the requested node
      *
-     * @param hostName
-     * @return
+     * suppressed 'UnusedDeclaration' warning as it is used by nodeUpdateQueries.jsp
+     *
+     * @param hostName the host name
+     * @return the throughput value
      * @throws RemoteException
      */
+    @SuppressWarnings("UnusedDeclaration")
     public long updateThroughputForNode(String hostName) throws RemoteException,
                                                                 AndesManagerServiceClusterMgtAdminExceptionException {
         return stub.getThroughputForNode(hostName);
     }
 
     /**
-     * Restart the node requested
-     *
-     * @param hostName
-     * @return success
-     */
-    public boolean restartNode(String hostName) {
-        return true;
-    }
-
-    /**
      * Reassign worker of a particular queue to another node
      *
-     * @param queueToUpdate
-     * @param newNodeToAssign
-     * @return
+     * @param queueToUpdate queue name to update
+     * @param newNodeToAssign new node name to assign
+     * @return update success or failed
      */
     public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
             throws RemoteException,
-                   AndesManagerServiceClusterMgtExceptionException {
-        boolean result = stub.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
-        return result;
+                   AndesManagerServiceClusterMgtExceptionException,
+                   AndesManagerServiceClusterMgtAdminExceptionException {
+        return stub.updateWorkerForQueue(queueToUpdate, newNodeToAssign);
     }
 
     /**
      * check if broker is running in clustered mode
      *
-     * @return
+     * @return whether clustering is enabled
      * @throws AndesManagerServiceClusterMgtExceptionException
      * @throws RemoteException
      */
     public boolean isClusteringEnabled()
             throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
-        boolean result = stub.isClusteringEnabled();
-        return result;
+        return stub.isClusteringEnabled();
     }
 
     /**
      * get node ID assigned to this node by Zookeeper
      *
-     * @return
+     * @return the current node's ID
      * @throws AndesManagerServiceClusterMgtExceptionException
      * @throws RemoteException
      */
     public String getMyNodeID()
             throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         return stub.getMyNodeID();
-    }
-
-    /**
-     * get total subscription count for all queues in cluster of a given node
-     *
-     * @param hostName
-     * @return total subscription count
-     * @throws AndesManagerServiceClusterMgtAdminExceptionException
-     * @throws RemoteException
-     */
-    public int getTotalSubscriptionCountForNode(String hostName) throws
-                                                                 AndesManagerServiceClusterMgtAdminExceptionException,
-                                                                 RemoteException {
-        int totalSubscriptionCount = 0;
-        Queue[] queueList = stub.getAllDestinationQueuesDetailForNode(hostName, 0, Integer.MAX_VALUE);
-        if (queueList == null) {
-            return totalSubscriptionCount;
-        }
-        for (Queue aQueue : queueList) {
-            int subscriptionCountForCurrentQueue = aQueue.getSubscriberCount();
-            totalSubscriptionCount += subscriptionCountForCurrentQueue;
-        }
-        return totalSubscriptionCount;
     }
 }

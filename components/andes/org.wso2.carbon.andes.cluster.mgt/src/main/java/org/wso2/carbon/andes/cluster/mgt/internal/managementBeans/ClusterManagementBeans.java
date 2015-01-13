@@ -23,14 +23,28 @@ import org.wso2.carbon.andes.cluster.mgt.Topic;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtConstants;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
 
-
-import javax.management.*;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Cluster Management MBeans invoker
+ */
 public class ClusterManagementBeans {
 
+    /**
+     * Checks whether clustering is enabled
+     *
+     * @return a boolean whether clustering is enabled
+     * @throws ClusterMgtException
+     */
     public boolean isClusteringEnabled() throws ClusterMgtException {
         boolean isClustered = false;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -46,18 +60,24 @@ public class ClusterManagementBeans {
 
             return isClustered;
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         }
     }
 
+    /**
+     * Gets the current node's ID
+     *
+     * @return current node's ID
+     * @throws ClusterMgtException
+     */
     public String getMyNodeID() throws ClusterMgtException {
         String myNodeID = "";
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -73,46 +93,24 @@ public class ClusterManagementBeans {
             return myNodeID;
 
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         }
     }
 
-    public String getIPAddressForNode(int nodeID) throws ClusterMgtException {
-        String IPAddress = "";
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
-            String operationName = "getIPAddressForNode";
-            Object[] parameters = new Object[]{nodeID};
-            String[] signature = new String[]{int.class.getName()};
-            IPAddress = (String) mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            return IPAddress;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        }
-    }
-
+    /**
+     * Gets the queues in a cluster
+     *
+     * @return a list of queues available in the cluster
+     * @throws ClusterMgtException
+     */
     public List<String> queuesOfCluster() throws ClusterMgtException {
         List<String> destinationQueuesOfCluster = new ArrayList<String>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -123,6 +121,7 @@ public class ClusterManagementBeans {
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.QUEUES_OF_CLUSTER);
 
             if (result != null) {
+                //noinspection unchecked
                 destinationQueuesOfCluster = (List<String>) result;
             }
             return destinationQueuesOfCluster;
@@ -140,6 +139,12 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Gets the topics in a cluster
+     *
+     * @return a list of topics available in the cluster
+     * @throws ClusterMgtException
+     */
     public ArrayList<Topic> getTopicList() throws ClusterMgtException {
         ArrayList<Topic> topicDetailsList = new ArrayList<Topic>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -150,6 +155,7 @@ public class ClusterManagementBeans {
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.TOPICS_MBEAN_ATTRIB);
 
             if (result != null) {
+                //noinspection unchecked
                 List<String> TopicNamesList = (List<String>) result;
 
                 for (String topicName : TopicNamesList) {
@@ -175,6 +181,13 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Gets global queues running in the node
+     *
+     * @param nodeName the node name
+     * @return a list of queues
+     * @throws ClusterMgtException
+     */
     public ArrayList<Queue> getGlobalQueuesRunningInNode(String nodeName)
             throws ClusterMgtException {
         int nodeId = Integer.parseInt(nodeName);
@@ -215,8 +228,15 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Gets the number of subscribers for a topic
+     *
+     * @param topicName the topic name
+     * @return the number of topics
+     * @throws ClusterMgtException
+     */
     public int getNumOfSubscribersForTopic(String topicName) throws ClusterMgtException {
-        int numberOfSubscribers = 0;
+        int numberOfSubscribers;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -244,6 +264,13 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Gets the number of all the messages for a queue
+     *
+     * @param queueName the queue name
+     * @return the number of messages
+     * @throws ClusterMgtException
+     */
     public int getNumberOfAllMessagesForQueue(String queueName) throws ClusterMgtException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -254,12 +281,11 @@ public class ClusterManagementBeans {
             Object[] parameters = new Object[]{queueName};
             String[] signature = new String[]{String.class.getName()};
 
-            int numberOfMessages = (Integer) mBeanServer.invoke(
+            return (Integer) mBeanServer.invoke(
                     objectName,
                     operationName,
                     parameters,
                     signature);
-            return numberOfMessages;
 
         } catch (MalformedObjectNameException e) {
             throw new ClusterMgtException("Cannot access queue information", e);
@@ -272,6 +298,14 @@ public class ClusterManagementBeans {
         }
     }
 
+    /**
+     * Updates the worker for a queue
+     *
+     * @param queueToUpdate the queue to update
+     * @param newNodeToAssign the new node to assign
+     * @return whether assigning succeeded or failed
+     * @throws ClusterMgtException
+     */
     public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign)
             throws ClusterMgtException {
 
@@ -294,18 +328,26 @@ public class ClusterManagementBeans {
             }
 
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
+            throw new ClusterMgtException("Cannot update worker for queue", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
+            throw new ClusterMgtException("Cannot update worker for queue", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
+            throw new ClusterMgtException("Cannot update worker for queue", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information for node", e);
+            throw new ClusterMgtException("Cannot update worker for queue", e);
         }
 
         return operationResult;
     }
 
+    /**
+     * Gets the message count of a node addressed to a destination queue
+     *
+     * @param hostName the host name
+     * @param destinationQueueName the destination queue name
+     * @return the number of messages
+     * @throws ClusterMgtException
+     */
     public int getMessageCountOfNodeAddressedToDestinationQueue(String hostName,
                                                                 String destinationQueueName) throws
                                                                                              ClusterMgtException {
@@ -331,16 +373,24 @@ public class ClusterManagementBeans {
             return messageCount;
 
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
+            throw new ClusterMgtException("Cannot count messages in the mentioned destination queue at node " + hostName, e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
+            throw new ClusterMgtException("Cannot count messages in the mentioned destination queue at node " + hostName, e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
+            throw new ClusterMgtException("Cannot count messages in the mentioned destination queue at node " + hostName, e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
+            throw new ClusterMgtException("Cannot count messages in the mentioned destination queue at node " + hostName, e);
         }
     }
 
+    /**
+     * Gets the subscriber count of a node addressed to a destination queue
+     *
+     * @param hostName the host name
+     * @param destinationQueueName the destination queue name
+     * @return the subscriber count
+     * @throws ClusterMgtException
+     */
     public int getSubscriberCountOfNodeAddressedToDestinationQueue(String hostName,
                                                                    String destinationQueueName)
             throws
@@ -426,6 +476,7 @@ public class ClusterManagementBeans {
             Object result = mBeanServer.getAttribute(objectName, "AllClusterNodeAddresses");
 
             if (result != null) {
+                //noinspection unchecked
                 allClusterNodeAddresses = (List<String>) result;
             }
             return allClusterNodeAddresses;

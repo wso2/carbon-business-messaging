@@ -43,7 +43,6 @@
     } catch (Exception e) {
         e.printStackTrace();
         CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-%>
 
 %>
 <script type="text/javascript">
@@ -83,8 +82,15 @@
                         </thead>
                         <% for(int i = 0; i < allClusterNodeAddresses.length; i++){ %>
                          <tr>
-                            <td><%=allClusterNodeAddresses[i].split(":")[0]%></td>
-                            <td><%=allClusterNodeAddresses[i].split(":")[1]%></td>
+                            <td><%=
+                                    allClusterNodeAddresses[i].split(":")[0]
+                                %>
+                            </td>
+                            <td>
+                                <%=
+                                    allClusterNodeAddresses[i].split(":")[1]
+                                %>
+                            </td>
                             <td>
                                 <% if(allClusterNodeAddresses[i].equals(coordinatorAddress)){%>
                                     Yes
