@@ -242,17 +242,23 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     @Override
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissions) throws
             QueueManagerException {
+        log.info("HERE1");
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
+        log.info("HERE2");
         if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
+            log.info("HERE3");
             String queueID = CommonsUtil.getQueueID(queueName);
             UserRealm userRealm;
             String role;
+            log.info("HERE4");
             String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
             try {
+                log.info("HERE5");
                 userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
                         (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
                                 MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
+                log.info("HERE6");
                 if (!userRealm.getAuthorizationManager().isUserAuthorized(
                         loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION)) {
                     throw new QueueManagerException(" User " + loggedInUser + " can not change" +
@@ -261,6 +267,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 for (QueueRolePermission queueRolePermission : queueRolePermissions) {
                     role = queueRolePermission.getRoleName();
                     if (queueRolePermission.isAllowedToConsume()) {
+                        log.info("ROLE : " + role);
+                        log.info("QUEUE_ID : " + queueID);
                         userRealm.getAuthorizationManager().authorizeRole(
                                 role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase());
                     } else {

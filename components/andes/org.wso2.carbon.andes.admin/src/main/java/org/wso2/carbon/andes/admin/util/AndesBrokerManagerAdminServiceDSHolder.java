@@ -18,10 +18,16 @@
 
 package org.wso2.carbon.andes.admin.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 
 public class AndesBrokerManagerAdminServiceDSHolder {
+
+    public static Log log = LogFactory.getLog(AndesBrokerManagerAdminServiceDSHolder.class);
+
+
     private String accessKey;
     private QueueManagerService queueManagerService;
     private SubscriptionManagerService subscriptionManagerService;
@@ -42,6 +48,9 @@ public class AndesBrokerManagerAdminServiceDSHolder {
     }
 
     public void registerQueueManagerService(QueueManagerService cepService){
+        if(cepService == null){
+            log.info("cepService is null");
+        }
         this.queueManagerService = cepService;
     }
 

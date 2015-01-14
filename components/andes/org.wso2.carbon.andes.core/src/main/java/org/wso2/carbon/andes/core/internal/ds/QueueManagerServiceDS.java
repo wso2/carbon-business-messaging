@@ -54,6 +54,7 @@ public class QueueManagerServiceDS {
     }
 
     protected void setRealmService(RealmService realmService) {
+        log.info("Setting Realm Service");
         QueueManagerServiceValueHolder.getInstance().registerRealmService(realmService);
     }
 

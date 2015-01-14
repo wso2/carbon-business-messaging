@@ -156,7 +156,7 @@ public class QpidAuthorizationHandler {
         if (null == userRealm) {
             return Result.DENIED;
         }
-
+        log.info("Consuming");
         // Queue properties
         String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -200,6 +200,7 @@ public class QpidAuthorizationHandler {
                                          ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
+            log.info("Binding");
             if (null != userRealm) {
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                 // Bind properties
@@ -313,6 +314,7 @@ public class QpidAuthorizationHandler {
                                                  ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
+            log.info("Publishing");
             if (null != userRealm) {
 
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -391,6 +393,7 @@ public class QpidAuthorizationHandler {
      */
     public static Result handleUnbindQueue(ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
+        log.info("Unbinding");
         // Bind properties
         String exchangeName =
                 getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
