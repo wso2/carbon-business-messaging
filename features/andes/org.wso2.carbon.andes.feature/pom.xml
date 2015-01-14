@@ -65,7 +65,7 @@
                         </goals>
                         <configuration>
                             <id>org.wso2.carbon.andes</id>
-                            <propertiesFile>../../../etc/feature.properties</propertiesFile>
+                            <propertiesFile>../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
                                     <propertyDef>org.eclipse.equinox.p2.type.group:true
@@ -73,7 +73,7 @@
                                 </properties>
                             </adviceFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:4.3.0-SNAPSHOT
+                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}
                                 </importFeatureDef>
                             </importFeatures>
                             <includedFeatures>

@@ -65,7 +65,7 @@ public class QpidServiceImpl implements QpidService {
     /**
      * Read configuration files and set ports and host names
      */
-    public void loadConfigurations() throws ConfigurationException, AndesException {
+    public void loadConfigurations() {
         // Get the hostname that Carbon runs on
         try {
             hostname = NetworkUtils.getLocalHostname();
@@ -204,23 +204,21 @@ public class QpidServiceImpl implements QpidService {
      * @return Port used for AMQP transports with offset if specified.
      * @throws AndesException
      */
-    private Integer readPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
+    private Integer readPortFromConfig() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
     }
 
-    private Integer readSSLPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
-                .TRANSPORTS_AMQP_SSL_PORT);
+    private Integer readSSLPortFromConfig() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT);
     }
 
-    private Integer readMQTTPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_MQTT_PORT);
+    private Integer readMQTTPortFromConfig() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_PORT);
 
     }
 
-    private Integer readMQTTSSLPortFromConfig() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
-                .TRANSPORTS_MQTT_SSL_PORT);
+    private Integer readMQTTSSLPortFromConfig() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_PORT);
 
     }
 

@@ -18,10 +18,6 @@
 
 package org.wso2.carbon.andes.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.configuration.AndesConfigurationManager;
-import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 
@@ -30,14 +26,8 @@ import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
  */
 public class CoordinatedActivityImpl implements CoordinatedActivity{
 
-    private static final Log log = LogFactory.getLog(CoordinatedActivityImpl.class);
-
     @Override
     public void execute() {
-        try {
-            ClusterResourceHolder.getInstance().getClusterManager().updateThriftCoordinatorDetailsToMap();
-        } catch (AndesException e) {
-            log.error(AndesConfigurationManager.GENERIC_CONFIGURATION_PARSE_ERROR,e);
-        }
+        ClusterResourceHolder.getInstance().getClusterManager().updateThriftCoordinatorDetailsToMap();
     }
 }

@@ -29,6 +29,7 @@ import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
+import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
@@ -165,7 +166,12 @@ public class QpidServiceComponent {
             qpidService.unregister();
         }
 
-        // Shutdown the Qpid broker
+        // Shut down the Andes broker
+        try {
+            AndesKernelBoot.shutDownAndesKernel();
+        } catch (Exception e) {
+            log.error("Error while shutting down Andes kernel. ", e);
+        }
         ApplicationRegistry.remove();
     }
 
@@ -283,8 +289,8 @@ public class QpidServiceComponent {
      * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
      * @return host name as derived from broker.xml
      */
-    private String getCarbonHostName() throws AndesException {
-        return AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
+    private String getTransportBindAddress() {
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS);
 
     }
 
@@ -334,8 +340,8 @@ public class QpidServiceComponent {
         while (!isServerStarted) {
             Socket socket = null;
             try {
-                log.info("Carbon Host Name : " + getCarbonHostName());
-                InetAddress address = InetAddress.getByName(getCarbonHostName());
+                log.info("Carbon Host Name : " + getTransportBindAddress());
+                InetAddress address = InetAddress.getByName(getTransportBindAddress());
                 socket = new Socket(address, port);
                 log.info("Host : " + address.getHostAddress() + " port : " + port);
                 isServerStarted = socket.isConnected();

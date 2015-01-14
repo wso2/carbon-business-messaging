@@ -293,19 +293,17 @@ public class Utils {
      * @return connection url
      */
     public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException, AndesException {
+            XMLStreamException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
         String CARBON_CLIENT_ID = "carbon";
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
         String CARBON_DEFAULT_HOSTNAME = "localhost";
 
-        Integer carbonPort = AndesConfigurationManager.getInstance().readConfigurationValue(AndesConfiguration
-                .TRANSPORTS_AMQP_PORT);
+        Integer carbonPort = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
         String CARBON_PORT = String.valueOf(carbonPort);
 
         // these are the properties which needs to be passed when ssl is enabled
-        String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.getInstance().readConfigurationValue
-                (AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT));
+        String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT));
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
