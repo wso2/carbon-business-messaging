@@ -18,8 +18,8 @@
 <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
 <script type="text/javascript" src="../admin/js/cookies.js"></script>
 <script type="text/javascript" src="../admin/js/main.js"></script>
-<link rel="stylesheet" href="../styles/dsxmleditor.css"/>
-<link rel="stylesheet" href="../styles/tree-styles.css"/>
+<link rel="stylesheet" href="styles/dsxmleditor.css"/>
+<link rel="stylesheet" href="styles/tree-styles.css"/>
 
 <%
     String serverURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
@@ -41,7 +41,6 @@
         nodeID = client.getMyNodeID();
 
     } catch (Exception e) {
-        e.printStackTrace();
         CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
 
 %>
@@ -103,27 +102,26 @@
                     </table>
                 </td>
                 <td width="25%">
-                    <div style="background-color:rgba(10,46,38,0.15);width:100%;height:100px;border:1px solid #000">
+                    <div class="currentNodeDetailsDiv">
                         <br/>
                         <br/>
-
-                        <p style="font-size:30px;margin-left:15px">Node:<%=nodeID%>
+                        <p class="nodeIDText">Node:<%=nodeID%>
                         </p>
                         <br/>
                         <br/>
-                        <p style="margin-left:15px">Running in Cluster Mode...</p>
+                        <p class="runningModeText">Running in Cluster Mode...</p>
                     </div>
                 </td>
             </tr>
         </table>
     <%  }else{ %>
-        <div style="background-color:rgba(10,46,38,0.15);width:100%;height:100px;border:1px solid #000">
+        <div class="currentNodeDetailsDiv">
             <br/>
             <br/>
-            <p style="font-size:30px;margin-left:15px">Node:<%=nodeID%>
+            <p class="nodeIDText">Node:<%=nodeID%>
             </p>
             <br/>
-            <br/><p style="margin-left:15px">Running in Standalone Mode...</p>
+            <br/><p class="runningModeText">Running in Standalone Mode...</p>
         </div>
     <%  }
     } catch (Exception e) { %>
