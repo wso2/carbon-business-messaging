@@ -17,14 +17,28 @@
  */
 package org.wso2.carbon.andes.cluster.mgt.internal;
 
-
+/**
+ * Stores cluster management constants which are used to contact through MBeans.
+ */
 public class ClusterMgtConstants {
 
-    public static final String ZOOKEEPER_ADDRESS_MBEAN_ATTRIB = "ZkServerAddress";
-    public static final String ZOOKEEPER_PORT_MBEAN_ATTRIB = "ZkServerPort";
-    public static final String ZOOKEEPER_NODES_MBEAN_ATTRIB = "ZkNodes";
-    public static final String TOPICS_MBEAN_ATTRIB = "Topics";
+    /**
+     * Attribute name for 'ClusteringEnabled'
+     */
     public static final String IS_CLUSTERING_ENABLED = "ClusteringEnabled";
+
+    /**
+     * Attribute name for 'MyNodeID'
+     */
     public static final String MY_NODE_ID = "MyNodeID";
-    public static final String QUEUES_OF_CLUSTER = "DestinationQueuesOfCluster";
+
+    /**
+     * Attribute name for 'AllClusterNodeAddresses'
+     */
+    public static final String ALL_CLUSTER_NODE_ADDRESSES =  "AllClusterNodeAddresses";
+
+    /**
+     * Attribute name for 'CoordinatorNodeAddress'
+     */
+    public static final String COORDINATOR_NODE_ADDRESS = "CoordinatorNodeAddress";
 }

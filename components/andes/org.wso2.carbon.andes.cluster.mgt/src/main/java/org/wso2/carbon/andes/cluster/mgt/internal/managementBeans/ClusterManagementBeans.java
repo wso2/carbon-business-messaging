@@ -17,28 +17,39 @@
  */
 package org.wso2.carbon.andes.cluster.mgt.internal.managementBeans;
 
-import org.wso2.carbon.andes.cluster.mgt.NodeDetail;
-import org.wso2.carbon.andes.cluster.mgt.Queue;
-import org.wso2.carbon.andes.cluster.mgt.Topic;
+import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtConstants;
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
-import org.wso2.carbon.andes.cluster.mgt.internal.Utils;
 
-
-import javax.management.*;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Cluster Management MBeans invoker
+ */
 public class ClusterManagementBeans {
 
+    /**
+     * Checks whether clustering is enabled
+     *
+     * @return a boolean whether clustering is enabled
+     * @throws ClusterMgtException
+     */
     public boolean isClusteringEnabled() throws ClusterMgtException {
         boolean isClustered = false;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
+                                   "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.IS_CLUSTERING_ENABLED);
 
             if (result != null) {
@@ -47,25 +58,31 @@ public class ClusterManagementBeans {
 
             return isClustered;
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         }
     }
 
+    /**
+     * Gets the current node's ID
+     *
+     * @return current node's ID
+     * @throws ClusterMgtException
+     */
     public String getMyNodeID() throws ClusterMgtException {
         String myNodeID = "";
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
+                                   "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.MY_NODE_ID);
 
             if (result != null) {
@@ -74,303 +91,81 @@ public class ClusterManagementBeans {
             return myNodeID;
 
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot access cluster information", e);
         }
     }
 
-    public String getIPAddressForNode(int nodeID) throws ClusterMgtException {
-        String IPAddress = "";
+    /**
+     * Gets the coordinator node's host address and port in a cluster
+     *
+     * @return The coordinator node's host address and port
+     * @throws ClusterMgtException
+     */
+    public String getCoordinatorNodeAddress() throws ClusterMgtException {
+        String coordinatorNodeAddress = StringUtils.EMPTY;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getIPAddressForNode";
-            Object[] parameters = new Object[]{nodeID};
-            String[] signature = new String[]{int.class.getName()};
-            IPAddress = (String) mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            return IPAddress;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access Ip address information for node " + nodeID, e);
-        }
-    }
-
-    public List<String> queuesOfCluster() throws ClusterMgtException {
-        List<String> destinationQueuesOfCluster = new ArrayList<String>();
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.QUEUES_OF_CLUSTER);
-
+                                   "name=ClusterManagementInformation");
+            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.COORDINATOR_NODE_ADDRESS);
             if (result != null) {
-                destinationQueuesOfCluster = (List<String>) result;
+                coordinatorNodeAddress = (String) result;
             }
-            return destinationQueuesOfCluster;
+            return coordinatorNodeAddress;
 
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot get queues of cluster", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot get queues of cluster", e);
+            throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot get queues of cluster", e);
+            throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
+        } catch (MBeanException e) {
+            throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
+        } catch (InstanceNotFoundException e) {
+            throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot get queues of cluster", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot get queues of cluster", e);
+            throw new ClusterMgtException("Cannot get coordinator node address. Check if clustering is enabled.", e);
         }
     }
 
-    public ArrayList<Topic> getTopicList() throws ClusterMgtException {
-        ArrayList<Topic> topicDetailsList = new ArrayList<Topic>();
+    /**
+     * Gets the IP addresses and ports of the nodes in a cluster
+     *
+     * @return A list of addresses of the nodes in a cluster
+     * @throws ClusterMgtException
+     */
+    public List<String> getAllClusterNodeAddresses() throws ClusterMgtException {
+        List<String> allClusterNodeAddresses = new ArrayList<String>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
+
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.TOPICS_MBEAN_ATTRIB);
+                                   "name=ClusterManagementInformation");
+            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.ALL_CLUSTER_NODE_ADDRESSES);
 
             if (result != null) {
-                List<String> TopicNamesList = (List<String>) result;
-
-                for (String topicName : TopicNamesList) {
-                    Topic aTopic = new Topic();
-                    aTopic.setName(topicName);
-                    aTopic.setNumberOfSubscribers(getNumOfSubscribersForTopic(topicName));
-                    topicDetailsList.add(aTopic);
-                }
-
+                allClusterNodeAddresses = (List<String>) result;
             }
+            return allClusterNodeAddresses;
 
-            return topicDetailsList;
         } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
+        } catch (MBeanException e) {
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
+        } catch (InstanceNotFoundException e) {
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic information", e);
-        }
-    }
-
-    public ArrayList<Queue> getGlobalQueuesRunningInNode(String nodeName) throws ClusterMgtException {
-        int nodeId = Integer.parseInt(nodeName);
-        ArrayList<Queue> queueDetailsList = new ArrayList<Queue>();
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getGlobalQueuesAssigned";
-            Object[] parameters = new Object[]{nodeId};
-            String[] signature = new String[]{int.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (result != null) {
-                String[] queueNamesArray = (String[]) result;
-                for (String queueName : queueNamesArray) {
-                    Queue aQueue = new Queue();
-                    aQueue.setQueueName(queueName);
-                    aQueue.setMessageCount(getNumberOfAllMessagesForQueue(queueName));
-                    queueDetailsList.add(aQueue);
-                }
-            }
-
-            return queueDetailsList;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access global queue information", e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access global queue information", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access global queue information", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access global queue information", e);
-        }
-    }
-
-    public int getNumOfSubscribersForTopic(String topicName) throws ClusterMgtException {
-        int numberOfSubscribers = 0;
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getSubscriberCount";
-            Object[] parameters = new Object[]{topicName};
-            String[] signature = new String[]{String.class.getName()};
-
-            numberOfSubscribers = (Integer) mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            return numberOfSubscribers;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        }
-    }
-
-    public int getNumberOfAllMessagesForQueue(String queueName) throws ClusterMgtException {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getMessageCount";
-            Object[] parameters = new Object[]{queueName};
-            String[] signature = new String[]{String.class.getName()};
-
-            int numberOfMessages = (Integer) mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            return numberOfMessages;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access queue information", e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access queue information", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access queue information", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access queue information", e);
-        }
-    }
-
-    public boolean updateWorkerForQueue(String queueToUpdate, String newNodeToAssign) throws ClusterMgtException {
-
-        boolean operationResult = false;
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "updateWorkerForQueue";
-            Object[] parameters = new Object[]{queueToUpdate, newNodeToAssign};
-            String[] signature = new String[]{String.class.getName(), String.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (result != null) {
-                operationResult = (Boolean) result;
-            }
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information", e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access topic subscriber information for node", e);
-        }
-
-        return operationResult;
-    }
-
-    public int getMessageCountOfNodeAddressedToDestinationQueue(String hostName, String destinationQueueName) throws
-            ClusterMgtException {
-        int nodeId = Integer.parseInt(hostName);
-        int messageCount = 0;
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getNodeQueueMessageCount";
-            Object[] parameters = new Object[]{nodeId, destinationQueueName};
-            String[] signature = new String[]{int.class.getName(), String.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (result != null) {
-                messageCount = (Integer) result;
-            }
-
-            return messageCount;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot count messages in Node Queue at node " + hostName, e);
-        }
-    }
-
-    public int getSubscriberCountOfNodeAddressedToDestinationQueue(String hostName,
-                                                                   String destinationQueueName) throws
-            ClusterMgtException {
-        int nodeId = Integer.parseInt(hostName);
-        int subscriberCount = 0;
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                            "name=ClusterManagementInformation");
-            String operationName = "getNodeQueueSubscriberCount";
-            Object[] parameters = new Object[]{nodeId, destinationQueueName};
-            String[] signature = new String[]{int.class.getName(), String.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (result != null) {
-                subscriberCount = (Integer) result;
-            }
-
-            return subscriberCount;
-
-        } catch (MalformedObjectNameException e) {
-            throw new ClusterMgtException("Cannot access subscriber count for queue " + destinationQueueName, e);
-        } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot access subscriber count for queue " + destinationQueueName, e);
-        } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot access subscriber count for queue " + destinationQueueName, e);
-        } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot access subscriber count for queue " + destinationQueueName, e);
+            throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         }
     }
 }
