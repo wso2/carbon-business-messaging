@@ -24,8 +24,8 @@
 <!--Local js includes-->
 <script type="text/javascript" src="js/treecontrol.js"></script>
 
-<link href="css/tree-styles.css" media="all" rel="stylesheet"/>
-<link href="css/dsxmleditor.css" media="all" rel="stylesheet"/>
+<link href="styles/tree-styles.css" media="all" rel="stylesheet"/>
+<link href="styles/dsxmleditor.css" media="all" rel="stylesheet"/>
 
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:breadcrumb

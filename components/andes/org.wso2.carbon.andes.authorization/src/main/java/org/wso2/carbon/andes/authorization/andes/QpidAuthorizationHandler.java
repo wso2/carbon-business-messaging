@@ -156,7 +156,6 @@ public class QpidAuthorizationHandler {
         if (null == userRealm) {
             return Result.DENIED;
         }
-        log.info("Consuming");
         // Queue properties
         String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -171,11 +170,13 @@ public class QpidAuthorizationHandler {
         try {
             // authorise if admin user
             if (isAdminUser(username, userRealm)) {
+
                 return Result.ALLOWED;
 
                 // authorise if either consume or browse queue
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                     username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
+
                 return Result.ALLOWED;
 
             }
@@ -200,7 +201,6 @@ public class QpidAuthorizationHandler {
                                          ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
-            log.info("Binding");
             if (null != userRealm) {
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
                 // Bind properties
@@ -314,7 +314,6 @@ public class QpidAuthorizationHandler {
                                                  ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
         try {
-            log.info("Publishing");
             if (null != userRealm) {
 
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -393,7 +392,6 @@ public class QpidAuthorizationHandler {
      */
     public static Result handleUnbindQueue(ObjectProperties properties)
             throws QpidAuthorizationHandlerException {
-        log.info("Unbinding");
         // Bind properties
         String exchangeName =
                 getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
@@ -651,9 +649,9 @@ public class QpidAuthorizationHandler {
                                                              queueName.replace("/", "-"));
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
 
+
         if (!userStoreManager.isExistingRole(roleName)) {
             String[] user = {MultitenantUtils.getTenantAwareUsername(username)};
-
             userStoreManager.addRole(roleName, user, null);
             userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
                                                               PERMISSION_CHANGE_PERMISSION);

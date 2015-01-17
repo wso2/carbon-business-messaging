@@ -30,7 +30,7 @@
         if (pageNumberAsStr != null) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
         }
-        try {
+        try {browseQueue
             totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
             filteredMsgArray = stub.browseQueue(nameOfQueue, pageNumber * msgCountPerPage, msgCountPerPage);

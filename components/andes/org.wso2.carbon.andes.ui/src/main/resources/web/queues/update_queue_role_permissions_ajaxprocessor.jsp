@@ -32,9 +32,10 @@
     QueueRolePermission[] queueRolePermissions = new QueueRolePermission[queueRolePermissionArrayList.size()];
     try {
         stub.updatePermission(queue, queueRolePermissionArrayList.toArray(queueRolePermissions));
-        message = "";
+        message = "Queue added successfully";
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
-        message = e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
+        e.printStackTrace();
+        message = "Error in adding/updating permissions : " + e.getMessage();
     }
     session.setAttribute("queueRolePermission", stub.getQueueRolePermission(queue));
 %><%=message%>

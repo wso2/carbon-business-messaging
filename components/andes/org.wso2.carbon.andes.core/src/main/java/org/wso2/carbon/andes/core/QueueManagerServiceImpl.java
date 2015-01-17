@@ -260,7 +260,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                 .getTenantId());
                 log.info("HERE6");
                 if (!userRealm.getAuthorizationManager().isUserAuthorized(
-                        loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION)) {
+                        loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION) && !Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
                     throw new QueueManagerException(" User " + loggedInUser + " can not change" +
                             " the permissions of " + queueName);
                 }
