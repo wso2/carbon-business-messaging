@@ -11,7 +11,7 @@
     <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
     <script type="text/javascript" src="../admin/js/cookies.js"></script>
     <script type="text/javascript" src="../admin/js/main.js"></script>
-    <link rel="stylesheet" href="../qpid/css/dsxmleditor.css"/>
+    <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
     <%
         String wholeMessage = request.getParameter("message");

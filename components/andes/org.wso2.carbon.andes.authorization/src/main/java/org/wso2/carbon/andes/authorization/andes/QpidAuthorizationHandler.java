@@ -649,7 +649,6 @@ public class QpidAuthorizationHandler {
                                                              queueName.replace("/", "-"));
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
 
-
         if (!userStoreManager.isExistingRole(roleName)) {
             String[] user = {MultitenantUtils.getTenantAwareUsername(username)};
             userStoreManager.addRole(roleName, user, null);

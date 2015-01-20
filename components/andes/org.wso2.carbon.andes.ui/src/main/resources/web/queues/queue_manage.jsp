@@ -23,8 +23,8 @@
 <!--Local js includes-->
 <script type="text/javascript" src="js/treecontrol.js"></script>
 
-<link href="css/tree-styles.css" media="all" rel="stylesheet"/>
-<link href="css/dsxmleditor.css" media="all" rel="stylesheet"/>
+<link href="styles/tree-styles.css" media="all" rel="stylesheet"/>
+<link href="styles/dsxmleditor.css" media="all" rel="stylesheet"/>
 
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:breadcrumb
@@ -33,9 +33,9 @@
             topPage="true"
             request="<%=request%>"/>
 
-    <script type="text/javascript" src="../carbon/admin/js/breadcrumbs.js"></script>
-    <script type="text/javascript" src="../carbon/admin/js/cookies.js"></script>
-    <script type="text/javascript" src="../carbon/admin/js/main.js"></script>
+    <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
+    <script type="text/javascript" src="../admin/js/cookies.js"></script>
+    <script type="text/javascript" src="../admin/js/main.js"></script>
 
     <%
         String queue;

@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
     <script type="text/javascript" src="../admin/js/cookies.js"></script>
     <script type="text/javascript" src="../admin/js/main.js"></script>
-    <link rel="stylesheet" href="../qpid/css/dsxmleditor.css"/>
+    <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
@@ -43,7 +43,7 @@
             if(request.getParameter("num_of_msgs").equals("")) {
                 inputValidated = false;
                 %>
-                <script type="text/javascript">CARBON.showErrorDialog('Number Of Messages Cannot be Empty', function
+                <script type="text/javascript">CARBON.showErrorDialog('Number of messages cannot be empty', function
                         () {
                     location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
                 });</script>
@@ -55,7 +55,7 @@
                     if(msg_count <= 0) {
                         inputValidated = false;
                         %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Please Enter a Valid Number of Messages to Send', function
+                            <script type="text/javascript">CARBON.showErrorDialog('Please enter a valid number of messages to send', function
                                     () {
                                 location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
                             });</script>
@@ -64,7 +64,7 @@
                 } catch (NumberFormatException e) {
                         inputValidated = false;
                         %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Number of Messages Input Is Not a Number', function
+                            <script type="text/javascript">CARBON.showErrorDialog('Number of messages input is not a number', function
                                     () {
                                 location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
                             });</script>
@@ -79,7 +79,7 @@
                     if(time_to_live < 0) {
                         inputValidated = false;
                         %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Please Enter a Valid Number of Milliseconds to Expire Message', function
+                            <script type="text/javascript">CARBON.showErrorDialog('Please enter a valid number of milliseconds to expire message', function
                                     () {
                                 location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
                             });</script>
@@ -88,7 +88,7 @@
                 } catch (NumberFormatException e) {
                         inputValidated = false;
                         %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Milliseconds to Expire Message(s) is Not a Number', function
+                            <script type="text/javascript">CARBON.showErrorDialog('Milliseconds to expire message(s) is not a number', function
                                     () {
                                 location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
                             });</script>
@@ -123,7 +123,7 @@
                     boolean success = stub.sendMessage(nameOfQueue, jms_type, cor_id, msg_count, message_txt, delivery_mode, priority, time_to_live);
                     if(success) {
                     %>
-                        <script type="text/javascript">CARBON.showInfoDialog('Successfully Sent <%=numberOfMessagesToSend%> Messages To Queue <%=nameOfQueue%>' , function
+                        <script type="text/javascript">CARBON.showInfoDialog('Successfully sent <%=numberOfMessagesToSend%> messages to Queue <%=nameOfQueue%>' , function
                                 () {
                             location.href = 'queue_details.jsp';
                         });</script>

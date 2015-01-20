@@ -46,7 +46,6 @@ import java.security.Principal;
 public class QpidAuthorizationPlugin extends AbstractPlugin {
 
     private static final Logger logger = Logger.getLogger(QpidAuthorizationPlugin.class);
-
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
     /**
@@ -72,7 +71,7 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
      * Authorize access to broker
      *
      * @param objectType We only control access to virtual host
-     * @param instance
+     * @param instance the accessing instance
      * @return Authorization result
      */
     public Result access(ObjectType objectType, Object instance) {
@@ -179,10 +178,11 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
         return Result.DENIED;
     }
 
-    private String getRawQueueName(String queueName) {
-        return queueName.substring(queueName.indexOf(":") + 1, queueName.length());
-    }
-
+    /**
+     * Gets user realm of a user
+     * @param username username of the user
+     * @return the UserRealm
+     */
     private static UserRealm getUserRealm(String username) {
         UserRealm userRealm = null;
 

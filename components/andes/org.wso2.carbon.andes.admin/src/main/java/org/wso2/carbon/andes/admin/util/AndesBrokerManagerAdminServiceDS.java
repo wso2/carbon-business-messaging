@@ -17,13 +17,10 @@
  */
 package org.wso2.carbon.andes.admin.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
-import org.wso2.carbon.andes.core.internal.builder.QueueManagerServiceBuilder;
 
 /**
  * this class is used to get the QueueMangerInterface service. it is used to send the
@@ -46,27 +43,15 @@ import org.wso2.carbon.andes.core.internal.builder.QueueManagerServiceBuilder;
 
 public class AndesBrokerManagerAdminServiceDS {
 
-    public static Log log = LogFactory.getLog(AndesBrokerManagerAdminServiceDS.class);
-
-
     protected void activate(ComponentContext context) {
-        try {
-            QueueManagerService brokerService = QueueManagerServiceBuilder.createQueueManagerService();
-            context.getBundleContext().registerService(QueueManagerService.class.getName(),
-                                                       brokerService, null);
-            log.info("Successfully created the queue manager service");
-        } catch (RuntimeException e) {
-            log.error("Can not create queue manager service ", e);
-        }
+
     }
 
     protected void setQueueManagerService(QueueManagerService cepService) {
-        log.info("EVENT : setQueueManagerService");
         AndesBrokerManagerAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
     }
 
     protected void unSetQueueManagerService(QueueManagerService cepService) {
-        log.info("EVENT : unSetQueueManagerService");
         AndesBrokerManagerAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
     }
 

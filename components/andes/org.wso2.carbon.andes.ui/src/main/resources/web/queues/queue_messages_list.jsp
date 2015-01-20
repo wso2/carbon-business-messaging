@@ -15,7 +15,7 @@
     <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
     <script type="text/javascript" src="../admin/js/cookies.js"></script>
     <script type="text/javascript" src="../admin/js/main.js"></script>
-    <link rel="stylesheet" href="../qpid/css/dsxmleditor.css"/>
+    <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
@@ -30,7 +30,7 @@
         if (pageNumberAsStr != null) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
         }
-        try {browseQueue
+        try {
             totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
             filteredMsgArray = stub.browseQueue(nameOfQueue, pageNumber * msgCountPerPage, msgCountPerPage);

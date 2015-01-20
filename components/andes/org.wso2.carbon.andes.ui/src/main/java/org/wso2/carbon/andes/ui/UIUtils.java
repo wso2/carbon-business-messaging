@@ -28,24 +28,25 @@ import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
+import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
-import org.wso2.carbon.andes.ui.client.QueueReceiverClient;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.ServerConstants;
 
-import javax.jms.JMSException;
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 
+/**
+ * This class is used by the UI to connect to services and provides utilities. Used by JSP pages.
+ */
 public class UIUtils {
 
     private static final String QPID_CONF_DIR = "/repository/conf/advanced/";
@@ -74,12 +75,28 @@ public class UIUtils {
      */
     public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
 
-
+    /**
+     * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
+     *
+     * @param message the string value
+     * @return encoded string value
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public static String getHtmlString(String message) {
         return message.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
     }
 
+    /**
+     * Gets the AndesAdminServices stub.
+     *
+     * @param config  the servlet configuration
+     * @param session the http session
+     * @param request the http servlet request
+     * @return an AndesAdminServiceStub
+     * @throws AxisFault
+     */
     public static AndesAdminServiceStub getAndesAdminServiceStub(ServletConfig config,
                                                                  HttpSession session,
                                                                  HttpServletRequest request)
@@ -101,20 +118,21 @@ public class UIUtils {
 
     /**
      * filter the full queue list to suit the range
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
-     * @param fullList
-     * @param startingIndex
-     * @param maxQueueCount
-     * @return Queue[]
+     * @param fullList      a complete list of queues
+     * @param startingIndex the starting index to start from the queue list
+     * @param maxQueueCount the maximum queue count to limit
+     * @return an array of queues
      */
-    public static Queue[] getFilteredQueueList(Queue[] fullList, int startingIndex, int maxQueueCount) {
+    @SuppressWarnings("UnusedDeclaration")
+    public static Queue[] getFilteredQueueList(Queue[] fullList, int startingIndex,
+                                               int maxQueueCount) {
         Queue[] queueDetailsArray;
         int resultSetSize = maxQueueCount;
 
         ArrayList<Queue> resultList = new ArrayList<Queue>();
-        for (Queue aQueue : fullList) {
-            resultList.add(aQueue);
-        }
+        Collections.addAll(resultList, fullList);
 
         if ((resultList.size() - startingIndex) < maxQueueCount) {
             resultSetSize = (resultList.size() - startingIndex);
@@ -139,16 +157,24 @@ public class UIUtils {
         return queueDetailsArray;
     }
 
-
-    public static Subscription[] getFilteredSubscriptionList(Subscription[] fullList, int startingIndex,
+    /**
+     * Gets filtered list of subscription list
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
+     *
+     * @param fullList             the complete list of subscriptions
+     * @param startingIndex        the starting index to start from the subscription list
+     * @param maxSubscriptionCount the maximum subscription count to limit
+     * @return an array of subscriptions
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public static Subscription[] getFilteredSubscriptionList(Subscription[] fullList,
+                                                             int startingIndex,
                                                              int maxSubscriptionCount) {
         Subscription[] subscriptionDetailsArray;
         int resultSetSize = maxSubscriptionCount;
 
         ArrayList<Subscription> resultList = new ArrayList<Subscription>();
-        for (Subscription sub : fullList) {
-            resultList.add(sub);
-        }
+        Collections.addAll(resultList, fullList);
 
         if ((resultList.size() - startingIndex) < maxSubscriptionCount) {
             resultSetSize = (resultList.size() - startingIndex);
@@ -161,21 +187,21 @@ public class UIUtils {
                 subscriptionDetailsArray[subscriptionDetailsIndex] = new Subscription();
 
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
-                        .getSubscriptionIdentifier());
+                                                                                                     .getSubscriptionIdentifier());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscribedQueueOrTopicName(subscriptionDetail
-                        .getSubscribedQueueOrTopicName());
+                                                                                                         .getSubscribedQueueOrTopicName());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueBoundExchange(subscriptionDetail
-                        .getSubscriberQueueBoundExchange());
+                                                                                                           .getSubscriberQueueBoundExchange());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueName(subscriptionDetail
-                        .getSubscriberQueueName());
+                                                                                                  .getSubscriberQueueName());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
-                        .getSubscriptionIdentifier());
+                                                                                                     .getSubscriptionIdentifier());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail.getDurable());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail.getActive());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber
                         (subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail
-                        .getSubscriberNodeAddress());
+                                                                                                    .getSubscriberNodeAddress());
 
                 subscriptionDetailsIndex++;
                 if (subscriptionDetailsIndex == maxSubscriptionCount) {
@@ -190,13 +216,16 @@ public class UIUtils {
 
     /**
      * filter the whole message list to fit for the page range
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
      * @param msgArrayList  - total message list
      * @param startingIndex -  index of the first message of given page
      * @param maxMsgCount   - max messages count per a page
      * @return filtered message object array for the given page
      */
-    public static Object[] getFilteredMsgsList(ArrayList msgArrayList, int startingIndex, int maxMsgCount) {
+    @SuppressWarnings("UnusedDeclaration")
+    public static Object[] getFilteredMsgsList(ArrayList msgArrayList, int startingIndex,
+                                               int maxMsgCount) {
         Object[] messageArray;
         int resultSetSize = maxMsgCount;
 
@@ -226,15 +255,17 @@ public class UIUtils {
     }
 
     /**
-     * Gets the TCP connection url to reach the broker by using the currently logged in user and the accesskey for
+     * Gets the TCP connection url to reach the broker by using the currently logged in user and the access key for
      * the user, generated by andes Authentication Service
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
      * @param userName  - currently logged in user
      * @param accessKey - the key (uuid) generated by authentication service
-     * @return
+     * @return the tcp connection url
      */
-    public static String getTCPConnectionURL(String userName, String accessKey) throws FileNotFoundException,
-            XMLStreamException, AndesException {
+    public static String getTCPConnectionURL(String userName, String accessKey)
+            throws FileNotFoundException,
+                   XMLStreamException, AndesException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
         String CARBON_CLIENT_ID = "carbon";
         String CARBON_VIRTUAL_HOST_NAME = "carbon";
@@ -275,30 +306,31 @@ public class UIUtils {
             // }'&key_store_password='{key_store_pwd}''";
 
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                    ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + TRUST_STORE_PATH +
-                    "'&trust_store_password='" + SSL_TRUSTSTORE_PASSWORD + "'&key_store='" +
-                    KEY_STORE_PATH + "'&key_store_password='" + SSL_KEYSTORE_PASSWORD + "''";
+                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                   ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + TRUST_STORE_PATH +
+                   "'&trust_store_password='" + SSL_TRUSTSTORE_PASSWORD + "'&key_store='" +
+                   KEY_STORE_PATH + "'&key_store_password='" + SSL_KEYSTORE_PASSWORD + "''";
         } else {
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                    ":" + CARBON_PORT + "'";
+                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                   ":" + CARBON_PORT + "'";
         }
     }
 
     /**
      * Gets the message count of a given queue at that moment
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
      * @param queueList - list of all queues available
-     * @param queuename - the given queue
+     * @param queueName - the given queue
      * @return - message count of the given queue
      */
-
-    public static long getCurrentMessageCountInQueue(Queue[] queueList, String queuename) {
+    @SuppressWarnings("UnusedDeclaration")
+    public static long getCurrentMessageCountInQueue(Queue[] queueList, String queueName) {
         long messageCount = 0;
         if (queueList != null) {
             for (Queue queue : queueList) {
-                if (queue.getQueueName().equals(queuename)) {
+                if (queue.getQueueName().equals(queueName)) {
                     messageCount = queue.getMessageCount();
                 }
             }
@@ -307,6 +339,13 @@ public class UIUtils {
         return messageCount;
     }
 
+    /**
+     * Checks if its SSL
+     *
+     * @return true if its SSL, false otherwise.
+     * @throws FileNotFoundException
+     * @throws XMLStreamException
+     */
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR + QPID_CONF_FILE);
@@ -320,5 +359,31 @@ public class UIUtils {
                 new QName(QPID_CONF_SSL_ONLY_NODE));
 
         return Boolean.parseBoolean(sslOnlyNode.getText());
+    }
+
+    /**
+     * Filter the full user-roles list to suit the range
+     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
+     *
+     * @param fullList      full list of roles
+     * @param startingIndex starting index to filter
+     * @param maxRolesCount maximum number of roles that the filtered list can contain
+     * @return ArrayList<QueueRolePermission>
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public static ArrayList<QueueRolePermission> getFilteredRoleList
+    (ArrayList<QueueRolePermission> fullList, int startingIndex, int maxRolesCount) {
+        int resultSetSize = maxRolesCount;
+
+        if ((fullList.size() - startingIndex) < maxRolesCount) {
+            resultSetSize = (fullList.size() - startingIndex);
+        }
+
+        ArrayList<QueueRolePermission> resultList = new ArrayList<QueueRolePermission>();
+        for (int i = startingIndex; i < startingIndex + resultSetSize; i++) {
+            resultList.add(fullList.get(i));
+        }
+
+        return resultList;
     }
 }
