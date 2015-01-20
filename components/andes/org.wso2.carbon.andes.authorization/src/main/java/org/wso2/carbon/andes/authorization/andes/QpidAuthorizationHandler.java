@@ -96,9 +96,9 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling create queue.", e);
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling create queue.", e);
         }
 
         return Result.DENIED;
@@ -183,7 +183,7 @@ public class QpidAuthorizationHandler {
             // if non of the above deny permission
             return Result.DENIED;
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling consume queue.", e);
         }
     }
 
@@ -293,9 +293,9 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling bind queue.", e);
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling bind queue.", e);
         }
 
         return Result.DENIED;
@@ -377,7 +377,7 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling publish queue.", e);
         }
 
         return Result.DENIED;
@@ -411,7 +411,7 @@ public class QpidAuthorizationHandler {
 
             return Result.ALLOWED;
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling unbind queue.", e);
         }
     }
 
@@ -450,9 +450,9 @@ public class QpidAuthorizationHandler {
                 return Result.ALLOWED;
             }
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling delete queue.", e);
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling delete queue.", e);
         }
         return Result.DENIED;
     }
@@ -476,7 +476,7 @@ public class QpidAuthorizationHandler {
                 return Result.ALLOWED;
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException(e);
+            throw new QpidAuthorizationHandlerException("Error handling purge queue.", e);
         }
         return Result.DENIED;
     }

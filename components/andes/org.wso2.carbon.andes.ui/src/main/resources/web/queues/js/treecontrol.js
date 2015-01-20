@@ -4,9 +4,9 @@ function addQueue(createdFrom) {
     var error = "";
 
     if (topic.value == "") {
-        error = "Queue name can not be empty.\n";
+        error = "Queue name cannot be empty.\n";
     } else if (!isValidQueueName(topic.value)) {
-        error = "Queue name can not contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
+        error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
     }
     if (error != "") {
         CARBON.showErrorDialog(error);
@@ -267,7 +267,7 @@ function validateForm(){
     var error = "";
 
     if(msg_count.value == ""){
-        error = "Number of messages field can not be empty. \n";
+        error = "Number of messages field cannot be empty. \n";
     }
 
     if (error != "") {
