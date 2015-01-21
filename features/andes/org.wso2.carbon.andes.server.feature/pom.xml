@@ -87,11 +87,6 @@
             <version>2.10.4-wso2v2</version>
         </dependency>
         <dependency>
-            <groupId>com.datastax.cassandra.wso2</groupId>
-            <artifactId>cql-driver</artifactId>
-            <version>1.0.8.wso2v1</version>
-        </dependency>
-        <dependency>
             <groupId>commons-configuration.wso2</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>${commons-configuration.version}.wso2v1</version>
@@ -196,7 +191,6 @@
                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
                                 <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>
-                                <bundleDef>com.datastax.cassandra.wso2:cql-driver</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration.wso2:commons-configuration
                                 </bundleDef>
