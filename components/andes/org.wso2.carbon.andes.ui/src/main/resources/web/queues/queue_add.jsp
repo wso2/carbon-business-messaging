@@ -142,7 +142,6 @@
         for (QueueRolePermission permission : queueRolePermissions) {
             if (permission.getRoleName().toLowerCase().contains(searchTerm.toLowerCase())) {
                 selectedQueueRolePermissions.add(permission);
-                break;
             }
         }
     }
