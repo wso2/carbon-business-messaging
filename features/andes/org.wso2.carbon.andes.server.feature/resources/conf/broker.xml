@@ -45,13 +45,13 @@ expression of the property. -->
     transports are enabled. This section also allows you to customize the messaging flows used 
     within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
-        <!-- If you need to provide a specific IP with which the messaging transports should happen, 
-        change this. By default, this takes the IP of the resident node. Please note that this is 
+        <!-- In a clustered setup this should be updated with the IP address of this node
+        Setting the value to 127.0.0.1 in a clustered setup is wrong. Please note that this is 
         the address exposed by the server. NOT the hostname inferred from carbon.xml -->
         <bindAddress>127.0.0.1</bindAddress>
 
         <amqp enabled="true">
-            <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid 
+            <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid
             messaging model during AMQP.-->
             <port>5672</port>
             <sslPort>8672</sslPort>
@@ -62,7 +62,7 @@ expression of the property. -->
         <mqtt enabled="true">
             <port>1883</port>
             <!-- put proper default SSL port -->
-            <sslPort>8883</sslPort> 
+            <sslPort>8883</sslPort>
             <!-- These two properties are temporary. Ideally, MQTT should use carbon users. -->
             <users>
                 <user userName="testuser1" password="password1" />
@@ -72,17 +72,34 @@ expression of the property. -->
 
     </transports>
 
-    <!-- Depending on the database type selected in master-datasources.xml, you must enable the 
-    relevant Data access classes here. Currently supported stores are JDBC(any RDBMS store) and 
-    Cassandra(CQL, Hector). Any data store is accessed for 2 purposes. 
+    <!-- Depending on the database type selected in master-datasources.xml, you must enable the
+    relevant Data access classes here. Currently supported stores are RDBMS(any RDBMS store) and
+    Cassandra(CQL, Hector). These stores are accessed for two purposes.
     1. For message persistence ("messageStore")
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
-    <!-- By default WSO2 MB runs with H2 persistent store. If you plan to use a different 
-    store, uncomment the relevant entry and comment out H2 persistent store -->
+    <!-- By default WSO2 MB runs with H2 persistent store. If you plan to use a different
+    store, point to the relevant dataSource or uncomment the database apprpriately.
+
+    RDBMS
+    =====
+    If you are running an RDBMS you can use the existing RDBMS implementation of stores
+    by pointing to the correct data source by updateing the property "dataSource".
+
+    Data source entry should be present in
+    <MB_HOME>/repository/conf/datasources/master-datasources.xml.
+
+    Cassandra
+    =========
+    For Cassandra depending on the driver (CQL or Hector) you use to connect to data store
+    uncomment the relevant entry and COMMENT out the RDBMS entry.
+
+    Update the <MB_HOME>/repository/conf/datasources/master-datasources.xml with Cassandra
+    data source and update "dataSource" property for stores here.
+    -->
     <persistence>
 
-        <!-- H2 Based MB Store Configuration -->
+        <!-- RDBMS MB Store Configuration -->
 
         <messageStore class="org.wso2.andes.store.rdbms.RDBMSMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
@@ -94,7 +111,7 @@ expression of the property. -->
 
 
         <!-- H2 Based In-Memory Store Configuration -->
-<!--         
+<!--
         <messageStore class="org.wso2.andes.store.rdbms.h2.H2MemMessageStoreImpl">
         </messageStore>
 
@@ -108,37 +125,47 @@ expression of the property. -->
         <!-- NOTE: Update the master-datasources.xml file to connect to Cassandra data source
              READ the documentation to set advanced Cassandra tuning parameters.
 
-            Advanced Tuning Parameters
+            Advanced Tuning Parameters.
+
+            gcGraceSeconds:
+            Specifies the time to wait before garbage collecting tombstones (deletion markers).
+            Defaults to 864000, or 10 days, which allows a great deal of time for consistency
+            to be achieved prior to deletion. In many deployments this interval can be reduced,
+            and in a single-node cluster it can be safely set to zero
 
             Replication strategy class:
-            Strategy to determines the physical location of nodes to replication and their proximity
+            Strategy to determine the physical location of nodes to replication and their proximity
             to each other
 
             Replication factor:
-            replication is the process of storing copies of data on multiple nodes to ensure 
-            reliability and fault tolerance.
+            replication is the process of storing copies of data on multiple nodes to ensure
+            reliability and fault tolerance. This value specify how many copies of same data should
+            persisted.
 
             Read consistency level:
             Specifies how many replicas must respond to a read request before returning data
             Valid values are 'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY'
 
             Write consistency level:
-            Determines the number of replicas on which the write must succeed before returning an 
-            acknowledgement Valid values are 
+            Determines the number of replicas on which the write must succeed before returning an
+            acknowledgement Valid values are
             'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY' -->
 
         <!--CQL Based MB stores-->
 <!--
-        <messageStore class="org.wso2.andes.store.cassandra.cql.CQLBasedMessageStoreImpl">
+        <messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="keyspace">MB_KEYSPACE</property>
+            <property name="gcGraceSeconds">864000</property>
             <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
             <property name="replicationFactor">1</property>
             <property name="readConsistencyLevel">ONE</property>
             <property name="writeConsistencyLevel">ONE</property>
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.cassandra.cql.CQLBasedAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="keyspace">MB_KEYSPACE</property>
             <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
             <property name="replicationFactor">1</property>
             <property name="readConsistencyLevel">ONE</property>
@@ -148,16 +175,20 @@ expression of the property. -->
 
         <!--Hector based MB stores-->
 <!--
-        <messageStore class="org.wso2.andes.store.cassandra.hector.HectorBasedMessageStoreImpl">
+        <messageStore class="org.wso2.andes.store.cassandra.HectorBasedMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="keyspace">MB_KEYSPACE</property>
+            <property name="gcGraceSeconds">864000</property>
             <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
             <property name="replicationFactor">1</property>
             <property name="readConsistencyLevel">ONE</property>
             <property name="writeConsistencyLevel">ONE</property>
         </messageStore>
 
-        <contextStore class="org.wso2.andes.store.cassandra.hector.HectorBasedAndesContextStoreImpl">
+        <contextStore class="org.wso2.andes.store.cassandra.HectorBasedAndesContextStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="keyspace">MB_KEYSPACE</property>
+            <property name="gcGraceSeconds">864000</property>
             <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
             <property name="replicationFactor">1</property>
             <property name="readConsistencyLevel">ONE</property>
@@ -165,9 +196,9 @@ expression of the property. -->
         </contextStore>
 -->
 
-        <!-- This class decides how unique IDs are generated for the MB node. This id generator is 
-        expected to be thread safe and a implementation of interface 
-        org.wso2.andes.server.cluster.coordination.MessageIdGenerator 
+        <!-- This class decides how unique IDs are generated for the MB node. This id generator is
+        expected to be thread safe and a implementation of interface
+        org.wso2.andes.server.cluster.coordination.MessageIdGenerator
 
         NOTE: This is NOT used in MB to generate message IDs. -->
         <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
@@ -179,12 +210,12 @@ expression of the property. -->
     </failoverBehaviour>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
-    Broken down by critical processes so you have a clear view of which parameters to change in 
+    Broken down by critical processes so you have a clear view of which parameters to change in
     different scenarios.  -->
     <performanceTuning>
 
         <slots>
-            <!--maximum time interval where slot can be retain in memory before updating to the 
+            <!--maximum time interval where slot can be retain in memory before updating to the
             cluster, in milliseconds -->
             <slotRetainTimeInMemory>1000</slotRetainTimeInMemory>
 
@@ -196,21 +227,22 @@ expression of the property. -->
         </slots>
 
         <delivery>
-            <!-- Maximum number of undelivered messages that can have in memory. Increasing this value
-                increase the possibility of out of memory scenario but performance will be improved-->
+            <!-- Maximum number of undelivered messages that can have in memory. Increasing this
+            value increase the possibility of out of memory scenario but performance will be
+            improved -->
             <maxNumberOfReadButUndeliveredMessages>1000</maxNumberOfReadButUndeliveredMessages>
 
-            <!-- This is the ring buffer size of the delivery disruptor. This value should be a 
-            power of 2 (E.g. 1024, 2048, 4096). Use a small ring size if you want to reduce the 
+            <!-- This is the ring buffer size of the delivery disruptor. This value should be a
+            power of 2 (E.g. 1024, 2048, 4096). Use a small ring size if you want to reduce the
             memory usage. -->
             <ringBufferSize>4096</ringBufferSize>
 
-            <!--Number of parallel readers used to used to read content from message store. 
-            Increasing this value will speed-up the message sending mechanism. But the load 
+            <!--Number of parallel readers used to used to read content from message store.
+            Increasing this value will speed-up the message sending mechanism. But the load
             on the data store will increase. -->
             <parallelContentReaders>5</parallelContentReaders>
 
-            <!-- Number of parallel delivery handlers used to send messages to subscribers. 
+            <!-- Number of parallel delivery handlers used to send messages to subscribers.
             Increasing this value will speed-up the message sending mechanism. But the system load
             will increase. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
@@ -222,41 +254,41 @@ expression of the property. -->
             <ackHandlerCount>5</ackHandlerCount>
 
             <!--Maximum batch size of the acknowledgement handler. Andes process acknowledgements in
-            batches using Disruptor Increasing the batch size reduces the number of calls made to 
-            database by MB. Depending on the database optimal batch size this value should be set. 
-            Batches will be of the maximum batch size mostly in high throughput scenarios. Underlying 
-            implementation use Disruptor for batching hence will batch message at a lesser value than
-            this in low throughput scenarios -->
+            batches using Disruptor Increasing the batch size reduces the number of calls made to
+            database by MB. Depending on the database optimal batch size this value should be set.
+            Batches will be of the maximum batch size mostly in high throughput scenarios.
+            Underlying implementation use Disruptor for batching hence will batch message at a
+            lesser value than this in low throughput scenarios -->
             <ackHandlerBatchSize>100</ackHandlerBatchSize>
 
-            <!-- Message delivery from server to the client will be paused temporarily if number of 
-            delivered but unacknowledged message count reaches this size. Should be set considering 
+            <!-- Message delivery from server to the client will be paused temporarily if number of
+            delivered but unacknowledged message count reaches this size. Should be set considering
             message consume rate. This is to avoid overwhelming slow subscribers. -->
             <maxUnackedMessages>1000</maxUnackedMessages>
         </ackHandling>
 
         <inboundEvents>
-            <!--Number of parallel writers used to write content to message store. Increasing this 
-            value will speed-up the message receiving mechanism. But the load on the data store will 
+            <!--Number of parallel writers used to write content to message store. Increasing this
+            value will speed-up the message receiving mechanism. But the load on the data store will
             increase.-->
             <parallelMessageWriters>1</parallelMessageWriters>
 
-            <!--Size of the Disruptor ring buffer for inbound event handling. For publishing at higher
-            rates increasing the buffer size may give some advantage on keeping messages in memory
-            and write. 
+            <!--Size of the Disruptor ring buffer for inbound event handling. For publishing at
+            higher rates increasing the buffer size may give some advantage on keeping messages in
+            memory and write.
 
             NOTE: Buffer size should be a value of power of two -->
             <bufferSize>65536</bufferSize>
 
-            <!--Maximum batch size of the batch write operation for inbound messages. MB internals 
-            use Disruptor to batch events. Hence this batch size is set to avoid database requests 
-            with high load (with big batch sizes) to write messages. This need to be configured in 
+            <!--Maximum batch size of the batch write operation for inbound messages. MB internals
+            use Disruptor to batch events. Hence this batch size is set to avoid database requests
+            with high load (with big batch sizes) to write messages. This need to be configured in
             high throughput messaging scenarios to regulate the hit on database from MB -->
             <messageWriterBatchSize>70</messageWriterBatchSize>
         </inboundEvents>
 
         <failover>
-            <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will 
+            <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will
             sync the Virtual host details across the cluster -->
             <vHostSyncTaskInterval>3600</vHostSyncTaskInterval>
         </failover>
@@ -267,19 +299,19 @@ expression of the property. -->
         </messageExpiration>
 
         <messageCounter>
-            <!-- Message counter tasks delay between the termination of one execution and the 
+            <!-- Message counter tasks delay between the termination of one execution and the
             commencement of the next in seconds -->
             <counterTaskInterval>5</counterTaskInterval>
 
-            <!-- Message count is updated in batches. Once the count exceed the batch size message 
+            <!-- Message count is updated in batches. Once the count exceed the batch size message
             count update is moved to message count update task. -->
             <countUpdateBatchSize>100</countUpdateBatchSize>
         </messageCounter>
 
-        <!-- Code specific parameters to ensure messages get deleted as fast as possible without 
+        <!-- Code specific parameters to ensure messages get deleted as fast as possible without
         disturbing other processes.-->
         <messageDeletion>
-            <!-- This is the Task interval (SECONDS) for the content removal task which will remove 
+            <!-- This is the Task interval (SECONDS) for the content removal task which will remove
             the actual message content from the store in the background. If the message rate is very
             high, users can set this to a lower value to minimise the delete requests per task. -->
             <contentRemovalTaskInterval>3</contentRemovalTaskInterval>
@@ -287,15 +319,16 @@ expression of the property. -->
 
     </performanceTuning>
 
-    <!-- This section is about how you want to view messaging statistics from the admin console and 
+    <!-- This section is about how you want to view messaging statistics from the admin console and
     how you plan to interact with it. -->
     <managementConsole>
-        <!--Maximum number of messages to be fetched using Andes message browser when browsing queues-->
+        <!--Maximum number of messages to be fetched using Andes message browser when browsing
+        queues -->
         <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
     </managementConsole>
 
     <!-- Memory and resource exhaustion is something we should prevent and recover from.
-    This section allows you to specify the threshold at which to reduce/stop frequently intensive 
+    This section allows you to specify the threshold at which to reduce/stop frequently intensive
     operations within MB temporarily. -->
     <flowControl>
         <!-- This is the global buffer limits which enable/disable the flow control globally -->
@@ -304,7 +337,8 @@ expression of the property. -->
             <highLimit>8000</highLimit>
         </global>
 
-        <!-- This is the channel specific buffer limits which enable/disable the flow control locally -->
+        <!-- This is the channel specific buffer limits which enable/disable the flow control
+        locally -->
         <bufferBased>
             <lowLimit>100</lowLimit>
             <highLimit>1000</highLimit>

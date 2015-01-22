@@ -26,8 +26,12 @@ import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
  */
 public class CoordinatedActivityImpl implements CoordinatedActivity{
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         ClusterResourceHolder.getInstance().getClusterManager().updateThriftCoordinatorDetailsToMap();
+        ClusterResourceHolder.getInstance().getClusterManager().updateCoordinatorNodeDetailMap();
     }
 }

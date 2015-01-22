@@ -78,37 +78,6 @@
         }
     %>
 
-    <script type="text/javascript">
-
-        function updateWorkerLocationForQueue(queueName, index, successMessage) {
-            var selectedNode = $('#combo' + index + ' option:selected').val();
-            $.ajax({
-                url:'updateWorkers.jsp?queueName=' + queueName + '&selectedNode=' + selectedNode,
-                async:false,
-                dataType:"html",
-                success:function (data) {
-                    html = data;
-                    var isSuccess = $(data).find('#workerReassignState').text();
-                    if (isSuccess == successMessage) {
-                        var result = CARBON.showInfoDialog("Worker thread of" + queueName + "queue successfully moved to" + selectedNode,
-                                function () {
-                                    location.href = 'nodesList.jsp';
-                                });
-                    }
-                    else {
-                        CARBON.showErrorDialog("Failed moving " + queueName + " to " + selectedNode);
-                    }
-                },
-                failure:function (data) {
-                    if (data.responseText !== undefined) {
-                        CARBON.showErrorDialog("Error " + data.status + "\n Following is the message from the server.\n" + data.responseText);
-                    }
-                }
-            });
-        }
-
-    </script>
-
     <carbon:breadcrumb
             label="queues.list"
             resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
