@@ -421,7 +421,7 @@ public class QpidAuthorizationHandler {
      * @return Raw routing key
      */
     private static String getRawRoutingKey(String routingKey) {
-        return routingKey.substring(routingKey.indexOf(":") + 1, routingKey.length());
+        return routingKey.substring(routingKey.indexOf("carbon:") + 1, routingKey.length());
     }
 
     /**
