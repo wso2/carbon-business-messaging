@@ -22,105 +22,88 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>2.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>4.3.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes - Server</name>
     <url>http://wso2.org</url>
     <description>This feature provides Andes back-end functionality</description>
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.authentication</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.authorization</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.commons</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.core</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.admin</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-cli.wso2</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>${commons-cli.version}.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.disruptor.wso2</groupId>
             <artifactId>disruptor</artifactId>
-            <version>2.10.4-wso2v2</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration.wso2</groupId>
             <artifactId>commons-configuration</artifactId>
-            <version>${commons-configuration.version}.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs.wso2</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
-            <version>${geronimo-jms_1.1_spec.version}.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>commons-digester.wso2</groupId>
             <artifactId>commons-digester</artifactId>
-            <version>${commons-digester.version}.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils.wso2</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>${commons-beanutils.version}.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>${version.log4j}</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp.wso2</groupId>
             <artifactId>commons-dbcp</artifactId>
-            <version>${orbit.version.commons.dbcp}</version>
         </dependency>
         <!--MQTT related dependencies-->
         <dependency>
             <groupId>io.netty.wso2</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.0.8.wso2v1</version>
         </dependency>
     </dependencies>
     <build>
@@ -181,23 +164,19 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.authentication
-                                </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.authorization
-                                </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.commons</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.core</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.admin</bundleDef>
-                                <bundleDef>org.wso2.andes.wso2:andes</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.authentication:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.authorization:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.commons:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.core:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.andes.wso2:andes:${andes.dependency.version}</bundleDef>
                                 <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
-                                <bundleDef>commons-configuration.wso2:commons-configuration
-                                </bundleDef>
+                                <bundleDef>commons-configuration.wso2:commons-configuration</bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt
-                                </bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
                             </bundles>
                             <importFeatures>
@@ -230,13 +209,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <commons-cli.version>1.2.0</commons-cli.version>
-        <commons-configuration.version>1.6.0</commons-configuration.version>
-        <commons-digester.version>1.8.1</commons-digester.version>
-        <commons-beanutils.version>1.8.0</commons-beanutils.version>
-        <geronimo-jms_1.1_spec.version>1.1.0</geronimo-jms_1.1_spec.version>
-    </properties>
 
 </project>
