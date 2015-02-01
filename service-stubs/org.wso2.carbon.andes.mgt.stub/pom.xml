@@ -22,13 +22,13 @@
 	<parent>
 		<groupId>org.wso2.carbon.messaging</groupId>
 		<artifactId>carbon-service-stubs</artifactId>
-		<version>2.5.0</version>
+		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-	<version>2.5.0</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>WSO2 Carbon - Andes Management Stubs</name>
 	<url>http://wso2.org</url>
@@ -54,7 +54,7 @@
 									<pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
 								</path>
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<arg line="-uri src/main/resources/AndesManagerService.wsdl -u -uw           -o target/generated-code -p org.wso2.carbon.andes.mgt.stub                                      -ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
+									<arg line="-uri src/main/resources/AndesManagerService.wsdl -u -uw -o target/generated-code -p org.wso2.carbon.andes.mgt.stub                                      -ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
 									<classpath refid="wsdl2java.classpath" />
 								</java>
 							</tasks>
