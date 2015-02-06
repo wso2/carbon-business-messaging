@@ -17,45 +17,42 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>4.3.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.ui.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes - UI</name>
     <url>http://wso2.org</url>
     <description>This feature provides Andes front-end functionality</description>
+
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.stub</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.ui</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -110,16 +107,13 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.cluster.mgt.ui
-                                </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.mgt.stub
-                                </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.stub</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.andes.ui</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt.ui:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.mgt.stub:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.stub:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.ui:${carbon.messaging.version}</bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.ui:${carbon.kernel.version}
-                                </importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core.ui:${carbon.kernel.version}</importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>

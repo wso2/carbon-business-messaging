@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
-  ~   WSO2 Inc. licenses this file to you under the Apache License,
-  ~   Version 2.0 (the "License"); you may not use this file except
-  ~   in compliance with the License.
-  ~   You may obtain a copy of the License at
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
   ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~   http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~   Unless required by applicable law or agreed to in writing,
-  ~   software distributed under the License is distributed on an
-  ~   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~   KIND, either express or implied.  See the License for the
-  ~   specific language governing permissions and limitations
-  ~   under the License.
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-       <parent>
-	 <groupId>org.wso2.carbon</groupId>
-	 <artifactId>carbon-service-stubs</artifactId>
-	 <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
-        </parent>
+	<parent>
+		<groupId>org.wso2.carbon.messaging</groupId>
+		<artifactId>carbon-service-stubs</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-	<version>4.3.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>WSO2 Carbon - Andes Management Stubs</name>
 	<url>http://wso2.org</url>
@@ -50,17 +49,12 @@
 						<configuration>
 							<tasks>
 								<path id="wsdl2java.classpath">
-			 <pathelement location="${settings.localRepository}/org/apache/ws/commons/axiom/wso2/axiom/${orbit.version.axiom}/axiom-${orbit.version.axiom}.jar"/>
-									<pathelement
-										location="${settings.localRepository}/org/apache/axis2/wso2/axis2-client/${orbit.version.axis2}/axis2-client-${orbit.version.axis2}.jar" />
-									<pathelement
-										location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
+									<pathelement location="${settings.localRepository}/org/apache/ws/commons/axiom/wso2/axiom/${orbit.version.axiom}/axiom-${orbit.version.axiom}.jar" />
+									<pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2-client/${orbit.version.axis2}/axis2-client-${orbit.version.axis2}.jar" />
+									<pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
 								</path>
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<arg
-										line="-uri src/main/resources/AndesManagerService.wsdl -u -uw
-										-o target/generated-code -p org.wso2.carbon.andes.mgt.stub
-                                    	-ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
+									<arg line="-uri src/main/resources/AndesManagerService.wsdl -u -uw -o target/generated-code -p org.wso2.carbon.andes.mgt.stub                                      -ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
 									<classpath refid="wsdl2java.classpath" />
 								</java>
 							</tasks>
@@ -101,7 +95,7 @@
 						<Private-Package>
 						</Private-Package>
 						<Export-Package>
-							org.wso2.carbon.andes.mgt.stub.*;version="${carbon.platform.package.export.version}"
+							org.wso2.carbon.andes.mgt.stub.*;version="${andes.export.version}"
 						</Export-Package>
 						<Import-Package>
 							!org.wso2.carbon.andes.mgt.*
@@ -118,11 +112,10 @@
 			<groupId>org.apache.axis2.wso2</groupId>
 			<artifactId>axis2</artifactId>
 		</dependency>
-                <dependency>
-                      <groupId>org.apache.axis2.wso2</groupId>
-                      <artifactId>axis2-client</artifactId>
-                      <version>${orbit.version.axis2}</version>
-                </dependency>
+		<dependency>
+			<groupId>org.apache.axis2.wso2</groupId>
+			<artifactId>axis2-client</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
