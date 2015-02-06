@@ -34,7 +34,6 @@
         stub.updatePermission(queue, queueRolePermissionArrayList.toArray(queueRolePermissions));
         message = "Queue added successfully";
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
-        e.printStackTrace();
         message = "Error in adding/updating permissions : " + e.getMessage();
     }
     session.setAttribute("queueRolePermission", stub.getQueueRolePermission(queue));

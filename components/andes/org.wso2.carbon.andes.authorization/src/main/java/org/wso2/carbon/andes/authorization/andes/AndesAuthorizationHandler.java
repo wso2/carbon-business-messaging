@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.andes.authorization.andes;
 
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.server.queue.DLCQueueUtils;
@@ -32,14 +33,15 @@ import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.authorization.TreeNode;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
+import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 /**
  * This class includes the actual access control logic
  */
-public class QpidAuthorizationHandler {
+public class AndesAuthorizationHandler {
 
-    private static final Log log = LogFactory.getLog(QpidAuthorizationHandler.class);
+    private static final Log log = LogFactory.getLog(AndesAuthorizationHandler.class);
     private static final String DEFAULT_EXCHANGE = "default";
     private static final String DIRECT_EXCHANGE = "amq.direct";
     private static final String TOPIC_EXCHANGE = "amq.topic";
@@ -66,14 +68,14 @@ public class QpidAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handleCreateQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         try {
             if (null != userRealm) {
-                if (isAdminUser(username, userRealm)) {
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     return Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
@@ -96,9 +98,9 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException("Error handling create queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling create queue.", e);
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling create queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling create queue.", e);
         }
 
         return Result.DENIED;
@@ -107,9 +109,9 @@ public class QpidAuthorizationHandler {
     /**
      * Register queue and authorize to login user if login user has permission
      * Permission not validating when user subscribe to topic or durable topic and allow user to register queue because
-     * topic name (routing key) not pass by QPID in first call (CREATE) of subscription. But permission
+     * topic name (routing key) not pass by andes in first call (CREATE) of subscription. But permission
      * check in the BIND operation to verify user has permission to subscribe to given topic. It is possible in bind
-     * operation because topic name (routing key) pass by QPID.
+     * operation because topic name (routing key) pass by andes.
      *
      * @param username   - username of logged user
      * @param userRealm  - @link {org.wso2.carbon.user.api.UserRealm}
@@ -123,15 +125,15 @@ public class QpidAuthorizationHandler {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String queueName =
                 getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-
-        //For registry we use a modified queue name
-        String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
-        // Store queue details
-        RegistryClient.createQueue(newQueueName, username);
-
-        String queueID = CommonsUtil.getQueueID(queueName);
-
         if (isOwnDomain(tenantDomain, queueName)) {
+
+            //For registry we use a modified queue name
+            String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
+            // Store queue details
+            RegistryClient.createQueue(newQueueName, username);
+
+            String queueID = CommonsUtil.getQueueID(queueName);
+
             authorizeQueuePermissionsToLoggedInUser(username, newQueueName, queueID,
                                                     userRealm);
         }
@@ -148,14 +150,15 @@ public class QpidAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, TEMPORARY
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handleConsumeQueue(String username, UserRealm userRealm,
                                             ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         if (null == userRealm) {
             return Result.DENIED;
         }
+
         // Queue properties
         String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -169,21 +172,19 @@ public class QpidAuthorizationHandler {
 
         try {
             // authorise if admin user
-            if (isAdminUser(username, userRealm)) {
-
+            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                 return Result.ALLOWED;
 
                 // authorise if either consume or browse queue
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                     username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-
                 return Result.ALLOWED;
 
             }
             // if non of the above deny permission
             return Result.DENIED;
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling consume queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
         }
     }
 
@@ -195,11 +196,11 @@ public class QpidAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handleBindQueue(String username, UserRealm userRealm,
                                          ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         try {
             if (null != userRealm) {
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -215,7 +216,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, queueName)) {
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -232,7 +233,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, queueName)) {
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -270,7 +271,7 @@ public class QpidAuthorizationHandler {
                         authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
                                                                 tempQueueId, userRealm);
                         return Result.ALLOWED;
-                    } else if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain,
+                    } else if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain,
                                                                                queueName)) {
                         // admin user who is in the same tenant domain get permission
 
@@ -293,9 +294,9 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling bind queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling bind queue.", e);
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException("Error handling bind queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling bind queue.", e);
         }
 
         return Result.DENIED;
@@ -308,11 +309,11 @@ public class QpidAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY   @return
      *                   ALLOWED, DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handlePublishToExchange(String username, UserRealm userRealm,
                                                  ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         try {
             if (null != userRealm) {
 
@@ -334,7 +335,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize admin user
-                    if (isAdminUser(username, userRealm)) {
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -355,7 +356,7 @@ public class QpidAuthorizationHandler {
                     String permissionID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize admin user
-                    if (isAdminUser(username, userRealm)) {
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, permissionID,
@@ -367,7 +368,7 @@ public class QpidAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize
-                    if (isAdminUser(username, userRealm) && isOwnDomain(tenantDomain, routingKey)) {
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, routingKey)) {
                         return Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -377,7 +378,7 @@ public class QpidAuthorizationHandler {
                 }
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling publish queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling publish queue.", e);
         }
 
         return Result.DENIED;
@@ -388,10 +389,10 @@ public class QpidAuthorizationHandler {
      *
      * @param properties NAME, QUEUE_NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handleUnbindQueue(ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         // Bind properties
         String exchangeName =
                 getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
@@ -411,26 +412,26 @@ public class QpidAuthorizationHandler {
 
             return Result.ALLOWED;
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException("Error handling unbind queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling unbind queue.", e);
         }
     }
 
     /**
      * Handle deleting queue
      *
-     * @param username User who is trying to publish
-     * @param userRealm User's Realm
+     * @param username   User who is trying to publish
+     * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handleDeleteQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         try {
             String queueName =
                     getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-            if (isAdminUser(username, userRealm)) {
+            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                 unregisterQueue(queueName);
                 return Result.ALLOWED;
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
@@ -450,25 +451,26 @@ public class QpidAuthorizationHandler {
                 return Result.ALLOWED;
             }
         } catch (RegistryClientException e) {
-            throw new QpidAuthorizationHandlerException("Error handling delete queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling delete queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
         }
         return Result.DENIED;
     }
 
     /**
+     * // TODO : define user realm
      * Handle purging queue
      *
-     * @param username User who is trying to publish
+     * @param username  User who is trying to publish
      * @param userRealm User's Realm
      * @return ALLOWED/DENIED
-     * @throws QpidAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException
      */
     public static Result handlePurgeQueue(String username, UserRealm userRealm)
-            throws QpidAuthorizationHandlerException {
+            throws AndesAuthorizationHandlerException {
         try {
-            if (isAdminUser(username, userRealm) || userRealm.getAuthorizationManager()
+            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) || userRealm.getAuthorizationManager()
                     .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE,
                                       UI_EXECUTE) || userRealm.getAuthorizationManager()
                         .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE)) {
@@ -476,7 +478,7 @@ public class QpidAuthorizationHandler {
                 return Result.ALLOWED;
             }
         } catch (UserStoreException e) {
-            throw new QpidAuthorizationHandlerException("Error handling purge queue.", e);
+            throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
         }
         return Result.DENIED;
     }
@@ -535,29 +537,7 @@ public class QpidAuthorizationHandler {
     }
 
     /**
-     * Check whether the user has admin privileges
-     *
-     * @param username  username
-     * @param userRealm userRealm of the user
-     * @return true if user has admin privileges and false otherwise
-     */
-    private static boolean isAdminUser(String username, UserRealm userRealm) {
-        try {
-            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
-            String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
-
-            for (String userRole : userRoles) {
-                if (adminRole.equals(userRole)) {
-                    return true;
-                }
-            }
-        } catch (UserStoreException e) {
-            log.error("Error while retrieving roles for user " + username, e);
-        }
-        return false;
-    }
-
-    /**
+     * TODO : already method exists ?
      * Check whether a queue/topic belongs to given domain in order to avoid other tenant domains'
      * users operate on the given queue/topic
      *
@@ -567,7 +547,6 @@ public class QpidAuthorizationHandler {
      */
     private static boolean isOwnDomain(String tenantDomain, String routingKey) {
         boolean isOwnDomain = false;
-
         if (tenantDomain != null) {
             if (routingKey.length() >= tenantDomain.length() + 1 && routingKey.substring(0,
                                                                                          tenantDomain.length() + 1).equals(tenantDomain + "/")) {
@@ -577,7 +556,8 @@ public class QpidAuthorizationHandler {
                     isOwnDomain = true;
                 }
             }
-        } else {   // tenantDomain is null,this implies this is a normal user.
+        } else {
+            // tenantDomain is null,this implies this is a normal user.
             if (!routingKey.contains("/")) {
                 isOwnDomain = true;
             }
@@ -587,6 +567,7 @@ public class QpidAuthorizationHandler {
     }
 
     /**
+     * // TODO : use separate const for tmp_
      * when a subscriber is created for a topic in tenant mode, a temporary queue as 'tmp_<queueId></>' created for
      * its messages. this is to check
      * whether a queue is such kind of one.

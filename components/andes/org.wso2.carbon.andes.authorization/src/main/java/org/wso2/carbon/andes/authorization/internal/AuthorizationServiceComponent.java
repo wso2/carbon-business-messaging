@@ -24,8 +24,8 @@ import org.wso2.andes.configuration.qpid.plugins.ConfigurationPluginFactory;
 import org.wso2.andes.server.security.SecurityPluginFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.andes.authorization.service.andes.QpidAuthorizationPlugin;
-import org.wso2.carbon.andes.authorization.service.andes.QpidAuthorizationPluginConfiguration;
+import org.wso2.carbon.andes.authorization.service.andes.AndesAuthorizationPlugin;
+import org.wso2.carbon.andes.authorization.service.andes.AndesAuthorizationPluginConfiguration;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -55,12 +55,12 @@ public class AuthorizationServiceComponent {
         try {
             // Register security plugin factory
             securityPluginFactory = ctx.getBundleContext().registerService(
-                    SecurityPluginFactory.class.getName(), QpidAuthorizationPlugin.FACTORY, null);
+                    SecurityPluginFactory.class.getName(), AndesAuthorizationPlugin.FACTORY, null);
 
             // Register security configuration plugin factory
             configurationPluginFactory = ctx.getBundleContext().registerService(
                     ConfigurationPluginFactory.class.getName(),
-                    QpidAuthorizationPluginConfiguration.FACTORY, null);
+                    AndesAuthorizationPluginConfiguration.FACTORY, null);
         } catch (Throwable e) {
             log.error("Failed to activate org.wso2.carbon.andes.authorization.internal." +
                       "AuthorizationServiceComponent : " + e);

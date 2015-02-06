@@ -26,20 +26,20 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is the configuration class for QpidAuthorizationPlugin that is based on Qpid plugin configuration model.
- * This is not actually used as QpidAuthorizationPlugin loads configuration off Carbon Registry.
+ * This is the configuration class for AndesAuthorizationPlugin that is based on andes plugin configuration model.
+ * This is not actually used as AndesAuthorizationPlugin loads configuration off Carbon Registry.
  */
-public class QpidAuthorizationPluginConfiguration extends ConfigurationPlugin {
+public class AndesAuthorizationPluginConfiguration extends ConfigurationPlugin {
 
     /**
-        * Factory method for QpidAuthorizationPluginConfiguration
+        * Factory method for AndesAuthorizationPluginConfiguration
         */
     public static final ConfigurationPluginFactory FACTORY = new ConfigurationPluginFactory()
     {
         public ConfigurationPlugin newInstance(String path, Configuration config)
                 throws ConfigurationException
         {
-            ConfigurationPlugin instance = new QpidAuthorizationPluginConfiguration();
+            ConfigurationPlugin instance = new AndesAuthorizationPluginConfiguration();
             return instance;
         }
 

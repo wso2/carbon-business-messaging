@@ -47,6 +47,7 @@ function addPermissions() {
     var callback =
     {
         success:function(o) {
+        // TODO : Throwing err on JSP
             if (o.responseText !== undefined) {
                 message = "Queue added successfully";
                 if (o.responseText.indexOf("Error") > -1) {
@@ -89,13 +90,12 @@ function updatePermissions() {
     {
         success:function(o) {
             if (o.responseText !== undefined) {
-                message = "Updated permissions successfully";
                 if (o.responseText.indexOf("Error") > -1) {
                     CARBON.showErrorDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 } else {
-                    CARBON.showInfoDialog("" + message, function() {
+                    CARBON.showInfoDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 }

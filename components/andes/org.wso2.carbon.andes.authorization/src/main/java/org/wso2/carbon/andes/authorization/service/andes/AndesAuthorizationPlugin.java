@@ -28,8 +28,8 @@ import org.wso2.andes.server.security.SecurityPluginFactory;
 import org.wso2.andes.server.security.access.ObjectProperties;
 import org.wso2.andes.server.security.access.ObjectType;
 import org.wso2.andes.server.security.access.Operation;
-import org.wso2.carbon.andes.authorization.andes.QpidAuthorizationHandler;
-import org.wso2.carbon.andes.authorization.andes.QpidAuthorizationHandlerException;
+import org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandler;
+import org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException;
 import org.wso2.carbon.andes.authorization.internal.AuthorizationServiceDataHolder;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.user.api.UserRealm;
@@ -41,29 +41,29 @@ import javax.security.auth.Subject;
 import java.security.Principal;
 
 /**
- * Qpid access control class based on Carbon Authorization Manager
+ * Andes access control class based on Carbon Authorization Manager
  */
-public class QpidAuthorizationPlugin extends AbstractPlugin {
+public class AndesAuthorizationPlugin extends AbstractPlugin {
 
-    private static final Logger logger = Logger.getLogger(QpidAuthorizationPlugin.class);
+    private static final Logger logger = Logger.getLogger(AndesAuthorizationPlugin.class);
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
     /**
-     * Factory method for QpidAuthorizationPlugin
+     * Factory method for AndesAuthorizationPlugin
      */
-    public static final SecurityPluginFactory<QpidAuthorizationPlugin>
-            FACTORY = new SecurityPluginFactory<QpidAuthorizationPlugin>() {
-        public QpidAuthorizationPlugin newInstance(ConfigurationPlugin config)
+    public static final SecurityPluginFactory<AndesAuthorizationPlugin>
+            FACTORY = new SecurityPluginFactory<AndesAuthorizationPlugin>() {
+        public AndesAuthorizationPlugin newInstance(ConfigurationPlugin config)
                 throws ConfigurationException {
-            return new QpidAuthorizationPlugin();
+            return new AndesAuthorizationPlugin();
         }
 
         public String getPluginName() {
-            return QpidAuthorizationPlugin.class.getName();
+            return AndesAuthorizationPlugin.class.getName();
         }
 
-        public Class<QpidAuthorizationPlugin> getPluginClass() {
-            return QpidAuthorizationPlugin.class;
+        public Class<AndesAuthorizationPlugin> getPluginClass() {
+            return AndesAuthorizationPlugin.class;
         }
     };
 
@@ -145,32 +145,32 @@ public class QpidAuthorizationPlugin extends AbstractPlugin {
                     if (ObjectType.EXCHANGE == objectType) {
                         return Result.ALLOWED;
                     } else if (ObjectType.QUEUE == objectType) {
-                        return QpidAuthorizationHandler.handleCreateQueue(
+                        return AndesAuthorizationHandler.handleCreateQueue(
                                 username, userRealm, properties);
                     }
                 case BIND:
-                    return QpidAuthorizationHandler.handleBindQueue(
+                    return AndesAuthorizationHandler.handleBindQueue(
                             username, userRealm, properties);
                 case PUBLISH:
-                    return QpidAuthorizationHandler.handlePublishToExchange(
+                    return AndesAuthorizationHandler.handlePublishToExchange(
                             username, userRealm, properties);
                 case CONSUME:
-                    return QpidAuthorizationHandler.handleConsumeQueue(
+                    return AndesAuthorizationHandler.handleConsumeQueue(
                             username, userRealm, properties);
                 case UNBIND:
-                    return QpidAuthorizationHandler.handleUnbindQueue(properties);
+                    return AndesAuthorizationHandler.handleUnbindQueue(properties);
                 case DELETE:
                     if (ObjectType.EXCHANGE == objectType) {
                         return Result.ALLOWED;
                     } else if (ObjectType.QUEUE == objectType) {
-                        return QpidAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
+                        return AndesAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
                     }
                 case PURGE:
-                    return QpidAuthorizationHandler.handlePurgeQueue(username, userRealm
+                    return AndesAuthorizationHandler.handlePurgeQueue(username, userRealm
                     );
             }
-        } catch (QpidAuthorizationHandlerException e) {
-            logger.error("Error while invoking QpidAuthorizationHandler", e);
+        } catch (AndesAuthorizationHandlerException e) {
+            logger.error("Error while invoking AndesAuthorizationHandler", e);
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }

@@ -34,7 +34,8 @@
         jQuery('.checkboxChanged').click(function () {
             var $element = jQuery(this);
             var role = $element.attr('role');
-            var checked = $element.attr('checked');
+            // prop is used because when unchecked, attr gives undefined
+            var checked = $element.prop('checked');
             var action = $element.attr('permission');
 
             jQuery.ajax({
