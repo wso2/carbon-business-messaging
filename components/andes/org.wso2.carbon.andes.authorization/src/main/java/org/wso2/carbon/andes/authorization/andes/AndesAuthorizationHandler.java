@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.andes.authorization.andes;
 
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.server.queue.DLCQueueUtils;
@@ -33,7 +32,6 @@ import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.authorization.TreeNode;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
-import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 /**
@@ -60,6 +58,7 @@ public class AndesAuthorizationHandler {
             "/permission/admin/manage/topic/purgeTopic";
     private static final String QUEUE_ROLE_PREFIX = "Q_";
     private static final String TOPIC_ROLE_PREFIX = "T_";
+    private static final String TEMP_QUEUE_SUFFIX = "tmp_";
 
     /**
      * Handle creating queue
@@ -459,11 +458,10 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * // TODO : define user realm
      * Handle purging queue
      *
      * @param username  User who is trying to publish
-     * @param userRealm User's Realm
+     * @param userRealm User's Realm that represents the user store
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException
      */
@@ -537,7 +535,6 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * TODO : already method exists ?
      * Check whether a queue/topic belongs to given domain in order to avoid other tenant domains'
      * users operate on the given queue/topic
      *
@@ -567,7 +564,6 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * // TODO : use separate const for tmp_
      * when a subscriber is created for a topic in tenant mode, a temporary queue as 'tmp_<queueId></>' created for
      * its messages. this is to check
      * whether a queue is such kind of one.
@@ -576,7 +572,7 @@ public class AndesAuthorizationHandler {
      * @return true if queue is a temporary queue for topics. false otherwise
      */
     private static boolean isTopicSubscriberQueue(String queueName) {
-        return queueName.startsWith("tmp_");
+        return queueName.startsWith(TEMP_QUEUE_SUFFIX);
 
     }
 
