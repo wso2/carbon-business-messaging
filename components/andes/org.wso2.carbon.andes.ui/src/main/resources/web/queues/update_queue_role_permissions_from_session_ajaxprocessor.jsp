@@ -16,9 +16,9 @@
 
     try {
         stub.updatePermission(queue, queueRolePermissions);
-        message = "";
+        message = "Queue added successfully";
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
-        message = e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
+        message = "Error in adding queue : " + e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
     }
 
     session.removeAttribute("queueRolePermissions");

@@ -254,10 +254,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public long getMessageCountForQueue(String queueName, String msgPattern)
+    public long getMessageCount(String destinationName, String msgPattern)
             throws QueueManagerException {
         long messageCount;
-        messageCount = QueueManagementBeans.getInstance().getMessageCount(queueName, msgPattern);
+        messageCount = QueueManagementBeans.getInstance().getMessageCount(destinationName, msgPattern);
         return messageCount;
     }
 

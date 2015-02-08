@@ -94,12 +94,12 @@ public interface QueueManagerService {
     /**
      * Gets the message count for a queue
      *
-     * @param queueName  the queue name
-     * @param msgPattern The exchange type used to transfer messages with the given queueName. e.g. "queue" or "topic"
+     * @param destinationName the destination name. the name of the queue or topic
+     * @param msgPattern      The exchange type used to transfer messages with the given destinationName. e.g. "queue" or "topic"
      * @return the number of messages for a queue
      * @throws QueueManagerException
      */
-    public long getMessageCountForQueue(String queueName, String msgPattern)
+    public long getMessageCount(String destinationName, String msgPattern)
             throws QueueManagerException;
 
     /**
