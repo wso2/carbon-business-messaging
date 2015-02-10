@@ -18,11 +18,10 @@
 
 package org.wso2.carbon.andes.core;
 
-
 import java.util.List;
 
 /**
- * The interface for queue related service.
+ * This interface provides the base for managing all queue related services
  */
 public interface QueueManagerService {
 

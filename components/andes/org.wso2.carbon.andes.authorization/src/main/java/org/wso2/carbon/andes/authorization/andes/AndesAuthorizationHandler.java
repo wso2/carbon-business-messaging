@@ -545,7 +545,7 @@ public class AndesAuthorizationHandler {
     private static boolean isOwnDomain(String tenantDomain, String routingKey) {
         boolean isOwnDomain = false;
         if (tenantDomain != null) {
-            if (routingKey.length() >= tenantDomain.length() + 1 && routingKey.substring(0,
+            if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
                                                                                          tenantDomain.length() + 1).equals(tenantDomain + "/")) {
                 isOwnDomain = true;
             } else if (tenantDomain.equalsIgnoreCase("carbon.super")) {

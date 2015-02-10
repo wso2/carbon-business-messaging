@@ -35,7 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * This class wraps Registry API for the Qpid component
+ * This class wraps Registry API for the Andes component
  */
 public class RegistryClient {
 

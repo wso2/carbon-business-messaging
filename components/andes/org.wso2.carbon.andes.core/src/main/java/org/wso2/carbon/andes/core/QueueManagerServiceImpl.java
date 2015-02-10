@@ -76,13 +76,13 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static final String URLEncodingFormat = "UTF-8";
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
     private static final String ROLE_EVERY_ONE = "everyone";
-    public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
+    private static final String ANDES_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
-    public static final String UI_EXECUTE = "ui.execute";
+    private static final String UI_EXECUTE = "ui.execute";
 
-    public static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
+    private static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
     private static final String AT_REPLACE_CHAR = "_";
     private static final String QUEUE_ROLE_PREFIX = "Q_";
 
@@ -199,7 +199,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 userRegistry.delete(resourcePath);
             }
 
-            removeRoleCreateForLoggedInUser(queueName);
+            removeRoleCreatedForLoggedInUser(queueName);
         } catch (RegistryException e) {
             throw new QueueManagerException("Failed to delete queue : " + queueName, e);
         }
@@ -588,7 +588,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throws FileNotFoundException,
                    XMLStreamException, NamingException, JMSException {
         Properties properties = new Properties();
-        properties.put(Context.INITIAL_CONTEXT_FACTORY, QPID_ICF);
+        properties.put(Context.INITIAL_CONTEXT_FACTORY, ANDES_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
         properties.put(QUEUE_NAME_PREFIX + nameOfQueue, nameOfQueue);
         properties.put(CarbonConstants.REQUEST_BASE_CONTEXT, "true");
@@ -665,7 +665,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * @param queueName name of the queue
      * @throws QueueManagerException
      */
-    private static void removeRoleCreateForLoggedInUser(String queueName)
+    private static void removeRoleCreatedForLoggedInUser(String queueName)
             throws QueueManagerException {
         //For registry we use a modified queue name
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
