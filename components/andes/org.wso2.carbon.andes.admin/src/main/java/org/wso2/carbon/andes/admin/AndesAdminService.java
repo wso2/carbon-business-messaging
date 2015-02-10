@@ -62,7 +62,7 @@ public class AndesAdminService extends AbstractAdmin {
 
     /**
      * Gets all queues
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allQueues' is used to sort and to convert to an array
      *
      * @return an array of queues
      * @throws BrokerManagerAdminException
