@@ -163,15 +163,9 @@ public class AndesAuthorizationHandler {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String queueID = CommonsUtil.getQueueID(queueName);
 
-        // if queue is owned by a different domain deny permission
-        if (!isOwnDomain(tenantDomain, queueName)) {
-            log.warn("Permission denied to publish to " + queueName + " in domain " + tenantDomain);
-            return Result.DENIED;
-        }
-
         try {
             // authorise if admin user
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
+            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
                 return Result.ALLOWED;
 
                 // authorise if either consume or browse queue
