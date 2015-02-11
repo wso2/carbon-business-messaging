@@ -79,7 +79,8 @@
                         <Private-Package>org.wso2.carbon.andes.internal</Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.andes.internal,
-                            org.wso2.carbon.andes.service.*
+                            org.wso2.carbon.andes.service.*,
+                            org.wso2.carbon.andes.utils.*
                         </Export-Package>
                         <Import-Package>
                             org.apache.axis2.*; version="${imp.pkg.version.axis2}",
