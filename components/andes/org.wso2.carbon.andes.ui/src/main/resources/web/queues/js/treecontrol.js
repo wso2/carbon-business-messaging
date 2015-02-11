@@ -4,9 +4,9 @@ function addQueue(createdFrom) {
     var error = "";
 
     if (topic.value == "") {
-        error = "Queue can not be empty.\n";
+        error = "Queue name cannot be empty.\n";
     } else if (!isValidQueueName(topic.value)) {
-        error = "Queue can not contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
+        error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
     }
     if (error != "") {
         CARBON.showErrorDialog(error);
@@ -44,32 +44,16 @@ function addQueueToBackEnd(queue, createdFrom) {
 }
 
 function addPermissions() {
-    var permissionTable = document.getElementById("permissionsTable");
-    var rowCount = permissionTable.rows.length;
-    var parameters = "";
-    for (var i = 1; i < rowCount; i++) {
-        /* since there can be special characters in roleNames we need to encode them before send the parameters to backend*/
-        var roleName = encodeURIComponent(permissionTable.rows[i].cells[0].innerHTML.replace(/^\s+|\s+$/g, ""));
-        var consumeAllowed = permissionTable.rows[i].cells[1].getElementsByTagName("input")[0].checked;
-        var publishAllowed = permissionTable.rows[i].cells[2].getElementsByTagName("input")[0].checked;
-        if (i == 1) {
-            parameters = roleName + "," + consumeAllowed + "," + publishAllowed + ",";
-        } else {
-            parameters = parameters + roleName + "," + consumeAllowed + "," + publishAllowed + ",";
-        }
-    }
-
     var callback =
     {
         success:function(o) {
             if (o.responseText !== undefined) {
-                message = "Queue added successfully";
                 if (o.responseText.indexOf("Error") > -1) {
                     CARBON.showErrorDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 } else {
-                    CARBON.showInfoDialog("" + message, function() {
+                    CARBON.showInfoDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 }
@@ -81,7 +65,7 @@ function addPermissions() {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_ajaxprocessor.jsp", callback, "permissions=" + parameters + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_from_session_ajaxprocessor.jsp", callback, "type=input");
 }
 
 function updatePermissions() {
@@ -104,13 +88,12 @@ function updatePermissions() {
     {
         success:function(o) {
             if (o.responseText !== undefined) {
-                message = "Updated permissions successfully";
                 if (o.responseText.indexOf("Error") > -1) {
                     CARBON.showErrorDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 } else {
-                    CARBON.showInfoDialog("" + message, function() {
+                    CARBON.showInfoDialog("" + o.responseText, function() {
                         location.href = "../queues/queue_details.jsp"
                     });
                 }
@@ -238,7 +221,7 @@ function doReRouteMessages(nameOfQueue) {
 
                     CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.reRoute"], function () {
                         $.ajax({
-                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&newQueueName=' + selectedQueue + '&msgList=' + checkedValues,
+                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?newQueueName=' + selectedQueue + '&msgList=' + checkedValues,
                             async: true,
                             dataType: "html",
                             success: function () {
@@ -282,7 +265,7 @@ function validateForm(){
     var error = "";
 
     if(msg_count.value == ""){
-        error = "Number of messages field can not be empty. \n";
+        error = "Number of messages field cannot be empty. \n";
     }
 
     if (error != "") {
