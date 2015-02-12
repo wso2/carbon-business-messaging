@@ -79,11 +79,14 @@
                 <tbody>
                 <%
                     if(filteredMsgArray != null) {
+                        int count =1;
                         for (Message queueMessage : filteredMsgArray) {
                             if (queueMessage != null) {
                             String msgProperties = queueMessage.getMsgProperties();
                             String contentType = queueMessage.getContentType();
                             String[] messageContent = queueMessage.getMessageContent();
+                            long contentDisplayID = queueMessage.getJMSTimeStamp()+count;
+                            count++;
                 %>
                 <tr>
                     <td><img src="images/<%= contentType.toLowerCase()%>.png"
@@ -107,7 +110,13 @@
                     </td>
                     <td><%= msgProperties%>
                     </td>
-                    <td><%= messageContent[0]%><a href="message_content.jsp?message=<%=messageContent[1]%>">&nbsp;&nbsp;&nbsp;more...</a>
+                    <td>
+                        <%= messageContent[0]%>
+                        <!-- This is converted to a POST to avoid message length eating up the URI request length. -->
+                        <form name="msgViewForm<%=contentDisplayID%>" method="POST" action="message_content.jsp">
+                            <input type="hidden" name="message" value="<%=messageContent[1]%>">
+                            <a href="javascript:document.msgViewForm<%=contentDisplayID%>.submit()">&nbsp;&nbsp;&nbsp;more..</a>
+                        </form>
                     </td>
                 </tr>
 
