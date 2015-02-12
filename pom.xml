@@ -439,6 +439,12 @@ considered very carefully. -->
                 <version>1.2.0.wso2v1</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.stratos.common</artifactId>
+                <version>${stratos.common.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -544,5 +550,7 @@ considered very carefully. -->
         <commons-digester.version>1.8.1</commons-digester.version>
         <commons-beanutils.version>1.8.0</commons-beanutils.version>
         <geronimo-jms_1.1_spec.version>1.1.0</geronimo-jms_1.1_spec.version>
+
+        <stratos.common.version>2.2.0</stratos.common.version>
     </properties>
 </project>
