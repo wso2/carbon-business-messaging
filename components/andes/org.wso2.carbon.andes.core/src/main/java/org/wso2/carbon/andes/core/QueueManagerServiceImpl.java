@@ -60,6 +60,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -434,11 +435,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             // User name may contain the domain name and the user name. eg: WSO2/admin
             // having this username with domain name containing '/' character violates the
             // amqp url user name. Therefore escaping it according to url standards
-            javax.jms.Queue queue = getQueue(
-                    nameOfQueue,
-                    URLEncoder.encode(userName, URLEncodingFormat),
-                    accessKey
-            );
+            javax.jms.Queue queue = getQueue(nameOfQueue, URLEncoder.encode(userName, URLEncodingFormat),
+                                             accessKey);
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             QueueBrowser queueBrowser = queueSession.createBrowser(queue);
             queueConnection.start();
@@ -448,7 +446,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager.readValue
                         (AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
                 if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
-                    Object[] filteredMsgArray = Utils.getFilteredMsgsList(msgArrayList, startingIndex, maxMsgCount);
+                    Object[] filteredMsgArray = Utils.getFilteredMessagesList(msgArrayList, startingIndex, maxMsgCount);
                     for (Object message : filteredMsgArray) {
                         //cast to jms message
                         Message queueMessage = (Message) message;
@@ -492,6 +490,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to browse queue.", e);
         } catch (UnsupportedEncodingException e) {
             throw new QueueManagerException("Unable to encode user name to url safe format", e);
+        } catch (UnknownHostException e) {
+            throw new QueueManagerException("Unable to browse queue due to invalid host address", e);
         } finally {
             try {
                 // There is no need to close the sessions, producers, and consumers of a
@@ -553,6 +553,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Unable to send message.", e);
         } catch (XMLStreamException e) {
             throw new QueueManagerException("Unable to send message.", e);
+        } catch (UnknownHostException e) {
+            throw new QueueManagerException("Unable to send message(s) due to invalid host address", e);
         } finally {
             try {
                 queueConnection.close();
@@ -586,7 +588,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     private Queue getQueue(String nameOfQueue, String userName, String accessKey)
             throws FileNotFoundException,
-                   XMLStreamException, NamingException, JMSException {
+                   XMLStreamException, NamingException, JMSException, UnknownHostException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, ANDES_ICF);
         properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
