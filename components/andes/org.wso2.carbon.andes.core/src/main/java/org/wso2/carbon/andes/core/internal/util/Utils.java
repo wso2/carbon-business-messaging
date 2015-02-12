@@ -75,7 +75,7 @@ public class Utils {
     /**
      * Maximum size a message will be displayed on UI
      */
-    public static final int MESSAGE_DISPLAY_LENGTH_MAX = AndesConfigurationManager.readValue(AndesConfiguration.MANAGEMENT_CONSOLE_MAX_DISPLAY_LENGTH_FOR_MESSAGE_CONTENT);
+    public static final Integer MESSAGE_DISPLAY_LENGTH_MAX = AndesConfigurationManager.readValue(AndesConfiguration.MANAGEMENT_CONSOLE_MAX_DISPLAY_LENGTH_FOR_MESSAGE_CONTENT);
 
     /**
      * Shown to user has a indication that the particular message has more content than shown in UI
