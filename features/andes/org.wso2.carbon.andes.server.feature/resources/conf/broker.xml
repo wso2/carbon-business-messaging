@@ -325,6 +325,11 @@ expression of the property. -->
         <!--Maximum number of messages to be fetched using Andes message browser when browsing
         queues -->
         <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
+        <!-- This property defines the maximum message content length that can be displayed at the management console when
+        browsing queues. If the message length exceeds the value, a truncated content will be displayed with a statement
+        "message content too large to display." at the end. default value is 100000 (can roughly display a 100KB message.)
+        * NOTE : Increasing this value could cause delays when loading the message content page.-->
+        <maximumMessageDisplayLength>100000</maximumMessageDisplayLength>
     </managementConsole>
 
     <!-- Memory and resource exhaustion is something we should prevent and recover from.

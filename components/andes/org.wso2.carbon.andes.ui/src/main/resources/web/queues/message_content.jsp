@@ -27,7 +27,7 @@
         <h2><fmt:message key="message.content"/></h2>
         <div id="workArea">
             <%-- There should be no spaces between the "<textarea>" tags as it counts them as white spaces and displays in the page--%>
-            <textarea rows="40" cols="100" readonly="true" style="border:none;"><%=wholeMessage%></textarea>
+            <textarea rows="<%= (wholeMessage.length()/200) + 2 %>" cols="200" readonly="true" style="border:none;"><%=wholeMessage%></textarea>
         </div>
     </div>
 

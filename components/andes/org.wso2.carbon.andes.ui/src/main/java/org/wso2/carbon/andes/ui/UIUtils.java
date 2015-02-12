@@ -60,22 +60,6 @@ public class UIUtils {
     private static final String ANDES_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
 
     /**
-     * Maximum size a message will be displayed on UI
-     */
-    public static final int MESSAGE_DISPLAY_LENGTH_MAX = 4000;
-
-    /**
-     * Shown to user has a indication that the particular message has more content than shown in UI
-     */
-    public static final String DISPLAY_CONTINUATION = "...";
-
-    /**
-     * Message shown in UI if message content exceed the limit - Further enhancement,
-     * these needs to read from a resource bundle
-     */
-    public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
-
-    /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
