@@ -40,6 +40,7 @@ import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
+import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
@@ -296,6 +297,16 @@ public class QpidServiceComponent {
 
     private void startAndesBroker() throws ConfigurationException, AndesException {
         brokerShouldBeStarted = false;
+
+        String dSetupValue = System.getProperty("setup");
+
+        if (dSetupValue != null) {
+
+            // Source MB rdbms database if data source configurations and supported sql exist
+            MessageBrokerDBUtil messageBrokerDBUtil = new MessageBrokerDBUtil();
+
+            messageBrokerDBUtil.initialize();
+        }
 
         // Start andes broker
 
