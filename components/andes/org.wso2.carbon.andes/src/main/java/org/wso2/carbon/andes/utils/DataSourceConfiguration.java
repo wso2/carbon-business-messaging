@@ -38,9 +38,14 @@ import java.io.FileInputStream;
 import java.util.*;
 
 
-
-
-
+/**
+ *
+ * <h1>Extract data source configurations from given XML descriptor</h1>
+ * This class contain methods to read data source configurations from given xml source.
+ * It will also populate these configurations to a hash map as key value pair for later
+ * use when required.
+ *
+ */
 public class DataSourceConfiguration {
 
     private HashMap dataSourceConfiguration = new HashMap();
@@ -50,9 +55,12 @@ public class DataSourceConfiguration {
 
 
     /**
-     * Populate this configuration by reading an XML file at the given location. This method
-     * can be executed only once on a given DataSourceConfiguration instance. Once invoked and
-     * successfully populated, it will ignore all subsequent invocations.
+     *
+     * This method will populate data source configurations by reading a XML file at the given location.
+     * First it'll get the jndi configuration name from andes context instance and compare that configuration
+     * name against given rdbms data sources.
+     * Once relevant configuration node found it will call addToConfigurationMap method to store configurations
+     * in dataSourceConfiguration hash map.
      *
      * @param filePath Path of the XML descriptor file
      * @throws ConfigurationException If an error occurs while reading the XML descriptor
@@ -98,12 +106,23 @@ public class DataSourceConfiguration {
     }
 
 
+    /**
+     * This method will return dataSourceConfiguration hash map
+     *
+     * @return dataSourceConfiguration which contain extracted database configurations
+     */
     public HashMap getConfigurationMap() {
 
         return dataSourceConfiguration;
     }
 
 
+    /**
+     * This method will populate dataSourceConfiguration hash map as key value pairs
+     * from given parent node.
+     *
+     * @param node contain relevant configuration  parameters.
+     */
     private void addToConfigurationMap(Node node) {
 
         NodeList childNodeList;

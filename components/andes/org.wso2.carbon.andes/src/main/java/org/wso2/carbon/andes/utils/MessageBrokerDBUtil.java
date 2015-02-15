@@ -29,8 +29,14 @@ import java.io.File;
 import java.util.HashMap;
 
 /**
- * Connect to an external RDBMS store automatically through -Dsetup feature
- * of wso2server startup script
+ * <h1>Initialize MB RDBMS store database</h1>
+ * Connect to an external RDBMS store automatically when Dsetup feature enabled
+ * with wso2server startup script.
+ * This utility class contain methods for following functions.
+ * 1. Find rdbms configurations to rdbms data store from external source.
+ * 2. Source given sql scripts according to data source configurations.
+ * 3. verify database tables are properly initialized.
+ *
  */
 public final class MessageBrokerDBUtil {
 
@@ -73,6 +79,12 @@ public final class MessageBrokerDBUtil {
         }
     }
 
+    /**
+     * Based on database configurations create database tables, if tables dose not
+     * exist in given database.
+     *
+     * @throws ConfigurationException
+     */
     private void setupMBStoreRdbmsDatabase() throws ConfigurationException {
 
         LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
@@ -100,6 +112,12 @@ public final class MessageBrokerDBUtil {
     }
 
 
+    /**
+     * Set database configuration parameters to BasicDataSource object.
+     *
+     * @param configuration
+     * @throws ConfigurationException
+     */
     private void setMBStoreRdbmsConfiguration(DataSourceConfiguration configuration) throws ConfigurationException {
 
         HashMap dbConfigurationMap = configuration.getConfigurationMap();

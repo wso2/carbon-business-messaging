@@ -26,6 +26,12 @@ import org.wso2.carbon.utils.dbcreator.DatabaseCreator;
 import javax.sql.DataSource;
 import java.io.File;
 
+/**
+ * <h1>Create MB store database tables based on configurations set</h1>
+ * This class contain methods to create database tables
+ * for mb store based on given DataSource Configurations.
+ *
+ */
 public class LocalDatabaseCreator  extends DatabaseCreator {
 
     private DataSource dataSource;
@@ -37,7 +43,7 @@ public class LocalDatabaseCreator  extends DatabaseCreator {
     }
 
     /**
-     * Creates database if the script exists; otherwise returns with exception.
+     * Creates database if the script exists, otherwise returns with exception.
      *
      * @throws Exception
      */
@@ -58,6 +64,12 @@ public class LocalDatabaseCreator  extends DatabaseCreator {
         }
     }
 
+    /**
+     * This method returns relevant mb store sql file path based on given database type.
+     *
+     * @param databaseType
+     * @return databaseSqlScriptPath which contain absolute file path to matching sql file.
+     */
     protected String getDbScriptLocation(String databaseType) {
         String scriptName = databaseType + "-mb.sql";
         String carbonHome = System.getProperty("carbon.home");
