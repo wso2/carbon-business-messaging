@@ -26,118 +26,177 @@ import org.w3c.dom.NodeList;
 import org.wso2.andes.configuration.StoreConfiguration;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathFactory;
 import java.io.FileInputStream;
-
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
- *
  * <h1>Extract data source configurations from given XML descriptor</h1>
  * This class contain methods to read data source configurations from given xml source.
  * It will also populate these configurations to a hash map as key value pair for later
  * use when required.
- *
  */
 public class DataSourceConfiguration {
 
-    private HashMap dataSourceConfiguration = new HashMap();
-    private static final Log log = LogFactory.getLog(DataSourceConfiguration.class);
+    /**
+     * log variable for logging.
+     */
+    private static final Log log =
+            LogFactory.getLog(DataSourceConfiguration.class);
+    /**
+     * xpath instance to traverse through given xml.
+     */
+    XPath xPath = XPathFactory.newInstance().newXPath();
+    /**
+     * hash map to hold db configurations as key value pairs.
+     */
+    private HashMap<Object, String> messageStoreConfiguration =
+            new HashMap<Object, String>();
 
-    XPath xPath =  XPathFactory.newInstance().newXPath();
-
+    private HashMap<Object, String> contextStoreConfiguration =
+            new HashMap<Object, String>();
 
     /**
-     *
-     * This method will populate data source configurations by reading a XML file at the given location.
-     * First it'll get the jndi configuration name from andes context instance and compare that configuration
-     * name against given rdbms data sources.
-     * Once relevant configuration node found it will call addToConfigurationMap method to store configurations
-     * in dataSourceConfiguration hash map.
+     * This method will populate data source configurations by reading a XML file at the given
+     * location. First it'll get the jndi configuration name from andes context instance and
+     * compare that configuration name against given rdbms data sources.
+     * Once relevant configuration node found it will call addToConfigurationMap method to
+     * store configurations in hash maps.
      *
      * @param filePath Path of the XML descriptor file
      * @throws ConfigurationException If an error occurs while reading the XML descriptor
      */
     public void loadDbConfiguration(String filePath) throws ConfigurationException {
 
-        String jndiConfigName = AndesContext.getInstance().getStoreConfiguration().getMessageStoreProperties()
-                .getProperty(StoreConfiguration.DATA_SOURCE);
+        String[] dataSourceNameArray = new String[2];
 
-        String xpathExpression = "//datasources-configuration/datasources/datasource/definition/" +
-                "configuration[ ../../jndiConfig/name/text()='"+jndiConfigName+"']";
+        dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE] = AndesContext.
+                getInstance().getStoreConfiguration().getMessageStoreProperties().
+                getProperty(StoreConfiguration.DATA_SOURCE);
 
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE] = AndesContext.
+                getInstance().getStoreConfiguration().getContextStoreProperties().
+                getProperty(StoreConfiguration.DATA_SOURCE);
 
-        DocumentBuilder builder = null;
-
-        if (log.isDebugEnabled()) {
-            log.debug("load database configurations from data source xml file");
-            log.debug("file path : " + filePath);
+        // if both data source configurations are equal only one data source configuration
+        // will sourced to database
+        if(dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE].
+                equals(dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE])) {
+            dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE] = "";
         }
 
-        try {
-            builder = builderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            log.error(e.getMessage());
-            throw new ConfigurationException("Unexpected error occurred while parsing configuration: " + filePath, e);
-        }
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 
-        try{
+            DocumentBuilder builder;
 
-            Document xmlDocument = builder.parse(new FileInputStream(filePath));
+            if (log.isDebugEnabled()) {
+                log.debug("load database configurations from data source xml file." +
+                          " file path : " + filePath);
+            }
 
-            //read an xml node using xpath
-            Node configurationNode = (Node) xPath.compile(xpathExpression).evaluate(xmlDocument, XPathConstants.NODE);
+            try {
+                builder = builderFactory.newDocumentBuilder();
 
-            addToConfigurationMap(configurationNode);
+                Document xmlDocument = builder.parse(new FileInputStream(filePath));
 
-        } catch (Exception e){
-            log.error("Unexpected error occurred while parsing configuration: " + e.getMessage());
-            throw new ConfigurationException("Unexpected error occurred while parsing configuration: " + filePath, e);
-        }
+                if(!dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE].isEmpty()) {
+                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
+                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
+                                        dataSourceNameArray[MessageBrokerDBUtil.
+                                                MESSAGE_STORE_DATA_SOURCE] +
+                                        "' and ../@type='RDBMS']";
+                    //read an xml node using xpath
+                    Node configurationNode = (Node) xPath.compile(xpathQuery).
+                            evaluate(xmlDocument, XPathConstants.NODE);
+
+                    addToConfigurationMap(configurationNode, messageStoreConfiguration);
+                }
+
+                if(!dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE].isEmpty()) {
+                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
+                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
+                                        dataSourceNameArray[MessageBrokerDBUtil.
+                                                CONTEXT_STORE_DATA_SOURCE] +
+                                        "' and ../@type='RDBMS']";
+                    //read an xml node using xpath
+                    Node configurationNode = (Node) xPath.compile(xpathQuery).
+                            evaluate(xmlDocument, XPathConstants.NODE);
+
+                    addToConfigurationMap(configurationNode, contextStoreConfiguration);
+                }
+
+            } catch (ParserConfigurationException e) {
+                log.error("Unexpected error occurred while parsing configuration.", e);
+                throw new ConfigurationException("Unexpected error occurred while parsing" +
+                                                 " configuration: ", e);
+            } catch (XPathException e) {
+                log.error("Unexpected error occurred while parsing xml file content.", e);
+                throw new ConfigurationException("Unexpected error occurred while parsing xml" +
+                                                 " file content: ", e);
+            } catch (SAXException e) {
+                log.error("Unexpected error occurred in XML parser.", e);
+                throw new ConfigurationException("Unexpected error occurred in XML parser.", e);
+            } catch (IOException e) {
+                log.error("master data source xml file not found.", e);
+                throw new ConfigurationException("master data source xml file not found.", e);
+            }
+
 
     }
 
 
     /**
-     * This method will return dataSourceConfiguration hash map
+     * This method will return configurationList Array list
      *
-     * @return dataSourceConfiguration which contain extracted database configurations
+     * @return configurationList which contain list of configurations (context store configurations
+     * and message store configurations)
      */
-    public HashMap getConfigurationMap() {
+    public ArrayList<HashMap<Object, String>> getConfigurationMap() {
 
-        return dataSourceConfiguration;
+        ArrayList<HashMap<Object, String>> configurationList =
+                new ArrayList<HashMap<Object, String>>();
+        if(!messageStoreConfiguration.isEmpty()) {
+            configurationList.add(messageStoreConfiguration);
+        }
+        if(!contextStoreConfiguration.isEmpty()) {
+            configurationList.add(contextStoreConfiguration);
+        }
+        return configurationList;
     }
 
 
     /**
-     * This method will populate dataSourceConfiguration hash map as key value pairs
+     * This method will populate messageStoreConfiguration hash map as key value pairs
      * from given parent node.
      *
      * @param node contain relevant configuration  parameters.
      */
-    private void addToConfigurationMap(Node node) {
+    private void addToConfigurationMap(Node node,HashMap<Object, String> databaseConfiguration ) {
 
         NodeList childNodeList;
 
-        if(null != node) {
+        if (null != node) {
             childNodeList = node.getChildNodes();
-            for (int i = 0;null!=childNodeList && i < childNodeList.getLength(); i++) {
+            for (int i = 0; null != childNodeList && i < childNodeList.getLength(); i++) {
                 Node nod = childNodeList.item(i);
-                if(nod.getNodeType() == Node.ELEMENT_NODE) {
-                    dataSourceConfiguration.put(childNodeList.item(i).getNodeName(),nod.getFirstChild().getNodeValue());
+                if (nod.getNodeType() == Node.ELEMENT_NODE) {
+                    databaseConfiguration.put(childNodeList.item(i).getNodeName(), nod.
+                            getFirstChild().getNodeValue());
                 }
             }
         }
     }
-
 
 
 }

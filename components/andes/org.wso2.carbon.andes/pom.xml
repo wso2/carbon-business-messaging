@@ -84,11 +84,13 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>org.wso2.carbon.andes.internal</Private-Package>
+                        <Private-Package>
+                            org.wso2.carbon.andes.internal,
+                            org.wso2.carbon.andes.utils.*
+                        </Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.andes.internal,
-                            org.wso2.carbon.andes.service.*,
-                            org.wso2.carbon.andes.utils.*
+                            org.wso2.carbon.andes.service.*
                         </Export-Package>
                         <Import-Package>
                             org.apache.axis2.*; version="${imp.pkg.version.axis2}",

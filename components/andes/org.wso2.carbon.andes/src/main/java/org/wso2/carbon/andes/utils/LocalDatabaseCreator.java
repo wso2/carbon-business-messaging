@@ -30,12 +30,11 @@ import java.io.File;
  * <h1>Create MB store database tables based on configurations set</h1>
  * This class contain methods to create database tables
  * for mb store based on given DataSource Configurations.
- *
  */
-public class LocalDatabaseCreator  extends DatabaseCreator {
+public class LocalDatabaseCreator extends DatabaseCreator {
 
-    private DataSource dataSource;
     private static final Log log = LogFactory.getLog(LocalDatabaseCreator.class);
+    private DataSource dataSource;
 
     public LocalDatabaseCreator(DataSource dataSource) {
         super(dataSource);
@@ -45,41 +44,58 @@ public class LocalDatabaseCreator  extends DatabaseCreator {
     /**
      * Creates database if the script exists, otherwise returns with exception.
      *
-     * @throws Exception
+     * @throws org.wso2.carbon.andes.service.exception.ConfigurationException
      */
-    public void createRegistryDatabase() throws Exception {
+    public void createRegistryDatabase() throws ConfigurationException {
 
-        String databaseType = DatabaseCreator.getDatabaseType(this.dataSource.getConnection());
+        String databaseType;
+        File scripFile;
 
-        log.info("this.dataSource.getConnection() : " + this.dataSource.getConnection());
+        try {
 
-        String scripPath = getDbScriptLocation(databaseType);
-        File scripFile = new File(scripPath);
+            databaseType = DatabaseCreator.getDatabaseType(this.dataSource.getConnection());
+            String scripPath = getDbScriptLocation(databaseType);
+            scripFile = new File(scripPath);
 
-        if(scripFile.canRead()){
-            super.createRegistryDatabase();
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while connecting to the database.", e);
+            throw new ConfigurationException("Unexpected error occurred while connecting to" +
+                                             " the database.", e);
+        }
+
+
+        if (scripFile.canRead()) {
+
+            try {
+                super.createRegistryDatabase();
+            } catch (Exception e) { // Carbon throws Exception.
+                log.error("Unexpected error occurred while creating the database tables.", e);
+                throw new ConfigurationException("Unexpected error occurred while creating the" +
+                                                 " database tables.", e);
+            }
+
         } else {
-            log.error("Unexpected error occurred while reading db script " + scripFile );
-            throw new ConfigurationException("Unexpected error occurred while reading db script"  + scripFile);
+            log.error("Unexpected error occurred while reading db script : " + scripFile);
+            throw new ConfigurationException("Unexpected error occurred while reading db script");
         }
     }
 
     /**
      * This method returns relevant mb store sql file path based on given database type.
      *
-     * @param databaseType
+     * @param databaseType type of the database as a string.
      * @return databaseSqlScriptPath which contain absolute file path to matching sql file.
      */
     protected String getDbScriptLocation(String databaseType) {
         String scriptName = databaseType + "-mb.sql";
         String carbonHome = System.getProperty("carbon.home");
 
-        String databaseSqlScriptPath = carbonHome +
-                "/dbscripts/mb-store/" + scriptName;
+        String databaseSqlScriptPath = carbonHome + File.separator + "dbscripts" + File.separator +
+                                       "mb-store" + File.separator + scriptName;
 
         if (log.isDebugEnabled()) {
-            log.debug("Loading database script from : " + scriptName);
-            log.debug("Load database path           : " + databaseSqlScriptPath);
+            log.debug("Load database path : " + databaseSqlScriptPath);
+
         }
 
         return databaseSqlScriptPath;
