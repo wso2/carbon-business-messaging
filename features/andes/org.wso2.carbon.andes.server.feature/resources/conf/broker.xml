@@ -64,6 +64,17 @@ expression of the property. -->
             <!-- put proper default SSL port -->
             <sslPort>8883</sslPort>
             <!-- These two properties are temporary. Ideally, MQTT should use carbon users. -->
+
+            <!--Ring buffer size of MQTT inbound event disruptor. Default is set to 32768 (1024 * 32)
+            Having a large ring buffer will have a increase memory usage and will improve performance
+            and wise versa -->
+            <inboundBufferSize>32768</inboundBufferSize>
+
+            <!--Ring buffer size of MQTT delivery event disruptor. Default is set to 32768 (1024 * 32)
+            Having a large ring buffer will have a increase memory usage and will improve performance
+            and wise versa -->
+            <deliveryBufferSize>32768</deliveryBufferSize>
+            
             <users>
                 <user userName="testuser1" password="password1" />
                 <user userName="testuser2" password="password2" />
