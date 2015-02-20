@@ -67,12 +67,12 @@ expression of the property. -->
 
             <!--Ring buffer size of MQTT inbound event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance
-            and wise versa -->
+            and vise versa -->
             <inboundBufferSize>32768</inboundBufferSize>
 
             <!--Ring buffer size of MQTT delivery event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance
-            and wise versa -->
+            and vise versa -->
             <deliveryBufferSize>32768</deliveryBufferSize>
             
             <users>
@@ -90,12 +90,12 @@ expression of the property. -->
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
     <!-- By default WSO2 MB runs with H2 persistent store. If you plan to use a different
-    store, point to the relevant dataSource or uncomment the database apprpriately.
+    store, point to the relevant dataSource or uncomment the database appropriately.
 
     RDBMS
     =====
     If you are running an RDBMS you can use the existing RDBMS implementation of stores
-    by pointing to the correct data source by updateing the property "dataSource".
+    by pointing to the correct data source by updating the property "dataSource".
 
     Data source entry should be present in
     <MB_HOME>/repository/conf/datasources/master-datasources.xml.
@@ -262,7 +262,7 @@ expression of the property. -->
         <ackHandling>
             <!--Number of message acknowledgement handlers to process acknowledgements concurrently.
             These acknowledgement handlers will batch and process acknowledgements.  -->
-            <ackHandlerCount>5</ackHandlerCount>
+            <ackHandlerCount>1</ackHandlerCount>
 
             <!--Maximum batch size of the acknowledgement handler. Andes process acknowledgements in
             batches using Disruptor Increasing the batch size reduces the number of calls made to
@@ -336,11 +336,14 @@ expression of the property. -->
         <!--Maximum number of messages to be fetched using Andes message browser when browsing
         queues -->
         <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
-        <!-- This property defines the maximum message content length that can be displayed at the management console when
-        browsing queues. If the message length exceeds the value, a truncated content will be displayed with a statement
-        "message content too large to display." at the end. default value is 100000 (can roughly display a 100KB message.)
+
+        <!-- This property defines the maximum message content length that can be displayed at the
+        management console when browsing queues. If the message length exceeds the value, a
+        truncated content will be displayed with a statement "message content too large to display."
+        at the end. default value is 100000 (can roughly display a 100KB message.)
         * NOTE : Increasing this value could cause delays when loading the message content page.-->
         <maximumMessageDisplayLength>100000</maximumMessageDisplayLength>
+
     </managementConsole>
 
     <!-- Memory and resource exhaustion is something we should prevent and recover from.

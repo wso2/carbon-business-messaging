@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~   WSO2 Inc. licenses this file to you under the Apache License,
   ~   Version 2.0 (the "License"); you may not use this file except
@@ -42,13 +42,24 @@
             </exchanges>
 
             <queues>
-                <!--  Size in bytes when the sizes of all messages accumulated in a particular queue which leads to generate the notifications, By setting it to 0 , we switch it off , If we are setting it to 4MB , we need to put 4235264  -->
+                <!--  Size in bytes when the sizes of all messages accumulated in a particular queue 
+                which leads to generate the notifications, By setting it to 0 , we switch it off , If 
+                we are setting it to 4MB , we need to put 4235264  -->
                 <maximumQueueDepth>0</maximumQueueDepth>
-                <!--  Size in bytes when the sizes of a particular messages  which leads to generate the notifications, By setting it to 0 , we switch it off , If we are setting it to 2MB , we need to put 2117632  -->
+                
+                <!--  Size in bytes when the sizes of a particular messages  which leads to generate 
+                the notifications, By setting it to 0 , we switch it off , If we are setting it to 2MB,
+                 we need to put 2117632  -->
                 <maximumMessageSize>0</maximumMessageSize>
-                <!-- Time of a message which can be stayed in the server without delivering which leads to generate the notification, By setting it to 0 , we switch it off. If we are setting it to 1hr , we need to put 3600000  -->
+                
+                <!-- Time of a message which can be stayed in the server without delivering which leads 
+                to generate the notification, By setting it to 0 , we switch it off. If we are setting 
+                it to 1hr , we need to put 3600000  -->
                 <maximumMessageAge>0</maximumMessageAge>
-                <!-- Maximum message count of a queue which leads to generate the notofication,By setting it to 0 , we switch it off. If we are setting it to 50000 , we need to put 50000 -->
+                
+                <!-- Maximum message count of a queue which leads to generate the notification, By 
+                setting it to 0 , we switch it off. If we are setting it to 50000 , we need to put 50000 
+                -->
                 <maximumMessageCount>0</maximumMessageCount>
             </queues>
         </carbon>
