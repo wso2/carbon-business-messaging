@@ -55,6 +55,14 @@
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.stratos.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.utils</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -72,7 +80,10 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>org.wso2.carbon.andes.internal</Private-Package>
+                        <Private-Package>
+                            org.wso2.carbon.andes.internal,
+                            org.wso2.carbon.andes.utils.*
+                        </Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.andes.internal,
                             org.wso2.carbon.andes.service.*

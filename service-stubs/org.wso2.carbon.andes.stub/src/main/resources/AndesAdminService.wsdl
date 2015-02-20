@@ -1,4 +1,5 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:ax23="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:ax23="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax21="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
     <wsdl:documentation>AndesAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd">
@@ -55,13 +56,13 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax26="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax24="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
+        <xs:schema xmlns:ax22="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax24="http://internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
             <xs:import namespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
             <xs:import namespace="http://internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
             <xs:element name="AndesAdminServiceBrokerManagerAdminException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax23:BrokerManagerAdminException"></xs:element>
+                        <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax21:BrokerManagerAdminException"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -69,7 +70,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="queueRolePermissionsDTO" nillable="true" type="ax25:QueueRolePermission"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="queueRolePermissionsDTO" nillable="true" type="ax23:QueueRolePermission"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -166,19 +167,19 @@
             <xs:element name="getQueueRolePermissionResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:QueueRolePermission"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:QueueRolePermission"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getMessageCountForQueue">
+            <xs:element name="getMessageCount">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="destinationName" nillable="true" type="xs:string"></xs:element>
                         <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getMessageCountForQueueResponse">
+            <xs:element name="getMessageCountResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:long"></xs:element>
@@ -193,7 +194,7 @@
             <xs:element name="getAllSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -205,7 +206,7 @@
             <xs:element name="getAllQueuesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Queue"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Queue"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -217,7 +218,7 @@
             <xs:element name="getAllLocalTempTopicSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -229,7 +230,7 @@
             <xs:element name="getAllLocalTempQueueSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -241,7 +242,7 @@
             <xs:element name="getAllDurableTopicSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -253,7 +254,7 @@
             <xs:element name="getAllDurableQueueSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -303,7 +304,7 @@
             <xs:element name="browseQueueResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Message"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Message"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -325,12 +326,8 @@
     <wsdl:message name="AndesAdminServiceException">
         <wsdl:part name="parameters" element="ns:AndesAdminServiceException"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getMessageCountForQueueRequest">
-        <wsdl:part name="parameters" element="ns:getMessageCountForQueue"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getMessageCountForQueueResponse">
-        <wsdl:part name="parameters" element="ns:getMessageCountForQueueResponse"></wsdl:part>
-    </wsdl:message>
+    <wsdl:message name="getMessageCountForQueueRequest"></wsdl:message>
+    <wsdl:message name="getMessageCountForQueueResponse"></wsdl:message>
     <wsdl:message name="getAccessKeyRequest">
         <wsdl:part name="parameters" element="ns:getAccessKey"></wsdl:part>
     </wsdl:message>
@@ -405,6 +402,12 @@
     <wsdl:message name="getQueueRolePermissionResponse">
         <wsdl:part name="parameters" element="ns:getQueueRolePermissionResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="getMessageCountRequest">
+        <wsdl:part name="parameters" element="ns:getMessageCount"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageCountResponse">
+        <wsdl:part name="parameters" element="ns:getMessageCountResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="getUserRolesRequest">
         <wsdl:part name="parameters" element="ns:getUserRoles"></wsdl:part>
     </wsdl:message>
@@ -435,7 +438,6 @@
         <wsdl:operation name="getMessageCountForQueue">
             <wsdl:input message="tns:getMessageCountForQueueRequest" wsaw:Action="urn:getMessageCountForQueue"></wsdl:input>
             <wsdl:output message="tns:getMessageCountForQueueResponse" wsaw:Action="urn:getMessageCountForQueueResponse"></wsdl:output>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountForQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAccessKey">
             <wsdl:input message="tns:getAccessKeyRequest" wsaw:Action="urn:getAccessKey"></wsdl:input>
@@ -506,6 +508,11 @@
             <wsdl:output message="tns:getQueueRolePermissionResponse" wsaw:Action="urn:getQueueRolePermissionResponse"></wsdl:output>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getQueueRolePermissionAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <wsdl:input message="tns:getMessageCountRequest" wsaw:Action="urn:getMessageCount"></wsdl:input>
+            <wsdl:output message="tns:getMessageCountResponse" wsaw:Action="urn:getMessageCountResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getUserRoles">
             <wsdl:input message="tns:getUserRolesRequest" wsaw:Action="urn:getUserRoles"></wsdl:input>
             <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"></wsdl:output>
@@ -532,9 +539,6 @@
             <wsdl:output>
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
-            </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <soap:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap:operation>
@@ -737,6 +741,18 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap:operation soapAction="urn:getMessageCount" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <soap:operation soapAction="urn:getAllSubscriptions" style="document"></soap:operation>
             <wsdl:input>
@@ -772,9 +788,6 @@
             <wsdl:output>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
-            </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <soap12:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap12:operation>
@@ -977,6 +990,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap12:operation soapAction="urn:getMessageCount" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <soap12:operation soapAction="urn:getAllSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
@@ -1166,6 +1191,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <http:operation location="getMessageCount"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <http:operation location="getAllSubscriptions"></http:operation>
             <wsdl:input>
@@ -1187,13 +1221,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

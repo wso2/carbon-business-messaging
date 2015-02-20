@@ -56,7 +56,7 @@
         <operation name="updatePermission">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
         </operation>
-        <operation name="getMessageCountForQueue">
+        <operation name="getMessageCount">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
         </operation>
         <operation name="getTotalMessagesInQueue">

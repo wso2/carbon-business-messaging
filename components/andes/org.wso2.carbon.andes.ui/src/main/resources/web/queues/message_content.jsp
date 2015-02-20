@@ -11,7 +11,7 @@
     <script type="text/javascript" src="../admin/js/breadcrumbs.js"></script>
     <script type="text/javascript" src="../admin/js/cookies.js"></script>
     <script type="text/javascript" src="../admin/js/main.js"></script>
-    <link rel="stylesheet" href="../qpid/css/dsxmleditor.css"/>
+    <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
     <%
         String wholeMessage = request.getParameter("message");
@@ -27,7 +27,7 @@
         <h2><fmt:message key="message.content"/></h2>
         <div id="workArea">
             <%-- There should be no spaces between the "<textarea>" tags as it counts them as white spaces and displays in the page--%>
-            <textarea rows="40" cols="100" readonly="true" style="border:none;"><%=wholeMessage%></textarea>
+            <textarea rows="<%= (wholeMessage.length()/200) + 2 %>" cols="200" readonly="true" style="border:none;"><%=wholeMessage%></textarea>
         </div>
     </div>
 

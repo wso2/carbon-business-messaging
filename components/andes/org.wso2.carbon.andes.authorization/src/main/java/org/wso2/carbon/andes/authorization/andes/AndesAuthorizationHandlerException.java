@@ -18,21 +18,36 @@
 
 package org.wso2.carbon.andes.authorization.andes;
 
-public class QpidAuthorizationHandlerException extends Exception {
+/**
+ * Exception class for user authorization
+ */
+public class AndesAuthorizationHandlerException extends Exception {
 
-    public QpidAuthorizationHandlerException() {
+    /**
+     * {@inheritDoc}
+     */
+    public AndesAuthorizationHandlerException() {
         super();
     }
 
-    public QpidAuthorizationHandlerException(Throwable cause) {
+    /**
+     * {@inheritDoc}
+     */
+    public AndesAuthorizationHandlerException(Throwable cause) {
         super(cause);
     }
 
-    public QpidAuthorizationHandlerException(String message) {
+    /**
+     * {@inheritDoc}
+     */
+    public AndesAuthorizationHandlerException(String message) {
         super(message);
     }
 
-    public QpidAuthorizationHandlerException(String message, Throwable cause) {
+    /**
+     * {@inheritDoc}
+     */
+    public AndesAuthorizationHandlerException(String message, Throwable cause) {
         super(message, cause);
     }
 }

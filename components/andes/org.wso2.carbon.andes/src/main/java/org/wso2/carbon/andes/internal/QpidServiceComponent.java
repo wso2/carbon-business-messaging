@@ -40,11 +40,13 @@ import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
+import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 import javax.management.MBeanServer;
@@ -136,6 +138,12 @@ public class QpidServiceComponent {
             qpidServiceImpl
                     = new QpidServiceImpl(QpidServiceDataHolder.getInstance().getAccessKey());
             qpidServiceImpl.loadConfigurations();
+
+            // Register tenant management listener for Message Broker
+            BundleContext bundleCtx = componentContext.getBundleContext();
+            MessageBrokerTenanatManagementListener tenanatManagementListener = new
+                    MessageBrokerTenanatManagementListener();
+            bundleCtx.registerService(TenantMgtListener.class.getName(), tenanatManagementListener, null);
 
             // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
@@ -297,6 +305,12 @@ public class QpidServiceComponent {
     private void startAndesBroker() throws ConfigurationException, AndesException {
         brokerShouldBeStarted = false;
 
+        String dSetupValue = System.getProperty("setup");
+        if (dSetupValue != null) {
+            // Source MB rdbms database if data source configurations and supported sql exist
+            MessageBrokerDBUtil messageBrokerDBUtil = new MessageBrokerDBUtil();
+            messageBrokerDBUtil.initialize();
+        }
         // Start andes broker
 
         //register coordinatedActivityImpl to get coordinator changes notification.

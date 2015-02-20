@@ -1,810 +1,1232 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax23="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:ax23="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax21="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
     <wsdl:documentation>AndesAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd">
             <xs:complexType name="BrokerManagerAdminException">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="faultCode" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="faultString" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="QueueRolePermission">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="allowedToConsume" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
             <xs:complexType name="Subscription">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="active" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="durable" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="numberOfMessagesRemainingForSubscriber" type="xs:int"/>
-                    <xs:element minOccurs="0" name="subscribedQueueOrTopicName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="subscriberNodeAddress" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="subscriberQueueBoundExchange" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="subscriberQueueName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="subscriptionIdentifier" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="active" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="durable" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="numberOfMessagesRemainingForSubscriber" type="xs:int"></xs:element>
+                    <xs:element minOccurs="0" name="subscribedQueueOrTopicName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="subscriberNodeAddress" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="subscriberQueueBoundExchange" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="subscriberQueueName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="subscriptionIdentifier" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="Queue">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="createdFrom" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"/>
-                    <xs:element minOccurs="0" name="messageCount" type="xs:int"/>
-                    <xs:element minOccurs="0" name="queueDepth" type="xs:long"/>
-                    <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="createdFrom" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"></xs:element>
+                    <xs:element minOccurs="0" name="messageCount" type="xs:long"></xs:element>
+                    <xs:element minOccurs="0" name="queueDepth" type="xs:long"></xs:element>
+                    <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Message">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="JMSCorrelationId" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="JMSDeliveredMode" nillable="true" type="xs:int"></xs:element>
+                    <xs:element minOccurs="0" name="JMSExpiration" nillable="true" type="xs:long"></xs:element>
+                    <xs:element minOccurs="0" name="JMSMessageId" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="JMSPriority" nillable="true" type="xs:int"></xs:element>
+                    <xs:element minOccurs="0" name="JMSReDelivered" nillable="true" type="xs:boolean"></xs:element>
+                    <xs:element minOccurs="0" name="JMSTimeStamp" nillable="true" type="xs:long"></xs:element>
+                    <xs:element minOccurs="0" name="JMSType" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="contentType" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="dlcMsgDestination" nillable="true" type="xs:string"></xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="messageContent" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="msgProperties" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax26="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax24="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
-            <xs:import namespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd"/>
-            <xs:import namespace="http://internal.admin.andes.carbon.wso2.org/xsd"/>
+        <xs:schema xmlns:ax22="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax24="http://internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
+            <xs:import namespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
+            <xs:import namespace="http://internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
+            <xs:element name="AndesAdminServiceBrokerManagerAdminException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax21:BrokerManagerAdminException"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="updatePermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="queueRolePermissionsDTO" nillable="true" type="ax23:QueueRolePermission"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendMessage">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="jmsType" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="jmsCorrelationID" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="numberOfMessages" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deliveryMode" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="priority" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="expireTime" type="xs:long"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendMessageResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="AndesAdminServiceException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="AndesAdminServiceException" nillable="true" type="ns:Exception"/>
+                        <xs:element minOccurs="0" name="AndesAdminServiceException" nillable="true" type="ns:Exception"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:complexType name="Exception">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:element name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="restoreMessagesFromDeadLetterQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="purgeMessagesOfQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="AndesAdminServiceBrokerManagerAdminException">
+            <xs:element name="getUserRoles">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRolesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax23:BrokerManagerAdminException"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getMessageCountForQueue">
+            <xs:element name="getTotalMessagesInQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getMessageCountForQueueResponse">
+            <xs:element name="getTotalMessagesInQueueResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:long"/>
+                        <xs:element minOccurs="0" name="return" type="xs:long"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getCurrentUser">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCurrentUserResponse">
+            <xs:element name="getQueueRolePermission">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getQueueRolePermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:QueueRolePermission"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCount">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="destinationName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCountResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:long"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllSubscriptions">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllQueues">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllQueuesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Queue"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Queue"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllLocalTempTopicSubscriptions">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllLocalTempTopicSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllLocalTempQueueSubscriptions">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllLocalTempQueueSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllDurableTopicSubscriptions">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllDurableTopicSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllDurableQueueSubscriptions">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllDurableQueueSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax25:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAccessKey">
                 <xs:complexType>
-                    <xs:sequence/>
+                    <xs:sequence></xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAccessKeyResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deleteQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="deleteMessagesFromDeadLetterQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="messageIDs" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="deadLetterQueueName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="createQueue">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="browseQueue">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="startingIndex" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="maxMsgCount" type="xs:int"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="browseQueueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Message"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="deleteMessagesFromDeadLetterQueueRequest">
-        <wsdl:part name="parameters" element="ns:deleteMessagesFromDeadLetterQueue"/>
-    </wsdl:message>
-    <wsdl:message name="AndesAdminServiceException">
-        <wsdl:part name="parameters" element="ns:AndesAdminServiceException"/>
-    </wsdl:message>
     <wsdl:message name="getAllDurableTopicSubscriptionsRequest">
-        <wsdl:part name="parameters" element="ns:getAllDurableTopicSubscriptions"/>
+        <wsdl:part name="parameters" element="ns:getAllDurableTopicSubscriptions"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllDurableTopicSubscriptionsResponse">
-        <wsdl:part name="parameters" element="ns:getAllDurableTopicSubscriptionsResponse"/>
+        <wsdl:part name="parameters" element="ns:getAllDurableTopicSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="AndesAdminServiceBrokerManagerAdminException">
-        <wsdl:part name="parameters" element="ns:AndesAdminServiceBrokerManagerAdminException"/>
+        <wsdl:part name="parameters" element="ns:AndesAdminServiceBrokerManagerAdminException"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getMessageCountForQueueRequest">
-        <wsdl:part name="parameters" element="ns:getMessageCountForQueue"/>
+    <wsdl:message name="deleteMessagesFromDeadLetterQueueRequest">
+        <wsdl:part name="parameters" element="ns:deleteMessagesFromDeadLetterQueue"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getMessageCountForQueueResponse">
-        <wsdl:part name="parameters" element="ns:getMessageCountForQueueResponse"/>
+    <wsdl:message name="deleteMessagesFromDeadLetterQueueResponse"></wsdl:message>
+    <wsdl:message name="AndesAdminServiceException">
+        <wsdl:part name="parameters" element="ns:AndesAdminServiceException"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getAllQueuesRequest">
-        <wsdl:part name="parameters" element="ns:getAllQueues"/>
-    </wsdl:message>
-    <wsdl:message name="getAllQueuesResponse">
-        <wsdl:part name="parameters" element="ns:getAllQueuesResponse"/>
-    </wsdl:message>
+    <wsdl:message name="getMessageCountForQueueRequest"></wsdl:message>
+    <wsdl:message name="getMessageCountForQueueResponse"></wsdl:message>
     <wsdl:message name="getAccessKeyRequest">
-        <wsdl:part name="parameters" element="ns:getAccessKey"/>
+        <wsdl:part name="parameters" element="ns:getAccessKey"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAccessKeyResponse">
-        <wsdl:part name="parameters" element="ns:getAccessKeyResponse"/>
+        <wsdl:part name="parameters" element="ns:getAccessKeyResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllQueuesRequest">
+        <wsdl:part name="parameters" element="ns:getAllQueues"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getAllQueuesResponse">
+        <wsdl:part name="parameters" element="ns:getAllQueuesResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllLocalTempQueueSubscriptionsRequest">
-        <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptions"/>
+        <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptions"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllLocalTempQueueSubscriptionsResponse">
-        <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptionsResponse"/>
+        <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllDurableQueueSubscriptionsRequest">
-        <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptions"/>
+        <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptions"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllDurableQueueSubscriptionsResponse">
-        <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptionsResponse"/>
+        <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="sendMessageRequest">
+        <wsdl:part name="parameters" element="ns:sendMessage"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sendMessageResponse">
+        <wsdl:part name="parameters" element="ns:sendMessageResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updatePermissionRequest">
+        <wsdl:part name="parameters" element="ns:updatePermission"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="updatePermissionResponse"></wsdl:message>
     <wsdl:message name="createQueueRequest">
-        <wsdl:part name="parameters" element="ns:createQueue"/>
+        <wsdl:part name="parameters" element="ns:createQueue"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="createQueueResponse"></wsdl:message>
     <wsdl:message name="restoreMessagesFromDeadLetterQueueRequest">
-        <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueue"/>
+        <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueue"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="restoreMessagesFromDeadLetterQueueResponse"></wsdl:message>
     <wsdl:message name="purgeMessagesOfQueueRequest">
-        <wsdl:part name="parameters" element="ns:purgeMessagesOfQueue"/>
+        <wsdl:part name="parameters" element="ns:purgeMessagesOfQueue"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="purgeMessagesOfQueueResponse"></wsdl:message>
+    <wsdl:message name="browseQueueRequest">
+        <wsdl:part name="parameters" element="ns:browseQueue"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="browseQueueResponse">
+        <wsdl:part name="parameters" element="ns:browseQueueResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTotalMessagesInQueueRequest">
+        <wsdl:part name="parameters" element="ns:getTotalMessagesInQueue"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getTotalMessagesInQueueResponse">
+        <wsdl:part name="parameters" element="ns:getTotalMessagesInQueueResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deleteQueueRequest">
-        <wsdl:part name="parameters" element="ns:deleteQueue"/>
+        <wsdl:part name="parameters" element="ns:deleteQueue"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="deleteQueueResponse"></wsdl:message>
     <wsdl:message name="getAllLocalTempTopicSubscriptionsRequest">
-        <wsdl:part name="parameters" element="ns:getAllLocalTempTopicSubscriptions"/>
+        <wsdl:part name="parameters" element="ns:getAllLocalTempTopicSubscriptions"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllLocalTempTopicSubscriptionsResponse">
-        <wsdl:part name="parameters" element="ns:getAllLocalTempTopicSubscriptionsResponse"/>
+        <wsdl:part name="parameters" element="ns:getAllLocalTempTopicSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getCurrentUserRequest">
-        <wsdl:part name="parameters" element="ns:getCurrentUser"/>
+    <wsdl:message name="getQueueRolePermissionRequest">
+        <wsdl:part name="parameters" element="ns:getQueueRolePermission"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getCurrentUserResponse">
-        <wsdl:part name="parameters" element="ns:getCurrentUserResponse"/>
+    <wsdl:message name="getQueueRolePermissionResponse">
+        <wsdl:part name="parameters" element="ns:getQueueRolePermissionResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageCountRequest">
+        <wsdl:part name="parameters" element="ns:getMessageCount"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getMessageCountResponse">
+        <wsdl:part name="parameters" element="ns:getMessageCountResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getUserRolesRequest">
+        <wsdl:part name="parameters" element="ns:getUserRoles"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getUserRolesResponse">
+        <wsdl:part name="parameters" element="ns:getUserRolesResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllSubscriptionsRequest">
-        <wsdl:part name="parameters" element="ns:getAllSubscriptions"/>
+        <wsdl:part name="parameters" element="ns:getAllSubscriptions"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getAllSubscriptionsResponse">
-        <wsdl:part name="parameters" element="ns:getAllSubscriptionsResponse"/>
+        <wsdl:part name="parameters" element="ns:getAllSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest">
-        <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
+        <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueueWithDifferentDestination"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="restoreMessagesFromDeadLetterQueueWithDifferentDestinationResponse"></wsdl:message>
     <wsdl:portType name="AndesAdminServicePortType">
-        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
-            <wsdl:input message="tns:deleteMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:deleteMessagesFromDeadLetterQueue"/>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueAndesAdminServiceException"/>
-        </wsdl:operation>
         <wsdl:operation name="getAllDurableTopicSubscriptions">
-            <wsdl:input message="tns:getAllDurableTopicSubscriptionsRequest" wsaw:Action="urn:getAllDurableTopicSubscriptions"/>
-            <wsdl:output message="tns:getAllDurableTopicSubscriptionsResponse" wsaw:Action="urn:getAllDurableTopicSubscriptionsResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllDurableTopicSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getAllDurableTopicSubscriptionsRequest" wsaw:Action="urn:getAllDurableTopicSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:getAllDurableTopicSubscriptionsResponse" wsaw:Action="urn:getAllDurableTopicSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllDurableTopicSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
+            <wsdl:input message="tns:deleteMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:deleteMessagesFromDeadLetterQueue"></wsdl:input>
+            <wsdl:output message="tns:deleteMessagesFromDeadLetterQueueResponse" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueAndesAdminServiceException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getMessageCountForQueue">
-            <wsdl:input message="tns:getMessageCountForQueueRequest" wsaw:Action="urn:getMessageCountForQueue"/>
-            <wsdl:output message="tns:getMessageCountForQueueResponse" wsaw:Action="urn:getMessageCountForQueueResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountForQueueAndesAdminServiceBrokerManagerAdminException"/>
-        </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <wsdl:input message="tns:getAllQueuesRequest" wsaw:Action="urn:getAllQueues"/>
-            <wsdl:output message="tns:getAllQueuesResponse" wsaw:Action="urn:getAllQueuesResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllQueuesAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getMessageCountForQueueRequest" wsaw:Action="urn:getMessageCountForQueue"></wsdl:input>
+            <wsdl:output message="tns:getMessageCountForQueueResponse" wsaw:Action="urn:getMessageCountForQueueResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAccessKey">
-            <wsdl:input message="tns:getAccessKeyRequest" wsaw:Action="urn:getAccessKey"/>
-            <wsdl:output message="tns:getAccessKeyResponse" wsaw:Action="urn:getAccessKeyResponse"/>
+            <wsdl:input message="tns:getAccessKeyRequest" wsaw:Action="urn:getAccessKey"></wsdl:input>
+            <wsdl:output message="tns:getAccessKeyResponse" wsaw:Action="urn:getAccessKeyResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllQueues">
+            <wsdl:input message="tns:getAllQueuesRequest" wsaw:Action="urn:getAllQueues"></wsdl:input>
+            <wsdl:output message="tns:getAllQueuesResponse" wsaw:Action="urn:getAllQueuesResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllQueuesAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
-            <wsdl:input message="tns:getAllLocalTempQueueSubscriptionsRequest" wsaw:Action="urn:getAllLocalTempQueueSubscriptions"/>
-            <wsdl:output message="tns:getAllLocalTempQueueSubscriptionsResponse" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getAllLocalTempQueueSubscriptionsRequest" wsaw:Action="urn:getAllLocalTempQueueSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:getAllLocalTempQueueSubscriptionsResponse" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
-            <wsdl:input message="tns:getAllDurableQueueSubscriptionsRequest" wsaw:Action="urn:getAllDurableQueueSubscriptions"/>
-            <wsdl:output message="tns:getAllDurableQueueSubscriptionsResponse" wsaw:Action="urn:getAllDurableQueueSubscriptionsResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllDurableQueueSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getAllDurableQueueSubscriptionsRequest" wsaw:Action="urn:getAllDurableQueueSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:getAllDurableQueueSubscriptionsResponse" wsaw:Action="urn:getAllDurableQueueSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllDurableQueueSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="sendMessage">
+            <wsdl:input message="tns:sendMessageRequest" wsaw:Action="urn:sendMessage"></wsdl:input>
+            <wsdl:output message="tns:sendMessageResponse" wsaw:Action="urn:sendMessageResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:sendMessageAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <wsdl:input message="tns:updatePermissionRequest" wsaw:Action="urn:updatePermission"></wsdl:input>
+            <wsdl:output message="tns:updatePermissionResponse" wsaw:Action="urn:updatePermissionResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:updatePermissionAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="createQueue">
-            <wsdl:input message="tns:createQueueRequest" wsaw:Action="urn:createQueue"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:createQueueAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:createQueueRequest" wsaw:Action="urn:createQueue"></wsdl:input>
+            <wsdl:output message="tns:createQueueResponse" wsaw:Action="urn:createQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:createQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
-            <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueue"/>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueAndesAdminServiceException"/>
+            <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueue"></wsdl:input>
+            <wsdl:output message="tns:restoreMessagesFromDeadLetterQueueResponse" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueAndesAdminServiceException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
-            <wsdl:input message="tns:purgeMessagesOfQueueRequest" wsaw:Action="urn:purgeMessagesOfQueue"/>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:purgeMessagesOfQueueAndesAdminServiceException"/>
+            <wsdl:input message="tns:purgeMessagesOfQueueRequest" wsaw:Action="urn:purgeMessagesOfQueue"></wsdl:input>
+            <wsdl:output message="tns:purgeMessagesOfQueueResponse" wsaw:Action="urn:purgeMessagesOfQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:purgeMessagesOfQueueAndesAdminServiceException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="browseQueue">
+            <wsdl:input message="tns:browseQueueRequest" wsaw:Action="urn:browseQueue"></wsdl:input>
+            <wsdl:output message="tns:browseQueueResponse" wsaw:Action="urn:browseQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:browseQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalMessagesInQueue">
+            <wsdl:input message="tns:getTotalMessagesInQueueRequest" wsaw:Action="urn:getTotalMessagesInQueue"></wsdl:input>
+            <wsdl:output message="tns:getTotalMessagesInQueueResponse" wsaw:Action="urn:getTotalMessagesInQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getTotalMessagesInQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="deleteQueue">
-            <wsdl:input message="tns:deleteQueueRequest" wsaw:Action="urn:deleteQueue"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:deleteQueueAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:deleteQueueRequest" wsaw:Action="urn:deleteQueue"></wsdl:input>
+            <wsdl:output message="tns:deleteQueueResponse" wsaw:Action="urn:deleteQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:deleteQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempTopicSubscriptions">
-            <wsdl:input message="tns:getAllLocalTempTopicSubscriptionsRequest" wsaw:Action="urn:getAllLocalTempTopicSubscriptions"/>
-            <wsdl:output message="tns:getAllLocalTempTopicSubscriptionsResponse" wsaw:Action="urn:getAllLocalTempTopicSubscriptionsResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllLocalTempTopicSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getAllLocalTempTopicSubscriptionsRequest" wsaw:Action="urn:getAllLocalTempTopicSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:getAllLocalTempTopicSubscriptionsResponse" wsaw:Action="urn:getAllLocalTempTopicSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllLocalTempTopicSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getCurrentUser">
-            <wsdl:input message="tns:getCurrentUserRequest" wsaw:Action="urn:getCurrentUser"/>
-            <wsdl:output message="tns:getCurrentUserResponse" wsaw:Action="urn:getCurrentUserResponse"/>
+        <wsdl:operation name="getQueueRolePermission">
+            <wsdl:input message="tns:getQueueRolePermissionRequest" wsaw:Action="urn:getQueueRolePermission"></wsdl:input>
+            <wsdl:output message="tns:getQueueRolePermissionResponse" wsaw:Action="urn:getQueueRolePermissionResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getQueueRolePermissionAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <wsdl:input message="tns:getMessageCountRequest" wsaw:Action="urn:getMessageCount"></wsdl:input>
+            <wsdl:output message="tns:getMessageCountResponse" wsaw:Action="urn:getMessageCountResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <wsdl:input message="tns:getUserRolesRequest" wsaw:Action="urn:getUserRoles"></wsdl:input>
+            <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getUserRolesAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
-            <wsdl:input message="tns:getAllSubscriptionsRequest" wsaw:Action="urn:getAllSubscriptions"/>
-            <wsdl:output message="tns:getAllSubscriptionsResponse" wsaw:Action="urn:getAllSubscriptionsResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+            <wsdl:input message="tns:getAllSubscriptionsRequest" wsaw:Action="urn:getAllSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:getAllSubscriptionsResponse" wsaw:Action="urn:getAllSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
-            <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationAndesAdminServiceException"/>
+            <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination"></wsdl:input>
+            <wsdl:output message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationResponse" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationAndesAdminServiceException"></wsdl:fault>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="AndesAdminServiceSoap11Binding" type="tns:AndesAdminServicePortType">
-        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
         <wsdl:operation name="getMessageCountForQueue">
-            <soap:operation soapAction="urn:getMessageCountForQueue" style="document"/>
+            <soap:operation soapAction="urn:getMessageCountForQueue" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
+            <soap:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceException">
+                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableTopicSubscriptions">
-            <soap:operation soapAction="urn:getAllDurableTopicSubscriptions" style="document"/>
+            <soap:operation soapAction="urn:getAllDurableTopicSubscriptions" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
-            <soap:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"/>
+        <wsdl:operation name="getAllQueues">
+            <soap:operation soapAction="urn:getAllQueues" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"/>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAccessKey">
-            <soap:operation soapAction="urn:getAccessKey" style="document"/>
+            <soap:operation soapAction="urn:getAccessKey" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <soap:operation soapAction="urn:getAllQueues" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
-            </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
-            <soap:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"/>
+            <soap:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
-            <soap:operation soapAction="urn:getAllDurableQueueSubscriptions" style="document"/>
+            <soap:operation soapAction="urn:getAllDurableQueueSubscriptions" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="createQueue">
-            <soap:operation soapAction="urn:createQueue" style="document"/>
+            <soap:operation soapAction="urn:createQueue" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <soap:operation soapAction="urn:updatePermission" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="sendMessage">
+            <soap:operation soapAction="urn:sendMessage" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
-            <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueue" style="document"/>
+            <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueue" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"/>
+                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
-            <soap:operation soapAction="urn:purgeMessagesOfQueue" style="document"/>
+            <soap:operation soapAction="urn:purgeMessagesOfQueue" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"/>
+                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="browseQueue">
+            <soap:operation soapAction="urn:browseQueue" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalMessagesInQueue">
+            <soap:operation soapAction="urn:getTotalMessagesInQueue" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="deleteQueue">
-            <soap:operation soapAction="urn:deleteQueue" style="document"/>
+            <soap:operation soapAction="urn:deleteQueue" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getCurrentUser">
-            <soap:operation soapAction="urn:getCurrentUser" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getAllLocalTempTopicSubscriptions">
-            <soap:operation soapAction="urn:getAllLocalTempTopicSubscriptions" style="document"/>
+            <soap:operation soapAction="urn:getAllLocalTempTopicSubscriptions" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getQueueRolePermission">
+            <soap:operation soapAction="urn:getQueueRolePermission" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap:operation soapAction="urn:getUserRoles" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap:operation soapAction="urn:getMessageCount" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
-            <soap:operation soapAction="urn:getAllSubscriptions" style="document"/>
+            <soap:operation soapAction="urn:getAllSubscriptions" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
-            <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"/>
+            <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"></soap:operation>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal"></soap:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"/>
+                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="AndesAdminServiceSoap12Binding" type="tns:AndesAdminServicePortType">
-        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
         <wsdl:operation name="getMessageCountForQueue">
-            <soap12:operation soapAction="urn:getMessageCountForQueue" style="document"/>
+            <soap12:operation soapAction="urn:getMessageCountForQueue" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
+            <soap12:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceException">
+                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableTopicSubscriptions">
-            <soap12:operation soapAction="urn:getAllDurableTopicSubscriptions" style="document"/>
+            <soap12:operation soapAction="urn:getAllDurableTopicSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
-            <soap12:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"/>
+        <wsdl:operation name="getAllQueues">
+            <soap12:operation soapAction="urn:getAllQueues" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"/>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAccessKey">
-            <soap12:operation soapAction="urn:getAccessKey" style="document"/>
+            <soap12:operation soapAction="urn:getAccessKey" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <soap12:operation soapAction="urn:getAllQueues" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
-            </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
-            <soap12:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"/>
+            <soap12:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
-            <soap12:operation soapAction="urn:getAllDurableQueueSubscriptions" style="document"/>
+            <soap12:operation soapAction="urn:getAllDurableQueueSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="createQueue">
-            <soap12:operation soapAction="urn:createQueue" style="document"/>
+            <soap12:operation soapAction="urn:createQueue" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <soap12:operation soapAction="urn:updatePermission" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="sendMessage">
+            <soap12:operation soapAction="urn:sendMessage" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
-            <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueue" style="document"/>
+            <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueue" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
-            <soap12:operation soapAction="urn:purgeMessagesOfQueue" style="document"/>
+            <soap12:operation soapAction="urn:purgeMessagesOfQueue" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="browseQueue">
+            <soap12:operation soapAction="urn:browseQueue" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalMessagesInQueue">
+            <soap12:operation soapAction="urn:getTotalMessagesInQueue" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="deleteQueue">
-            <soap12:operation soapAction="urn:deleteQueue" style="document"/>
+            <soap12:operation soapAction="urn:deleteQueue" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getCurrentUser">
-            <soap12:operation soapAction="urn:getCurrentUser" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getAllLocalTempTopicSubscriptions">
-            <soap12:operation soapAction="urn:getAllLocalTempTopicSubscriptions" style="document"/>
+            <soap12:operation soapAction="urn:getAllLocalTempTopicSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getQueueRolePermission">
+            <soap12:operation soapAction="urn:getQueueRolePermission" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap12:operation soapAction="urn:getUserRoles" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap12:operation soapAction="urn:getMessageCount" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
-            <soap12:operation soapAction="urn:getAllSubscriptions" style="document"/>
+            <soap12:operation soapAction="urn:getAllSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:output>
             <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
-            <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"/>
+            <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"></soap12:operation>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap12:body use="literal"></soap12:body>
             </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
             <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"/>
+                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="AndesAdminServiceHttpBinding" type="tns:AndesAdminServicePortType">
-        <http:binding verb="POST"/>
+        <http:binding verb="POST"></http:binding>
         <wsdl:operation name="getMessageCountForQueue">
-            <http:operation location="getMessageCountForQueue"/>
+            <http:operation location="getMessageCountForQueue"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="getAllDurableTopicSubscriptions">
-            <http:operation location="getAllDurableTopicSubscriptions"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
-            <http:operation location="deleteMessagesFromDeadLetterQueue"/>
+            <http:operation location="deleteMessagesFromDeadLetterQueue"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-        </wsdl:operation>
-        <wsdl:operation name="getAccessKey">
-            <http:operation location="getAccessKey"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllDurableTopicSubscriptions">
+            <http:operation location="getAllDurableTopicSubscriptions"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllQueues">
-            <http:operation location="getAllQueues"/>
+            <http:operation location="getAllQueues"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAccessKey">
+            <http:operation location="getAccessKey"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
-            <http:operation location="getAllLocalTempQueueSubscriptions"/>
+            <http:operation location="getAllLocalTempQueueSubscriptions"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
-            <http:operation location="getAllDurableQueueSubscriptions"/>
+            <http:operation location="getAllDurableQueueSubscriptions"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="createQueue">
-            <http:operation location="createQueue"/>
+            <http:operation location="createQueue"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-        </wsdl:operation>
-        <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
-            <http:operation location="restoreMessagesFromDeadLetterQueue"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-        </wsdl:operation>
-        <wsdl:operation name="purgeMessagesOfQueue">
-            <http:operation location="purgeMessagesOfQueue"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-        </wsdl:operation>
-        <wsdl:operation name="deleteQueue">
-            <http:operation location="deleteQueue"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-        </wsdl:operation>
-        <wsdl:operation name="getCurrentUser">
-            <http:operation location="getCurrentUser"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <http:operation location="updatePermission"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendMessage">
+            <http:operation location="sendMessage"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
+            <http:operation location="restoreMessagesFromDeadLetterQueue"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="purgeMessagesOfQueue">
+            <http:operation location="purgeMessagesOfQueue"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="browseQueue">
+            <http:operation location="browseQueue"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalMessagesInQueue">
+            <http:operation location="getTotalMessagesInQueue"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteQueue">
+            <http:operation location="deleteQueue"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempTopicSubscriptions">
-            <http:operation location="getAllLocalTempTopicSubscriptions"/>
+            <http:operation location="getAllLocalTempTopicSubscriptions"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getQueueRolePermission">
+            <http:operation location="getQueueRolePermission"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <http:operation location="getUserRoles"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <http:operation location="getMessageCount"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
-            <http:operation location="getAllSubscriptions"/>
+            <http:operation location="getAllSubscriptions"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
-            <http:operation location="restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
+            <http:operation location="restoreMessagesFromDeadLetterQueueWithDifferentDestination"></http:operation>
             <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
+                <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.1.146:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.1.146:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://10.100.1.146:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

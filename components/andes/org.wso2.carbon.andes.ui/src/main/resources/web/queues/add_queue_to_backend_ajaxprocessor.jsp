@@ -16,7 +16,5 @@
     }
 
 %><%=message%><%
-    QueueRolePermission[] queueRolePermission = stub.getQueueRolePermission(queue);
     session.setAttribute("queue", queue);
-    session.setAttribute("queueRolePermission", queueRolePermission);
 %>
