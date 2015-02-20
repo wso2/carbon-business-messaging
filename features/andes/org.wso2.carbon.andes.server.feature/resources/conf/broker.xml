@@ -318,12 +318,12 @@ expression of the property. -->
         </messageDeletion>
 
         <!--
-            0 - Default Selector Mechanism
-	    1 - BitMaps
+            SIMPLE - Default Selector Mechanism
+	        BITMAPS - BitMaps
             When using the subscriptions and topics in large quantity, BitMaps are faster than
             the existing ones
          -->
-        <topicMatching>0</topicMatching>
+        <topicMatching>SIMPLE</topicMatching>
 
     </performanceTuning>
 
