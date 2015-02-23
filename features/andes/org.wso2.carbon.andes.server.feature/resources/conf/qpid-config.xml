@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  ~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~   WSO2 Inc. licenses this file to you under the Apache License,
   ~   Version 2.0 (the "License"); you may not use this file except
@@ -28,7 +28,7 @@
     <connector>
         <!-- To enable SSL edit the keystorePath and keystorePassword
      and set enabled to true.
-             To disasble Non-SSL port set sslOnly to true -->
+             To disable Non-SSL port set sslOnly to true -->
         <ssl>
             <enabled>true</enabled>
             <sslOnly>false</sslOnly>

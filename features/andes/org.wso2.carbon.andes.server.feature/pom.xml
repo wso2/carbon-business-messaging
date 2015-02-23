@@ -71,7 +71,7 @@
             <artifactId>commons-cli</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.disruptor.wso2</groupId>
+            <groupId>org.wso2.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
         <dependency>
@@ -170,7 +170,7 @@
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes:${andes.dependency.version}</bundleDef>
-                                <bundleDef>com.googlecode.disruptor.wso2:disruptor</bundleDef>
+                                <bundleDef>org.wso2.lmax:disruptor</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration.wso2:commons-configuration</bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
