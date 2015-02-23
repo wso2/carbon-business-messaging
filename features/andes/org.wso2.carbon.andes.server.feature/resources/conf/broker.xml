@@ -328,6 +328,14 @@ expression of the property. -->
             <contentRemovalTaskInterval>3</contentRemovalTaskInterval>
         </messageDeletion>
 
+        <!--
+            SIMPLE - Default Selector Mechanism
+	        BITMAPS - BitMaps
+            When using the subscriptions and topics in large quantity, BitMaps are faster than
+            the existing ones
+         -->
+        <topicMatching>SIMPLE</topicMatching>
+
     </performanceTuning>
 
     <!-- This section is about how you want to view messaging statistics from the admin console and
