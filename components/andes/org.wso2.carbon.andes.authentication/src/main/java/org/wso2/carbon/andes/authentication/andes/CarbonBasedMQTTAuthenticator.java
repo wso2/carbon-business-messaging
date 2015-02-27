@@ -1,4 +1,4 @@
-package org.wso2.carbon.andes.authentication.mqtt;
+package org.wso2.carbon.andes.authentication.andes;
 
 import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.server.IAuthenticator;
@@ -34,7 +34,6 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
             String errorMsg = String.format("unable to authenticate user : %s", username);
             logger.error(errorMsg, e);
         }
-         
         
         return isAuthenticated;
     }

@@ -91,7 +91,7 @@ expression of the property. -->
                    <!--Class name of the authenticator to use. class should inherit from org.dna.mqtt.moquette.server.IAuthenticator
                        Note: default implementation authenticates against carbon user store based on supplied username/password
                    --> 
-                   <authenticator>org.wso2.carbon.andes.authentication.mqtt.CarbonBasedMQTTAuthenticator</authenticator>
+                   <authenticator>org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator</authenticator>
             </security>
 
         </mqtt>
