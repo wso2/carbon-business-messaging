@@ -65,7 +65,8 @@
                         </Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.andes.authentication.internal,
-                            org.wso2.carbon.andes.authentication.*
+                            org.wso2.carbon.andes.authentication.*,
+                            org.wso2.carbon.andes.authentication.mqtt.*
                         </Export-Package>
                         <Import-Package>
                             org.wso2.andes.*,

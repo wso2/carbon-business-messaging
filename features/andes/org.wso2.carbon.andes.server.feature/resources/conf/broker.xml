@@ -75,10 +75,25 @@ expression of the property. -->
             and vise versa -->
             <deliveryBufferSize>32768</deliveryBufferSize>
             
-            <users>
-                <user userName="testuser1" password="password1" />
-                <user userName="testuser2" password="password2" />
-            </users>
+
+            <security>
+                   <!--
+                       Instructs the MQTT server weather clients should always send credentials when establishing a connection.
+                       Possible values:
+                        OPTIONAL: This is the default value. MQTT clients may or may not send credentials. If a client sends credentials server will validates it. 
+                                  If client doesn't send credentials then server will not authenticate, but allows client to establish the connection. 
+                                  This behavior adheres to MQTT 3.1 specification.
+                        REQUIRED: Clients should always provide credentials when connecting. If client doesn't send credentials or they are invalid server rejects
+                                  the connection
+                   -->
+                   <authentication>OPTIONAL</authentication>
+                  
+                   <!--Class name of the authenticator to use. class should inherit from org.dna.mqtt.moquette.server.IAuthenticator
+                       Note: default implementation authenticates against carbon user store based on supplied username/password
+                   --> 
+                   <authenticator>org.wso2.carbon.andes.authentication.mqtt.CarbonBasedMQTTAuthenticator</authenticator>
+            </security>
+
         </mqtt>
 
     </transports>
