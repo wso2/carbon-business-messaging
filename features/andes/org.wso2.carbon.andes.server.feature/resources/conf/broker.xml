@@ -78,7 +78,7 @@ expression of the property. -->
 
             <security>
                    <!--
-                       Instructs the MQTT server weather clients should always send credentials when establishing a connection.
+                       Instructs the MQTT server whether clients should always send credentials when establishing a connection.
                        Possible values:
                         OPTIONAL: This is the default value. MQTT clients may or may not send credentials. If a client sends credentials server will validates it. 
                                   If client doesn't send credentials then server will not authenticate, but allows client to establish the connection. 
