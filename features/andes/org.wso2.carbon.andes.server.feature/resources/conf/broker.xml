@@ -78,18 +78,25 @@ expression of the property. -->
 
             <security>
                    <!--
-                       Instructs the MQTT server whether clients should always send credentials when establishing a connection.
+                       Instructs the MQTT server whether clients should always send credentials
+                       when establishing a connection.
                        Possible values:
-                        OPTIONAL: This is the default value. MQTT clients may or may not send credentials. If a client sends credentials server will validates it. 
-                                  If client doesn't send credentials then server will not authenticate, but allows client to establish the connection. 
+                        OPTIONAL: This is the default value. MQTT clients may or may not send 
+                                  credentials. If a client sends credentials server will 
+                                  validates it. 
+                                  If client doesn't send credentials then server will not 
+                                  authenticate, but allows client to establish the connection. 
                                   This behavior adheres to MQTT 3.1 specification.
-                        REQUIRED: Clients should always provide credentials when connecting. If client doesn't send credentials or they are invalid server rejects
-                                  the connection
+                        REQUIRED: Clients should always provide credentials when connecting. 
+                                  If client doesn't send credentials or they are invalid 
+                                  server rejects the connection.
                    -->
                    <authentication>OPTIONAL</authentication>
                   
-                   <!--Class name of the authenticator to use. class should inherit from org.dna.mqtt.moquette.server.IAuthenticator
-                       Note: default implementation authenticates against carbon user store based on supplied username/password
+                   <!--Class name of the authenticator to use. class should 
+                       inherit from org.dna.mqtt.moquette.server.IAuthenticator
+                       Note: default implementation authenticates against carbon user store
+                       based on supplied username/password
                    --> 
                    <authenticator>org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator</authenticator>
             </security>
