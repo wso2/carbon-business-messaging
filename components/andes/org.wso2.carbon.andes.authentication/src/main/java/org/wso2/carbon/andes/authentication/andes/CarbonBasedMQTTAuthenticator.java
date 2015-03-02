@@ -50,16 +50,14 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
 
             if (MultitenantConstants.INVALID_TENANT_ID != tenantId) {
                 UserRealm userRealm =
-                                      AuthenticationServiceDataHolder.getInstance()
-                                                                     .getRealmService()
+                                      AuthenticationServiceDataHolder.getInstance().getRealmService()
                                                                      .getTenantUserRealm(tenantId);
                 UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                 isAuthenticated =
                                   userStoreManager.authenticate(MultitenantUtils.getTenantAwareUsername(username),
                                                                 password);
             } else {
-                logger.error(String.format("access denied, unable to find a tenant for user name : %s",
-                                           username));
+                logger.error(String.format("access denied, unable to find a tenant for user name : %s", username));
             }
 
         } catch (UserStoreException e) {
@@ -83,8 +81,7 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
         String domainName = MultitenantUtils.getTenantDomain(username);
         if (domainName != null) {
             TenantManager tenantManager =
-                                          AuthenticationServiceDataHolder.getInstance()
-                                                                         .getRealmService()
+                                          AuthenticationServiceDataHolder.getInstance().getRealmService()
                                                                          .getTenantManager();
             tenantId = tenantManager.getTenantId(domainName);
         }
