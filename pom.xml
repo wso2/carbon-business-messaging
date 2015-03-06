@@ -453,7 +453,7 @@ considered very carefully. -->
 
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.3.0</carbon.platform.version>
-        <carbon.commons.version>4.3.2</carbon.commons.version>
+        <carbon.commons.version>4.3.6</carbon.commons.version>
         <carbon.messaging.version>3.0.0-SNAPSHOT</carbon.messaging.version>
         <andes.dependency.version>3.0.0-SNAPSHOT</andes.dependency.version>
         <andes.export.version>3.0.0</andes.export.version>
