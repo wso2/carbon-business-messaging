@@ -36,6 +36,7 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.listeners.AndesServerShutDownListener;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -43,6 +44,7 @@ import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
+import org.wso2.carbon.core.ServerShutdownHandler;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
@@ -161,6 +163,9 @@ public class QpidServiceComponent {
                     this.brokerShouldBeStarted = true;
                 }
             }
+            AndesServerShutDownListener andesServerShutDownListener = new AndesServerShutDownListener(qpidService);
+            bundleCtx.registerService(ServerShutdownHandler.class.getName(), andesServerShutDownListener, null);
+
         } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
             throw new RuntimeException("Invalid configuration found in a configuration file", e);
@@ -169,18 +174,7 @@ public class QpidServiceComponent {
     }
 
     protected void deactivate(ComponentContext ctx) {
-        // Unregister QpidService
-        if (null != qpidService) {
-            qpidService.unregister();
-        }
-
-        // Shut down the Andes broker
-        try {
-            AndesKernelBoot.shutDownAndesKernel();
-        } catch (Exception e) {
-            log.error("Error while shutting down Andes kernel. ", e);
-        }
-        ApplicationRegistry.remove();
+        // By this time, through the AndesServerShutDownListener, All other services/ workers including this service, have been closed.
     }
 
     protected void setAccessKey(AuthenticationService authenticationService) {
