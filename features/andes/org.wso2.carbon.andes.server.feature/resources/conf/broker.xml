@@ -282,6 +282,10 @@ expression of the property. -->
             Increasing this value will speed-up the message sending mechanism. But the system load
             will increase. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
+
+            <!-- The size of the batch represents, at a given time the number of messages that could 
+            be retrived from the database. -->
+            <contentReadBatchSize>65000</contentReadBatchSize>
         </delivery>
 
         <ackHandling>
