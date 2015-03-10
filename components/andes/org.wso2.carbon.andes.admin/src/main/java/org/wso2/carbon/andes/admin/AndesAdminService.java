@@ -143,10 +143,10 @@ public class AndesAdminService extends AbstractAdmin {
      *
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws BrokerManagerAdminException
      */
     public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
-            throws Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -163,13 +163,12 @@ public class AndesAdminService extends AbstractAdmin {
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param destination         The new destination queue for the messages in the same tenant
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws BrokerManagerAdminException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs,
                                                                            String destination,
                                                                            String deadLetterQueueName)
-            throws
-            Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -186,10 +185,10 @@ public class AndesAdminService extends AbstractAdmin {
      *
      * @param messageIDs          Browser Message Id / External Message Id list to be deleted
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws BrokerManagerAdminException
      */
     public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
-            throws Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -201,12 +200,12 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Deletes messages from a queue
+     * Deletes all messages from a queue
      *
      * @param queueName queue name
-     * @throws Exception
+     * @throws BrokerManagerAdminException
      */
-    public void purgeMessagesOfQueue(String queueName) throws Exception {
+    public void purgeMessagesOfQueue(String queueName) throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();

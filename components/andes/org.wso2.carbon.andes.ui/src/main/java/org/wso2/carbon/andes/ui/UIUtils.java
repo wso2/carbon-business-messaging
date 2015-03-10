@@ -58,6 +58,10 @@ public class UIUtils {
     private static final String ANDES_CONF_SSL_KEYSTORE_PASSWORD = "keystorePassword";
     private static final String ANDES_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
     private static final String ANDES_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
+    private static final String CARBON_CLIENT_ID = "carbon";
+    private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
+    private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
+    private static final String ANDES_ADMIN_SERVER_NAME = "AndesAdminService";
 
     /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
@@ -86,7 +90,7 @@ public class UIUtils {
                                                                  HttpServletRequest request)
             throws AxisFault {
         String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-        backendServerURL = backendServerURL + "AndesAdminService";
+        backendServerURL = backendServerURL + ANDES_ADMIN_SERVER_NAME;
         ConfigurationContext configContext =
                 (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
         AndesAdminServiceStub stub = new AndesAdminServiceStub(configContext, backendServerURL);
@@ -180,8 +184,10 @@ public class UIUtils {
                                                                                                   .getSubscriberQueueName());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
                                                                                                      .getSubscriptionIdentifier());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail.getDurable());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail.getActive());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail
+                                                                                      .getDurable());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail
+                                                                                     .getActive());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber
                         (subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail
@@ -211,9 +217,6 @@ public class UIUtils {
             throws FileNotFoundException,
                    XMLStreamException, AndesException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
-        String CARBON_CLIENT_ID = "carbon";
-        String CARBON_VIRTUAL_HOST_NAME = "carbon";
-        String CARBON_DEFAULT_HOSTNAME = "localhost";
 
         String CARBON_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT));
 
@@ -236,10 +239,10 @@ public class UIUtils {
         OMElement sslTrustStorePwd = sslNode.getFirstChildWithName(
                 new QName(ANDES_CONF_SSL_TRUSTSTORE_PASSWORD));
 
-        String KEY_STORE_PATH = sslKeyStorePath.getText();
-        String TRUST_STORE_PATH = sslTrustStorePath.getText();
-        String SSL_KEYSTORE_PASSWORD = sslKeyStorePwd.getText();
-        String SSL_TRUSTSTORE_PASSWORD = sslTrustStorePwd.getText();
+        String sslKeyStorePathText = sslKeyStorePath.getText();
+        String sslTrustStorePathText = sslTrustStorePath.getText();
+        String sslKeyStorePwdText = sslKeyStorePwd.getText();
+        String sslTrustStorePwdText = sslTrustStorePwd.getText();
 
         // as it is nt possible to obtain the password of for the given user, we use service generated access key
         // to authenticate the user
@@ -251,9 +254,9 @@ public class UIUtils {
 
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                   ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + TRUST_STORE_PATH +
-                   "'&trust_store_password='" + SSL_TRUSTSTORE_PASSWORD + "'&key_store='" +
-                   KEY_STORE_PATH + "'&key_store_password='" + SSL_KEYSTORE_PASSWORD + "''";
+                   ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + sslTrustStorePathText +
+                   "'&trust_store_password='" + sslTrustStorePwdText + "'&key_store='" +
+                   sslKeyStorePathText + "'&key_store_password='" + sslKeyStorePwdText + "''";
         } else {
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
@@ -284,7 +287,7 @@ public class UIUtils {
     }
 
     /**
-     * Filter the full user-roles list to suit the range
+     * Filter the full user-roles list to suit the range.
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
      * @param fullList      full list of roles
@@ -295,17 +298,22 @@ public class UIUtils {
     @SuppressWarnings("UnusedDeclaration")
     public static ArrayList<QueueRolePermission> getFilteredRoleList
     (ArrayList<QueueRolePermission> fullList, int startingIndex, int maxRolesCount) {
-        int resultSetSize = maxRolesCount;
+        int numberOfPermissionsToShow = maxRolesCount;
 
+        // Calculating the amount of permissions to show
         if ((fullList.size() - startingIndex) < maxRolesCount) {
-            resultSetSize = (fullList.size() - startingIndex);
+            numberOfPermissionsToShow = (fullList.size() - startingIndex);
         }
 
-        ArrayList<QueueRolePermission> resultList = new ArrayList<QueueRolePermission>();
-        for (int i = startingIndex; i < startingIndex + resultSetSize; i++) {
-            resultList.add(fullList.get(i));
+        /*
+         * Add permissions from the given starting index to the calculated amount of permissions to
+         * show.
+        */
+        ArrayList<QueueRolePermission> permissionList = new ArrayList<QueueRolePermission>();
+        for (int i = startingIndex; i < startingIndex + numberOfPermissionsToShow; i++) {
+            permissionList.add(fullList.get(i));
         }
 
-        return resultList;
+        return permissionList;
     }
 }

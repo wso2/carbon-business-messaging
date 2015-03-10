@@ -627,8 +627,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     private static void authorizePermissionsToLoggedInUser(String queueName,
                                                            String queueId,
-                                                           UserRealm userRealm) throws
-                                                                                QueueManagerException {
+                                                           UserRealm userRealm)
+                                                                        throws QueueManagerException {
         //For registry we use a modified queue name
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
 
@@ -650,8 +650,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 userRealm.getAuthorizationManager().authorizeRole(
                         roleName, queueId, TreeNode.Permission.PUBLISH.toString().toLowerCase());
             } else {
-                log.warn("Unable to provide permissions to the user, " +
-                         " " + username + ", to subscribe and publish to " + newQueueName);
+                throw new QueueManagerException("Error while giving permissions.");
             }
         } catch (UserStoreException e) {
             throw new QueueManagerException("Error while creating " + newQueueName, e);
