@@ -38,20 +38,20 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Provides all the admin services that is available through the UI(JSP).
+ * Provides all the andes admin services that is available through the UI(JSP).
  */
 public class AndesAdminService extends AbstractAdmin {
     private static Log log = LogFactory.getLog(AndesAdminService.class);
 
     /**
-     * Creates a queue
+     * Creates a queue.
      *
-     * @param queueName new queue name
+     * @param queueName New queue name.
      * @throws BrokerManagerAdminException
      */
     public void createQueue(String queueName) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
-                .getQueueManagerService();
+                                                                        .getQueueManagerService();
         try {
             queueManagerService.createQueue(queueName);
         } catch (QueueManagerException e) {
@@ -61,17 +61,18 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Gets all queues
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allQueues' is used to sort and to convert to an array
+     * Gets all queues.
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allQueues' is used to sort and to
+     * convert to an array.
      *
-     * @return an array of queues
+     * @return An array of queues.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public org.wso2.carbon.andes.admin.internal.Queue[] getAllQueues()
             throws BrokerManagerAdminException {
         List<org.wso2.carbon.andes.admin.internal.Queue> allQueues
-                = new ArrayList<org.wso2.carbon.andes.admin.internal.Queue>();
+                                        = new ArrayList<org.wso2.carbon.andes.admin.internal.Queue>();
         org.wso2.carbon.andes.admin.internal.Queue[] queuesDTO;
         try {
             QueueManagerService queueManagerService =
@@ -79,7 +80,8 @@ public class AndesAdminService extends AbstractAdmin {
             List<org.wso2.carbon.andes.core.types.Queue> queues = queueManagerService.getAllQueues();
             queuesDTO = new org.wso2.carbon.andes.admin.internal.Queue[queues.size()];
             for (org.wso2.carbon.andes.core.types.Queue queue : queues) {
-                org.wso2.carbon.andes.admin.internal.Queue queueDTO = new org.wso2.carbon.andes.admin.internal.Queue();
+                org.wso2.carbon.andes.admin.internal.Queue queueDTO =
+                                                    new org.wso2.carbon.andes.admin.internal.Queue();
                 queueDTO.setQueueName(queue.getQueueName());
                 queueDTO.setMessageCount(queue.getMessageCount());
                 queueDTO.setCreatedTime(queue.getCreatedTime());
@@ -100,9 +102,9 @@ public class AndesAdminService extends AbstractAdmin {
      * Gets the message count for a queue
      * Suppressing 'UnusedDeclaration' as it is called by webservice
      *
-     * @param destinationName destination name
-     * @param msgPattern      value should be either 'queue' of 'topic'
-     * @return message count
+     * @param destinationName Destination name.
+     * @param msgPattern      Value should be either 'queue' or 'topic'.
+     * @return Message count.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("UnusedDeclaration")
@@ -121,9 +123,9 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Deletes a queue
+     * Deletes a queue.
      *
-     * @param queueName queue name
+     * @param queueName Queue name.
      * @throws BrokerManagerAdminException
      */
     public void deleteQueue(String queueName) throws BrokerManagerAdminException {
@@ -141,12 +143,12 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Restore messages from the Dead Letter Queue to their original queues.
      *
-     * @param messageIDs          Browser Message Id / External Message Id list
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @param messageIDs          Browser Message Id / External Message Id list.
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant.
+     * @throws BrokerManagerAdminException
      */
     public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
-            throws Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -160,21 +162,20 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Restore messages from the Dead Letter Queue to another queue in the same tenant.
      *
-     * @param messageIDs          Browser Message Id / External Message Id list
-     * @param destination         The new destination queue for the messages in the same tenant
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @param messageIDs          Browser Message Id / External Message Id list.
+     * @param destination         The new destination queue for the messages in the same tenant.
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant.
+     * @throws BrokerManagerAdminException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs,
                                                                            String destination,
                                                                            String deadLetterQueueName)
-            throws
-            Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs, destination,
-                                                                                           deadLetterQueueName);
+            queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
+                                                                   destination, deadLetterQueueName);
         } catch (QueueManagerException e) {
             log.error("Error in restoring message from dead letter queue", e);
             throw new BrokerManagerAdminException("Error in restoring message from dead letter queue.", e);
@@ -184,12 +185,12 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Delete messages from the Dead Letter Queue and delete their content.
      *
-     * @param messageIDs          Browser Message Id / External Message Id list to be deleted
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @param messageIDs          Browser Message Id / External Message Id list to be deleted.
+     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant.
+     * @throws BrokerManagerAdminException
      */
     public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
-            throws Exception {
+            throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -201,12 +202,12 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Deletes messages from a queue
+     * Deletes all messages from a queue.
      *
-     * @param queueName queue name
-     * @throws Exception
+     * @param queueName Queue name.
+     * @throws BrokerManagerAdminException
      */
-    public void purgeMessagesOfQueue(String queueName) throws Exception {
+    public void purgeMessagesOfQueue(String queueName) throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -218,10 +219,11 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Gets all subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Gets all subscriptions.
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
+     * to an array.
      *
-     * @return an array of subscriptions
+     * @return An array of {@link Subscription}.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -230,9 +232,9 @@ public class AndesAdminService extends AbstractAdmin {
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getAllSubscriptions();
+                AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions =
+                                                    subscriptionManagerService.getAllSubscriptions();
             subscriptionsDTO = new Subscription[subscriptions.size()];
             for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
                 Subscription subscriptionDTO = new Subscription();
@@ -242,8 +244,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
-                                                                                  .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
+                                                    sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -259,10 +261,11 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Gets all durable queue subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Gets all durable queue subscriptions.
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
+     * to an array.
      *
-     * @return an array of subscriptions
+     * @return An array of {@link Subscription}.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -283,8 +286,7 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
-                                                                                  .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -301,9 +303,10 @@ public class AndesAdminService extends AbstractAdmin {
 
     /**
      * Gets all local temporary queue subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
+     * to an array.
      *
-     * @return an array of subscriptions
+     * @return An array of {@link Subscription}.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -324,8 +327,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
-                                                                                  .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
+                                                    sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -342,9 +345,10 @@ public class AndesAdminService extends AbstractAdmin {
 
     /**
      * Gets all durable topic subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
+     * to an array.
      *
-     * @return an array of subscriptions
+     * @return An array of {@link Subscription}.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -365,8 +369,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
-                                                                                  .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
+                                                    sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -383,9 +387,10 @@ public class AndesAdminService extends AbstractAdmin {
 
     /**
      * Gets all local temporary topic subscriptions.
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert to an array
+     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
+     * to an array.
      *
-     * @return an array of subscriptions
+     * @return An array of {@link Subscription}.
      * @throws BrokerManagerAdminException
      */
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -406,8 +411,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
-                                                                                  .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
+                                                    sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -425,8 +430,8 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Update the permission of the given queue name
      *
-     * @param queueName               - Name of the queue
-     * @param queueRolePermissionsDTO {@link org.wso2.carbon.andes.admin.internal.QueueRolePermission}
+     * @param queueName               Name of the queue
+     * @param queueRolePermissionsDTO A {@link org.wso2.carbon.andes.admin.internal.QueueRolePermission}
      * @throws BrokerManagerAdminException
      */
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissionsDTO)
@@ -437,17 +442,18 @@ public class AndesAdminService extends AbstractAdmin {
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
         try {
             if (queueRolePermissionsDTO != null && queueRolePermissionsDTO.length > 0) {
-                List<org.wso2.carbon.andes.core.types.QueueRolePermission> permissionList = new ArrayList<org.wso2
-                        .carbon.andes.core.types.QueueRolePermission>();
+                List<org.wso2.carbon.andes.core.types.QueueRolePermission> permissionList =
+                                new ArrayList<org.wso2.carbon.andes.core.types.QueueRolePermission>();
                 for (QueueRolePermission queueRolePermission : queueRolePermissionsDTO) {
-                    org.wso2.carbon.andes.core.types.QueueRolePermission permission = new org.wso2.carbon.andes.core
-                            .types.QueueRolePermission();
+                    org.wso2.carbon.andes.core.types.QueueRolePermission permission =
+                                        new org.wso2.carbon.andes.core.types.QueueRolePermission();
                     permission.setRoleName(queueRolePermission.getRoleName());
                     permission.setAllowedToConsume(queueRolePermission.isAllowedToConsume());
                     permission.setAllowedToPublish(queueRolePermission.isAllowedToPublish());
                     permissionList.add(permission);
                 }
-                rolePermissions = new org.wso2.carbon.andes.core.types.QueueRolePermission[permissionList.size()];
+                rolePermissions =
+                    new org.wso2.carbon.andes.core.types.QueueRolePermission[permissionList.size()];
                 permissionList.toArray(rolePermissions);
                 queueManagerService.updatePermission(queueName, rolePermissions);
             }
@@ -461,7 +467,7 @@ public class AndesAdminService extends AbstractAdmin {
      * Get roles of the current logged user
      * If user has admin role, then all available roles will be return
      *
-     * @return Array of user roles
+     * @return Array of user roles.
      * @throws BrokerManagerAdminException
      */
     public String[] getUserRoles() throws BrokerManagerAdminException {
@@ -480,7 +486,7 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Get all permission of the given queue name
      *
-     * @param queueName - Name of the queue
+     * @param queueName Name of the queue
      * @return Array of {@link org.wso2.carbon.andes.admin.internal.QueueRolePermission}
      * @throws BrokerManagerAdminException
      */
@@ -499,7 +505,8 @@ public class AndesAdminService extends AbstractAdmin {
                 queueRolePermissionDTO.setAllowedToPublish(rolePermission.isAllowedToPublish());
                 queueRolePermissionDTOList.add(queueRolePermissionDTO);
             }
-            return queueRolePermissionDTOList.toArray(new QueueRolePermission[queueRolePermissionDTOList.size()]);
+            return queueRolePermissionDTOList.toArray(
+                                        new QueueRolePermission[queueRolePermissionDTOList.size()]);
         } catch (QueueManagerException e) {
             log.error("Unable to retrieve queue permission", e);
             throw new BrokerManagerAdminException("Unable to retrieve queue permission.", e);
@@ -509,9 +516,9 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Browse the given queue name by start index and max messages count
      *
-     * @param queueName     - Name of the queue
-     * @param startingIndex - Start point of the queue messages
-     * @param maxMsgCount   - Maximum messages from start index
+     * @param queueName     Name of the queue
+     * @param startingIndex Start point of the queue messages
+     * @param maxMsgCount   Maximum messages from start index
      * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
      * @throws BrokerManagerAdminException
      */
@@ -521,8 +528,9 @@ public class AndesAdminService extends AbstractAdmin {
                 .getQueueManagerService();
         List<Message> messageDTOList = new ArrayList<Message>();
         try {
-            org.wso2.carbon.andes.core.types.Message[] messages = queueManagerService.browseQueue(queueName,
-                                                                                                  getCurrentUser(), getAccessKey(), startingIndex, maxMsgCount);
+            org.wso2.carbon.andes.core.types.Message[] messages =
+                    queueManagerService.browseQueue(queueName, getCurrentUser(), getAccessKey(),
+                                                                        startingIndex, maxMsgCount);
             for (org.wso2.carbon.andes.core.types.Message message : messages) {
                 Message messageDTO = new Message();
                 messageDTO.setMsgProperties(message.getMsgProperties());
@@ -549,7 +557,7 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Total messages in the given queue
      *
-     * @param queueName - Name of the queue
+     * @param queueName Name of the queue
      * @return Total count of the messages
      * @throws BrokerManagerAdminException
      */
@@ -567,14 +575,14 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Send messages to given queue
      *
-     * @param queueName        - Name of the queue
-     * @param jmsType          - JMS Type
-     * @param jmsCorrelationID - JMS Correlation Id
-     * @param numberOfMessages - Number of times
-     * @param message          - Message content
-     * @param deliveryMode     - Delivery mode
-     * @param priority         - Message priority
-     * @param expireTime       - Message expire time
+     * @param queueName        Name of the queue
+     * @param jmsType          JMS Type
+     * @param jmsCorrelationID JMS Correlation Id
+     * @param numberOfMessages Number of times
+     * @param message          Message content
+     * @param deliveryMode     Delivery mode
+     * @param priority         Message priority
+     * @param expireTime       Message expire time
      * @return true if send message successful and false otherwise
      * @throws BrokerManagerAdminException
      */
@@ -595,10 +603,18 @@ public class AndesAdminService extends AbstractAdmin {
         }
     }
 
+    /**
+     * Gets the access key for a amqp url.
+     * @return The access key.
+     */
     public String getAccessKey() {
         return AndesBrokerManagerAdminServiceDSHolder.getInstance().getAccessKey();
     }
 
+    /**
+     * Get current user's username.
+     * @return The user name.
+     */
     private String getCurrentUser() {
         String userName;
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != 0) {
@@ -610,8 +626,15 @@ public class AndesAdminService extends AbstractAdmin {
         return userName.trim();
     }
 
+    /**
+     * A comparator class to order queues.
+     */
     public class CustomQueueComparator implements Comparator<Queue> {
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public int compare(Queue queue1, Queue queue2) {
             long comparedValue = queue1.getMessageCount() - queue2.getMessageCount();
             int returnValue = 0;
@@ -624,8 +647,15 @@ public class AndesAdminService extends AbstractAdmin {
         }
     }
 
+    /**
+     * A comparator class to order subscriptions.
+     */
     public class CustomSubscriptionComparator implements Comparator<Subscription> {
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public int compare(Subscription sub1, Subscription sub2) {
             return sub1.getNumberOfMessagesRemainingForSubscriber() - sub2.getNumberOfMessagesRemainingForSubscriber();
         }

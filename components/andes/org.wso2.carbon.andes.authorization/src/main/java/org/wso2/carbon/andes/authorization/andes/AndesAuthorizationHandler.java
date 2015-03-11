@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *   WSO2 Inc. licenses this file to you under the Apache License,
- *   Version 2.0 (the "License"); you may not use this file except
- *   in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing,
- *   software distributed under the License is distributed on an
- *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *   KIND, either express or implied.  See the License for the
- *   specific language governing permissions and limitations
- *   under the License.
- */
+*  Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 
 package org.wso2.carbon.andes.authorization.andes;
 
@@ -35,33 +35,101 @@ import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 /**
- * This class includes the actual access control logic
+ * This class evaluates the user permissions that are allowed for a user when doing an action for a
+ * certain queue, topic or durable topic.
+ *
+ * @see <a href="https://qpid.apache.org/releases/qpid-0.24/cpp-broker/book/chap-Messaging_User_Guide-Security.html#tabl-Messaging_User_Guide-ACL_Syntax-ACL_Rulesaction">Qpid Actions</a>
  */
 public class AndesAuthorizationHandler {
 
+    /**
+     * The logger used to log information, warnings, errors, etc.
+     */
     private static final Log log = LogFactory.getLog(AndesAuthorizationHandler.class);
+
+    /**
+     * Pre-declared name for amqp "Default Exchange".
+     */
     private static final String DEFAULT_EXCHANGE = "default";
+
+    /**
+     * Pre-declared name for amqp "Direct Exchange".
+     */
     private static final String DIRECT_EXCHANGE = "amq.direct";
+
+    /**
+     * Pre-declared name for amqp "Topic Exchange".
+     */
     private static final String TOPIC_EXCHANGE = "amq.topic";
+
+    /**
+     * Permission string for changing permission for a queue/topic.
+     */
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
+
+    /**
+     * Underscore character for routing key change.
+     */
     private static final String AT_REPLACE_CHAR = "_";
+
+    /**
+     * Permission value for changing permissions through UI.
+     */
     private static final String UI_EXECUTE = "ui.execute";
-    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/addQueue";
+
+    /**
+     * Permission path for adding a queue.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE =
+                                                        "/permission/admin/manage/queue/addQueue";
+
+    /**
+     * Permission path for deleting a queue.
+     */
     private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE =
-            "/permission/admin/manage/queue/deleteQueue";
+                                                    "/permission/admin/manage/queue/deleteQueue";
+
+    /**
+     * Permission path for purging a queue messages.
+     */
     private static final String PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE =
-            "/permission/admin/manage/queue/purgeQueue";
-    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC = "/permission/admin/manage/topic/addTopic";
+                                                        "/permission/admin/manage/queue/purgeQueue";
+
+    /**
+     * permission path for adding a topic.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC =
+                                                        "/permission/admin/manage/topic/addTopic";
+
+    /**
+     * Permission path for deleting a topic.
+     */
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC =
-            "/permission/admin/manage/topic/deleteTopic";
+                                                    "/permission/admin/manage/topic/deleteTopic";
+
+    /**
+     * Permission path for purging topic messages.
+     */
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC =
-            "/permission/admin/manage/topic/purgeTopic";
+                                                    "/permission/admin/manage/topic/purgeTopic";
+
+    /**
+     * Prefix for creating an internal role for queues.
+     */
     private static final String QUEUE_ROLE_PREFIX = "Q_";
+
+    /**
+     * Prefix for creating an internal role for topics.
+     */
     private static final String TOPIC_ROLE_PREFIX = "T_";
+
+    /**
+     * The prefix used for temporary topic destination names.
+     */
     private static final String TEMP_QUEUE_SUFFIX = "tmp_";
 
     /**
-     * Handle creating queue
+     * Evaluates user permissions when creating a queue.
      *
      * @param username   User who is trying to create the queue
      * @param userRealm  User's Realm
@@ -72,28 +140,30 @@ public class AndesAuthorizationHandler {
     public static Result handleCreateQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         try {
             if (null != userRealm) {
                 if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
-                    return Result.ALLOWED;
+                    accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                                                                PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE, UI_EXECUTE)) {
+                                            PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
-                    return Result.ALLOWED;
+                    accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                                                                PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
+                                            PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
-                    return Result.ALLOWED;
-                } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
-                                                         properties.get(ObjectProperties.Property.OWNER)) && Boolean.valueOf(
-                        properties.get(ObjectProperties.Property.DURABLE))) {
+                    accessResult = Result.ALLOWED;
+                } else if (isDurableTopicSubscriberQueue(
+                                                    properties.get(ObjectProperties.Property.NAME),
+                                                     properties.get(ObjectProperties.Property.OWNER))
+                           && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
-                    return Result.ALLOWED;
+                    accessResult = Result.ALLOWED;
                 } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
                            !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
-                    return Result.ALLOWED;
+                    accessResult = Result.ALLOWED;
                 }
             }
         } catch (RegistryClientException e) {
@@ -102,19 +172,20 @@ public class AndesAuthorizationHandler {
             throw new AndesAuthorizationHandlerException("Error handling create queue.", e);
         }
 
-        return Result.DENIED;
+        return accessResult;
     }
 
     /**
      * Register queue and authorize to login user if login user has permission
-     * Permission not validating when user subscribe to topic or durable topic and allow user to register queue because
-     * topic name (routing key) not pass by andes in first call (CREATE) of subscription. But permission
-     * check in the BIND operation to verify user has permission to subscribe to given topic. It is possible in bind
-     * operation because topic name (routing key) pass by andes.
+     * Permission not validating when user subscribe to topic or durable topic and allow user to
+     * register queue because topic name (routing key) not pass by andes in first call (CREATE) of
+     * subscription. But permission check in the BIND operation to verify user has permission to
+     * subscribe to given topic. It is possible in bind operation because topic name (routing key)
+     * pass by andes.
      *
-     * @param username   - username of logged user
-     * @param userRealm  - @link {org.wso2.carbon.user.api.UserRealm}
-     * @param properties - @link {org.wso2.andes.server.security.access.ObjectProperties}
+     * @param username   username of logged user
+     * @param userRealm  The {@link org.wso2.carbon.user.api.UserRealm}
+     * @param properties {@link org.wso2.andes.server.security.access.ObjectProperties} of the queue
      * @throws RegistryClientException
      * @throws UserStoreException
      */
@@ -139,11 +210,11 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Handle consuming queue
+     * Evaluates whether the user has consuming permissions for a queue, topic or durable topic.
      * <p/>
-     * IMPORTANT : Consuming an AMQP queue is not as same as consuming a JMS queue. The former is an atomic
-     * operation that is allowed for the user who created the queue where as the latter is the binding to an exchange
-     * based on permission granted.
+     * IMPORTANT : Consuming an AMQP queue is not as same as consuming a JMS queue. The former is an
+     * atomic operation that is allowed for the user who created the queue where as the latter is
+     * the binding to an exchange based on permission granted.
      *
      * @param username   User who is trying to consume the queue
      * @param userRealm  User's Realm
@@ -154,35 +225,40 @@ public class AndesAuthorizationHandler {
     public static Result handleConsumeQueue(String username, UserRealm userRealm,
                                             ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         if (null == userRealm) {
-            return Result.DENIED;
-        }
+            accessResult = Result.DENIED;
+        } else {
 
-        // Queue properties
-        String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        String queueID = CommonsUtil.getQueueID(queueName);
+            // Queue properties
+            String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+            String queueID = CommonsUtil.getQueueID(queueName);
 
-        try {
-            // authorise if admin user
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
-                return Result.ALLOWED;
+            try {
+                // authorise if admin user
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
+                        .getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
+                    accessResult = Result.ALLOWED;
 
-                // authorise if either consume or browse queue
-            } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                    username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                return Result.ALLOWED;
+                    // authorise if either consume or browse queue
+                } else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                        username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
+                    accessResult = Result.ALLOWED;
 
+                }
+                // if non of the above deny permission
+                return accessResult;
+            } catch (UserStoreException e) {
+                throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
             }
-            // if non of the above deny permission
-            return Result.DENIED;
-        } catch (UserStoreException e) {
-            throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
         }
+
+        return accessResult;
     }
 
     /**
-     * Authorize binding a queue to an exchange
+     * Authorize binding a destination to an exchange based on permissions.
      *
      * @param username   topicID
      *                   User who is trying to do the binding
@@ -194,6 +270,7 @@ public class AndesAuthorizationHandler {
     public static Result handleBindQueue(String username, UserRealm userRealm,
                                          ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         try {
             if (null != userRealm) {
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -209,51 +286,48 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
-                        return Result.ALLOWED;
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
+                        && isOwnDomain(tenantDomain, queueName)) {
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
                             TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                        return Result.ALLOWED;
-                    } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.QUEUE_NAME), properties.get(ObjectProperties.Property.OWNER))
-                               && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
+                    } else if (isDurableTopicSubscriberQueue(
+                                            properties.get(ObjectProperties.Property.QUEUE_NAME),
+                                            properties.get(ObjectProperties.Property.OWNER)) &&
+                               Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                        accessResult = Result.ALLOWED;
                     } else if (isTopicSubscriberQueue(queueName) && !Boolean.valueOf(
                             properties.get(ObjectProperties.Property.DURABLE))) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 } else if (DIRECT_EXCHANGE.equals(exchangeName)) {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
-                        return Result.ALLOWED;
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
+                        && isOwnDomain(tenantDomain, queueName)) {
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
                             TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 } else if (TOPIC_EXCHANGE.equals(exchangeName)) {
 
-                    // Note:  we don't give topic name as <domain_name/topicname> but just the <topicname> with
-                    // current authorization
-                    //        model,hence commented this
-
-                    /*if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-                        // then we need to remove the domain name path from the topic name before saving to the registry
-                        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-                        routingKey = routingKey.substring(tenantDomain.length() + 1);
-                    }*/
                     String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
                     String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                                                         newRoutingKey.replace("/", "-"));
+                                                                         newRoutingKey
+                                                                                 .replace("/", "-"));
                     UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                     String topicId = CommonsUtil.getTopicID(routingKey);
                     String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                     String tempQueueId = CommonsUtil.getQueueID(queueName);
                     // Authorize
                     if (!userStoreManager.isExistingRole(roleName) && userRealm
-                            .getAuthorizationManager().isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
+                            .getAuthorizationManager().isUserAuthorized(username,
+                                            PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
 
                         //This is triggered when a topic is created.So the user who creates the
                         // topic will get publish/subscribe permissions
@@ -263,17 +337,18 @@ public class AndesAuthorizationHandler {
 
                         authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
                                                                 tempQueueId, userRealm);
-                        return Result.ALLOWED;
-                    } else if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain,
-                                                                               queueName)) {
+                        accessResult = Result.ALLOWED;
+                    } else if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
+                            .getRealmConfiguration())
+                               && isOwnDomain(tenantDomain, queueName)) {
                         // admin user who is in the same tenant domain get permission
 
                         // Store subscription
                         RegistryClient.createSubscription(newRoutingKey, newQName, username);
 
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                                                                    topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                                topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
                         //This is triggered when a new subscriber is arrived when the topic
                         // has already been created
 
@@ -282,7 +357,7 @@ public class AndesAuthorizationHandler {
 
                         authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
                                                                 tempQueueId, userRealm);
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 }
             }
@@ -292,11 +367,11 @@ public class AndesAuthorizationHandler {
             throw new AndesAuthorizationHandlerException("Error handling bind queue.", e);
         }
 
-        return Result.DENIED;
+        return accessResult;
     }
 
     /**
-     * Authorise publishing to a given exchange
+     * Authorise publishing to a given exchange based on user's permissions.
      *
      * @param username   User who is trying to publish
      * @param userRealm  User's Realm
@@ -307,20 +382,23 @@ public class AndesAuthorizationHandler {
     public static Result handlePublishToExchange(String username, UserRealm userRealm,
                                                  ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         try {
             if (null != userRealm) {
 
                 String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
 
                 // Exchange properties
-                String exchangeName = getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
-                String routingKey = getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
+                String exchangeName =
+                        getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
+                String routingKey =
+                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
                 // if queue is owned by a different domain deny permission
                 if (!isOwnDomain(tenantDomain, routingKey)) {
                     log.warn("Permission denied to publish to " + routingKey + " in domain "
                              + tenantDomain);
-                    return Result.DENIED;
+                    accessResult = Result.DENIED;
                 }
 
                 if (DIRECT_EXCHANGE.equals(exchangeName)) {  // Publish to queue
@@ -328,45 +406,38 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize admin user
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
-                        return Result.ALLOWED;
+                    if (UserCoreUtil
+                            .isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
                             TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 } else if (TOPIC_EXCHANGE.equals(exchangeName)) {   // Publish to topic
-
-                    // Note:  we don't give topic name as <domain_name/topicname> but just the <topicname> with
-                    // current authorization
-                    //        model,hence commented this
-
-                    /*if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-                         then we need to remove the domain name path from the topic name before saving to the registry
-                        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-                        routingKey = routingKey.substring(tenantDomain.length() + 1);
-                    }*/
                     String permissionID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize admin user
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
-                        return Result.ALLOWED;
+                    if (UserCoreUtil
+                            .isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, permissionID,
                             TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 } else if (DEFAULT_EXCHANGE.equals(exchangeName)) {  // Publish to queue
 
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) && isOwnDomain(tenantDomain, routingKey)) {
-                        return Result.ALLOWED;
+                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
+                        && isOwnDomain(tenantDomain, routingKey)) {
+                        accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
                             TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
-                        return Result.ALLOWED;
+                        accessResult = Result.ALLOWED;
                     }
                 }
             }
@@ -374,11 +445,11 @@ public class AndesAuthorizationHandler {
             throw new AndesAuthorizationHandlerException("Error handling publish queue.", e);
         }
 
-        return Result.DENIED;
+        return accessResult;
     }
 
     /**
-     * Handle queue unbinding
+     * Evaluates whether the user has unbind permissions for an exchange.
      *
      * @param properties NAME, QUEUE_NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
@@ -410,7 +481,9 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Handle deleting queue
+     * The following method handles the deletion of a queue by checking whether the user is
+     * authorized or not. Admin users and users with queue or topic deletion are allowed to delete
+     * the queue or topic.
      *
      * @param username   User who is trying to publish
      * @param userRealm  User's Realm
@@ -421,38 +494,40 @@ public class AndesAuthorizationHandler {
     public static Result handleDeleteQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         try {
             String queueName =
                     getRawQueueName(properties.get(ObjectProperties.Property.NAME));
             if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
-                unregisterQueue(queueName);
-                return Result.ALLOWED;
+                deleteQueueFromRegistry(queueName);
+                accessResult = Result.ALLOWED;
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                                                            PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
-                unregisterQueue(queueName);
-                return Result.ALLOWED;
+                                        PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
+                deleteQueueFromRegistry(queueName);
+                accessResult = Result.ALLOWED;
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                                                            PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
-                unregisterQueue(queueName);
-                return Result.ALLOWED;
+                                        PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
+                deleteQueueFromRegistry(queueName);
+                accessResult = Result.ALLOWED;
             } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
-                                                     properties.get(ObjectProperties.Property.OWNER)) && Boolean.valueOf(
-                    properties.get(ObjectProperties.Property.DURABLE))) {
-                return Result.ALLOWED;
+                                                 properties.get(ObjectProperties.Property.OWNER))
+                       && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                accessResult = Result.ALLOWED;
             } else if (isTopicSubscriberQueue(queueName) &&
                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                return Result.ALLOWED;
+                accessResult = Result.ALLOWED;
             }
         } catch (RegistryClientException e) {
             throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
         } catch (UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
         }
-        return Result.DENIED;
+        return accessResult;
     }
 
     /**
-     * Handle purging queue
+     * This method handles the deletion of messages of a topic or queue. The deletion of messages is
+     * only allowed if the permissions for the user exists.
      *
      * @param username  User who is trying to publish
      * @param userRealm User's Realm that represents the user store
@@ -461,18 +536,20 @@ public class AndesAuthorizationHandler {
      */
     public static Result handlePurgeQueue(String username, UserRealm userRealm)
             throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
         try {
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) || userRealm.getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE,
-                                      UI_EXECUTE) || userRealm.getAuthorizationManager()
-                        .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE)) {
-
-                return Result.ALLOWED;
+            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
+                || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE)
+                || userRealm.getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE))
+            {
+                accessResult = Result.ALLOWED;
             }
         } catch (UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
         }
-        return Result.DENIED;
+        return accessResult;
     }
 
     /**
@@ -482,13 +559,15 @@ public class AndesAuthorizationHandler {
      * @throws RegistryClientException
      * @throws UserStoreException
      */
-    private static void unregisterQueue(String queueName)
+    private static void deleteQueueFromRegistry(String queueName)
             throws RegistryClientException, UserStoreException {
-        // Delete queue details
+        // Modifying queue name for registry
         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
+
+        // Delete queue details
         RegistryClient.deleteQueue(queueName);
 
-
+        // Deleting internal role created for user.
         removeQueueRoleCreateForLoggedInUser(newQName);
     }
 
@@ -507,8 +586,8 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Internally durable queue routing keys have the format [client id]:[raw routing key]. This method
-     * extracts raw name from it's internal name..
+     * Internally durable queue routing keys have the format [client id]:[raw routing key]. This
+     * method extracts raw name from it's internal name..
      *
      * @param routingKey Internal routing key
      * @return Raw routing key
@@ -518,8 +597,8 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Internally default exchange has the name <<default>> that can not be used as Registry node. This method
-     * trims off leading and trailing > and < characters and returns "default"
+     * Internally default exchange has the name <<default>> that can not be used as Registry node.
+     * This method trims off leading and trailing > and < characters and returns "default"
      *
      * @param exchangeName <<default>> for the default exchange
      * @return default for <<default>>
@@ -540,7 +619,7 @@ public class AndesAuthorizationHandler {
         boolean isOwnDomain = false;
         if (tenantDomain != null) {
             if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
-                                                                                         tenantDomain.length() + 1).equals(tenantDomain + "/")) {
+                                            tenantDomain.length() + 1).equals(tenantDomain + "/")) {
                 isOwnDomain = true;
             } else if (tenantDomain.equalsIgnoreCase("carbon.super")) {
                 if (!routingKey.contains("/")) {
@@ -558,9 +637,9 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * when a subscriber is created for a topic in tenant mode, a temporary queue as 'tmp_<queueId></>' created for
-     * its messages. this is to check
-     * whether a queue is such kind of one.
+     * when a subscriber is created for a topic in tenant mode, a temporary queue as
+     * 'tmp_<queueId></>' created for its messages. this is to check whether a queue is such kind of
+     * one.
      *
      * @param queueName - topic subscriber's queue
      * @return true if queue is a temporary queue for topics. false otherwise
@@ -571,12 +650,13 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Durable queue created with prefix of virtual host name when a subscriber is created for a durable topic. This check whether subscription
-     * for create durable topic
+     * Durable queue created with prefix of virtual host name when a subscriber is created for a
+     * durable topic. This check whether subscription for create durable topic.
      *
-     * @param queueName   - durable topic subscriber's queue
-     * @param virtualHost - virtual host name
-     * @return check queue name start with virtual host name to verify subscription is for durable topic
+     * @param queueName   durable topic subscriber's queue
+     * @param virtualHost virtual host name
+     * @return check queue name start with virtual host name to verify subscription is for durable
+     * topic
      */
     private static boolean isDurableTopicSubscriberQueue(String queueName, String virtualHost) {
         return !virtualHost.isEmpty() && queueName.startsWith(virtualHost);
@@ -593,17 +673,15 @@ public class AndesAuthorizationHandler {
      * @param userRealm User's Realm
      * @throws UserStoreException
      */
-    private static void authorizeQueuePermissionsToLoggedInUser(String username,
-                                                                String queueName,
-                                                                String queueId,
-                                                                UserRealm userRealm) throws
-                                                                                     UserStoreException {
+    private static void authorizeQueuePermissionsToLoggedInUser(String username, String queueName,
+                                                                String queueId, UserRealm userRealm)
+                                                                        throws UserStoreException {
 
         // if this is the dead letter channel user is not given permission to consume or subscribe
         if (DLCQueueUtils.isDeadLetterQueue(queueName)) {
             if (log.isDebugEnabled()) {
-                log.debug("Dead letter channel permission to subscribe or consume is not granted to " +
-                          "users");
+                log.debug("Dead letter channel permission to subscribe or consume is not granted " +
+                          "to users");
             }
             return;
         }
@@ -626,9 +704,11 @@ public class AndesAuthorizationHandler {
             userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
                                                               PERMISSION_CHANGE_PERMISSION);
             userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                              TreeNode.Permission.CONSUME.toString().toLowerCase());
+                                                              TreeNode.Permission.CONSUME.toString()
+                                                                      .toLowerCase());
             userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                              TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                                                              TreeNode.Permission.PUBLISH.toString()
+                                                                      .toLowerCase());
         } else {
             log.warn("Unable to provide permissions to the user, " +
                      " " + username + ", to subscribe and publish to " + queueName);
@@ -647,12 +727,10 @@ public class AndesAuthorizationHandler {
      * @param userRealm   User's Realm
      * @throws UserStoreException
      */
-    private static void authorizeTopicPermissionsToLoggedInUser(String username,
-                                                                String topicName,
-                                                                String topicId,
-                                                                String tempQueueID,
-                                                                UserRealm userRealm) throws
-                                                                                     UserStoreException {
+    private static void authorizeTopicPermissionsToLoggedInUser(String username, String topicName,
+                                                                String topicId, String tempQueueID,
+                                                                UserRealm userRealm)
+                                                                    throws UserStoreException {
 
         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
                                                              topicName.replace("/", "-"));
@@ -676,17 +754,21 @@ public class AndesAuthorizationHandler {
         }
         //Giving permissions to the topic
         userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
-                                                          TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                                                          TreeNode.Permission.SUBSCRIBE.toString()
+                                                                  .toLowerCase());
         userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
-                                                          TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                                                          TreeNode.Permission.PUBLISH.toString()
+                                                                  .toLowerCase());
         userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
                                                           PERMISSION_CHANGE_PERMISSION);
 
         //Giving permissions for the temporary queue
         userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
-                                                          TreeNode.Permission.CONSUME.toString().toLowerCase());
+                                                          TreeNode.Permission.CONSUME.toString()
+                                                                  .toLowerCase());
         userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
-                                                          TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                                                          TreeNode.Permission.PUBLISH.toString()
+                                                                  .toLowerCase());
         userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
                                                           PERMISSION_CHANGE_PERMISSION);
     }
