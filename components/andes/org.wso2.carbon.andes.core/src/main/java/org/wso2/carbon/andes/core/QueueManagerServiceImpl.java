@@ -650,7 +650,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 userRealm.getAuthorizationManager().authorizeRole(
                         roleName, queueId, TreeNode.Permission.PUBLISH.toString().toLowerCase());
             } else {
-                throw new QueueManagerException("Error while giving permissions.");
+                throw new QueueManagerException("Unable to provide permissions to the user, " +
+                                                " " + username + ", to subscribe and publish to " +
+                                                newQueueName);
             }
         } catch (UserStoreException e) {
             throw new QueueManagerException("Error while creating " + newQueueName, e);

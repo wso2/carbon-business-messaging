@@ -290,28 +290,28 @@ public class UIUtils {
      * Filter the full user-roles list to suit the range.
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
-     * @param fullList      full list of roles
-     * @param startingIndex starting index to filter
-     * @param maxRolesCount maximum number of roles that the filtered list can contain
+     * @param allPermissions    full list of roles
+     * @param startingIndex     starting index to filter
+     * @param maxRolesCount     maximum number of roles that the filtered list can contain
      * @return ArrayList<QueueRolePermission>
      */
     @SuppressWarnings("UnusedDeclaration")
     public static ArrayList<QueueRolePermission> getFilteredRoleList
-    (ArrayList<QueueRolePermission> fullList, int startingIndex, int maxRolesCount) {
+    (ArrayList<QueueRolePermission> allPermissions, int startingIndex, int maxRolesCount) {
         int numberOfPermissionsToShow = maxRolesCount;
 
         // Calculating the amount of permissions to show
-        if ((fullList.size() - startingIndex) < maxRolesCount) {
-            numberOfPermissionsToShow = (fullList.size() - startingIndex);
+        if ((allPermissions.size() - startingIndex) < maxRolesCount) {
+            numberOfPermissionsToShow = (allPermissions.size() - startingIndex);
         }
 
         /*
-         * Add permissions from the given starting index to the calculated amount of permissions to
-         * show.
+         * Add permissions to list from the given starting index to the calculated amount of
+         * permissions to show.
         */
         ArrayList<QueueRolePermission> permissionList = new ArrayList<QueueRolePermission>();
         for (int i = startingIndex; i < startingIndex + numberOfPermissionsToShow; i++) {
-            permissionList.add(fullList.get(i));
+            permissionList.add(allPermissions.get(i));
         }
 
         return permissionList;

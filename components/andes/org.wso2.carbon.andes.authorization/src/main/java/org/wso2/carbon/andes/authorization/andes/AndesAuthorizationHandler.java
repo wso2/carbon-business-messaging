@@ -154,8 +154,8 @@ public class AndesAuthorizationHandler {
                                             PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
-                } else if (isDurableTopicSubscriberQueue(properties
-                                                                 .get(ObjectProperties.Property.NAME),
+                } else if (isDurableTopicSubscriberQueue(
+                                                    properties.get(ObjectProperties.Property.NAME),
                                                      properties.get(ObjectProperties.Property.OWNER))
                            && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
@@ -183,9 +183,9 @@ public class AndesAuthorizationHandler {
      * subscribe to given topic. It is possible in bind operation because topic name (routing key)
      * pass by andes.
      *
-     * @param username   - username of logged user
-     * @param userRealm  - @link {org.wso2.carbon.user.api.UserRealm}
-     * @param properties - @link {org.wso2.andes.server.security.access.ObjectProperties}
+     * @param username   username of logged user
+     * @param userRealm  The {@link org.wso2.carbon.user.api.UserRealm}
+     * @param properties {@link org.wso2.andes.server.security.access.ObjectProperties} of the queue
      * @throws RegistryClientException
      * @throws UserStoreException
      */
@@ -210,7 +210,7 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Handle consuming queue
+     * Evaluates whether the user has consuming permissions for a queue, topic or durable topic.
      * <p/>
      * IMPORTANT : Consuming an AMQP queue is not as same as consuming a JMS queue. The former is an
      * atomic operation that is allowed for the user who created the queue where as the latter is
@@ -258,7 +258,7 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Authorize binding a queue to an exchange
+     * Authorize binding a destination to an exchange based on permissions.
      *
      * @param username   topicID
      *                   User who is trying to do the binding
@@ -372,7 +372,7 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Authorise publishing to a given exchange
+     * Authorise publishing to a given exchange based on user's permissions.
      *
      * @param username   User who is trying to publish
      * @param userRealm  User's Realm
@@ -416,16 +416,6 @@ public class AndesAuthorizationHandler {
                         accessResult = Result.ALLOWED;
                     }
                 } else if (TOPIC_EXCHANGE.equals(exchangeName)) {   // Publish to topic
-
-                    // Note:  we don't give topic name as <domain_name/topicname> but just the
-                    // <topicname> with current authorization model,hence commented this
-
-                    /*if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-                         then we need to remove the domain name path from the topic name before
-                         saving to the registry.
-                        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-                        routingKey = routingKey.substring(tenantDomain.length() + 1);
-                    }*/
                     String permissionID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize admin user
@@ -460,7 +450,7 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Handle queue unbinding
+     * Evaluates whether the user has unbind permissions for an exchange.
      *
      * @param properties NAME, QUEUE_NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
