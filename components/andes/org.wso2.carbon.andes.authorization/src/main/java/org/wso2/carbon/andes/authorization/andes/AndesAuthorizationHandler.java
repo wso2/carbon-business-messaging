@@ -293,11 +293,10 @@ public class AndesAuthorizationHandler {
                             username, queueID,
                             TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                         accessResult = Result.ALLOWED;
-                    } else if (isDurableTopicSubscriberQueue(properties
-                                                     .get(ObjectProperties.Property.QUEUE_NAME),
-                                                    properties.get(ObjectProperties.Property.OWNER))
-                               && Boolean
-                            .valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    } else if (isDurableTopicSubscriberQueue(
+                                            properties.get(ObjectProperties.Property.QUEUE_NAME),
+                                            properties.get(ObjectProperties.Property.OWNER)) &&
+                               Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
                         accessResult = Result.ALLOWED;
                     } else if (isTopicSubscriberQueue(queueName) && !Boolean.valueOf(
                             properties.get(ObjectProperties.Property.DURABLE))) {
