@@ -91,4 +91,11 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                     PRIMARY KEY (QUEUE_NAME)
                     );
 
+CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
+                NODE_ID VARCHAR NOT NULL,
+                TIME_STAMP BIGINT,
+                PRIMARY KEY(NODE_ID, TIME_STAMP)
+);
+
+
 -- End of Andes Context Store Tables --

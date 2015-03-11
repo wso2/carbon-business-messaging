@@ -90,4 +90,12 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                         PRIMARY KEY (QUEUE_NAME) 
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+
+CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        TIME_STAMP BIGINT, 
+                        PRIMARY KEY (NODE_ID, TIME_STAMP)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
 -- End of Andes Context Store Tables --

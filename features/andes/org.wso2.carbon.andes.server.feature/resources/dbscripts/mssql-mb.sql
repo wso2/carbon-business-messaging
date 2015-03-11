@@ -113,4 +113,11 @@ CREATE TABLE MB_QUEUE_COUNTER (
                         PRIMARY KEY (QUEUE_NAME)      
 );
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_MSG_STORE_STATUS]') AND TYPE IN (N'U'))
+CREATE TABLE MB_MSG_STORE_STATUS (
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        TIME_STAMP BIGINT, 
+                        PRIMARY KEY(NODE_ID, TIME_STAMP)   
+);
+
 -- End of Andes Context Store Tables --
