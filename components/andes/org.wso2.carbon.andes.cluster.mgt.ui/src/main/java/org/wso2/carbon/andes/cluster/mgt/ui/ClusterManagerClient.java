@@ -58,7 +58,7 @@ public class ClusterManagerClient {
     }
 
     /**
-     * Return address of the nodes in a cluster
+     * Return addresses of the nodes in a cluster
      *
      * @return the addresses
      */
