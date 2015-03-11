@@ -345,35 +345,39 @@ public class QpidServiceComponent {
         } else {
             port = qpidServiceImpl.getAMQPPort();
         }
-        while (!isServerStarted) {
-            Socket socket = null;
-            try {
-                log.info("Carbon Host Name : " + getTransportBindAddress());
-                InetAddress address = InetAddress.getByName(getTransportBindAddress());
-                socket = new Socket(address, port);
-                log.info("Host : " + address.getHostAddress() + " port : " + port);
-                isServerStarted = socket.isConnected();
-                if (isServerStarted) {
-                    log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
-                            port);
-                }
-            } catch (IOException e) {
-                log.error("Wait until Qpid server starts on port " + port, e);
+        if (AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
+            while (!isServerStarted) {
+                Socket socket = null;
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ignore) {
-                    // Ignore
-                }
-            } finally {
-                try {
-                    if ((socket != null) && (socket.isConnected())) {
-                        socket.close();
+                    log.info("Carbon Host Name : " + getTransportBindAddress());
+                    InetAddress address = InetAddress.getByName(getTransportBindAddress());
+                    socket = new Socket(address, port);
+                    log.info("Host : " + address.getHostAddress() + " port : " + port);
+                    isServerStarted = socket.isConnected();
+                    if (isServerStarted) {
+                        log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
+                                port);
                     }
                 } catch (IOException e) {
-                    log.error("Can not close the socket which is used to check the server " +
-                            "status ", e);
+                    log.error("Wait until Qpid server starts on port " + port, e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignore) {
+                        // Ignore
+                    }
+                } finally {
+                    try {
+                        if ((socket != null) && (socket.isConnected())) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                        log.error("Can not close the socket which is used to check the server " +
+                                "status ", e);
+                    }
                 }
             }
+        } else {
+            log.warn("AMQP Transport is disabled as per configuration.");
         }
 
         // Publish Qpid properties
