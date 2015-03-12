@@ -106,7 +106,6 @@
         <dependency>
             <groupId>com.h2database.wso2</groupId>
             <artifactId>h2-database-engine</artifactId>
-            <version>1.2.140.wso2v3</version>
         </dependency>
     </dependencies>
     <build>
@@ -118,8 +117,8 @@
                 <version>1.1</version>
                 <executions>
                     <execution>
-                        <id>clean-bpel-h2-database</id>
-                        <phase>prepare-package</phase>
+                        <id>clean-mb-h2-database</id>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -130,8 +129,8 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>create-bpel-h2-database</id>
-                        <phase>package</phase>
+                        <id>create-mb-h2-database</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -141,30 +140,21 @@
                                     <path refid="maven.compile.classpath"/>
                                 </path>
 
-                                <echo message="########### Create BPEL Database ##############"/>
+                                <echo message="######### Create MB H2 Database #############"/>
 
                                 <sql driver="org.h2.Driver"
                                      url="jdbc:h2:${basedir}/resources/databases/WSO2MB_DB;create=true"
                                      userid="" password="" autocommit="true" onerror="continue">
-                                    <!-- userid="wso2carbon" password="wso2carbon" -->
                                     <classpath>
                                         <path refid="h2.classpath"/>
                                     </classpath>
                                     <fileset file="${basedir}/resources/dbscripts/h2-mb.sql"/>
                                 </sql>
-                                <echo message="##################### END ############################"/>
+                                <echo message="################### END ######################"/>
                                 <echo message="********Version of H2: "/>
-                                <echo>1.2.140.wso2v3</echo>
-                                <!--echo>${orbit.version.h2.engine}</echo-->
+                                <echo>${orbit.version.h2.engine}</echo>
                             </tasks>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>clean_target</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -175,7 +165,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -256,16 +246,19 @@
                 <version>1.1</version>
                 <executions>
                     <execution>
-                        <id>clean resources</id>
+                        <id>clean-resources</id>
                         <phase>install</phase>
-                        <configuration>
-                            <tasks>
-                                <delete dir="src" />
-                            </tasks>
-                        </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>remove generated h2 database file</echo>
+                                <delete file="resources/databases/WSO2MB_DB.h2.db"/>
+                                <echo>clean up src directory</echo>
+                                <delete dir="src" />
+                            </tasks>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
