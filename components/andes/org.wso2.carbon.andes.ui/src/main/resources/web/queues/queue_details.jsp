@@ -149,7 +149,8 @@
                 %>
                 <tr>
                     <td>
-                        <a href="javascript:void(0);" onclick="showManageQueueWindow('<%=queue.getQueueName()%>')"><%=queue.getQueueName()%></a>
+                        <a href="javascript:void(0);" onclick="showManageQueueWindow('<%=queue.getQueueName()%>')"
+                                    title="<fmt:message key='queues.queueDetailsToolTip'/>"><%=queue.getQueueName()%></a>
                     </td>
                     <td><%=queue.getMessageCount()%>
                     </td>
