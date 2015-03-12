@@ -8,10 +8,10 @@
 
     for(QueueRolePermission permission: queueRolePermissions){
         if(permission.getRoleName().equals(role)){
-            if(action.equals("consume")){
-               permission.setAllowedToConsume(checked.equals("true") ? true : false);
-            } else if (action.equals("publish")){
-                permission.setAllowedToPublish(checked.equals("true") ? true : false);
+            if ("consume".equals(action)){
+                permission.setAllowedToConsume(Boolean.valueOf(checked));
+            } else if ("publish".equals(action)){
+                permission.setAllowedToPublish(Boolean.valueOf(checked));
             }
         }
     }

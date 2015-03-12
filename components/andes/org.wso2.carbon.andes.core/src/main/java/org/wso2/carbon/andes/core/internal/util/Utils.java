@@ -54,7 +54,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * Provides
+ * Provides common utilities for UI related functions and services.
  */
 public class Utils {
 
@@ -71,11 +71,13 @@ public class Utils {
     private static final String ANDES_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
     private static final String CARBON_CLIENT_ID = "carbon";
     private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
+    private static final int CHARACTERS_TO_SHOW = 15;
 
     /**
      * Maximum size a message will be displayed on UI
      */
-    public static final Integer MESSAGE_DISPLAY_LENGTH_MAX = AndesConfigurationManager.readValue(AndesConfiguration.MANAGEMENT_CONSOLE_MAX_DISPLAY_LENGTH_FOR_MESSAGE_CONTENT);
+    public static final Integer MESSAGE_DISPLAY_LENGTH_MAX =
+            AndesConfigurationManager.readValue(AndesConfiguration.MANAGEMENT_CONSOLE_MAX_DISPLAY_LENGTH_FOR_MESSAGE_CONTENT);
 
     /**
      * Shown to user has a indication that the particular message has more content than shown in UI
@@ -289,7 +291,7 @@ public class Utils {
     }
 
     /**
-     * filter the whole message list to fit for the page range
+     * Filter the whole message list to fit for the page range
      *
      * @param msgArrayList  - total message list
      * @param startingIndex -  index of the first message of given page
@@ -339,7 +341,8 @@ public class Utils {
                    XMLStreamException, UnknownHostException {
 
         // getting host address from andes configuration mentioned in broker.xml
-        String andesConfigHostAddress = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS));
+        String andesConfigHostAddress =
+                String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS));
         String hostAddress = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
 
         // getting port from andes configuration mentioned in broker.xml
@@ -456,14 +459,14 @@ public class Utils {
             if (message instanceof TextMessage) {
                 String textMessage = ((TextMessage) message).getText();
                 wholeMsg = StringEscapeUtils.escapeHtml(textMessage).trim();
-                if (wholeMsg.length() >= 15) {
-                    summaryMsg = wholeMsg.substring(0, 15);
+                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
                 } else {
                     summaryMsg = wholeMsg;
                 }
                 if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
-                    wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) + DISPLAY_CONTINUATION +
-                               DISPLAY_LENGTH_EXCEEDED;
+                    wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) +
+                               DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
                 }
             } else if (message instanceof ObjectMessage) {
                 wholeMsg = "This Operation is Not Supported!";
@@ -476,11 +479,11 @@ public class Utils {
                     String mapName = (String) mapEnu.nextElement();
                     String mapVal = mapMessage.getObject(mapName).toString();
                     wholeMsg = StringEscapeUtils.escapeHtml(sb.append(mapName).append(": ")
-                                                                    .append(mapVal).append(", ").toString()).trim();
+                                                        .append(mapVal).append(", ").toString()).trim();
 
                 }
-                if (wholeMsg.length() >= 15) {
-                    summaryMsg = wholeMsg.substring(0, 15);
+                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
                 } else {
                     summaryMsg = wholeMsg;
                 }
@@ -488,8 +491,8 @@ public class Utils {
             } else if (message instanceof StreamMessage) {
                 ((StreamMessage) message).reset();
                 wholeMsg = getContentFromStreamMessage((StreamMessage) message, sb).trim();
-                if (wholeMsg.length() >= 15) {
-                    summaryMsg = wholeMsg.substring(0, 15);
+                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
                 } else {
                     summaryMsg = wholeMsg;
                 }
@@ -504,8 +507,8 @@ public class Utils {
                     wholeMsg = sb.append(byteMsgArr[i]).append(" ").toString().trim();
                 }
 
-                if (wholeMsg.length() >= 15) {
-                    summaryMsg = wholeMsg.substring(0, 15);
+                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
                 } else {
                     summaryMsg = wholeMsg;
                 }
@@ -517,7 +520,8 @@ public class Utils {
     }
 
     /**
-     * A stream message can have java primitives plus objects, as its content. This message it used to retrieve the
+     * A stream message can have java primitives plus objects, as its content. This method is used
+     * for getting the valid message content from the stream.
      *
      * @param streamMessage - input message
      * @param sb            - a string builder to build the whole message content
@@ -555,7 +559,8 @@ public class Utils {
      */
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR +
+                                                                                ANDES_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(

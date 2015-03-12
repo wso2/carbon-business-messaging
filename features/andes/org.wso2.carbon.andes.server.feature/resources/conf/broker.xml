@@ -144,9 +144,6 @@ expression of the property. -->
 
 
         <!-- H2 Based In-Memory Store Configuration -->
-
-        <!-- H2 In-Memory storing would not be applicable when it comes to durable topics. I.E When
-        the server is restarted all the data stored in the memory would be wiped away. -->
 <!--
         <messageStore class="org.wso2.andes.store.rdbms.h2.H2MemMessageStoreImpl">
         </messageStore>
