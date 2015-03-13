@@ -443,6 +443,11 @@ considered very carefully. -->
                 <artifactId>org.wso2.carbon.stratos.common</artifactId>
                 <version>${stratos.common.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.h2database.wso2</groupId>
+                <artifactId>h2-database-engine</artifactId>
+                <version>${orbit.version.h2.engine}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -506,6 +511,7 @@ considered very carefully. -->
         <orbit.version.httpcore>4.1.0-wso2v1</orbit.version.httpcore>
         <orbit.version.wsdl4j>1.6.2.wso2v4</orbit.version.wsdl4j>
         <orbit.version.poi>3.9.0.wso2v1</orbit.version.poi>
+        <orbit.version.h2.engine>1.2.140.wso2v3</orbit.version.h2.engine>
         <orbit.version.commons.httpclient>3.1.0.wso2v2</orbit.version.commons.httpclient>
         <orbit.version.commons.pool>1.5.6.wso2v1</orbit.version.commons.pool>
         <orbit.version.commons.fileuploader>1.2.0.wso2v1</orbit.version.commons.fileuploader>
