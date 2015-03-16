@@ -325,7 +325,9 @@ public class AndesAuthorizationHandler {
                     String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                     String tempQueueId = CommonsUtil.getQueueID(queueName);
                     // Authorize
-                    if (!userStoreManager.isExistingRole(roleName) && userRealm
+                    if (!isOwnDomain(tenantDomain, routingKey)) {
+                        accessResult = Result.DENIED;
+                    } else if (!userStoreManager.isExistingRole(roleName) && userRealm
                             .getAuthorizationManager().isUserAuthorized(username,
                                             PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
 
@@ -394,13 +396,6 @@ public class AndesAuthorizationHandler {
                 String routingKey =
                         getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
-                // if queue is owned by a different domain deny permission
-                if (!isOwnDomain(tenantDomain, routingKey)) {
-                    log.warn("Permission denied to publish to " + routingKey + " in domain "
-                             + tenantDomain);
-                    accessResult = Result.DENIED;
-                }
-
                 if (DIRECT_EXCHANGE.equals(exchangeName)) {  // Publish to queue
 
                     String queueID = CommonsUtil.getQueueID(routingKey);
@@ -418,7 +413,9 @@ public class AndesAuthorizationHandler {
                     String permissionID = CommonsUtil.getTopicID(routingKey);
 
                     // Authorize admin user
-                    if (UserCoreUtil
+                    if (!isOwnDomain(tenantDomain, routingKey)) {
+                        accessResult = Result.DENIED;
+                    } else if (UserCoreUtil
                             .isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
                         accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
