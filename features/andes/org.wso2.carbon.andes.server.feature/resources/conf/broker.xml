@@ -322,6 +322,10 @@ expression of the property. -->
             with high load (with big batch sizes) to write messages. This need to be configured in
             high throughput messaging scenarios to regulate the hit on database from MB -->
             <messageWriterBatchSize>70</messageWriterBatchSize>
+
+            <!-- The Default PurgedTimeout = 180
+            -->
+            <purgedCountTimeout>180</purgedCountTimeout>
         </inboundEvents>
 
         <failover>
