@@ -536,13 +536,15 @@ public class AndesAuthorizationHandler {
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
-                || userRealm.getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE)
-                || userRealm.getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE))
-            {
-                accessResult = Result.ALLOWED;
+            if (null != userRealm) {
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) ||
+                    userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                            PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE) ||
+                    userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                         PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE)) {
+
+                    accessResult = Result.ALLOWED;
+                }
             }
         } catch (UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
