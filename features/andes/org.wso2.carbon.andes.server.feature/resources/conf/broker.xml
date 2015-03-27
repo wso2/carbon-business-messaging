@@ -323,7 +323,9 @@ expression of the property. -->
             high throughput messaging scenarios to regulate the hit on database from MB -->
             <messageWriterBatchSize>70</messageWriterBatchSize>
 
-            <!-- The Default PurgedTimeout = 180
+            <!--Timeout for waiting for a queue purge event to end to get the purged count. Doesn't affect actual purging.
+            If purge takes time, increasing the value will improve the possibility of retrieving the correct purged count.
+            Having a lower value doesn't stop purge event. Getting the purged count is affected by this
             -->
             <purgedCountTimeout>180</purgedCountTimeout>
         </inboundEvents>
