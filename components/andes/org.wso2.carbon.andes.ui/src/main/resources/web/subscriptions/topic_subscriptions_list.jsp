@@ -35,11 +35,12 @@
     function unSubscribe(obj) {
         var aTag = jQuery(obj);
         var queueName = aTag.attr('data-id');
+        var topicName = aTag.attr('data-id-topic');
         aTag.css('font-weight', 'bolder');
 
         CARBON.showConfirmationDialog("Are you sure you want to unsubscribe?", function(){
             $.ajax({
-                url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName,
+                url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
                 dataType:"html",
                 success: function() {
@@ -370,6 +371,7 @@ No subscriptions are created.
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
                data-id="<%=sub.getSubscriberQueueName()%>"
+               data-id-topic="<%=sub.getDestination()%>"
                onclick="unSubscribe(this)">Unsubscribe
             </a>
         </td>

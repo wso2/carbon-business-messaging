@@ -141,6 +141,24 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
+     * Delete topic related resources from registry
+     * @param topicName Topic Name
+     * @param subscriptionId Subscription ID
+     * @throws BrokerManagerAdminException
+     */
+    public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws BrokerManagerAdminException {
+        try {
+            QueueManagerService queueManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+            queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
+        } catch (QueueManagerException e) {
+            String message = e.getMessage();
+            throw new BrokerManagerAdminException("Error in deleting topic from registry. " +
+                    "" + message, e);
+        }
+    }
+
+    /**
      * Restore messages from the Dead Letter Queue to their original queues.
      *
      * @param messageIDs          Browser Message Id / External Message Id list.
@@ -372,6 +390,7 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
                                                     sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
+                subscriptionDTO.setDestination(sub.getDestination());
 
                 allSubscriptions.add(subscriptionDTO);
             }

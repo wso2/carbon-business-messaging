@@ -26,6 +26,7 @@ public class Subscription {
     private String subscriberQueueName;
     private boolean isDurable;
     private boolean isActive;
+    private String destination;
     private int numberOfMessagesRemainingForSubscriber;
     private String subscriberNodeAddress;
 
@@ -95,5 +96,13 @@ public class Subscription {
 
     public void setSubscriberQueueBoundExchange(String subscriberQueueBoundExchange) {
         this.subscriberQueueBoundExchange = subscriberQueueBoundExchange;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 }
