@@ -493,26 +493,27 @@ public class AndesAuthorizationHandler {
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
-            String queueName =
-                    getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
-                deleteQueueFromRegistry(queueName);
-                accessResult = Result.ALLOWED;
-            } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                        PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
-                deleteQueueFromRegistry(queueName);
-                accessResult = Result.ALLOWED;
-            } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                        PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
-                deleteQueueFromRegistry(queueName);
-                accessResult = Result.ALLOWED;
-            } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
-                                                 properties.get(ObjectProperties.Property.OWNER))
-                       && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                accessResult = Result.ALLOWED;
-            } else if (isTopicSubscriberQueue(queueName) &&
-                       !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                accessResult = Result.ALLOWED;
+            if (null != userRealm) {
+                String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
+                    deleteQueueFromRegistry(queueName);
+                    accessResult = Result.ALLOWED;
+                } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                            PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
+                    deleteQueueFromRegistry(queueName);
+                    accessResult = Result.ALLOWED;
+                } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                            PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
+                    deleteQueueFromRegistry(queueName);
+                    accessResult = Result.ALLOWED;
+                } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
+                                                properties.get(ObjectProperties.Property.OWNER)) &&
+                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    accessResult = Result.ALLOWED;
+                } else if (isTopicSubscriberQueue(queueName) &&
+                                !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    accessResult = Result.ALLOWED;
+                }
             }
         } catch (RegistryClientException e) {
             throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
@@ -535,13 +536,15 @@ public class AndesAuthorizationHandler {
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
-            if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
-                || userRealm.getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE)
-                || userRealm.getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE))
-            {
-                accessResult = Result.ALLOWED;
+            if (null != userRealm) {
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration()) ||
+                    userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                            PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE) ||
+                    userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                         PERMISSION_ADMIN_MANAGE_TOPIC_PURGE_TOPIC, UI_EXECUTE)) {
+
+                    accessResult = Result.ALLOWED;
+                }
             }
         } catch (UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
