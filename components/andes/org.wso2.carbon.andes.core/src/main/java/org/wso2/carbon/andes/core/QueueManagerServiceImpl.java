@@ -211,6 +211,29 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
+    public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws QueueManagerException {
+        try {
+            UserRegistry userRegistry = Utils.getUserRegistry();
+
+            String resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" +
+                    subscriptionId.split(":")[1];
+            String resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName,
+                    subscriptionId.split(":")[1]);
+            userRegistry.delete(resourcePathForTopic);
+            userRegistry.delete(resourcePathForQueue);
+
+        } catch (RegistryException e) {
+            String message = e.getMessage();
+            throw new QueueManagerException("Failed to delete topic: " + topicName + " from " +
+                    "registry " +
+                    message, e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
             throws
             QueueManagerException {

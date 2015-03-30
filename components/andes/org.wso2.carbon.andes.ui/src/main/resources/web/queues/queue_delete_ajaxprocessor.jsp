@@ -6,8 +6,12 @@
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
 
     String queue = request.getParameter("nameOfQueue");
+    String topicName = request.getParameter("nameOfTopic");
     try {
         stub.deleteQueue(queue);
+        if (null != topicName ) {
+            stub.deleteTopicFromRegistry(topicName, queue);
+        }
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);

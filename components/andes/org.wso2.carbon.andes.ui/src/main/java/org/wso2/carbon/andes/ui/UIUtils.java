@@ -192,6 +192,8 @@ public class UIUtils {
                         (subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail
                                                                                                     .getSubscriberNodeAddress());
+                subscriptionDetailsArray[subscriptionDetailsIndex].setDestination
+                        (subscriptionDetail.getDestination());
 
                 subscriptionDetailsIndex++;
                 if (subscriptionDetailsIndex == maxSubscriptionCount) {

@@ -286,6 +286,8 @@ public class Utils {
         subscription.setActive(Boolean.parseBoolean(subInfo[5]));
         subscription.setNumberOfMessagesRemainingForSubscriber(Integer.parseInt(subInfo[6]));
         subscription.setSubscriberNodeAddress(subInfo[7]);
+        subscription.setDestination(subInfo[8]);
+
 
         return subscription;
     }
