@@ -95,13 +95,13 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void createQueue(String queueName) throws QueueManagerException {
+    public void createQueue(String queueName, boolean isExclusiveConsumer) throws QueueManagerException {
         try {
             String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
             String userName = getLoggedInUserName();
             if (!QueueManagementBeans.queueExists(tenantBasedQueueName)) {
                 RegistryClient.createQueue(tenantBasedQueueName, userName);
-                QueueManagementBeans.getInstance().createQueue(tenantBasedQueueName, userName);
+               QueueManagementBeans.getInstance().createQueue(tenantBasedQueueName, userName, isExclusiveConsumer);
 
                 //Adding change permissions to the current logged in user
                 UserRealm userRealm =
@@ -686,4 +686,15 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throw new QueueManagerException("Error while deleting " + newQueueName, e);
         }
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateExclusiveConsumerValue(String queueName, boolean isExclusiveConsumer) throws QueueManagerException {
+
+        QueueManagementBeans.getInstance().updateExclusiveConsumer(queueName, isExclusiveConsumer);
+    }
+
 }
