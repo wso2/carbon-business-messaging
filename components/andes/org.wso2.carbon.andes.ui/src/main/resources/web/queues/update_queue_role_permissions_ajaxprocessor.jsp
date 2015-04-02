@@ -6,6 +6,7 @@
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     String message = "";
+    boolean exclusiveConsumer;
 
     String queue = (String) session.getAttribute("queue");
     String permissions = request.getParameter("permissions");
@@ -13,6 +14,13 @@
     if (permissions != null && !"".equals(permissions)) {
          permissionParams = permissions.split(",");
     }
+
+    if(null!=request.getParameter("isExclusiveConsumer")) {
+            exclusiveConsumer = true;
+   }
+   else{
+           exclusiveConsumer = false;
+   }
 
     ArrayList<QueueRolePermission> queueRolePermissionArrayList = new ArrayList<QueueRolePermission>();
     for (int i = 0; i < permissionParams.length; i++) {
@@ -31,7 +39,8 @@
 
     QueueRolePermission[] queueRolePermissions = new QueueRolePermission[queueRolePermissionArrayList.size()];
     try {
-        stub.updatePermission(queue, queueRolePermissionArrayList.toArray(queueRolePermissions));
+        stub.updatePermissionWithExclusiveConsumer(queue, queueRolePermissionArrayList.toArray(queueRolePermissions),
+         exclusiveConsumer);
         message = "Queue added successfully";
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         message = "Error in adding/updating permissions : " + e.getMessage();
