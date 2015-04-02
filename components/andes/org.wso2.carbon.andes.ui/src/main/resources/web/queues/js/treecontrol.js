@@ -1,6 +1,14 @@
 function addQueue(createdFrom) {
     var topic = document.getElementById("queue");
+    //exclusive consumer value
+    var exclusiveValue = document.getElementById("isExclusiveConsumer");
 
+    if(exclusiveValue.checked){
+            var exclusiveConsumer = exclusiveValue.value;
+            }
+    else {
+            var exclusiveConsumer = "";
+         }
     var error = "";
 
     if (topic.value == "") {
@@ -12,14 +20,14 @@ function addQueue(createdFrom) {
         CARBON.showErrorDialog(error);
         return;
     }
-    addQueueToBackEnd(topic.value, createdFrom)
+    addQueueToBackEnd(topic.value, exclusiveConsumer, createdFrom)
 }
 
 function isValidQueueName(queueName){
     return !/[~!@#;%^*()+={}|\<>"',]/g.test(queueName);
 }
 
-function addQueueToBackEnd(queue, createdFrom) {
+function addQueueToBackEnd(queue, exclusiveConsumer, createdFrom) {
     var callback =
     {
         success:function(o) {
@@ -36,11 +44,12 @@ function addQueueToBackEnd(queue, createdFrom) {
         failure:function(o) {
             if (o.responseText !== undefined) {
                 alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
-            }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback, "queue=" + queue + "&type=input");
 
+    //sending queue name with exclusive consumer
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback, "queue="+
+                                                queue + "&exclusiveConsumer="+ exclusiveConsumer + "&type=input");
 }
 
 function addPermissions() {
@@ -69,6 +78,16 @@ function addPermissions() {
 }
 
 function updatePermissions() {
+        //exclusive consumer value of the queue
+      var exclusiveConsumer = document.getElementById("isExclusiveConsumer");
+
+      if(exclusiveConsumer.checked){
+            var exclusiveValue = exclusiveConsumer.value;
+             }
+      else{
+            var exclusiveValue = "";
+            }
+
     var permissionTable = document.getElementById("permissionsTable");
     var rowCount = permissionTable.rows.length;
     var parameters = "";
@@ -106,7 +125,9 @@ function updatePermissions() {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_ajaxprocessor.jsp", callback, "permissions=" + parameters + "&type=input");
+    //sending along with exclusive consumer value
+    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_ajaxprocessor.jsp", callback, "permissions=" +
+                                parameters + "&isExclusiveConsumer="+ exclusiveValue + "&type=input");
 }
 
 function showManageQueueWindow(queueName) {
@@ -275,4 +296,41 @@ function validateForm(){
             location.href = "../queues/queue_message_sender.jsp";
         });
     }
+}
+
+//checking the status of the checkbox
+function checkBoxStatus(queueName)
+{
+    var callback =
+    {
+        success:function(o) {
+            if (o.responseText.equals("true")) // if the queue has subscribers
+            {
+                 if(document.getElementById("isExclusiveConsumer").checked)
+                       {
+                           document.getElementById("isExclusiveConsumer").checked=true;
+                       }
+                 else {
+                           document.getElementById("isExclusiveConsumer").checked=false;
+                       }
+             }
+            else { // queue has no subscribers
+                      if(document.getElementById("isExclusiveConsumer").checked)
+                      {
+                        document.getElementById("isExclusiveConsumer").checked=false;
+                      }
+                      else
+                      {
+                        document.getElementById("isExclusiveConsumer").checked=true;
+                      }
+                }
+        },
+        failure:function(o) {
+            if (o.responseText !== undefined) {
+                alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+            }
+        }
+    };
+    var request = YAHOO.util.Connect.asyncRequest('POST', "check_subscription_from_backend_ajaxprocessor.jsp", callback, "queueName=" + queueName + "&type=input");
+
 }
