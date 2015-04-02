@@ -20,12 +20,15 @@ package org.wso2.carbon.andes.core.internal.registry;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
 import org.wso2.carbon.andes.core.types.Queue;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
 public class QueueManagementBeans {
+    private static Log log = LogFactory.getLog(QueueManagementBeans.class);
 
     public static QueueManagementBeans self;
 
@@ -359,7 +362,7 @@ public class QueueManagementBeans {
      * @param isExclusiveConsumer exclusive consumer value of the queue
      * @throws QueueManagerException
      */
-    public void updateExclusiveConsumer(String queueName, boolean isExclusiveConsumer) throws QueueManagerException{
+    public void updateExclusiveConsumer(String queueName, boolean isExclusiveConsumer) throws QueueManagerException, MalformedObjectNameException {
 
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -376,12 +379,16 @@ public class QueueManagementBeans {
                     parameters,
                     signature);
 
-        } catch (MalformedObjectNameException e) {
-            e.printStackTrace();
-        }catch (JMException e) {
-            throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
         }
-
+        catch (MalformedObjectNameException e1) {
+            log.error("Malformed object name Error in updating exclusive consumer value", e1);
+            throw new MalformedObjectNameException("Error in updating exclusive consumer value.");
+        }
+        catch (JMException e2)
+        {
+            log.error("MBean invoking error in updating exclusive consumer value", e2);
+            throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e2);
+        }
 
     }
 
