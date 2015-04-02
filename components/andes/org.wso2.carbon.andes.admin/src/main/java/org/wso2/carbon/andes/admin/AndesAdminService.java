@@ -19,6 +19,9 @@ package org.wso2.carbon.andes.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesException;
+import org.wso2.andes.kernel.LocalSubscription;
+import org.wso2.andes.subscription.SubscriptionStore;
 import org.wso2.carbon.andes.admin.internal.Exception.BrokerManagerAdminException;
 import org.wso2.carbon.andes.admin.internal.Message;
 import org.wso2.carbon.andes.admin.internal.Queue;
@@ -31,11 +34,7 @@ import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provides all the andes admin services that is available through the UI(JSP).
@@ -49,11 +48,11 @@ public class AndesAdminService extends AbstractAdmin {
      * @param queueName New queue name.
      * @throws BrokerManagerAdminException
      */
-    public void createQueue(String queueName) throws BrokerManagerAdminException {
+    public void createQueue(String queueName, boolean isExclusiveConsumerEnabled) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                                                                         .getQueueManagerService();
         try {
-            queueManagerService.createQueue(queueName);
+            queueManagerService.createQueue(queueName, isExclusiveConsumerEnabled);
         } catch (QueueManagerException e) {
             log.error("Error in creating the queue", e);
             throw new BrokerManagerAdminException("Error in creating the queue.", e);
@@ -428,6 +427,30 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
+     * Update the permission of the given queue name with exclusive Consumer value
+     *
+     * @param queueName               Name of the queue
+     * @param queueRolePermissionsDTO A {@link org.wso2.carbon.andes.admin.internal.QueueRolePermission}
+     * @param exclusiveConsumerUpdate  new exclusive Consumer value for queue
+     * @throws BrokerManagerAdminException
+     */
+    public void updatePermissionWithExclusiveConsumer(String queueName, QueueRolePermission[] queueRolePermissionsDTO,
+                                                      boolean exclusiveConsumerUpdate) throws BrokerManagerAdminException{
+
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
+                .getQueueManagerService();
+
+        // call the queue and update the value of isExclusiveConsumer
+        try {
+            queueManagerService.updateExclusiveConsumerValue(queueName, exclusiveConsumerUpdate);
+        } catch (QueueManagerException e) {
+            e.printStackTrace();
+        }
+
+        updatePermission(queueName, queueRolePermissionsDTO);
+    }
+
+    /**
      * Update the permission of the given queue name
      *
      * @param queueName               Name of the queue
@@ -626,6 +649,23 @@ public class AndesAdminService extends AbstractAdmin {
         return userName.trim();
     }
 
+    /**
+     *
+     * @param queueName Name of the queue
+     * @return
+     * @throws AndesException
+     */
+    public boolean checkForSubscriptions(String queueName) throws AndesException {
+
+        SubscriptionStore  subscriptionStore = new SubscriptionStore();
+        Map<String, LocalSubscription> subscriptionMapForQueue = subscriptionStore.getLocalSubscriptionMap(queueName, false);
+
+        if(subscriptionMapForQueue.isEmpty())
+            return false;
+
+        else
+            return true;
+    }
     /**
      * A comparator class to order queues.
      */
