@@ -1,10 +1,18 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:ax23="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax21="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://wso2.org/carbon/andes/admin/xsd" xmlns:ax25="http://kernel.andes.wso2.org/xsd" xmlns:ax23="http://internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax21="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/admin" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/admin">
     <wsdl:documentation>AndesAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd">
             <xs:complexType name="BrokerManagerAdminException">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://kernel.andes.wso2.org/xsd">
+            <xs:complexType name="AndesException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="errorCode" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -55,13 +63,23 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax22="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax24="http://internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
+        <xs:schema xmlns:ax22="http://Exception.internal.admin.andes.carbon.wso2.org/xsd" xmlns:ax26="http://kernel.andes.wso2.org/xsd" xmlns:ax24="http://internal.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/xsd">
             <xs:import namespace="http://Exception.internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
             <xs:import namespace="http://internal.admin.andes.carbon.wso2.org/xsd"></xs:import>
+            <xs:import namespace="http://kernel.andes.wso2.org/xsd"></xs:import>
             <xs:element name="AndesAdminServiceBrokerManagerAdminException">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax21:BrokerManagerAdminException"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="updatePermissionWithExclusiveConsumer">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="queueRolePermissionsDTO" nillable="true" type="ax23:QueueRolePermission"></xs:element>
+                        <xs:element minOccurs="0" name="exclusiveConsumerUpdate" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -94,18 +112,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="AndesAdminServiceException">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="AndesAdminServiceException" nillable="true" type="ns:Exception"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:complexType name="Exception">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"></xs:element>
-                </xs:sequence>
-            </xs:complexType>
             <xs:element name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
                 <xs:complexType>
                     <xs:sequence>
@@ -288,6 +294,28 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="isExclusiveConsumerEnabled" type="xs:boolean"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AndesAdminServiceAndesException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="AndesException" nillable="true" type="ax25:AndesException"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkForSubscriptions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkForSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -322,11 +350,6 @@
         <wsdl:part name="parameters" element="ns:deleteMessagesFromDeadLetterQueue"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="deleteMessagesFromDeadLetterQueueResponse"></wsdl:message>
-    <wsdl:message name="AndesAdminServiceException">
-        <wsdl:part name="parameters" element="ns:AndesAdminServiceException"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getMessageCountForQueueRequest"></wsdl:message>
-    <wsdl:message name="getMessageCountForQueueResponse"></wsdl:message>
     <wsdl:message name="getAccessKeyRequest">
         <wsdl:part name="parameters" element="ns:getAccessKey"></wsdl:part>
     </wsdl:message>
@@ -401,6 +424,15 @@
     <wsdl:message name="getQueueRolePermissionResponse">
         <wsdl:part name="parameters" element="ns:getQueueRolePermissionResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="checkForSubscriptionsRequest">
+        <wsdl:part name="parameters" element="ns:checkForSubscriptions"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="checkForSubscriptionsResponse">
+        <wsdl:part name="parameters" element="ns:checkForSubscriptionsResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="AndesAdminServiceAndesException">
+        <wsdl:part name="parameters" element="ns:AndesAdminServiceAndesException"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="getMessageCountRequest">
         <wsdl:part name="parameters" element="ns:getMessageCount"></wsdl:part>
     </wsdl:message>
@@ -419,6 +451,9 @@
     <wsdl:message name="getAllSubscriptionsResponse">
         <wsdl:part name="parameters" element="ns:getAllSubscriptionsResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="updatePermissionWithExclusiveConsumerRequest">
+        <wsdl:part name="parameters" element="ns:updatePermissionWithExclusiveConsumer"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest">
         <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueueWithDifferentDestination"></wsdl:part>
     </wsdl:message>
@@ -432,11 +467,7 @@
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <wsdl:input message="tns:deleteMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:deleteMessagesFromDeadLetterQueue"></wsdl:input>
             <wsdl:output message="tns:deleteMessagesFromDeadLetterQueueResponse" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueResponse"></wsdl:output>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueAndesAdminServiceException"></wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getMessageCountForQueue">
-            <wsdl:input message="tns:getMessageCountForQueueRequest" wsaw:Action="urn:getMessageCountForQueue"></wsdl:input>
-            <wsdl:output message="tns:getMessageCountForQueueResponse" wsaw:Action="urn:getMessageCountForQueueResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:deleteMessagesFromDeadLetterQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAccessKey">
             <wsdl:input message="tns:getAccessKeyRequest" wsaw:Action="urn:getAccessKey"></wsdl:input>
@@ -475,12 +506,12 @@
         <wsdl:operation name="restoreMessagesFromDeadLetterQueue">
             <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueue"></wsdl:input>
             <wsdl:output message="tns:restoreMessagesFromDeadLetterQueueResponse" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueResponse"></wsdl:output>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueAndesAdminServiceException"></wsdl:fault>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
             <wsdl:input message="tns:purgeMessagesOfQueueRequest" wsaw:Action="urn:purgeMessagesOfQueue"></wsdl:input>
             <wsdl:output message="tns:purgeMessagesOfQueueResponse" wsaw:Action="urn:purgeMessagesOfQueueResponse"></wsdl:output>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:purgeMessagesOfQueueAndesAdminServiceException"></wsdl:fault>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:purgeMessagesOfQueueAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="browseQueue">
             <wsdl:input message="tns:browseQueueRequest" wsaw:Action="urn:browseQueue"></wsdl:input>
@@ -507,6 +538,11 @@
             <wsdl:output message="tns:getQueueRolePermissionResponse" wsaw:Action="urn:getQueueRolePermissionResponse"></wsdl:output>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getQueueRolePermissionAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="checkForSubscriptions">
+            <wsdl:input message="tns:checkForSubscriptionsRequest" wsaw:Action="urn:checkForSubscriptions"></wsdl:input>
+            <wsdl:output message="tns:checkForSubscriptionsResponse" wsaw:Action="urn:checkForSubscriptionsResponse"></wsdl:output>
+            <wsdl:fault message="tns:AndesAdminServiceAndesException" name="AndesAdminServiceAndesException" wsaw:Action="urn:checkForSubscriptionsAndesAdminServiceAndesException"></wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getMessageCount">
             <wsdl:input message="tns:getMessageCountRequest" wsaw:Action="urn:getMessageCount"></wsdl:input>
             <wsdl:output message="tns:getMessageCountResponse" wsaw:Action="urn:getMessageCountResponse"></wsdl:output>
@@ -522,23 +558,18 @@
             <wsdl:output message="tns:getAllSubscriptionsResponse" wsaw:Action="urn:getAllSubscriptionsResponse"></wsdl:output>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllSubscriptionsAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="updatePermissionWithExclusiveConsumer">
+            <wsdl:input message="tns:updatePermissionWithExclusiveConsumerRequest" wsaw:Action="urn:updatePermissionWithExclusiveConsumer"></wsdl:input>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:updatePermissionWithExclusiveConsumerAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination"></wsdl:input>
             <wsdl:output message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationResponse" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationResponse"></wsdl:output>
-            <wsdl:fault message="tns:AndesAdminServiceException" name="AndesAdminServiceException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationAndesAdminServiceException"></wsdl:fault>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestinationAndesAdminServiceBrokerManagerAdminException"></wsdl:fault>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="AndesAdminServiceSoap11Binding" type="tns:AndesAdminServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
-        <wsdl:operation name="getMessageCountForQueue">
-            <soap:operation soapAction="urn:getMessageCountForQueue" style="document"></soap:operation>
-            <wsdl:input>
-                <soap:body use="literal"></soap:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"></soap:body>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <soap:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap:operation>
             <wsdl:input>
@@ -547,8 +578,8 @@
             <wsdl:output>
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableTopicSubscriptions">
@@ -652,8 +683,8 @@
             <wsdl:output>
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
@@ -664,8 +695,8 @@
             <wsdl:output>
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="browseQueue">
@@ -752,6 +783,18 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="checkForSubscriptions">
+            <soap:operation soapAction="urn:checkForSubscriptions" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceAndesException">
+                <soap:fault use="literal" name="AndesAdminServiceAndesException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <soap:operation soapAction="urn:getAllSubscriptions" style="document"></soap:operation>
             <wsdl:input>
@@ -764,6 +807,15 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="updatePermissionWithExclusiveConsumer">
+            <soap:operation soapAction="urn:updatePermissionWithExclusiveConsumer" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"></soap:operation>
             <wsdl:input>
@@ -772,22 +824,13 @@
             <wsdl:output>
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap:fault use="literal" name="AndesAdminServiceException"></soap:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="AndesAdminServiceSoap12Binding" type="tns:AndesAdminServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap12:binding>
-        <wsdl:operation name="getMessageCountForQueue">
-            <soap12:operation soapAction="urn:getMessageCountForQueue" style="document"></soap12:operation>
-            <wsdl:input>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <soap12:operation soapAction="urn:deleteMessagesFromDeadLetterQueue" style="document"></soap12:operation>
             <wsdl:input>
@@ -796,8 +839,8 @@
             <wsdl:output>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableTopicSubscriptions">
@@ -901,8 +944,8 @@
             <wsdl:output>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="purgeMessagesOfQueue">
@@ -913,8 +956,8 @@
             <wsdl:output>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="browseQueue">
@@ -1001,6 +1044,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="checkForSubscriptions">
+            <soap12:operation soapAction="urn:checkForSubscriptions" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceAndesException">
+                <soap12:fault use="literal" name="AndesAdminServiceAndesException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <soap12:operation soapAction="urn:getAllSubscriptions" style="document"></soap12:operation>
             <wsdl:input>
@@ -1013,6 +1068,15 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="updatePermissionWithExclusiveConsumer">
+            <soap12:operation soapAction="urn:updatePermissionWithExclusiveConsumer" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"></soap12:operation>
             <wsdl:input>
@@ -1021,22 +1085,13 @@
             <wsdl:output>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceException">
-                <soap12:fault use="literal" name="AndesAdminServiceException"></soap12:fault>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="AndesAdminServiceHttpBinding" type="tns:AndesAdminServicePortType">
         <http:binding verb="POST"></http:binding>
-        <wsdl:operation name="getMessageCountForQueue">
-            <http:operation location="getMessageCountForQueue"></http:operation>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"></mime:content>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="deleteMessagesFromDeadLetterQueue">
             <http:operation location="deleteMessagesFromDeadLetterQueue"></http:operation>
             <wsdl:input>
@@ -1199,6 +1254,15 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="checkForSubscriptions">
+            <http:operation location="checkForSubscriptions"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <http:operation location="getAllSubscriptions"></http:operation>
             <wsdl:input>
@@ -1207,6 +1271,12 @@
             <wsdl:output>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermissionWithExclusiveConsumer">
+            <http:operation location="updatePermissionWithExclusiveConsumer"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <http:operation location="restoreMessagesFromDeadLetterQueueWithDifferentDestination"></http:operation>
@@ -1220,13 +1290,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://10.100.7.29:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://10.100.7.29:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://192.168.0.107:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
+            <http:address location="https://10.100.7.29:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
