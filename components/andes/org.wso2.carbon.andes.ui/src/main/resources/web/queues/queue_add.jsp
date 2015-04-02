@@ -182,6 +182,10 @@
                         class="required">*</span></td>
                 <td><input type="text" id="queue" value=<%=queueName%>></td>
             </tr>
+            <tr>
+               <td class="formRaw leftCol-big">Exclusive Consumer</td>
+               <td><input type="checkbox" id="isExclusiveConsumer" value="checked"></td>
+            </tr>
             </tbody>
         </table>
 
