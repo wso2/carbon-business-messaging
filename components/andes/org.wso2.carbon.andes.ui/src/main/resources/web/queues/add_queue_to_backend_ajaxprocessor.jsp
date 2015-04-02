@@ -5,10 +5,17 @@
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     String message = "";
+    boolean isExclusiveConsumer;
 
     String queue = request.getParameter("queue");
+        if(null!=request.getParameter("exclusiveConsumer")){
+             isExclusiveConsumer = true;
+        }
+        else{
+            isExclusiveConsumer = false;
+            }
     try {
-        stub.createQueue(queue);
+        stub.createQueue(queue, isExclusiveConsumer);
         message = "Queue added successfully";
         session.removeAttribute("queue");
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
@@ -17,4 +24,5 @@
 
 %><%=message%><%
     session.setAttribute("queue", queue);
+    session.setAttribute("isExclusiveConsumer"+queue, isExclusiveConsumer);
 %>
