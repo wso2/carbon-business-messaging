@@ -39,6 +39,8 @@
 
     <%
         String queue;
+        boolean exclusiveConsumer;
+        String  exclusiveCheck;
         if (session.getAttribute("queue") == null) {
     %>
     <script type="text/javascript">
@@ -47,6 +49,14 @@
             return;
         } else {
                 queue = (String) session.getAttribute("queue");
+                exclusiveConsumer = (Boolean)session.getAttribute("isExclusiveConsumer"+queue);
+
+                if( exclusiveConsumer){
+                         exclusiveCheck = "checked";
+        }
+                else{
+                    exclusiveCheck = " ";
+                }
         }
 %>
     <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
@@ -66,6 +76,11 @@
                     <td class="formRaw"><fmt:message key="queue"/></td>
                     <td><input type="text" id="queue" readonly="true" value="<%=queue%>"></td>
                 </tr>
+                <tr>
+                  <td class="formRaw leftCol-big">Exclusive Consumer</td>
+                  <td><input type="checkbox" id="isExclusiveConsumer" value="checked" onclick="checkBoxStatus(<%=queue%>)" <%=exclusiveCheck%> ></td>
+                </tr>
+
                 <tr>
                     <td class="formRow" colspan="2">
                         <h4>Permissions</h4>
