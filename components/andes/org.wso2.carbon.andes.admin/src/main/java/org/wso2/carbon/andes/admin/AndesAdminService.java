@@ -34,7 +34,12 @@ import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides all the andes admin services that is available through the UI(JSP).
@@ -45,14 +50,15 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Creates a queue.
      *
-     * @param queueName New queue name.
+     * @param queueName Name of the queue
+     * @param isExclusiveConsumer exclusive consumer value of the queue
      * @throws BrokerManagerAdminException
      */
-    public void createQueue(String queueName, boolean isExclusiveConsumerEnabled) throws BrokerManagerAdminException {
+    public void createQueue(String queueName, boolean isExclusiveConsumer) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                                                                         .getQueueManagerService();
         try {
-            queueManagerService.createQueue(queueName, isExclusiveConsumerEnabled);
+            queueManagerService.createQueue(queueName, isExclusiveConsumer);
         } catch (QueueManagerException e) {
             log.error("Error in creating the queue", e);
             throw new BrokerManagerAdminException("Error in creating the queue.", e);
@@ -137,6 +143,24 @@ public class AndesAdminService extends AbstractAdmin {
             throw new BrokerManagerAdminException("Error in deleting queue.", e);
         }
 
+    }
+
+    /**
+     * Delete topic related resources from registry
+     * @param topicName Topic Name
+     * @param subscriptionId Subscription ID
+     * @throws BrokerManagerAdminException
+     */
+    public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws BrokerManagerAdminException {
+        try {
+            QueueManagerService queueManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+            queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
+        } catch (QueueManagerException e) {
+            String message = e.getMessage();
+            throw new BrokerManagerAdminException("Error in deleting topic from registry. " +
+                    "" + message, e);
+        }
     }
 
     /**
@@ -369,8 +393,9 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                                                    sub.getNumberOfMessagesRemainingForSubscriber());
+                        sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
+                subscriptionDTO.setDestination(sub.getDestination());
 
                 allSubscriptions.add(subscriptionDTO);
             }
@@ -435,7 +460,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void updatePermissionWithExclusiveConsumer(String queueName, QueueRolePermission[] queueRolePermissionsDTO,
-                                                      boolean exclusiveConsumerUpdate) throws BrokerManagerAdminException{
+                                                      boolean exclusiveConsumerUpdate) throws BrokerManagerAdminException, QueueManagerException {
 
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
@@ -443,11 +468,12 @@ public class AndesAdminService extends AbstractAdmin {
         // call the queue and update the value of isExclusiveConsumer
         try {
             queueManagerService.updateExclusiveConsumerValue(queueName, exclusiveConsumerUpdate);
-        } catch (QueueManagerException e) {
-            e.printStackTrace();
+            updatePermission(queueName, queueRolePermissionsDTO);
         }
-
-        updatePermission(queueName, queueRolePermissionsDTO);
+        catch (QueueManagerException e) {
+            log.error("Error in updating exclusive consumer value", e);
+            throw new BrokerManagerAdminException("Error in updating exclusive consumer value.", e);
+        }
     }
 
     /**
@@ -650,7 +676,7 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     *
+     * Return true if there are subscriptions for that queue
      * @param queueName Name of the queue
      * @return
      * @throws AndesException
@@ -660,11 +686,13 @@ public class AndesAdminService extends AbstractAdmin {
         SubscriptionStore  subscriptionStore = new SubscriptionStore();
         Map<String, LocalSubscription> subscriptionMapForQueue = subscriptionStore.getLocalSubscriptionMap(queueName, false);
 
-        if(subscriptionMapForQueue.isEmpty())
+        if(subscriptionMapForQueue.isEmpty()) {
             return false;
+        }
 
-        else
+        else{
             return true;
+        }
     }
     /**
      * A comparator class to order queues.
