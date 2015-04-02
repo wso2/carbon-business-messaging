@@ -39,7 +39,8 @@ public class QueueManagementBeans {
     }
 
 
-    public void createQueue(String queueName, String userName) throws QueueManagerException {
+    public void createQueue(String queueName, String userName, boolean isExclusiveConsumerEnabled)
+            throws QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
 
@@ -47,8 +48,8 @@ public class QueueManagementBeans {
                     new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
             String operationName = "createNewQueue";
 
-            Object[] parameters = new Object[]{queueName, userName, true};
-            String[] signature = new String[]{String.class.getName(), String.class.getName(),
+            Object[] parameters = new Object[]{queueName, userName, true, isExclusiveConsumerEnabled};
+            String[] signature = new String[]{String.class.getName(), String.class.getName(), boolean.class.getName(),
                     boolean.class.getName()};
 
             mBeanServer.invoke(
@@ -350,6 +351,38 @@ public class QueueManagementBeans {
         } catch (JMException e) {
             throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
         }
+    }
+
+    /**
+     * Invoke service bean for updating the exclusive Consumer Value for queue
+     * @param queueName name of the queue
+     * @param isExclusiveConsumer exclusive consumer value of the queue
+     * @throws QueueManagerException
+     */
+    public void updateExclusiveConsumer(String queueName, boolean isExclusiveConsumer) throws QueueManagerException{
+
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
+            String operationName = "updateExclusiveConsumerValue";
+
+            Object[] parameters = new Object[]{queueName, isExclusiveConsumer};
+            String[] signature = new String[]{String.class.getName(), boolean.class.getName()};
+
+              mBeanServer.invoke(
+                    objectName,
+                    operationName,
+                    parameters,
+                    signature);
+
+        } catch (MalformedObjectNameException e) {
+            e.printStackTrace();
+        }catch (JMException e) {
+            throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
+        }
+
+
     }
 
 
