@@ -98,5 +98,11 @@
         <operation name="getAccessKey">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/getAccessKey</parameter>
         </operation>
+        <operation name="updatePermissionWithExclusiveConsumer">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/getAccessKey</parameter>
+        </operation>
+        <operation name="checkForSubscriptions">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/getAccessKey</parameter>
+        </operation>
     </service>
 </serviceGroup>
