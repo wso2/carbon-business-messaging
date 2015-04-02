@@ -8,12 +8,12 @@
     boolean isExclusiveConsumer;
 
     String queue = request.getParameter("queue");
-        if(null!=request.getParameter("exclusiveConsumer")){
+    if(null!=request.getParameter("exclusiveConsumer")){
              isExclusiveConsumer = true;
-        }
-        else{
-            isExclusiveConsumer = false;
-            }
+    }
+    else{
+       isExclusiveConsumer = false;
+         }
     try {
         stub.createQueue(queue, isExclusiveConsumer);
         message = "Queue added successfully";
