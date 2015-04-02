@@ -31,7 +31,7 @@ public interface QueueManagerService {
      * @param queueName new queue name
      * @throws QueueManagerException
      */
-    public void createQueue(String queueName) throws QueueManagerException;
+    public void createQueue(String queueName, boolean isExclusiveConsumerEnabled) throws QueueManagerException;
 
     /**
      * Gets a all the queues
@@ -179,5 +179,15 @@ public interface QueueManagerService {
                                String jmsCorrelationID, int numberOfMessages,
                                String message, int deliveryMode, int priority,
                                long expireTime) throws QueueManagerException;
+
+    /**
+     * Updating the ExclusiveConsumer value of the queue
+     * @param queueName
+     * @param isExclusiveConsumer
+     * @throws QueueManagerException
+     */
+    public void updateExclusiveConsumerValue(String queueName, boolean isExclusiveConsumer)throws QueueManagerException;
+
+
 
 }
