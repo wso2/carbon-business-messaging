@@ -50,6 +50,15 @@ public interface QueueManagerService {
     public void deleteQueue(String queueName) throws QueueManagerException;
 
     /**
+     * This method is triggered unsubscribe from a durable subscription to delete topic related
+     * entries from registry
+     * @param topicName Topic name
+     * @param subscriptionId  Subscription ID
+     * @throws QueueManagerException
+     */
+    public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws QueueManagerException;
+
+    /**
      * Restore messages from the Dead Letter Queue to their original queues.
      *
      * @param messageIDs          Browser Message Id / External Message Id list
@@ -182,8 +191,8 @@ public interface QueueManagerService {
 
     /**
      * Updating the ExclusiveConsumer value of the queue
-     * @param queueName
-     * @param isExclusiveConsumer
+     * @param queueName Name of the queue
+     * @param isExclusiveConsumer exclusive consumer value of the queue
      * @throws QueueManagerException
      */
     public void updateExclusiveConsumerValue(String queueName, boolean isExclusiveConsumer)throws QueueManagerException;
