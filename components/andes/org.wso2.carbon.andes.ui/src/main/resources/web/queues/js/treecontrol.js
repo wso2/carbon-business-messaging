@@ -4,10 +4,10 @@ function addQueue(createdFrom) {
     var exclusiveValue = document.getElementById("isExclusiveConsumer");
 
     if(exclusiveValue.checked){
-            var exclusiveConsumer = exclusiveValue.value;
-            }
+         var exclusiveConsumer = exclusiveValue.value;
+         }
     else {
-            var exclusiveConsumer = "";
+         var exclusiveConsumer = "";
          }
     var error = "";
 
@@ -44,6 +44,7 @@ function addQueueToBackEnd(queue, exclusiveConsumer, createdFrom) {
         failure:function(o) {
             if (o.responseText !== undefined) {
                 alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+            }
         }
     };
 
@@ -82,11 +83,11 @@ function updatePermissions() {
       var exclusiveConsumer = document.getElementById("isExclusiveConsumer");
 
       if(exclusiveConsumer.checked){
-            var exclusiveValue = exclusiveConsumer.value;
-             }
+          var exclusiveValue = exclusiveConsumer.value;
+          }
       else{
-            var exclusiveValue = "";
-            }
+          var exclusiveValue = "";
+          }
 
     var permissionTable = document.getElementById("permissionsTable");
     var rowCount = permissionTable.rows.length;
@@ -310,7 +311,7 @@ function checkBoxStatus(queueName)
                        {
                            document.getElementById("isExclusiveConsumer").checked=true;
                        }
-                 else {
+                 else  {
                            document.getElementById("isExclusiveConsumer").checked=false;
                        }
              }
