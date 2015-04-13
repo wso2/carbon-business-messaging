@@ -40,6 +40,8 @@
         <module>service-stubs</module>
         <module>components/andes</module>
         <module>features/andes</module>
+        <module>components/stat-publisher</module>
+        <module>features/stat-publisher</module>
     </modules>
 
     <scm>
