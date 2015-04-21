@@ -101,6 +101,40 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                         PRIMARY KEY (QUEUE_NAME) 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS MB_SLOT (
+                        SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
+                        MESSAGE_COUNT bigint(100) NOT NULL,
+                        START_MESSAGE_ID bigint(20) NOT NULL,
+                        END_MESSAGE_ID bigint(20) NOT NULL,
+                        STORAGE_QUEUE_NAME varchar(100) NOT NULL,
+                        IS_SLOT_ACTIVE tinyint(1) NOT NULL,
+                        SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
+                        DESTINATION_OF_MESSAGES varchar(512) DEFAULT NULL,
+                        ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
+                        ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
+                        PRIMARY KEY (SLOT_ID)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS MB_SLOT_MESSAGE_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS MB_NODE_TO_LAST_PUBLISHED_ID (
+                        NODE_ID varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (NODE_ID)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS MB_QUEUE_TO_LAST_ASSIGNED_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+
 
 CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
                         NODE_ID VARCHAR(512) NOT NULL,

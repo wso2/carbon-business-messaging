@@ -139,8 +139,44 @@ CREATE TABLE MB_RETAINED_CONTENT (
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_MSG_STORE_STATUS]') AND TYPE IN (N'U'))
 CREATE TABLE MB_MSG_STORE_STATUS (
                         NODE_ID VARCHAR(512) NOT NULL,
-                        TIME_STAMP BIGINT, 
-                        PRIMARY KEY(NODE_ID, TIME_STAMP)   
+                        TIME_STAMP BIGINT,
+                        PRIMARY KEY(NODE_ID, TIME_STAMP)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT]') AND TYPE IN (N'U'))
+CREATE TABLE MB_SLOT (
+                        SLOT_ID bigint IDENTITY(1,1) NOT NULL,
+                        MESSAGE_COUNT bigint NOT NULL,
+                        START_MESSAGE_ID bigint NOT NULL,
+                        END_MESSAGE_ID bigint NOT NULL,
+                        STORAGE_QUEUE_NAME varchar(100) NOT NULL,
+                        IS_SLOT_ACTIVE tinyint NOT NULL,
+                        SLOT_STATE tinyint NOT NULL DEFAULT '1',
+                        DESTINATION_OF_MESSAGES varchar(512) DEFAULT NULL,
+                        ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
+                        ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
+                        PRIMARY KEY (SLOT_ID)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT_MESSAGE_ID]') AND TYPE IN (N'U'))
+CREATE TABLE MB_SLOT_MESSAGE_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_NODE_TO_LAST_PUBLISHED_ID]') AND TYPE IN (N'U'))
+CREATE TABLE MB_NODE_TO_LAST_PUBLISHED_ID (
+                        NODE_ID varchar(512) NOT NULL,
+                        MESSAGE_ID bigint NOT NULL,
+                        PRIMARY KEY (NODE_ID)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_QUEUE_TO_LAST_ASSIGNED_ID]') AND TYPE IN (N'U'))
+CREATE TABLE MB_QUEUE_TO_LAST_ASSIGNED_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME)
 );
 
 -- End of Andes Context Store Tables --
