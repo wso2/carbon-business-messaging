@@ -345,7 +345,7 @@ public class QpidServiceComponent {
         } else {
             port = qpidServiceImpl.getAMQPPort();
         }
-        if (AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
+        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
             while (!isServerStarted) {
                 Socket socket = null;
                 try {
