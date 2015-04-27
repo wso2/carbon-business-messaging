@@ -103,13 +103,10 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
 
 CREATE TABLE IF NOT EXISTS MB_SLOT (
                         SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
-                        MESSAGE_COUNT bigint(100) NOT NULL,
                         START_MESSAGE_ID bigint(20) NOT NULL,
                         END_MESSAGE_ID bigint(20) NOT NULL,
                         STORAGE_QUEUE_NAME varchar(100) NOT NULL,
-                        IS_SLOT_ACTIVE tinyint(1) NOT NULL,
                         SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
-                        DESTINATION_OF_MESSAGES varchar(512) DEFAULT NULL,
                         ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
                         ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
                         PRIMARY KEY (SLOT_ID)
