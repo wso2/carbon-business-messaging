@@ -143,6 +143,8 @@ CREATE TABLE MB_MSG_STORE_STATUS (
                         PRIMARY KEY(NODE_ID, TIME_STAMP)
 );
 
+--create slot info
+--CREATED slot state is used as '1' default value for new created slots
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT]') AND TYPE IN (N'U'))
 CREATE TABLE MB_SLOT (
                         SLOT_ID bigint IDENTITY(1,1) NOT NULL,
@@ -155,6 +157,7 @@ CREATE TABLE MB_SLOT (
                         PRIMARY KEY (SLOT_ID)
 );
 
+--create slot message ids
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT_MESSAGE_ID]') AND TYPE IN (N'U'))
 CREATE TABLE MB_SLOT_MESSAGE_ID (
                         QUEUE_NAME varchar(512) NOT NULL,
@@ -162,6 +165,7 @@ CREATE TABLE MB_SLOT_MESSAGE_ID (
                         PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
 );
 
+--create node to last published id
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_NODE_TO_LAST_PUBLISHED_ID]') AND TYPE IN (N'U'))
 CREATE TABLE MB_NODE_TO_LAST_PUBLISHED_ID (
                         NODE_ID varchar(512) NOT NULL,
@@ -169,6 +173,7 @@ CREATE TABLE MB_NODE_TO_LAST_PUBLISHED_ID (
                         PRIMARY KEY (NODE_ID)
 );
 
+--create queue to last assigned id
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_QUEUE_TO_LAST_ASSIGNED_ID]') AND TYPE IN (N'U'))
 CREATE TABLE MB_QUEUE_TO_LAST_ASSIGNED_ID (
                         QUEUE_NAME varchar(512) NOT NULL,
