@@ -59,6 +59,17 @@ CREATE TABLE MB_EXPIRATION_DATA (
                 FOREIGN KEY (MESSAGE_ID) REFERENCES MB_METADATA (MESSAGE_ID)             
 );
 
+-- create table retained metadata
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_RETAINED_METADATA]') AND TYPE IN (N'U'))
+CREATE TABLE MB_RETAINED_METADATA (
+                TOPIC_ID INTEGER,
+                TOPIC_NAME VARCHAR(512) NOT NULL,
+                MESSAGE_ID BIGINT,
+                MESSAGE_METADATA VARBINARY(MAX),
+                PRIMARY KEY (TOPIC_ID)
+);
+
+
 -- End of Message Store Tables --
 
 -- Start of Andes Context Store Tables --
@@ -111,6 +122,15 @@ CREATE TABLE MB_QUEUE_COUNTER (
                         QUEUE_NAME VARCHAR(512) NOT NULL,
                         MESSAGE_COUNT BIGINT, 
                         PRIMARY KEY (QUEUE_NAME)      
+);
+
+-- create table retained_content
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_RETAINED_CONTENT]') AND TYPE IN (N'U'))
+CREATE TABLE MB_RETAINED_CONTENT (
+                MESSAGE_ID BIGINT,
+                CONTENT_OFFSET INTEGER,
+                MESSAGE_CONTENT VARBINARY(MAX) NOT NULL,
+                PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
 );
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_MSG_STORE_STATUS]') AND TYPE IN (N'U'))
