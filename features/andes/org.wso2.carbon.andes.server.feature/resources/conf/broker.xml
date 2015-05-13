@@ -408,10 +408,6 @@ expression of the property. -->
             <lowLimit>100</lowLimit>
             <highLimit>1000</highLimit>
         </bufferBased>
-        
-        <errorBased>
- 
-        </errorBased>
 
         <memoryBased>
             <memoryCheckInterval>20000</memoryCheckInterval>
