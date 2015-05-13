@@ -237,6 +237,10 @@ expression of the property. -->
 
         NOTE: This is NOT used in MB to generate message IDs. -->
         <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
+
+        <!-- This is the Task interval (in SECONDS) to check whether communication 
+        is healthy between message store (/Database) and this server instance. -->
+        <storeHealthCheckInterval>10</storeHealthCheckInterval>
     </persistence>
 
     <!-- Alter the flow that is triggered during a node fail -->
@@ -404,6 +408,10 @@ expression of the property. -->
             <lowLimit>100</lowLimit>
             <highLimit>1000</highLimit>
         </bufferBased>
+        
+        <errorBased>
+ 
+        </errorBased>
 
         <memoryBased>
             <memoryCheckInterval>20000</memoryCheckInterval>
