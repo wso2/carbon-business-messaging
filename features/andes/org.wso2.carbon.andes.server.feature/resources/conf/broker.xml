@@ -39,6 +39,8 @@ expression of the property. -->
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
         <thriftServerPort>7611</thriftServerPort>
+        <!--Thrift server reconnect timeout. Value specified in SECONDS-->
+        <thriftServerReconnectTimeout>5</thriftServerReconnectTimeout>
     </coordination>
 
     <!-- You can enable/disable specific messaging transports in this section. By default all 
