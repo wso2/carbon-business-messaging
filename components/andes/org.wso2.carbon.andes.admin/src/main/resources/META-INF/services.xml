@@ -101,5 +101,8 @@
         <operation name="getAccessKey">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/getAccessKey</parameter>
         </operation>
+        <operation name="getMessageCountForSubscriber">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+        </operation>
     </service>
 </serviceGroup>
