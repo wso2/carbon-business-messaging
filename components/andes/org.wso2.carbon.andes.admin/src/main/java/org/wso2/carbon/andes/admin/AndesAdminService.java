@@ -631,6 +631,41 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
+     * Gets the number of messages remaining for a subscriber.
+     *
+     * @param subscriptionID The subscription ID.
+     * @param durable        Whether the subscription is durable or not.
+     * @return The number of remaining messages.
+     * @throws BrokerManagerAdminException
+     */
+    public int getMessageCountForSubscriber(String subscriptionID, boolean durable) throws BrokerManagerAdminException {
+        int remainingMessages = 0;
+        try {
+            SubscriptionManagerService subscriptionManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions;
+            if (durable) {
+                subscriptions = subscriptionManagerService.getAllDurableTopicSubscriptions();
+            } else {
+                subscriptions = subscriptionManagerService.getAllLocalTempTopicSubscriptions();
+            }
+
+            for (org.wso2.carbon.andes.core.types.Subscription subscription : subscriptions) {
+                if (subscription.getSubscriptionIdentifier().equals(subscriptionID)) {
+                    remainingMessages = subscription.getNumberOfMessagesRemainingForSubscriber();
+                    break;
+                }
+            }
+        } catch (SubscriptionManagerException e) {
+            String errorMessage = "Unable to get remaining messages for subscription.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+
+        return remainingMessages;
+    }
+
+    /**
      * Get current user's username.
      * @return The user name.
      */
