@@ -1,0 +1,49 @@
+<configuration>
+            <async>false</async>
+            <clusterName>TestCluster</clusterName>
+            <compression>SNAPPY</compression>
+            <concurrency>100</concurrency>
+            <username>admin</username>
+            <password encrypted="true">admin</password>
+            <port>9042</port>
+            <maxConnections>100</maxConnections>
+            <!-- default cluster, modes: Cluster, Session ; if Session need to provide kespace as well-->
+            <mode>Cluster</mode>
+            <keyspace></keyspace>
+
+            <hosts>
+                <host>192.1.1.0</host>
+                <host>192.1.1.1</host>
+            </hosts>
+            <loadBalancePolicy>
+                <exclusionThreshold>2.5</exclusionThreshold>
+                <latencyAware>true</latencyAware>
+                <minMeasure>100</minMeasure>
+                <policyName>RoundRobinPolicy</policyName>
+                <retryPeriod>10</retryPeriod>
+                <scale>2</scale>
+            </loadBalancePolicy>
+
+            <poolOptions>
+                <coreConnectionsForLocal>10</coreConnectionsForLocal>
+                <coreConnectionsForRemote>10</coreConnectionsForRemote>
+                <maxConnectionsForLocal>10</maxConnectionsForLocal>
+                <maxConnectionsForRemote>10</maxConnectionsForRemote>
+                <maxSimultaneousRequestsForLocal>10</maxSimultaneousRequestsForLocal>
+                <maxSimultaneousRequestsForRemote>10</maxSimultaneousRequestsForRemote>
+                <minSimultaneousRequestsForLocal>10</minSimultaneousRequestsForLocal>
+                <minSimultaneousRequestsForRemote>10</minSimultaneousRequestsForRemote>
+            </poolOptions>
+
+            <reconnectPolicy>
+                <baseDelayMs>100</baseDelayMs>
+                <policyName>ConstantReconnectionPolicy</policyName>
+            </reconnectPolicy>
+            <socketOptions>
+                <connectTimeoutMillis>200</connectTimeoutMillis>
+                <keepAlive>true</keepAlive>
+                <readTimeoutMillis>200</readTimeoutMillis>
+                <tcpNoDelay>true</tcpNoDelay>
+            </socketOptions>
+
+</configuration>
