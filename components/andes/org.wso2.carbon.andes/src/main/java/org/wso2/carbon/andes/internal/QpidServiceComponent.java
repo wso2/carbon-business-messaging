@@ -36,6 +36,7 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -139,9 +140,9 @@ public class QpidServiceComponent {
 
             // Register tenant management listener for Message Broker
             bundleContext = context.getBundleContext();
-            MessageBrokerTenanatManagementListener tenanatManagementListener = new
-                    MessageBrokerTenanatManagementListener();
-            registrations.push(bundleContext.registerService(TenantMgtListener.class.getName(), tenanatManagementListener, null));
+            MessageBrokerTenantManagementListener tenantManagementListener = new
+                    MessageBrokerTenantManagementListener();
+            registrations.push(bundleContext.registerService(TenantMgtListener.class.getName(), tenantManagementListener, null));
 
             // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
