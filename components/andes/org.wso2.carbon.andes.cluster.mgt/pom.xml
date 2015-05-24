@@ -30,7 +30,7 @@
     <version>3.0.0-SNAPSHOT</version>
     <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon Component - MB Cluster Management - BE</name>
+    <name>WSO2 Carbon - Component - MB Cluster Management - BE</name>
     <description>org.wso2.carbon.andes.cluster.mgt provides the back-end functionalities for cluster
         management of MB
     </description>
