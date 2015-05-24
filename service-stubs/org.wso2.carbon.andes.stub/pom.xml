@@ -96,9 +96,9 @@
 							org.wso2.carbon.andes.stub.*;version="${andes.export.version}"
 						</Export-Package>
 						<Import-Package>
-							!org.wso2.carbon.andes.stub.*
+							!org.wso2.carbon.andes.stub.*,
+                            *;resolution:=optional
 						</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
 					</instructions>
 				</configuration>
 			</plugin>
