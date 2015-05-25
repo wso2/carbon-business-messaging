@@ -1,9 +1,0 @@
-<configuration>
-            <hosts>10.100.101.3:9160,10.100.101.4:9160,10.100.101.5:9160</hosts>
-            <username>admin</username>
-            <password>admin</password>
-            <clusterName>TestCluster</clusterName>
-            <maxActive>200</maxActive>
-            <enableSecurity>false</enableSecurity>
-</configuration>
-
