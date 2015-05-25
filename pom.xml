@@ -513,6 +513,16 @@
                 <artifactId>metrics-core</artifactId>
                 <version>${metrics-core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.axis2.transport</groupId>
+                <artifactId>axis2-transport-jms</artifactId>
+                <version>${axis2.transport.jms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.axis2.transport</groupId>
+                <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
+                <version>${axis2.transport.rabbitmq.amqp.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -624,6 +634,8 @@
         <codahale.metrics.version>3.0.2</codahale.metrics.version>
         <metrics-core.version>2.0.3.wso2v1</metrics-core.version>
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
+        <axis2.transport.jms.version>1.1.0-wso2v14</axis2.transport.jms.version>
+        <axis2.transport.rabbitmq.amqp.version>1.1.0-wso2v14</axis2.transport.rabbitmq.amqp.version>
     </properties>
 
 </project>
