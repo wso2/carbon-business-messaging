@@ -17,8 +17,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<groupId>org.wso2.carbon.messaging</groupId>
@@ -55,7 +54,7 @@
 									<pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
 								</path>
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<arg line="-uri src/main/resources/AndesManagerService.wsdl -u -uw -o target/generated-code -p org.wso2.carbon.andes.mgt.stub                                      -ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
+									<arg line="-uri src/main/resources/AndesManagerService.wsdl -u -uw -o target/generated-code -p org.wso2.carbon.andes.mgt.stub -ns2p http://mgt.cluster.andes.carbon.wso2.org=org.wso2.carbon.andes.mgt.stub,http://mgt.cluster.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.mgt.stub.types.carbon,http://org.apache.axis2/xsd=org.wso2.carbon.andes.mgt.stub.types.axis2,http://neethi.apache.org/xsd=org.wso2.carbon.andes.mgt.stub.types.neethi" />
 									<classpath refid="wsdl2java.classpath" />
 								</java>
 							</tasks>
@@ -98,9 +97,9 @@
 							org.wso2.carbon.andes.mgt.stub.*;version="${andes.export.version}"
 						</Export-Package>
 						<Import-Package>
-							!org.wso2.carbon.andes.mgt.*
+							!org.wso2.carbon.andes.mgt.*,
+                            *;resolution:=optional
 						</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
 					</instructions>
 				</configuration>
 			</plugin>

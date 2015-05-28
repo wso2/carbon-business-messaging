@@ -49,6 +49,14 @@ CREATE TABLE IF NOT EXISTS MB_EXPIRATION_DATA (
                 FOREIGN KEY (MESSAGE_ID) REFERENCES MB_METADATA (MESSAGE_ID)
 );
 
+CREATE TABLE IF NOT EXISTS MB_RETAINED_METADATA (
+                TOPIC_ID INT,
+                TOPIC_NAME VARCHAR NOT NULL,
+                MESSAGE_ID BIGINT,
+                MESSAGE_METADATA BINARY NOT NULL,
+                PRIMARY KEY (TOPIC_ID)
+);
+
 -- End of Message Store Tables --
 
 -- Start of Andes Context Store Tables --
@@ -90,5 +98,19 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                     MESSAGE_COUNT BIGINT,
                     PRIMARY KEY (QUEUE_NAME)
                     );
+
+CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
+                        MESSAGE_ID BIGINT,
+                        CONTENT_OFFSET INT,
+                        MESSAGE_CONTENT BLOB NOT NULL,
+                        PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
+);
+
+CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
+                NODE_ID VARCHAR NOT NULL,
+                TIME_STAMP BIGINT,
+                PRIMARY KEY(NODE_ID, TIME_STAMP)
+);
+
 
 -- End of Andes Context Store Tables --

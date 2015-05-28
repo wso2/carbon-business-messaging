@@ -17,8 +17,7 @@
   ~   under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
@@ -31,7 +30,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.admin</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Component - Andes admin</name>
+    <name>WSO2 Carbon - Component - Andes Admin</name>
     <description>Carbonized Andes</description>
     <url>http://wso2.org</url>
 
@@ -88,7 +87,6 @@
                             org.wso2.carbon.andes.core,
                             *;resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

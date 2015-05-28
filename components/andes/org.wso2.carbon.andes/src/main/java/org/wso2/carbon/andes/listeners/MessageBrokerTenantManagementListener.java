@@ -1,4 +1,4 @@
-package org.wso2.carbon.andes.internal;
+package org.wso2.carbon.andes.listeners;
 
 import org.apache.log4j.Logger;
 import org.wso2.andes.kernel.AndesContext;
@@ -12,9 +12,9 @@ import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
  * Tenant manager listener for WSO2 Message Broker.
  * After a management event in tenant realm has happened, it should be handled in Message Broker via this class.
  */
-public class MessageBrokerTenanatManagementListener implements TenantMgtListener {
+public class MessageBrokerTenantManagementListener implements TenantMgtListener {
 
-    private static final Logger logger = Logger.getLogger(MessageBrokerTenanatManagementListener.class);
+    private static final Logger logger = Logger.getLogger(MessageBrokerTenantManagementListener.class);
 
 
     /**
@@ -41,7 +41,7 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onTenantUpdate(TenantInfoBean tenantInfoBean) throws StratosException {
@@ -50,7 +50,16 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
+     */
+    @Override
+    public void onTenantDelete(int i) {
+        // Do Nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onTenantRename(int i, String s, String s2) throws StratosException {
@@ -59,7 +68,7 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onTenantInitialActivation(int i) throws StratosException {
@@ -68,7 +77,7 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onTenantActivation(int i) throws StratosException {
@@ -77,7 +86,7 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onTenantDeactivation(int i) throws StratosException {
@@ -86,7 +95,7 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public void onSubscriptionPlanChange(int i, String s, String s2) throws StratosException {
@@ -95,10 +104,19 @@ public class MessageBrokerTenanatManagementListener implements TenantMgtListener
 
     /**
      * {@inheritDoc}
-     * Not implemented on MessageBrokerTenanatManagementListener.
+     * Not implemented on MessageBrokerTenantManagementListener.
      */
     @Override
     public int getListenerOrder() {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Not implemented on MessageBrokerTenantManagementListener.
+     */
+    @Override
+    public void onPreDelete(int i) throws StratosException {
+        // Do nothing
     }
 }

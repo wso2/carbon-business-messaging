@@ -17,8 +17,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
@@ -109,6 +108,18 @@
             <groupId>com.h2database.wso2</groupId>
             <artifactId>h2-database-engine</artifactId>
         </dependency>
+        <dependency>
+            <groupId>libthrift.wso2</groupId>
+            <artifactId>libthrift</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2.transport</groupId>
+            <artifactId>axis2-transport-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2.transport</groupId>
+            <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -126,7 +137,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete file="resources/databases/WSO2MB_DB.h2.db"/>
+                                <delete file="resources/databases/WSO2MB_DB.h2.db" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -139,21 +150,19 @@
                         <configuration>
                             <tasks>
                                 <path id="h2.classpath">
-                                    <path refid="maven.compile.classpath"/>
+                                    <path refid="maven.compile.classpath" />
                                 </path>
 
-                                <echo message="######### Create MB H2 Database #############"/>
+                                <echo message="######### Create MB H2 Database #############" />
 
-                                <sql driver="org.h2.Driver"
-                                     url="jdbc:h2:${basedir}/resources/databases/WSO2MB_DB;create=true"
-                                     userid="" password="" autocommit="true" onerror="continue">
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/resources/databases/WSO2MB_DB;create=true" userid="" password="" autocommit="true" onerror="continue">
                                     <classpath>
-                                        <path refid="h2.classpath"/>
+                                        <path refid="h2.classpath" />
                                     </classpath>
-                                    <fileset file="${basedir}/resources/dbscripts/h2-mb.sql"/>
+                                    <fileset file="${basedir}/resources/dbscripts/h2-mb.sql" />
                                 </sql>
-                                <echo message="################### END ######################"/>
-                                <echo message="********Version of H2: "/>
+                                <echo message="################### END ######################" />
+                                <echo message="********Version of H2: " />
                                 <echo>${orbit.version.h2.engine}</echo>
                             </tasks>
                         </configuration>
@@ -230,6 +239,9 @@
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
+                                <bundleDef>libthrift.wso2:libthrift</bundleDef>
+                                <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
+                                <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.rabbitmq.amqp.version}</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
@@ -253,7 +265,7 @@
                         <configuration>
                             <tasks>
                                 <echo>remove generated h2 database file</echo>
-                                <delete file="resources/databases/WSO2MB_DB.h2.db"/>
+                                <delete file="resources/databases/WSO2MB_DB.h2.db" />
                                 <echo>clean up src directory</echo>
                                 <delete dir="src" />
                             </tasks>

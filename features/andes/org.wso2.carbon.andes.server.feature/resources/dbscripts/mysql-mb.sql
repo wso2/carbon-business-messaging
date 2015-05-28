@@ -48,6 +48,14 @@ CREATE TABLE IF NOT EXISTS MB_EXPIRATION_DATA (
                 FOREIGN KEY (MESSAGE_ID) REFERENCES MB_METADATA (MESSAGE_ID)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS MB_RETAINED_METADATA (
+                TOPIC_ID INT,
+                TOPIC_NAME VARCHAR(512) NOT NULL,
+                MESSAGE_ID BIGINT,
+                MESSAGE_METADATA VARBINARY(65000),
+                PRIMARY KEY (TOPIC_ID)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 -- End of Message Store Tables --
 
 -- Start of Andes Context Store Tables --
@@ -90,4 +98,18 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                         PRIMARY KEY (QUEUE_NAME) 
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+
+CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        TIME_STAMP BIGINT, 
+                        PRIMARY KEY (NODE_ID, TIME_STAMP)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
+                        MESSAGE_ID BIGINT,
+                        CONTENT_OFFSET INT,
+                        MESSAGE_CONTENT BLOB NOT NULL,
+                        PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 -- End of Andes Context Store Tables --

@@ -54,7 +54,7 @@
 									<pathelement location="${settings.localRepository}/org/apache/axis2/wso2/axis2/${orbit.version.axis2}/axis2-${orbit.version.axis2}.jar" />
 								</path>
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<arg line="-uri src/main/resources/AndesAdminService.wsdl -u -uw -sn AndesAdminService -o target/generated-code                                       -ns2p http://wso2.org/carbon/andes/admin/xsd=org.wso2.carbon.andes.stub.admin,http://wso2.org/carbon/andes/admin=org.wso2.carbon.andes.stub,http://Exception.internal.admin.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.stub.admin.types,http://internal.admin.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.stub.admin.types" />
+									<arg line="-uri src/main/resources/AndesAdminService.wsdl -u -uw -sn AndesAdminService -o target/generated-code -ns2p http://wso2.org/carbon/andes/admin/xsd=org.wso2.carbon.andes.stub.admin,http://wso2.org/carbon/andes/admin=org.wso2.carbon.andes.stub,http://Exception.internal.admin.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.stub.admin.types,http://internal.admin.andes.carbon.wso2.org/xsd=org.wso2.carbon.andes.stub.admin.types" />
 									<classpath refid="wsdl2java.classpath" />
 								</java>
 							</tasks>
@@ -96,9 +96,9 @@
 							org.wso2.carbon.andes.stub.*;version="${andes.export.version}"
 						</Export-Package>
 						<Import-Package>
-							!org.wso2.carbon.andes.stub.*
+							!org.wso2.carbon.andes.stub.*,
+                            *;resolution:=optional
 						</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
 					</instructions>
 				</configuration>
 			</plugin>

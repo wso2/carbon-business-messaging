@@ -36,7 +36,7 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
-import org.wso2.carbon.andes.listeners.AndesServerShutDownListener;
+import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
 import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -44,12 +44,12 @@ import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.core.ServerShutdownHandler;
 import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
+import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -59,6 +59,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @scr.component name="org.wso2.carbon.andes.internal.QpidServiceComponent"
@@ -103,13 +104,10 @@ public class QpidServiceComponent {
 
     private static final Log log = LogFactory.getLog(QpidServiceComponent.class);
 
-    private static final int CASSANDRA_THRIFT_PORT = 9160;
     private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
-    private static final String CARBON_CONFIG_HOST_NAME = "HostName";
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
-    private ComponentContext componentContext;
-
-    private ServiceRegistration qpidService = null;
+    private static BundleContext bundleContext;
+    private static Stack<ServiceRegistration> registrations = new Stack<ServiceRegistration>();
 
     /**
      * This is used in the situations where the Hazelcast instance is not registered but the activate method of the
@@ -129,8 +127,7 @@ public class QpidServiceComponent {
      */
     private QpidServiceImpl qpidServiceImpl;
 
-    protected void activate(ComponentContext ctx) throws AndesException {
-        this.componentContext = ctx;
+    protected void activate(ComponentContext context) throws AndesException {
         try {
 
             //Initialize AndesConfigurationManager
@@ -142,10 +139,10 @@ public class QpidServiceComponent {
             qpidServiceImpl.loadConfigurations();
 
             // Register tenant management listener for Message Broker
-            BundleContext bundleCtx = componentContext.getBundleContext();
-            MessageBrokerTenanatManagementListener tenanatManagementListener = new
-                    MessageBrokerTenanatManagementListener();
-            bundleCtx.registerService(TenantMgtListener.class.getName(), tenanatManagementListener, null);
+            bundleContext = context.getBundleContext();
+            MessageBrokerTenantManagementListener tenantManagementListener = new
+                    MessageBrokerTenantManagementListener();
+            registrations.push(bundleContext.registerService(TenantMgtListener.class.getName(), tenantManagementListener, null));
 
             // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
@@ -163,8 +160,25 @@ public class QpidServiceComponent {
                     this.brokerShouldBeStarted = true;
                 }
             }
-            AndesServerShutDownListener andesServerShutDownListener = new AndesServerShutDownListener(qpidService);
-            bundleCtx.registerService(ServerShutdownHandler.class.getName(), andesServerShutDownListener, null);
+
+            registrations.push(bundleContext.registerService(
+                    WaitBeforeShutdownObserver.class.getName(), new WaitBeforeShutdownObserver() {
+                boolean status = false;
+
+                public void startingShutdown() {
+                    try {
+                        AndesKernelBoot.shutDownAndesKernel();
+                    } catch (AndesException e) {
+                        log.error("Error while shutting down Andes kernel. ", e);
+                    } finally {
+                        status = true;
+                    }
+                }
+
+                public boolean isTaskComplete() {
+                    return status;
+                }
+            }, null));
 
         } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
@@ -175,6 +189,11 @@ public class QpidServiceComponent {
 
     protected void deactivate(ComponentContext ctx) {
         // By this time, through the AndesServerShutDownListener, All other services/ workers including this service, have been closed.
+        // Unregister services
+        while (!registrations.empty()) {
+            registrations.pop().unregister();
+        }
+        bundleContext = null;
     }
 
     protected void setAccessKey(AuthenticationService authenticationService) {
@@ -232,7 +251,8 @@ public class QpidServiceComponent {
     }
 
     protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        // Do nothing
+        //stop thrift server before hazelcast shutting down
+        AndesKernelBoot.stopThriftServer();
     }
 
     /**
@@ -309,10 +329,7 @@ public class QpidServiceComponent {
 
         //register coordinatedActivityImpl to get coordinator changes notification.
         //When is node is appointed as the coordinator execute method of coordinatedActivityImpl will be called
-        CoordinatedActivity coordinatedActivity = new CoordinatedActivityImpl();
-
-        BundleContext bundleContext = componentContext.getBundleContext();
-        bundleContext.registerService(CoordinatedActivity.class.getName(), coordinatedActivity, null);
+        registrations.push(bundleContext.registerService(CoordinatedActivity.class.getName(), new CoordinatedActivityImpl(), null));
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
@@ -345,40 +362,44 @@ public class QpidServiceComponent {
         } else {
             port = qpidServiceImpl.getAMQPPort();
         }
-        while (!isServerStarted) {
-            Socket socket = null;
-            try {
-                log.info("Carbon Host Name : " + getTransportBindAddress());
-                InetAddress address = InetAddress.getByName(getTransportBindAddress());
-                socket = new Socket(address, port);
-                log.info("Host : " + address.getHostAddress() + " port : " + port);
-                isServerStarted = socket.isConnected();
-                if (isServerStarted) {
-                    log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
-                            port);
-                }
-            } catch (IOException e) {
-                log.error("Wait until Qpid server starts on port " + port, e);
+        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
+            while (!isServerStarted) {
+                Socket socket = null;
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ignore) {
-                    // Ignore
-                }
-            } finally {
-                try {
-                    if ((socket != null) && (socket.isConnected())) {
-                        socket.close();
+                    log.info("Carbon Host Name : " + getTransportBindAddress());
+                    InetAddress address = InetAddress.getByName(getTransportBindAddress());
+                    socket = new Socket(address, port);
+                    log.info("Host : " + address.getHostAddress() + " port : " + port);
+                    isServerStarted = socket.isConnected();
+                    if (isServerStarted) {
+                        log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
+                                port);
                     }
                 } catch (IOException e) {
-                    log.error("Can not close the socket which is used to check the server " +
-                            "status ", e);
+                    log.error("Wait until Qpid server starts on port " + port, e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignore) {
+                        // Ignore
+                    }
+                } finally {
+                    try {
+                        if ((socket != null) && (socket.isConnected())) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                        log.error("Can not close the socket which is used to check the server " +
+                                "status ", e);
+                    }
                 }
             }
+        } else {
+            log.warn("AMQP Transport is disabled as per configuration.");
         }
 
         // Publish Qpid properties
-        qpidService = this.componentContext.getBundleContext().registerService(
-                QpidService.class.getName(), qpidServiceImpl, null);
+        registrations.push(bundleContext.registerService(
+                QpidService.class.getName(), qpidServiceImpl, null));
         Integer brokerPort;
         if (qpidServiceImpl.getIfSSLOnly()) {
             brokerPort = qpidServiceImpl.getAMQPSSLPort();

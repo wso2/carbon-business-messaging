@@ -39,6 +39,8 @@ expression of the property. -->
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
         <thriftServerPort>7611</thriftServerPort>
+        <!--Thrift server reconnect timeout. Value specified in SECONDS-->
+        <thriftServerReconnectTimeout>5</thriftServerReconnectTimeout>
     </coordination>
 
     <!-- You can enable/disable specific messaging transports in this section. By default all 
@@ -235,12 +237,30 @@ expression of the property. -->
 
         NOTE: This is NOT used in MB to generate message IDs. -->
         <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
+
+        <!-- This is the Task interval (in SECONDS) to check whether communication 
+        is healthy between message store (/Database) and this server instance. -->
+        <storeHealthCheckInterval>10</storeHealthCheckInterval>
     </persistence>
 
     <!-- Alter the flow that is triggered during a node fail -->
     <failoverBehaviour>
 
     </failoverBehaviour>
+
+    <!--Publisher transaction related configurations.-->
+    <transaction>
+
+        <!--Number of connections reserved at a given time for transactional DB tasks.
+        Transaction will hold on to a DB connection until a transaction is committed,
+        rolled back or closed.-->
+        <dbConnectionPoolSize>10</dbConnectionPoolSize>
+
+        <!--Maximum batch size (Messages) for a transaction. Exceeding this limit will result
+        in a failure in the subsequent commit request. Default is set to 10MB. Limit is
+        calculated considering the payload of messages-->
+        <maxBatchSizeInBytes>10000000</maxBatchSizeInBytes>
+    </transaction>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
     Broken down by critical processes so you have a clear view of which parameters to change in

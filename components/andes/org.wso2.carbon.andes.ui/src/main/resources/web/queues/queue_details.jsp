@@ -8,6 +8,7 @@
 <%@ page import="javax.jms.JMSException" %>
 <%@ page import="javax.naming.NamingException" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
+<%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:jsi18n
@@ -145,7 +146,7 @@
                     if (filteredQueueList != null) {
                         for (Queue queue : filteredQueueList) {
                             String nameOfQueue = queue.getQueueName();
-                            if(nameOfQueue != null && !nameOfQueue.contains("DeadLetterChannel")){
+                            if(!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)){
                 %>
                 <tr>
                     <td>

@@ -11,21 +11,20 @@
 <script type="text/javascript" src="js/treecontrol.js"></script>
 
 <script>
-    function refreshMessageCount(obj){
+    function refreshMessageCount(obj, durable){
         var aTag = jQuery(obj);
-        var subscriptionId = aTag.attr('data-id');
-        var queueName = subscriptionId.split("@")[1];
+        var subscriptionID = aTag.attr('data-id');
 
         aTag.css('font-weight', 'bolder');
 
         jQuery.ajax({
-            url:"retrieve_message_count_ajaxprocessor.jsp?queueName="+queueName+"&msgPattern=topic",
+            url:"retrive_message_count_for_subscriber_ajaxprocessor.jsp?subscriptionID="+subscriptionID+"&durable="+durable,
             data:{},
             type:"POST",
             success:function(data){
                 data = data.trim();
-                //$('#msg-'+subscriptionId).html(data);
-                $(document.getElementById('msg-'+subscriptionId)).html(data);
+                //$('#msg-'+subscriptionID).html(data);
+                $(document.getElementById('msg-'+subscriptionID)).html(data);
                 aTag.css('font-weight', 'normal');
                 // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
             }
@@ -290,7 +289,7 @@ No subscriptions are created.
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
                data-id="<%=sub.getSubscriptionIdentifier()%>"
-               onclick="refreshMessageCount(this)">Refresh
+               onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
     </tr>
@@ -364,7 +363,7 @@ No subscriptions are created.
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
                data-id="<%=sub.getSubscriptionIdentifier()%>"
-               onclick="refreshMessageCount(this)">Refresh
+               onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
         <td>
