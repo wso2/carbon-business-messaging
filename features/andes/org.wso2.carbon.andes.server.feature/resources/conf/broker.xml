@@ -473,7 +473,7 @@ expression of the property. -->
 
     <slotManagement>
         <!--Enable RDBMS slot information store-->
-        <useRdbmsSlotStore>true</useRdbmsSlotStore>
+        <useRdbmsSlotStore>false</useRdbmsSlotStore>
     </slotManagement>
 
 
