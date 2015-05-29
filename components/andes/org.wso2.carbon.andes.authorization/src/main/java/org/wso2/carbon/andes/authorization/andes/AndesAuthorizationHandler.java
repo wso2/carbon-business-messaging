@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.authorization.andes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.andes.server.security.Result;
 import org.wso2.andes.server.security.access.ObjectProperties;
@@ -567,8 +568,10 @@ public class AndesAuthorizationHandler {
         // Delete queue details
         RegistryClient.deleteQueue(queueName);
 
-        // Deleting internal role created for user.
-        removeQueueRoleCreateForLoggedInUser(newQName);
+        if (!AndesKernelBoot.isKernelShuttingDown()) {
+            // Deleting internal role created for user.
+            removeQueueRoleCreateForLoggedInUser(newQName);
+        }
     }
 
     /**
