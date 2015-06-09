@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.core.internal.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.carbon.andes.core.QueueManagerException;
@@ -460,15 +461,20 @@ public class Utils {
         if (message != null) {
             if (message instanceof TextMessage) {
                 String textMessage = ((TextMessage) message).getText();
-                wholeMsg = StringEscapeUtils.escapeHtml(textMessage).trim();
-                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
-                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
-                } else {
-                    summaryMsg = wholeMsg;
-                }
-                if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
-                    wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) +
-                               DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
+                if (!StringUtils.isEmpty(textMessage)) {
+                    wholeMsg = StringEscapeUtils.escapeHtml(textMessage).trim();
+                    if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                        summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
+                    } else {
+                        summaryMsg = wholeMsg;
+                    }
+                    if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
+                        wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) +
+                                   DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
+                    }
+                }else{
+                    wholeMsg = "(empty)";
+                    summaryMsg = "(empty)";
                 }
             } else if (message instanceof ObjectMessage) {
                 wholeMsg = "This Operation is Not Supported!";
