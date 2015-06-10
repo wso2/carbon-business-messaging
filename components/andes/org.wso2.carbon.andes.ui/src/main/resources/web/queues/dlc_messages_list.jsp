@@ -172,7 +172,10 @@
                     </td>
                     <td><%= msgProperties%>
                     </td>
-                    <td><%= messageContent[0]%><a href="message_content.jsp?message=<%=messageContent[1]%>">&nbsp;&nbsp;&nbsp;more...</a>
+                    <td><%= messageContent[0]%>
+                    <% if(messageContent[1].length() > messageContent[0].length()) { %>
+                        <a href="message_content.jsp?message=<%=messageContent[1]%>">&nbsp;&nbsp;&nbsp;more...</a>
+                    <% } %>
                     </td>
                 </tr>
 
