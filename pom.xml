@@ -39,6 +39,7 @@
         <module>service-stubs</module>
         <module>components/andes</module>
         <module>components/cassandra</module>
+        <module>components/metrics</module>
         <module>features/andes</module>
         <module>features/cassandra</module>
     </modules>
@@ -522,6 +523,21 @@
                 <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
                 <version>${axis2.transport.rabbitmq.amqp.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.view.ui</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -635,6 +651,9 @@
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
         <axis2.transport.jms.version>1.1.0-wso2v14</axis2.transport.jms.version>
         <axis2.transport.rabbitmq.amqp.version>1.1.0-wso2v14</axis2.transport.rabbitmq.amqp.version>
+        <carbon.metrics.version>1.1.0-SNAPSHOT</carbon.metrics.version>
+        <gson.version>2.3.1</gson.version>
+        <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
     </properties>
 
 </project>
