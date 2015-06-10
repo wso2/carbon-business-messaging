@@ -55,8 +55,8 @@ public class AndesAdminService extends AbstractAdmin {
         try {
             queueManagerService.createQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Error in creating the queue", e);
-            throw new BrokerManagerAdminException("Error in creating the queue.", e);
+            log.error("Error in creating the queue. " + e.getMessage(), e);
+            throw new BrokerManagerAdminException("Error in creating the queue. " + e.getMessage(), e);
         }
     }
 
@@ -134,10 +134,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Error in deleting queue", e);
-            throw new BrokerManagerAdminException("Error in deleting queue.", e);
+            log.error(e.getMessage(), e);
+            throw new BrokerManagerAdminException(e.getMessage(), e);
         }
-
     }
 
     /**
@@ -231,8 +230,8 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.purgeMessagesOfQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Error in purging message from queue", e);
-            throw new BrokerManagerAdminException("Error in purging message from queue.", e);
+            log.error("Error in purging message from queue. " + e.getMessage(), e);
+            throw new BrokerManagerAdminException("Error in purging message from queue. " + e.getMessage(), e);
         }
     }
 

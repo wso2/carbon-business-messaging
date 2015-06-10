@@ -1,20 +1,21 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *   WSO2 Inc. licenses this file to you under the Apache License,
- *   Version 2.0 (the "License"); you may not use this file except
- *   in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing,
- *   software distributed under the License is distributed on an
- *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *   KIND, either express or implied.  See the License for the
- *   specific language governing permissions and limitations
- *   under the License.
- */
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+
 package org.wso2.carbon.andes.core.internal.registry;
 
 import org.wso2.carbon.andes.core.QueueManagerException;
@@ -25,12 +26,18 @@ import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
+/**
+ * The following class contains the MBeans invoking services related to queue resources.
+ */
 public class QueueManagementBeans {
 
     public static QueueManagementBeans self;
-
     public static final String DIRECT_EXCHANGE = "amq.direct";
 
+    /**
+     * Gets the active queue managing instance.
+     * @return A queue managing instance.
+     */
     public static QueueManagementBeans getInstance() {
         if (self == null) {
             self = new QueueManagementBeans();
@@ -38,7 +45,14 @@ public class QueueManagementBeans {
         return self;
     }
 
-
+    /**
+     * Invoke service bean to creates a new queue.
+     *
+     * @param queueName The queue name.
+     * @param userName The user name of the queue owner
+     *
+     * @throws QueueManagerException
+     */
     public void createQueue(String queueName, String userName) throws QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -71,13 +85,21 @@ public class QueueManagementBeans {
                     bindingParams,
                     bpSignatures);
 
-        } catch (Exception e) {
+        } catch (MalformedObjectNameException | InstanceNotFoundException | ReflectionException e) {
             throw new QueueManagerException("Cannot create Queue : " + queueName, e);
+        } catch (MBeanException e) {
+            throw new QueueManagerException(e.getCause().getMessage(), e);
         }
     }
 
+    /**
+     * Invoke service bean to get all the queues.
+     *
+     * @return A list of {@link Queue}.
+     * @throws QueueManagerException
+     */
     public ArrayList<Queue> getAllQueues() throws QueueManagerException {
-        ArrayList<Queue> queueDetailsList = new ArrayList<Queue>();
+        ArrayList<Queue> queueDetailsList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -97,19 +119,20 @@ public class QueueManagementBeans {
             }
             return queueDetailsList;
 
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
-        } catch (ReflectionException e) {
-            throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
-        } catch (MBeanException e) {
-            throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
-        } catch (InstanceNotFoundException e) {
-            throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
-        } catch (AttributeNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | AttributeNotFoundException |
+                                                                                        InstanceNotFoundException e) {
             throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
         }
     }
 
+    /**
+     * Invoke service bean to get the message count for a destination.
+     *
+     * @param queueName  The destination name.
+     * @param msgPattern The value can be either "queue" or "topic".
+     * @return The number of messages.
+     * @throws QueueManagerException
+     */
     public long getMessageCount(String queueName, String msgPattern) throws QueueManagerException {
         long messageCount = 0;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -131,17 +154,16 @@ public class QueueManagementBeans {
 
             return messageCount;
 
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Cannot access mBean operations for message count:" + queueName, e);
-        } catch (ReflectionException e) {
-            throw new QueueManagerException("Cannot access mBean operations for message count:" + queueName, e);
-        } catch (MBeanException e) {
-            throw new QueueManagerException("Cannot access mBean operations for message count:" + queueName, e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Cannot access mBean operations for message count:" + queueName, e);
         }
     }
 
+    /**
+     * Deletes a queue.
+     * @param queueName Queue name to delete.
+     * @throws QueueManagerException
+     */
     public void deleteQueue(String queueName) throws QueueManagerException {
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -172,14 +194,10 @@ public class QueueManagementBeans {
                     parameters,
                     signature);
 
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Cannot delete Queue : " + queueName, e);
-        } catch (InstanceNotFoundException e) {
-            throw new QueueManagerException("Cannot delete Queue : " + queueName, e);
-        } catch (MBeanException e) {
+        } catch (MalformedObjectNameException | InstanceNotFoundException e) {
             throw new QueueManagerException("Cannot delete Queue : " + queueName, e);
         } catch (JMException e) {
-            throw new QueueManagerException("Cannot delete Queue : " + queueName, e);
+            throw new QueueManagerException(e.getCause().getMessage(), e);
         }
     }
 
@@ -188,7 +206,7 @@ public class QueueManagementBeans {
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
@@ -206,16 +224,7 @@ public class QueueManagementBeans {
                     operationName,
                     parameters,
                     signature);
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Error deleting messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (ReflectionException e) {
-            throw new QueueManagerException("Error deleting messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (MBeanException e) {
-            throw new QueueManagerException("Error deleting messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error deleting messages from Dead Letter Queue : " +
                     deadLetterQueueName, e);
         }
@@ -226,7 +235,7 @@ public class QueueManagementBeans {
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
@@ -243,16 +252,7 @@ public class QueueManagementBeans {
                     operationName,
                     parameters,
                     signature);
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (ReflectionException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (MBeanException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
                     deadLetterQueueName, e);
         }
@@ -264,7 +264,7 @@ public class QueueManagementBeans {
      * @param messageIDs          Browser message Id / External message Id list to be deleted
      * @param destination         The new destination for the messages in the same tenant
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
-     * @throws Exception
+     * @throws QueueManagerException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination,
                                                                            String deadLetterQueueName) throws
@@ -282,21 +282,19 @@ public class QueueManagementBeans {
                     operationName,
                     parameters,
                     signature);
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName + " to " + destination, e);
-        } catch (ReflectionException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName + " to " + destination, e);
-        } catch (MBeanException e) {
-            throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName + " to " + destination, e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
                     deadLetterQueueName + " to " + destination, e);
         }
     }
 
+    /**
+     * Invoke service bean to delete all messages of a queue.
+     *
+     * @param queueName The name of the queue.
+     * @param userName  The username of the queue owner.
+     * @throws QueueManagerException
+     */
     public void purgeMessagesFromQueue(String queueName,
                                        String userName) throws QueueManagerException {
         try {
@@ -315,17 +313,20 @@ public class QueueManagementBeans {
                     bindingParams,
                     bpSignatures);
 
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Cannot purge Queue : " + queueName, e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | InstanceNotFoundException | ReflectionException e) {
             throw new QueueManagerException("Cannot purge Queue : " + queueName, e);
         } catch (MBeanException e) {
-            throw new QueueManagerException("Cannot purge Queue : " + queueName, e);
-        } catch (JMException e) {
-            throw new QueueManagerException("Cannot purge Queue : " + queueName, e);
+            throw new QueueManagerException(e.getCause().getMessage(), e);
         }
     }
 
+    /**
+     * Invoke service bean to check whether a queue exists.
+     *
+     * @param queueName The queue name.
+     * @return True if queue exits, else false.
+     * @throws QueueManagerException
+     */
     public static boolean queueExists(String queueName) throws QueueManagerException {
         try {
             boolean status = false;
@@ -345,12 +346,8 @@ public class QueueManagementBeans {
             }
 
             return status;
-        } catch (MalformedObjectNameException e) {
-            throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
         } catch (JMException e) {
             throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
         }
     }
-
-
 }
