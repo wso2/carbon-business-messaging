@@ -51,19 +51,118 @@
         MetricDataWrapper metricData = null;
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         if ("Disruptor".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.inbound.disruptor.message.count", "Total Messages in Inbound Disruptor",
-                    MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.inbound.disruptor.ack.count", "Total Acks in Inbound Disruptor",
-                    MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.outbound.disruptor.message.count", "Total Messages in Outbound Disruptor",
-                    MetricAttribute.VALUE, null));
+            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.inbound.disruptor.message.count",
+                    "Total Messages in Inbound Disruptor", MetricAttribute.VALUE, null));
+            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.inbound.disruptor.ack.count",
+                    "Total Acks in Inbound Disruptor", MetricAttribute.VALUE, null));
+            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.outbound.disruptor.message.count",
+                    "Total Messages in Outbound Disruptor", MetricAttribute.VALUE, null));
         } else if ("PubSub".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.queue.subscribers.count", "Total Queue Subscribers",
-                    MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.topic.subscribers.count", "Total Topic Subscribers",
-                    MetricAttribute.VALUE, null));
+            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.queue.subscribers.count",
+                    "Total Queue Subscribers", MetricAttribute.VALUE, null));
+            metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.topic.subscribers.count",
+                    "Total Topic Subscribers", MetricAttribute.VALUE, null));
             metrics.add(new Metric(MetricType.GAUGE, "org.wso2.mb.channels.active.count", "Total Channels",
                     MetricAttribute.VALUE, null));
+        } else if ("MsgAckRecv".equals(type)) {
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.receive",
+                    "Received Messages Mean Rate", MetricAttribute.MEAN_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.receive",
+                    "Received Messages Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.receive",
+                    "Received Messages Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.receive",
+                    "Received Messages Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
+
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.receive",
+                    "Received Acknowledgements Mean Rate", MetricAttribute.MEAN_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.receive",
+                    "Received Acknowledgements Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.receive",
+                    "Received Acknowledgements Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.receive",
+                    "Received Acknowledgements Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
+        } else if ("MsgAckSent".equals(type)) {
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.sent", "Sent Messages Mean Rate",
+                    MetricAttribute.MEAN_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.sent",
+                    "Sent Messages Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.sent",
+                    "Sent Messages Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.message.sent",
+                    "Sent Messages Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
+
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.sent", "Sent Acknowledgements Mean Rate",
+                    MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.sent",
+                    "Sent Acknowledgements Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.sent",
+                    "Sent Acknowledgements Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.METER, "org.wso2.mb.ack.sent",
+                    "Sent Acknowledgements Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
+        } else if ("DatabaseRead".equals(type)) {
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read", "Minimum Database Read Time",
+                    MetricAttribute.MIN, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read", "Mean Database Read Time",
+                    MetricAttribute.MEAN, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read", "Maximum Database Read Time",
+                    MetricAttribute.MAX, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Standard Deviation of Database Read Time", MetricAttribute.STDDEV, null));
+
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 50th Percentile", MetricAttribute.P50, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 75th Percentile", MetricAttribute.P75, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 95th Percentile", MetricAttribute.P95, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 98th Percentile", MetricAttribute.P98, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 99th Percentile", MetricAttribute.P99, null));
+            // Charts did not work when display name had "99.9"
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Time 999th Percentile", MetricAttribute.P999, null));
+
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read", "Database Read Mean Rate",
+                    MetricAttribute.MEAN_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.read",
+                    "Database Read Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
+        } else if ("DatabaseWrite".equals(type)) {
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Minimum Database Write Time", MetricAttribute.MIN, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write", "Mean Database Write Time",
+                    MetricAttribute.MEAN, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Maximum Database Write Time", MetricAttribute.MAX, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Standard Deviation of Database Write Time", MetricAttribute.STDDEV, null));
+
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 50th Percentile", MetricAttribute.P50, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 75th Percentile", MetricAttribute.P75, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 95th Percentile", MetricAttribute.P95, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 98th Percentile", MetricAttribute.P98, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 99th Percentile", MetricAttribute.P99, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Time 999th Percentile", MetricAttribute.P999, null));
+
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write", "Database Write Mean Rate",
+                    MetricAttribute.MEAN_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Last Minute Rate", MetricAttribute.M1_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Last 5 Minutes Rate", MetricAttribute.M5_RATE, null));
+            metrics.add(new Metric(MetricType.TIMER, "org.wso2.mb.database.write",
+                    "Database Write Last 15 Minutes Rate", MetricAttribute.M15_RATE, null));
         }
 
         MetricList metricList = new MetricList();
