@@ -432,4 +432,27 @@ expression of the property. -->
             <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
         </connectionBased>
     </flowControl>
+
+    <!--
+    Message broker keeps track of all messages it has received as groups. These groups are termed ?Slots? (To know more
+    information about Slots and message broker install please refer to online wiki). Size of a slot is loosely
+    determined by the configuration <windowSize> (and the number of parallel publishers for specific topic/queue).
+    Message broker cluster (or in single node) keeps track of slots which constitutes for a large part of operating
+    state before the cluster went down.
+
+    When first message broker node of the cluster starts up, it will read the database to recreate the internal state
+    to previous state. In a deployment where Cassandra is the message storage, this broker node has to avoid
+    (please refer to Cassandra documentation for more information) tombstones when reading messages. Each message
+    stored in message store has a unique internal ID. This id is based on time on which the message was published.
+    To minimize the effect of tombstones, MB will use ?range queries? where ranges are defined using these messages ID.
+    During this start up, message broker will calculate a starting message ID based on date given below.
+    This significantly improves the (warm) start up time. So If you are going to warm start message broker, set this
+    value closer to the date (but before) which oldest message was received by this broker cluster.
+    For example: date of cluster set setup, 1st of this month/year.
+     -->
+    <recovery>
+        <!-- NOTE: please define date and time as yyyy-MM-dd HH:mm:ss -->
+        <startRecoveryFrom>2015-05-27 00:00:00</startRecoveryFrom>
+    </recovery>
+
 </broker>
