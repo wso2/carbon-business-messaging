@@ -28,9 +28,7 @@
     <packaging>pom</packaging>
     <version>3.0.0-SNAPSHOT</version>
     <name>WSO2 Carbon - Component - Metrics - Aggregator Module</name>
-    <description>
-        WSO2 Carbon Metrics related components
-    </description>
+    <description>Messaging Metrics related components</description>
     <url>http://wso2.org</url>
 
     <modules>
