@@ -168,19 +168,6 @@ public class QueueManagementBeans {
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
-            ObjectName bindingMBeanObjectName =
-                    new ObjectName("org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
-                            DIRECT_EXCHANGE + "\",ExchangeType=direct");
-            String bindingOperationName = "removeBinding";
-
-            Object[] bindingParams = new Object[]{queueName, queueName};
-            String[] bpSignatures = new String[]{String.class.getName(), String.class.getName()};
-
-            mBeanServer.invoke(
-                    bindingMBeanObjectName,
-                    bindingOperationName,
-                    bindingParams,
-                    bpSignatures);
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
             String operationName = "deleteQueue";
