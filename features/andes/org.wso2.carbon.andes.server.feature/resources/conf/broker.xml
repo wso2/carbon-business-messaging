@@ -434,7 +434,7 @@ expression of the property. -->
     </flowControl>
 
     <!--
-    Message broker keeps track of all messages it has received as groups. These groups are termed ?Slots? (To know more
+    Message broker keeps track of all messages it has received as groups. These groups are termed 'Slots' (To know more
     information about Slots and message broker install please refer to online wiki). Size of a slot is loosely
     determined by the configuration <windowSize> (and the number of parallel publishers for specific topic/queue).
     Message broker cluster (or in single node) keeps track of slots which constitutes for a large part of operating
@@ -453,6 +453,11 @@ expression of the property. -->
     <recovery>
         <!-- NOTE: please define date and time as yyyy-MM-dd HH:mm:ss -->
         <startRecoveryFrom>2015-05-27 00:00:00</startRecoveryFrom>
+        <!--
+        We will reading following number of message ids in a particular database call. Please note that increasing
+        value of below property may cause TombstoneOverwhelmingException in Cassandra as message store
+         -->
+        <recoveryWindowSize>100000</recoveryWindowSize>
     </recovery>
 
 </broker>
