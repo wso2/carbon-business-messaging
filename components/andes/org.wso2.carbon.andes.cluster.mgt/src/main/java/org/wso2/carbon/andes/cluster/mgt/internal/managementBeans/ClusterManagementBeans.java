@@ -168,4 +168,36 @@ public class ClusterManagementBeans {
             throw new ClusterMgtException("Cannot get cluster node addresses. Check if clustering is enabled.", e);
         }
     }
+
+    /**
+     * Gets the message store's health status
+     *
+     * @return true if healthy, else false.
+     * @throws ClusterMgtException
+     */
+    public boolean getStoreHealth() throws ClusterMgtException {
+        boolean storeHealth = false;
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
+                                   "name=ClusterManagementInformation");
+            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.STORE_HEALTH);
+            if (result != null) {
+                storeHealth = (Boolean) result;
+            }
+            return storeHealth;
+
+        } catch (MalformedObjectNameException e) {
+            throw new ClusterMgtException("Cannot get message store health.", e);
+        } catch (ReflectionException e) {
+            throw new ClusterMgtException("Cannot get message store health.", e);
+        } catch (MBeanException e) {
+            throw new ClusterMgtException("Cannot get message store health.", e);
+        } catch (InstanceNotFoundException e) {
+            throw new ClusterMgtException("Cannot get message store health.", e);
+        } catch (AttributeNotFoundException e) {
+            throw new ClusterMgtException("Cannot get message store health.", e);
+        }
+    }
 }

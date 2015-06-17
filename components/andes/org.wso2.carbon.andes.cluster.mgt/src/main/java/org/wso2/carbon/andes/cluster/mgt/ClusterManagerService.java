@@ -81,4 +81,14 @@ public class ClusterManagerService {
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
         return clusterManagementBeans.getMyNodeID();
     }
+
+    /**
+     * Gets the message store's health status
+     *
+     * @return true if healthy, else false.
+     */
+    public boolean getStoreHealth() throws ClusterMgtException {
+        ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+        return clusterManagementBeans.getStoreHealth();
+    }
 }

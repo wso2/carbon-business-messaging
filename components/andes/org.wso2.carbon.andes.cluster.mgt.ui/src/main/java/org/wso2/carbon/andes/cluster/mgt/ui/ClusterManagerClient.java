@@ -102,4 +102,13 @@ public class ClusterManagerClient {
             throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         return stub.getMyNodeID();
     }
+
+    /**
+     * Gets the message store's health status
+     *
+     * @return true if healthy, else false.
+     */
+    public boolean getStoreHealth() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
+        return stub.getStoreHealth();
+    }
 }
