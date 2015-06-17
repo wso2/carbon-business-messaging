@@ -59,11 +59,14 @@ public class DataSourceConfiguration {
      */
     XPath xPath = XPathFactory.newInstance().newXPath();
     /**
-     * hash map to hold db configurations as key value pairs.
+     * hash map to hold message store configurations as key value pairs.
      */
     private HashMap<Object, String> messageStoreConfiguration =
             new HashMap<Object, String>();
 
+    /**
+     * hash map to hold context store configurations as key value pairs.
+     */
     private HashMap<Object, String> contextStoreConfiguration =
             new HashMap<Object, String>();
 
@@ -80,7 +83,7 @@ public class DataSourceConfiguration {
      */
     public void loadDbConfiguration(String filePath) throws ConfigurationException {
 
-        String[] dataSourceNameArray = new String[2];
+        String[] dataSourceNameArray = new String[MessageBrokerDBUtil.NUMBER_OF_DATA_STORES];
 
         dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE] = AndesContext.
                 getInstance().getStoreConfiguration().getMessageStoreProperties().

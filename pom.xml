@@ -356,6 +356,11 @@
                 <version>${orbit.version.axis2}</version>
             </dependency>
             <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.logging</artifactId>
                 <version>${carbon.kernel.version}</version>
@@ -574,6 +579,7 @@
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
         <exp.pkg.version.neethi>2.0.4.wso2v4</exp.pkg.version.neethi>
         <imp.pkg.version.neethi>[2.0.4.wso2v4, 3.0.0)</imp.pkg.version.neethi>
+        <commons-lang.version>2.6</commons-lang.version>
         <!-- Apache Axiom -->
         <orbit.version.axiom>1.2.11.wso2v6</orbit.version.axiom>
         <exp.pkg.version.axiom>1.2.11.wso2v6</exp.pkg.version.axiom>
