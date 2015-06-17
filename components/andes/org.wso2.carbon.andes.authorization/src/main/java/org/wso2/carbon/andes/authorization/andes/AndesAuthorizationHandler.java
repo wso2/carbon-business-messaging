@@ -97,6 +97,12 @@ public class AndesAuthorizationHandler {
                                                         "/permission/admin/manage/queue/purgeQueue";
 
     /**
+     * Permission path for browsing a queue
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE =
+                                                        "/permission/admin/manage/queue/browseQueue";
+
+    /**
      * permission path for adding a topic.
      */
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC =
@@ -242,9 +248,52 @@ public class AndesAuthorizationHandler {
                         .getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
                     accessResult = Result.ALLOWED;
 
-                    // authorise if either consume or browse queue
+                    // authorise consume
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                         username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
+                    accessResult = Result.ALLOWED;
+
+                }
+                // if non of the above deny permission
+                return accessResult;
+            } catch (UserStoreException e) {
+                throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
+            }
+        }
+
+        return accessResult;
+    }
+
+    /**
+     * Evaluate whether the user has browsing permission for a queue
+     *
+     * @param username   User who is trying to consume the queue
+     * @param userRealm  User's Realm
+     * @param properties NAME, OWNER, TEMPORARY
+     * @return ALLOWED/DENIED
+     * @throws AndesAuthorizationHandlerException
+     */
+    public static Result handleBrowseQueue(String username, UserRealm userRealm,
+                                            ObjectProperties properties)
+            throws AndesAuthorizationHandlerException {
+        Result accessResult = Result.DENIED;
+        if (null == userRealm) {
+            accessResult = Result.DENIED;
+        } else {
+
+            // Queue properties
+            String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+
+            try {
+                // authorise if admin user
+                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
+                        .getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
+                    accessResult = Result.ALLOWED;
+
+                    // authorise browse
+                } else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                        username, PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE, UI_EXECUTE)) {
                     accessResult = Result.ALLOWED;
 
                 }

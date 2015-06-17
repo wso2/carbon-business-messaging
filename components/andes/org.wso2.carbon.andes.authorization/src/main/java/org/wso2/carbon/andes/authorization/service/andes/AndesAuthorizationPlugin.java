@@ -157,6 +157,9 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
                 case CONSUME:
                     return AndesAuthorizationHandler.handleConsumeQueue(
                             username, userRealm, properties);
+                case BROWSE:
+                    return AndesAuthorizationHandler.handleBrowseQueue(
+                            username, userRealm, properties);
                 case UNBIND:
                     return AndesAuthorizationHandler.handleUnbindQueue(properties);
                 case DELETE:
