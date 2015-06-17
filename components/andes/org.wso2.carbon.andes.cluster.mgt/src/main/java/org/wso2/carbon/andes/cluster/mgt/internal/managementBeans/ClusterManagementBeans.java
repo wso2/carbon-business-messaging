@@ -170,8 +170,7 @@ public class ClusterManagementBeans {
     }
 
     /**
-     /**
-     * Gets the broker's storage health status.
+     * Gets the message store's health status
      *
      * @return true if healthy, else false.
      * @throws ClusterMgtException
@@ -192,13 +191,13 @@ public class ClusterManagementBeans {
         } catch (MalformedObjectNameException e) {
             throw new ClusterMgtException("Cannot get message store health.", e);
         } catch (ReflectionException e) {
-            throw new ClusterMgtException("Cannot get coordinator node address.", e);
+            throw new ClusterMgtException("Cannot get message store health.", e);
         } catch (MBeanException e) {
-            throw new ClusterMgtException("Cannot get coordinator node address.", e);
+            throw new ClusterMgtException("Cannot get message store health.", e);
         } catch (InstanceNotFoundException e) {
-            throw new ClusterMgtException("Cannot get coordinator node address.", e);
+            throw new ClusterMgtException("Cannot get message store health.", e);
         } catch (AttributeNotFoundException e) {
-            throw new ClusterMgtException("Cannot get coordinator node address.", e);
+            throw new ClusterMgtException("Cannot get message store health.", e);
         }
     }
 }

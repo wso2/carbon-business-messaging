@@ -104,7 +104,7 @@ public class ClusterManagerClient {
     }
 
     /**
-     * Gets the broker's storage health status.
+     * Gets the message store's health status
      *
      * @return true if healthy, else false.
      */
