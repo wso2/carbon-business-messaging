@@ -102,4 +102,13 @@ public class ClusterManagerClient {
             throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         return stub.getMyNodeID();
     }
+
+    /**
+     * Gets the message store health.
+     *
+     * @return If messages store is broken, the exception string which cause the problem. Else empty string is returned.
+     */
+    public String getStoreHealth() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
+        return stub.getStoreHealth();
+    }
 }

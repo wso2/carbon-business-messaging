@@ -48,3 +48,18 @@
 .runningModeText{
     margin-left:15px;
 }
+.green-text {
+    color:#00921E;
+}
+
+.red-text {
+    color:#E31212;
+}
+
+.margin-top-twenty-five {
+    margin-top:25px;
+}
+
+.padding-left-ten {
+    padding-left : 10px;
+}

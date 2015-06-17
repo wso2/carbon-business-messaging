@@ -81,4 +81,14 @@ public class ClusterManagerService {
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
         return clusterManagementBeans.getMyNodeID();
     }
+
+    /**
+     * Gets the health of the stores.
+     *
+     * @return If messages store is broken, the exception string which cause the problem. Else empty string is returned.
+     */
+    public String getStoreHealth() throws ClusterMgtException {
+        ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+        return clusterManagementBeans.getExceptionStringValue();
+    }
 }

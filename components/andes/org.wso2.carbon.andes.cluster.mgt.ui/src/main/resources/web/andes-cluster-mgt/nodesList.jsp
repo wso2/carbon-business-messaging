@@ -63,7 +63,7 @@
 <div id="middle">
     <h2>Cluster Management- WSO2 Message Broker</h2>
     <div id="workArea">
-
+    <h2>Node Details</h2>
     <%
     try{
         if (isClusteringEnabled) {
@@ -128,6 +128,24 @@
         <script type="text/javascript">CARBON.showErrorDialog('Failed with BE.<%=e%>');</script>
     <%  return;
     } %>
+
+        <%
+            String storeHealth = "";
+
+            try {
+                storeHealth = client.getStoreHealth();
+            } catch (Exception e) {
+                CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
+            }
+        %>
+
+        <div class="margin-top-twenty-five"><h2>Message Store Details</h2></div>
+        <% if("".equals(storeHealth)) { %>
+            <div class="padding-left-ten"><h3>Message Store Health : <span class="green-text">Healthy</span></h3></div>
+        <% } else { %>
+            <div class="padding-left-ten"><h3>Message Store Health : <span class="red-text">Unhealthy</span></h3></div>
+        <% } %>
+
     </div>
 </div>
 
