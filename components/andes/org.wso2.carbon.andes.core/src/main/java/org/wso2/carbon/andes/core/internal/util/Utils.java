@@ -1,25 +1,27 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- *   WSO2 Inc. licenses this file to you under the Apache License,
- *   Version 2.0 (the "License"); you may not use this file except
- *   in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing,
- *   software distributed under the License is distributed on an
- *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *   KIND, either express or implied.  See the License for the
- *   specific language governing permissions and limitations
- *   under the License.
- */
+*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+
 package org.wso2.carbon.andes.core.internal.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.carbon.andes.core.QueueManagerException;
@@ -91,19 +93,6 @@ public class Utils {
     public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
 
     /**
-     * Gets a tenant's user name with domain. eg : tenant1user1@testtenant1.com
-     *
-     * @return A user name with domain as String
-     */
-    public static String getTenantAwareCurrentUserName() {
-        String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-            return username + "@" + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        }
-        return username;
-    }
-
-    /**
      * Gets the user registry for the current tenant
      *
      * @return a {@link org.wso2.carbon.registry.core.session.UserRegistry}
@@ -116,17 +105,6 @@ public class Utils {
         return registryService.getGovernanceSystemRegistry(
                 CarbonContext.getThreadLocalCarbonContext().getTenantId());
 
-    }
-
-    /**
-     * Gets the user real for the current user. The user realm represents the user store.
-     *
-     * @return a {@link org.wso2.carbon.user.api.UserRealm}
-     * @throws UserStoreException
-     */
-    public static org.wso2.carbon.user.api.UserRealm getUserRelam() throws UserStoreException {
-        return QueueManagerServiceValueHolder.getInstance().getRealmService().
-                getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId());
     }
 
     /**
@@ -182,7 +160,7 @@ public class Utils {
      */
     public static List<Queue> filterDomainSpecificQueues(List<Queue> fullList) {
         String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        ArrayList<Queue> tenantFilteredQueues = new ArrayList<Queue>();
+        ArrayList<Queue> tenantFilteredQueues = new ArrayList<>();
         if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Queue aQueue : fullList) {
@@ -214,7 +192,7 @@ public class Utils {
     public static List<Subscription> filterDomainSpecificSubscribers(
             List<Subscription> allSubscriptions) {
         String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        ArrayList<Subscription> tenantFilteredSubscriptions = new ArrayList<Subscription>();
+        ArrayList<Subscription> tenantFilteredSubscriptions = new ArrayList<>();
 
         //filter subscriptions belonging to the tenant domain
         if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
@@ -305,7 +283,7 @@ public class Utils {
         Object[] messageArray;
         int resultSetSize = maxMsgCount;
 
-        ArrayList<Object> resultList = new ArrayList<Object>();
+        ArrayList<Object> resultList = new ArrayList<>();
         for (Object aMsg : msgArrayList) {
             resultList.add(aMsg);
         }
@@ -460,15 +438,17 @@ public class Utils {
         if (message != null) {
             if (message instanceof TextMessage) {
                 String textMessage = ((TextMessage) message).getText();
-                wholeMsg = StringEscapeUtils.escapeHtml(textMessage).trim();
-                if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
-                    summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
-                } else {
-                    summaryMsg = wholeMsg;
-                }
-                if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
-                    wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) +
-                               DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
+                if (StringUtils.isNotEmpty(textMessage)) {
+                    wholeMsg = StringEscapeUtils.escapeHtml(textMessage).trim();
+                    if (wholeMsg.length() >= CHARACTERS_TO_SHOW) {
+                        summaryMsg = wholeMsg.substring(0, CHARACTERS_TO_SHOW);
+                    } else {
+                        summaryMsg = wholeMsg;
+                    }
+                    if (wholeMsg.length() > MESSAGE_DISPLAY_LENGTH_MAX) {
+                        wholeMsg = wholeMsg.substring(0, MESSAGE_DISPLAY_LENGTH_MAX - 3) +
+                                   DISPLAY_CONTINUATION + DISPLAY_LENGTH_EXCEEDED;
+                    }
                 }
             } else if (message instanceof ObjectMessage) {
                 wholeMsg = "This Operation is Not Supported!";
@@ -546,7 +526,6 @@ public class Utils {
             } catch (MessageEOFException ex) {
                 eofReached = true;
             }
-
         }
 
         return StringEscapeUtils.escapeHtml(sb.toString());
