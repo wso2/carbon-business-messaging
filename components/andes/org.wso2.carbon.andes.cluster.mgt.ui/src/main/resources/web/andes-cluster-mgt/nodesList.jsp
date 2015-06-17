@@ -130,7 +130,7 @@
     } %>
 
         <%
-            String storeHealth = "";
+            boolean storeHealth = false;
 
             try {
                 storeHealth = client.getStoreHealth();
@@ -140,7 +140,7 @@
         %>
 
         <div class="margin-top-twenty-five"><h2>Message Store Details</h2></div>
-        <% if("".equals(storeHealth)) { %>
+        <% if(storeHealth) { %>
             <div class="padding-left-ten"><h3>Message Store Health : <span class="green-text">Healthy</span></h3></div>
         <% } else { %>
             <div class="padding-left-ten"><h3>Message Store Health : <span class="red-text">Unhealthy</span></h3></div>

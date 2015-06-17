@@ -170,13 +170,14 @@ public class ClusterManagementBeans {
     }
 
     /**
-     * Gets the broker's message store health.
+     /**
+     * Gets the broker's storage health status.
      *
-     * @return If messages store is broken, the exception string which cause the problem. Else empty string is returned.
+     * @return true if healthy, else false.
      * @throws ClusterMgtException
      */
-    public String getExceptionStringValue() throws ClusterMgtException {
-        String storeHealth = StringUtils.EMPTY;
+    public boolean getStoreHealth() throws ClusterMgtException {
+        boolean storeHealth = false;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -184,7 +185,7 @@ public class ClusterManagementBeans {
                                    "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.STORE_HEALTH);
             if (result != null) {
-                storeHealth = (String) result;
+                storeHealth = (Boolean) result;
             }
             return storeHealth;
 

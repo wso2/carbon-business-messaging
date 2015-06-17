@@ -83,12 +83,12 @@ public class ClusterManagerService {
     }
 
     /**
-     * Gets the health of the stores.
+     * Gets the broker's storage health status.
      *
-     * @return If messages store is broken, the exception string which cause the problem. Else empty string is returned.
+     * @return true if healthy, else false.
      */
-    public String getStoreHealth() throws ClusterMgtException {
+    public boolean getStoreHealth() throws ClusterMgtException {
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-        return clusterManagementBeans.getExceptionStringValue();
+        return clusterManagementBeans.getStoreHealth();
     }
 }

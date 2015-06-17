@@ -104,11 +104,11 @@ public class ClusterManagerClient {
     }
 
     /**
-     * Gets the message store health.
+     * Gets the broker's storage health status.
      *
-     * @return If messages store is broken, the exception string which cause the problem. Else empty string is returned.
+     * @return true if healthy, else false.
      */
-    public String getStoreHealth() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
+    public boolean getStoreHealth() throws AndesManagerServiceClusterMgtExceptionException, RemoteException {
         return stub.getStoreHealth();
     }
 }
