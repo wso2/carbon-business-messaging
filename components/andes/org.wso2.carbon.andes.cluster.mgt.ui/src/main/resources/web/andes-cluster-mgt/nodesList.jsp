@@ -68,15 +68,17 @@
     try{
         if (isClusteringEnabled) {
     %>
+        <div class="padding-left-ten"><h3>Node ID : <%=nodeID%></h3></div>
+        <div class="padding-left-ten"><h3>Running in Cluster Mode...</h3></div>
         <table width="100%">
             <tr>
-                <td width="75%">
+                <td width="100%">
                     <table style="width:95%" class="styledLeft">
                         <thead>
                         <tr>
-                            <th><I><fmt:message key='node.ip'/></I></th>
-                            <th><I><fmt:message key='node.port'/></I></th>
-                            <th><I><fmt:message key='node.isCoordinator'/></I></th>
+                            <th><fmt:message key='node.ip'/></th>
+                            <th><fmt:message key='node.port'/></th>
+                            <th><fmt:message key='node.isCoordinator'/></th>
                         </tr>
                         </thead>
                         <% for(int i = 0; i < allClusterNodeAddresses.length; i++){ %>
@@ -101,28 +103,11 @@
                         <% } %>
                     </table>
                 </td>
-                <td width="25%">
-                    <div class="currentNodeDetailsDiv">
-                        <br/>
-                        <br/>
-                        <p class="nodeIDText">Node:<%=nodeID%>
-                        </p>
-                        <br/>
-                        <br/>
-                        <p class="runningModeText">Running in Cluster Mode...</p>
-                    </div>
-                </td>
             </tr>
         </table>
     <%  }else{ %>
-        <div class="currentNodeDetailsDiv">
-            <br/>
-            <br/>
-            <p class="nodeIDText">Node:<%=nodeID%>
-            </p>
-            <br/>
-            <br/><p class="runningModeText">Running in Standalone Mode...</p>
-        </div>
+        <div class="padding-left-ten"><h3>Node ID : <%=nodeID%></h3></div>
+        <div class="padding-left-ten"><h3>Running in Standalone Mode...</h3></div>
     <%  }
     } catch (Exception e) { %>
         <script type="text/javascript">CARBON.showErrorDialog('Failed with BE.<%=e%>');</script>
