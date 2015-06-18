@@ -25,6 +25,7 @@ import org.wso2.carbon.utils.dbcreator.DatabaseCreator;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.sql.SQLException;
 
 /**
  * <h1>Create MB store database tables based on configurations set</h1>
@@ -36,6 +37,10 @@ public class LocalDatabaseCreator extends DatabaseCreator {
     private static final Log log = LogFactory.getLog(LocalDatabaseCreator.class);
     private DataSource dataSource;
 
+    /**
+     * DataSource will set in super class.
+     * @param dataSource
+     */
     public LocalDatabaseCreator(DataSource dataSource) {
         super(dataSource);
         this.dataSource = dataSource;
@@ -49,13 +54,13 @@ public class LocalDatabaseCreator extends DatabaseCreator {
     public void createRegistryDatabase() throws ConfigurationException {
 
         String databaseType;
-        File scripFile;
+        File scriptFile;
 
         try {
 
             databaseType = DatabaseCreator.getDatabaseType(this.dataSource.getConnection());
-            String scripPath = getDbScriptLocation(databaseType);
-            scripFile = new File(scripPath);
+            String scriptPath = getDbScriptLocation(databaseType);
+            scriptFile = new File(scriptPath);
 
         } catch (Exception e) {
             log.error("Unexpected error occurred while connecting to the database.", e);
@@ -64,7 +69,7 @@ public class LocalDatabaseCreator extends DatabaseCreator {
         }
 
 
-        if (scripFile.canRead()) {
+        if (scriptFile.canRead()) {
 
             try {
                 super.createRegistryDatabase();
@@ -75,7 +80,7 @@ public class LocalDatabaseCreator extends DatabaseCreator {
             }
 
         } else {
-            log.error("Unexpected error occurred while reading db script : " + scripFile);
+            log.error("Unexpected error occurred while reading db script : " + scriptFile);
             throw new ConfigurationException("Unexpected error occurred while reading db script");
         }
     }
