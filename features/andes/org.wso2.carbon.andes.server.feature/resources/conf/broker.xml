@@ -301,7 +301,7 @@ expression of the property. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
 
             <!-- The size of the batch represents, at a given time the number of messages that could 
-            be retrived from the database. -->
+            be retrieved from the database. -->
             <contentReadBatchSize>65000</contentReadBatchSize>
         </delivery>
 
@@ -324,6 +324,27 @@ expression of the property. -->
             <maxUnackedMessages>1000</maxUnackedMessages>
         </ackHandling>
 
+        <contentHandling>
+
+            <!-- Within Andes there are content chunk handlers which convert incoming large content
+            chunks into max content chunk size allowed by Andes core. These handlers run in parallel
+            converting large content chunks to smaller chunks.
+
+            If the protocol specific content chunk size is different from the max chunk size allowed
+            by Andes core and there are significant number of large messages published, then having
+            multiple handlers will increase performance. -->
+            <contentChunkHandlerCount>3</contentChunkHandlerCount>
+
+            <!-- Andes core will store message content chunks according to this chunk size. Different
+            database will have limits and performance gains by tuning this parameter.
+
+            For instance in MySQL the maximum table column size for content is less than 65534, which
+            is the default chunk size of AMQP. By changing this parameter to a lesser value we can
+            store large content chunks converted to smaller content chunks within the DB with this
+            parameter. -->
+            <maxContentChunkSize>65500</maxContentChunkSize>
+        </contentHandling>
+
         <inboundEvents>
             <!--Number of parallel writers used to write content to message store. Increasing this
             value will speed-up the message receiving mechanism. But the load on the data store will
@@ -343,10 +364,10 @@ expression of the property. -->
             high throughput messaging scenarios to regulate the hit on database from MB -->
             <messageWriterBatchSize>70</messageWriterBatchSize>
 
-            <!--Timeout for waiting for a queue purge event to end to get the purged count. Doesn't affect actual purging.
-            If purge takes time, increasing the value will improve the possibility of retrieving the correct purged count.
-            Having a lower value doesn't stop purge event. Getting the purged count is affected by this
-            -->
+            <!--Timeout for waiting for a queue purge event to end to get the purged count. Doesn't
+            affect actual purging. If purge takes time, increasing the value will improve the
+            possibility of retrieving the correct purged count. Having a lower value doesn't stop
+            purge event. Getting the purged count is affected by this -->
             <purgedCountTimeout>180</purgedCountTimeout>
         </inboundEvents>
 
