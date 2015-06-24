@@ -366,10 +366,9 @@ public class QpidServiceComponent {
             while (!isServerStarted) {
                 Socket socket = null;
                 try {
-                    log.info("Carbon Host Name : " + getTransportBindAddress());
                     InetAddress address = InetAddress.getByName(getTransportBindAddress());
                     socket = new Socket(address, port);
-                    log.info("Host : " + address.getHostAddress() + " port : " + port);
+                    log.info("AMQP Host Address : " + address.getHostAddress() + " Port : " + port);
                     isServerStarted = socket.isConnected();
                     if (isServerStarted) {
                         log.info("WSO2 Message Broker is Started. Successfully connected to the server on port " +
