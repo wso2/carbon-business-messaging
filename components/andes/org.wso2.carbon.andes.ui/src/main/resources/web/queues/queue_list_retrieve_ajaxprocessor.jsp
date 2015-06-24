@@ -17,8 +17,12 @@
                  queueListString = queueListString + queueList[count].getQueueName() + "#";
              }
         }
-        //remove the last #
-        queueListString = queueListString.substring(0,queueListString.length()-1);
+
+        //We can remove the # tag only if the queueList is not empty
+        if (queueListString.length() > 0) {
+            //remove the last #
+            queueListString = queueListString.substring(0, queueListString.length() - 1);
+        }
 
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
