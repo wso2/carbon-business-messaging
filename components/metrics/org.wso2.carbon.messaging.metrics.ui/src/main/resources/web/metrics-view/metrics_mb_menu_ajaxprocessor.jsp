@@ -28,5 +28,5 @@
     viewMap.put("DisruptorView", new ChartView(true, new String[] { "Disruptor" }));
     viewMap.put("PubSubView", new ChartView(true, new String[] { "PubSub" }));
     viewMap.put("MsgAckView", new ChartView(true, new String[] { "MsgAckRecv", "MsgAckSent" }));
-    viewMap.put("DatabaseView", new ChartView(true, new String[] { "DatabaseRead", "DatabaseWrite" }));
+    viewMap.put("DatabaseView", new ChartView(true, new String[] { "DatabaseReadTime", "DatabaseReadRate", "DatabaseWriteTime", "DatabaseWriteRate" }));
 %>
