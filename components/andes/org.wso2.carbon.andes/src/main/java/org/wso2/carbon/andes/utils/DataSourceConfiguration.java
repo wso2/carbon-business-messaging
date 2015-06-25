@@ -50,6 +50,17 @@ import java.util.HashMap;
 public class DataSourceConfiguration {
 
     /**
+     * xpath to data source configuration
+     */
+    public static final String XPATH_DATASOURCE_CONFIGURATION = "//datasources-configuration/datasources/" +
+                                                                "datasource/definition/" +
+                                                                "configuration[ ../../jndiConfig/name/text()=";
+    /**
+     * xpath to verify RDBMS attribute
+     */
+    public static final String XPATH_RDBMS_ATTRIBUTE = "' and ../@type='RDBMS']";
+
+    /**
      * log variable for logging.
      */
     private static final Log log =
@@ -115,11 +126,9 @@ public class DataSourceConfiguration {
                 Document xmlDocument = builder.parse(new FileInputStream(filePath));
 
                 if(!dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE].isEmpty()) {
-                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
-                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
-                                        dataSourceNameArray[MessageBrokerDBUtil.
-                                                MESSAGE_STORE_DATA_SOURCE] +
-                                        "' and ../@type='RDBMS']";
+                    String xpathQuery = XPATH_DATASOURCE_CONFIGURATION + "'" +
+                                        dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE] +
+                                        XPATH_RDBMS_ATTRIBUTE;
                     //read an xml node using xpath
                     Node configurationNode = (Node) xPath.compile(xpathQuery).
                             evaluate(xmlDocument, XPathConstants.NODE);
@@ -128,11 +137,9 @@ public class DataSourceConfiguration {
                 }
 
                 if(!dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE].isEmpty()) {
-                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
-                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
-                                        dataSourceNameArray[MessageBrokerDBUtil.
-                                                CONTEXT_STORE_DATA_SOURCE] +
-                                        "' and ../@type='RDBMS']";
+                    String xpathQuery = XPATH_DATASOURCE_CONFIGURATION + "'" +
+                                        dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE] +
+                                        XPATH_RDBMS_ATTRIBUTE;
                     //read an xml node using xpath
                     Node configurationNode = (Node) xPath.compile(xpathQuery).
                             evaluate(xmlDocument, XPathConstants.NODE);
