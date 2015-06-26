@@ -20,15 +20,6 @@
 
 -- Start of Message Store Tables --
 
---create table messages
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_CONTENT]') AND TYPE IN (N'U'))
-CREATE TABLE MB_CONTENT (
-                MESSAGE_ID BIGINT,
-                CONTENT_OFFSET INTEGER,
-                MESSAGE_CONTENT VARBINARY(MAX),
-                PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
-);
-
 --create table queues
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_QUEUE_MAPPING]') AND TYPE IN (N'U'))
 CREATE TABLE MB_QUEUE_MAPPING (
@@ -47,7 +38,18 @@ CREATE TABLE MB_METADATA (
                 MESSAGE_METADATA VARBINARY(MAX),
                 PRIMARY KEY (MESSAGE_ID, QUEUE_ID),
                 UNIQUE (MESSAGE_ID),
-                FOREIGN KEY (QUEUE_ID) REFERENCES MB_QUEUE_MAPPING (QUEUE_ID)             
+                FOREIGN KEY (QUEUE_ID) REFERENCES MB_QUEUE_MAPPING (QUEUE_ID)
+);
+
+--create table messages
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_CONTENT]') AND TYPE IN (N'U'))
+CREATE TABLE MB_CONTENT (
+                MESSAGE_ID BIGINT,
+                CONTENT_OFFSET INTEGER,
+                MESSAGE_CONTENT VARBINARY(MAX),
+                PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET),
+                FOREIGN KEY (MESSAGE_ID) REFERENCES MB_METADATA (MESSAGE_ID)
+                ON DELETE CASCADE
 );
 
 --create table expiration_data
@@ -113,7 +115,8 @@ CREATE TABLE MB_BINDING (
                         QUEUE_NAME VARCHAR(512) NOT NULL,
                         BINDING_DETAILS VARCHAR(2048) NOT NULL,
                         FOREIGN KEY (EXCHANGE_NAME) REFERENCES MB_EXCHANGE (EXCHANGE_NAME),
-                        FOREIGN KEY (QUEUE_NAME) REFERENCES MB_QUEUE (QUEUE_NAME)       
+                        FOREIGN KEY (QUEUE_NAME) REFERENCES MB_QUEUE (QUEUE_NAME)
+                               ON DELETE CASCADE
 );
 
 --create table queue_counter
