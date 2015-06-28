@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
     <%
+        //clear data
+        request.getSession().removeAttribute("pageNumberToMessageIdMap");
+
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         Queue[] filteredQueueList = null;
         Queue[] queueList;

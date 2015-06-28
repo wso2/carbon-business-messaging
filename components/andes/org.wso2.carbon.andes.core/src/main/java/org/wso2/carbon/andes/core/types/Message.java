@@ -32,6 +32,7 @@ public class Message {
     private Long JMSTimeStamp;
     private Long JMSExpiration;
     private String dlcMsgDestination;
+    private Long andesMsgMetadataId;
 
     public String getMsgProperties() {
         return msgProperties;
@@ -127,5 +128,13 @@ public class Message {
 
     public void setDlcMsgDestination(String dlcMsgDestination) {
         this.dlcMsgDestination = dlcMsgDestination;
+    }
+
+    public long getAndesMsgMetadataId() {
+        return andesMsgMetadataId;
+    }
+
+    public void setAndesMsgMetadataId(long andesMsgMetadataId) {
+        this.andesMsgMetadataId = andesMsgMetadataId;
     }
 }
