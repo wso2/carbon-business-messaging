@@ -28,6 +28,7 @@
             <style-class>monitor</style-class>
             <icon>../metrics-view/images/icon_monitor_pc.gif</icon>
             <require-permission>/permission/admin/monitor/metrics</require-permission>
+            <require-super-tenant>true</require-super-tenant>
         </menu>
     </menus>
 </component>
