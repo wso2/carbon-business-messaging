@@ -180,8 +180,7 @@ public class QpidServiceComponent {
                 }
             }, null));
 
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
             throw new RuntimeException("Invalid configuration found in a configuration file", e);
         }
