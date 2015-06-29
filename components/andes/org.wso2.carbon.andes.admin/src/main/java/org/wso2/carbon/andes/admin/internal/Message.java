@@ -27,11 +27,12 @@ public class Message {
     private String JMSCorrelationId;
     private String JMSType;
     private Boolean JMSReDelivered;
-    private Integer JMSDeliveredMode;
+    private String JMSDeliveredMode;
     private Integer JMSPriority;
     private Long JMSTimeStamp;
     private Long JMSExpiration;
     private String dlcMsgDestination;
+    private Long andesMsgMetadataId;
 
     public String getMsgProperties() {
         return msgProperties;
@@ -89,11 +90,11 @@ public class Message {
         this.JMSReDelivered = JMSReDelivered;
     }
 
-    public Integer getJMSDeliveredMode() {
+    public String getJMSDeliveredMode() {
         return JMSDeliveredMode;
     }
 
-    public void setJMSDeliveredMode(Integer JMSDeliveredMode) {
+    public void setJMSDeliveredMode(String JMSDeliveredMode) {
         this.JMSDeliveredMode = JMSDeliveredMode;
     }
 
@@ -127,5 +128,13 @@ public class Message {
 
     public void setDlcMsgDestination(String dlcMsgDestination) {
         this.dlcMsgDestination = dlcMsgDestination;
+    }
+
+    public Long getAndesMsgMetadataId() {
+        return andesMsgMetadataId;
+    }
+
+    public void setAndesMsgMetadataId(Long andesMsgMetadataId) {
+        this.andesMsgMetadataId = andesMsgMetadataId;
     }
 }

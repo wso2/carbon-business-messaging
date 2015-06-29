@@ -535,12 +535,12 @@ public class AndesAdminService extends AbstractAdmin {
      * Browse the given queue name by start index and max messages count
      *
      * @param queueName     Name of the queue
-     * @param startingIndex Start point of the queue messages
+     * @param nextMessageIdToRead Start point of the queue message id to start reading
      * @param maxMsgCount   Maximum messages from start index
      * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
      * @throws BrokerManagerAdminException
      */
-    public Message[] browseQueue(String queueName, int startingIndex,
+    public Message[] browseQueue(String queueName, long nextMessageIdToRead,
                                  int maxMsgCount) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
@@ -548,7 +548,7 @@ public class AndesAdminService extends AbstractAdmin {
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
                     queueManagerService.browseQueue(queueName, getCurrentUser(), getAccessKey(),
-                                                                        startingIndex, maxMsgCount);
+                                                                        nextMessageIdToRead, maxMsgCount);
             for (org.wso2.carbon.andes.core.types.Message message : messages) {
                 Message messageDTO = new Message();
                 messageDTO.setMsgProperties(message.getMsgProperties());
@@ -558,18 +558,23 @@ public class AndesAdminService extends AbstractAdmin {
                 messageDTO.setJMSCorrelationId(message.getJMSCorrelationId());
                 messageDTO.setJMSType(message.getJMSType());
                 messageDTO.setJMSReDelivered(message.getJMSReDelivered());
-                messageDTO.setJMSDeliveredMode(message.getJMSDeliveredMode());
+                if(message.getJMSDeliveredMode() == 1) {
+                    messageDTO.setJMSDeliveredMode("NON PERSISTENT");
+                } else if (message.getJMSDeliveredMode() == 2) {
+                    messageDTO.setJMSDeliveredMode("PERSISTENT");
+                }
                 messageDTO.setMsgProperties(message.getMsgProperties());
                 messageDTO.setJMSTimeStamp(message.getJMSTimeStamp());
                 messageDTO.setJMSExpiration(message.getJMSExpiration());
                 messageDTO.setDlcMsgDestination(message.getDlcMsgDestination());
+                messageDTO.setAndesMsgMetadataId(message.getAndesMsgMetadataId());
                 messageDTOList.add(messageDTO);
             }
-            return messageDTOList.toArray(new Message[messageDTOList.size()]);
         } catch (QueueManagerException e) {
             log.error("Unable to browse queue", e);
             throw new BrokerManagerAdminException("Unable to browse queue.", e);
         }
+        return messageDTOList.toArray(new Message[messageDTOList.size()]);
     }
 
     /**

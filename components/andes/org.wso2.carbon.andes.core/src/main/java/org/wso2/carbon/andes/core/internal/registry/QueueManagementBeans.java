@@ -18,13 +18,18 @@
 
 package org.wso2.carbon.andes.core.internal.registry;
 
+import org.wso2.andes.management.common.mbeans.QueueManagementInformation;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
+import org.wso2.carbon.andes.core.types.Message;
 import org.wso2.carbon.andes.core.types.Queue;
 
 import javax.management.*;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The following class contains the MBeans invoking services related to queue resources.
@@ -33,6 +38,7 @@ public class QueueManagementBeans {
 
     public static QueueManagementBeans self;
     public static final String DIRECT_EXCHANGE = "amq.direct";
+    private static final int CHARACTERS_TO_SHOW = 15;
 
     /**
      * Gets the active queue managing instance.
@@ -336,5 +342,55 @@ public class QueueManagementBeans {
         } catch (JMException e) {
             throw new QueueManagerException("Error checking if queue " + queueName + " exists.", e);
         }
+    }
+
+    /**
+     * Invoke service bean to retrieve browse messages list
+     *
+     * @param queueName name of queue to browse
+     * @param nextMessageIdToRead next start message id to get message list
+     * @param maxMessageCount number of message count per page
+     *
+     * @return list of {@link org.wso2.carbon.andes.core.types.Message}
+     */
+    public List<Message> browseQueue (String queueName, long nextMessageIdToRead, int maxMessageCount)
+            throws QueueManagerException {
+        List<Message> browseMessageList = new ArrayList<>();
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "browseQueue";
+            Object[] parameters = new Object[]{queueName, nextMessageIdToRead, maxMessageCount};
+            String[] signature = new String[]{String.class.getName(), long.class.getName(), int.class.getName()};
+            Object result = mBeanServer.invoke(
+                    objectName,
+                    operationName,
+                    parameters,
+                    signature);
+            if (result != null) {
+                CompositeData[] messageDataList = (CompositeData[]) result;
+                for (CompositeData messageData : messageDataList) {
+                    Message message = new Message();
+                    message.setMsgProperties((String) messageData.get(QueueManagementInformation.JMS_PROPERTIES));
+                    message.setContentType((String) messageData.get(QueueManagementInformation.CONTENT_TYPE));
+                    message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
+                    message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
+                    message.setJMSCorrelationId((String) messageData.get(QueueManagementInformation.JMS_CORRELATION_ID));
+                    message.setJMSType((String) messageData.get(QueueManagementInformation.JMS_TYPE));
+                    message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
+                    message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation.JMS_DELIVERY_MODE));
+                    message.setJMSPriority((Integer) messageData.get(QueueManagementInformation.JMS_PRIORITY));
+                    message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
+                    message.setJMSExpiration((Long) messageData.get(QueueManagementInformation.JMS_EXPIRATION));
+                    message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
+                    message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
+                    browseMessageList.add(message);
+                }
+            }
+        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
+            throw new QueueManagerException("Cannot browse queue : " + queueName, e);
+        }
+        return browseMessageList;
     }
 }

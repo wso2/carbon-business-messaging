@@ -426,7 +426,7 @@ expression of the property. -->
     <managementConsole>
         <!--Maximum number of messages to be fetched using Andes message browser when browsing
         queues -->
-        <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
+        <messageBatchSizeForBrowserSubscriptions>100</messageBatchSizeForBrowserSubscriptions>
 
         <!-- This property defines the maximum message content length that can be displayed at the
         management console when browsing queues. If the message length exceeds the value, a

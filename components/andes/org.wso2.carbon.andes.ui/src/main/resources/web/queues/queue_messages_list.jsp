@@ -5,6 +5,12 @@
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 <%@ page import="org.wso2.carbon.andes.stub.admin.types.Message" %>
+<%@ page import="org.wso2.andes.configuration.enums.AndesConfiguration" %>
+<%@ page import="org.wso2.andes.configuration.AndesConfigurationManager" %>
+<%@ page import="javax.xml.bind.SchemaOutputResolver" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="org.wso2.andes.store.cassandra.ServerStartupRecoveryUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
@@ -22,10 +28,21 @@
         String nameOfQueue = request.getParameter("nameOfQueue");
         String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
         String pageNumberAsStr = request.getParameter("pageNumber");
-        int msgCountPerPage = 100;
+
+        int msgCountPerPage = AndesConfigurationManager.readValue(
+                AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
+        Map<Integer, Long> pageNumberToMessageIdMap = null;
+        if(request.getSession().getAttribute("pageNumberToMessageIdMap") != null) {
+            pageNumberToMessageIdMap = (Map<Integer, Long>) request.getSession().getAttribute("pageNumberToMessageIdMap");
+        } else {
+            pageNumberToMessageIdMap = new HashMap<Integer, Long>();
+        }
         int pageNumber = 0;
         int numberOfPages = 1;
         long totalMsgsInQueue;
+        long startMessageIdOfPage;
+        long nextMessageIdToRead = 0L;
+
         Message[] filteredMsgArray = null;
         if (pageNumberAsStr != null) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
@@ -33,7 +50,21 @@
         try {
             totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
-            filteredMsgArray = stub.browseQueue(nameOfQueue, pageNumber * msgCountPerPage, msgCountPerPage);
+            if (totalMsgsInQueue == 0L) {
+                nextMessageIdToRead = ServerStartupRecoveryUtils.getMessageIdToCompleteRecovery();
+            } else if(pageNumberToMessageIdMap.size() > 0) {
+                if(pageNumberToMessageIdMap.get(pageNumber) != null) {
+                    nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
+                }
+            }
+            filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
+            if(filteredMsgArray != null && filteredMsgArray.length > 0) {
+                startMessageIdOfPage = filteredMsgArray[0].getAndesMsgMetadataId();
+                pageNumberToMessageIdMap.put(pageNumber, startMessageIdOfPage);
+                nextMessageIdToRead = filteredMsgArray[filteredMsgArray.length - 1].getAndesMsgMetadataId() + 1;
+                pageNumberToMessageIdMap.put((pageNumber + 1), nextMessageIdToRead);
+                request.getSession().setAttribute("pageNumberToMessageIdMap", pageNumberToMessageIdMap);
+            }
         } catch (AndesAdminServiceBrokerManagerAdminException e) {
     %>
             <script type="text/javascript">CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
@@ -58,7 +89,8 @@
             <carbon:paginator pageNumber="<%=pageNumber%>" numberOfPages="<%=numberOfPages%>"
                               page="queue_messages_list.jsp" pageNumberParameterName="pageNumber"
                               resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
-                              prevKey="prev" nextKey="next" parameters="<%=concatenatedParameters%>"/>
+                              prevKey="prev" nextKey="next" parameters="<%=concatenatedParameters%>"
+                              showPageNumbers="false"/>
 
             <table class="styledLeft" style="width:100%">
                 <thead>
