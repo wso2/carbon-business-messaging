@@ -24,9 +24,15 @@ import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
 import org.wso2.carbon.andes.core.types.Message;
 import org.wso2.carbon.andes.core.types.Queue;
 
-import javax.management.*;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.JMException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +44,6 @@ public class QueueManagementBeans {
 
     public static QueueManagementBeans self;
     public static final String DIRECT_EXCHANGE = "amq.direct";
-    private static final int CHARACTERS_TO_SHOW = 15;
 
     /**
      * Gets the active queue managing instance.
@@ -201,7 +206,7 @@ public class QueueManagementBeans {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
@@ -211,7 +216,7 @@ public class QueueManagementBeans {
 
             String operationName = "deleteMessagesFromDeadLetterQueue";
             Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
-            String[] signature = new String[]{String[].class.getName(), String.class.getName()};
+            String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
                     operationName,
@@ -230,7 +235,7 @@ public class QueueManagementBeans {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName) throws
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName) throws
             QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -239,7 +244,7 @@ public class QueueManagementBeans {
 
             String operationName = "restoreMessagesFromDeadLetterQueue";
             Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
-            String[] signature = new String[]{String[].class.getName(), String.class.getName()};
+            String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
                     operationName,
@@ -259,7 +264,7 @@ public class QueueManagementBeans {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs, String destination,
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs, String destination,
                                                                            String deadLetterQueueName) throws
             QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -269,7 +274,7 @@ public class QueueManagementBeans {
 
             String operationName = "restoreMessagesFromDeadLetterQueue";
             Object[] parameters = new Object[]{messageIDs, destination, deadLetterQueueName};
-            String[] signature = new String[]{String[].class.getName(), String.class.getName(), String.class.getName()};
+            String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
                     operationName,

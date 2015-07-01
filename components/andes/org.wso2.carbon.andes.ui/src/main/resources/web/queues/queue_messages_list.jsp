@@ -22,7 +22,11 @@
     <script type="text/javascript" src="../admin/js/cookies.js"></script>
     <script type="text/javascript" src="../admin/js/main.js"></script>
     <link rel="stylesheet" href="styles/dsxmleditor.css"/>
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+            removeFirstAndLastPaginations();
+        })
+    </script>
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         String nameOfQueue = request.getParameter("nameOfQueue");
