@@ -472,8 +472,8 @@ expression of the property. -->
     </flowControl>
 
     <slotManagement>
-        <!--Enable RDBMS slot information store-->
-        <useRdbmsSlotStore>false</useRdbmsSlotStore>
+        <!--Set slot storage mode (RDBMS/HazelCast)-->
+        <storage>HazelCast</storage>
     </slotManagement>
 
 
