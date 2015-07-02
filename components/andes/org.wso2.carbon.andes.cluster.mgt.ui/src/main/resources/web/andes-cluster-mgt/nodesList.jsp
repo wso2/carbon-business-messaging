@@ -76,6 +76,7 @@
                     <table style="width:95%" class="styledLeft">
                         <thead>
                         <tr>
+                            <th><fmt:message key='node.id'/></th>
                             <th><fmt:message key='node.ip'/></th>
                             <th><fmt:message key='node.port'/></th>
                             <th><fmt:message key='node.isCoordinator'/></th>
@@ -84,16 +85,23 @@
                         <% for(int i = 0; i < allClusterNodeAddresses.length; i++){ %>
                          <tr>
                             <td><%=
-                                    allClusterNodeAddresses[i].split(":")[0]
+                                    allClusterNodeAddresses[i].split(",")[0]
                                 %>
                             </td>
                             <td>
                                 <%=
-                                    allClusterNodeAddresses[i].split(":")[1]
+                                    allClusterNodeAddresses[i].split(",")[1]
                                 %>
                             </td>
                             <td>
-                                <% if(allClusterNodeAddresses[i].equals(coordinatorAddress)){%>
+                                <%=
+                                    allClusterNodeAddresses[i].split(",")[2]
+                                %>
+                            </td>
+                            <td>
+                                <% if((allClusterNodeAddresses[i].split(",")[1] + "," +
+                                        allClusterNodeAddresses[i].split(",")[2])
+                                        .equals(coordinatorAddress)){%>
                                     Yes
                                 <% }else{ %>
                                     No
