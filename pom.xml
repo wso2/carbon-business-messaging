@@ -326,9 +326,9 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-configuration.wso2</groupId>
+                <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
-                <version>${orbit.version.commons-configuration}</version>
+                <version>${commons-configuration.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.commons</groupId>
@@ -354,6 +354,11 @@
                 <groupId>org.apache.axis2.wso2</groupId>
                 <artifactId>axis2</artifactId>
                 <version>${orbit.version.axis2}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -574,6 +579,7 @@
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
         <exp.pkg.version.neethi>2.0.4.wso2v4</exp.pkg.version.neethi>
         <imp.pkg.version.neethi>[2.0.4.wso2v4, 3.0.0)</imp.pkg.version.neethi>
+        <commons-lang.version>2.6</commons-lang.version>
         <!-- Apache Axiom -->
         <orbit.version.axiom>1.2.11.wso2v6</orbit.version.axiom>
         <exp.pkg.version.axiom>1.2.11.wso2v6</exp.pkg.version.axiom>
@@ -638,9 +644,8 @@
         <!-- XML Schema -->
         <orbit.version.xmlschema>1.4.7.wso2v2</orbit.version.xmlschema>
         <version.commons.codec>1.4.0.wso2v1</version.commons.codec>
-        <orbit.version.commons-configuration>1.6.0.wso2v1</orbit.version.commons-configuration>
         <commons-cli.version>1.2.0</commons-cli.version>
-        <commons-configuration.version>1.6.0</commons-configuration.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
         <commons-digester.version>1.8.1</commons-digester.version>
         <commons-beanutils.version>1.8.0</commons-beanutils.version>
         <geronimo-jms_1.1_spec.version>1.1.0</geronimo-jms_1.1_spec.version>

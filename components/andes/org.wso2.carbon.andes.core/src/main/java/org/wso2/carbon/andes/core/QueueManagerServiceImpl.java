@@ -448,82 +448,13 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     @Override
     public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
                                                                   String userName, String accessKey,
-                                                                  int startingIndex, int maxMsgCount
-    ) throws QueueManagerException {
+                                                                  long nextMessageIdToRead, int maxMsgCount)
+            throws QueueManagerException {
 
         List<org.wso2.carbon.andes.core.types.Message> messageList =
-                new ArrayList<org.wso2.carbon.andes.core.types.Message>();
+                QueueManagementBeans.getInstance().browseQueue(nameOfQueue, nextMessageIdToRead, maxMsgCount);
 
-        try {
-            // User name may contain the domain name and the user name. eg: WSO2/admin
-            // having this username with domain name containing '/' character violates the
-            // amqp url user name. Therefore escaping it according to url standards
-            javax.jms.Queue queue = getQueue(nameOfQueue, URLEncoder.encode(userName, URLEncodingFormat),
-                                             accessKey);
-            queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-            QueueBrowser queueBrowser = queueSession.createBrowser(queue);
-            queueConnection.start();
-            if (queueBrowser != null) {
-                Enumeration queueContentsEnu = queueBrowser.getEnumeration();
-                ArrayList msgArrayList = Collections.list(queueContentsEnu);
-                Integer messageBatchSizeForBrowserSubscriptions = AndesConfigurationManager.readValue
-                        (AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
-                if (startingIndex < messageBatchSizeForBrowserSubscriptions) {
-                    Object[] filteredMsgArray = Utils.getFilteredMessagesList(msgArrayList, startingIndex, maxMsgCount);
-                    for (Object message : filteredMsgArray) {
-                        //cast to jms message
-                        Message queueMessage = (Message) message;
-                        //assign jms message properties to org.wso2.carbon.andes.core.types.Message
-                        org.wso2.carbon.andes.core.types.Message msg = new org.wso2.carbon.andes.core.types.Message();
-                        if (queueMessage != null) {
-                            msg.setMsgProperties(Utils.getMsgProperties(queueMessage));
-                            msg.setContentType(Utils.getMsgContentType(queueMessage));
-                            msg.setMessageContent(Utils.getMessageContentAsString(queueMessage));
-                            msg.setJMSMessageId(queueMessage.getJMSMessageID());
-                            msg.setJMSCorrelationId(queueMessage.getJMSCorrelationID());
-                            msg.setJMSType(queueMessage.getJMSType());
-                            msg.setJMSReDelivered(queueMessage.getJMSRedelivered());
-                            msg.setJMSDeliveredMode(queueMessage.getJMSDeliveryMode());
-                            msg.setJMSPriority(queueMessage.getJMSPriority());
-                            msg.setJMSTimeStamp(queueMessage.getJMSTimestamp());
-                            msg.setJMSExpiration(queueMessage.getJMSExpiration());
-                            Destination destination = queueMessage.getJMSDestination();
-                            if (destination != null && destination.toString().contains("routingkey=")) {
-                                String[] word = destination.toString().split("routingkey=");
-                                if (word.length > 0) {
-                                    msg.setDlcMsgDestination(word[1]);
-                                }
-                            }
-                            messageList.add(msg);
-                        }
-                    }
-                } else {
-                    throw new QueueManagerException("Please increase the " +
-                                                    "messageBatchSizeForBrowserSubscriptions in broker.xml");
-                }
-            }
-            return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
-        } catch (NamingException e) {
-            throw new QueueManagerException("Unable to browse queue.", e);
-        } catch (JMSException e) {
-            throw new QueueManagerException("Unable to browse queue.", e);
-        } catch (FileNotFoundException e) {
-            throw new QueueManagerException("Unable to browse queue.", e);
-        } catch (XMLStreamException e) {
-            throw new QueueManagerException("Unable to browse queue.", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new QueueManagerException("Unable to encode user name to url safe format", e);
-        } catch (UnknownHostException e) {
-            throw new QueueManagerException("Unable to browse queue due to invalid host address", e);
-        } finally {
-            try {
-                // There is no need to close the sessions, producers, and consumers of a
-                // closed connection
-                queueConnection.close();
-            } catch (JMSException e) {
-                log.error("Failed to close queue connection", e);
-            }
-        }
+        return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
     }
 
     /**

@@ -19,6 +19,7 @@
 package org.wso2.carbon.andes.utils;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
@@ -42,6 +43,11 @@ public final class MessageBrokerDBUtil {
 
     public static final int MESSAGE_STORE_DATA_SOURCE = 0;
     public static final int CONTEXT_STORE_DATA_SOURCE = 1;
+
+    /**
+     * Number of database stores for message broker. Message store and Context store.
+     */
+    public static final int NUMBER_OF_DATA_STORES = 2;
 
     /**
      * log variable for logging.
@@ -223,19 +229,19 @@ public final class MessageBrokerDBUtil {
 
             }
 
-            if (null == dbUrl) {
+            if (StringUtils.isBlank(dbUrl)) {
                 log.warn("Required database url unspecified. So Message Broker RDBMS Store " +
                          "will not work as expected.");
             }
-            if (null == driver) {
+            if (StringUtils.isBlank(driver)) {
                 log.warn("Required database driver unspecified. So Message Broker RDBMS Store " +
                          "will not work as expected.");
             }
-            if (null == username) {
+            if (StringUtils.isBlank(username)) {
                 log.warn("Required database username unspecified. So Message Broker RDBMS Store " +
                          "will not work as expected.");
             }
-            if (null == password) {
+            if (StringUtils.isBlank(password)) {
                 log.warn("Required database password unspecified. So Message Broker RDBMS Store " +
                          "will not work as expected.");
             }

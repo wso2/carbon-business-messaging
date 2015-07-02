@@ -50,6 +50,17 @@ import java.util.HashMap;
 public class DataSourceConfiguration {
 
     /**
+     * xpath to data source configuration
+     */
+    public static final String XPATH_DATASOURCE_CONFIGURATION = "//datasources-configuration/datasources/" +
+                                                                "datasource/definition/" +
+                                                                "configuration[ ../../jndiConfig/name/text()=";
+    /**
+     * xpath to verify RDBMS attribute
+     */
+    public static final String XPATH_RDBMS_ATTRIBUTE = "' and ../@type='RDBMS']";
+
+    /**
      * log variable for logging.
      */
     private static final Log log =
@@ -59,11 +70,14 @@ public class DataSourceConfiguration {
      */
     XPath xPath = XPathFactory.newInstance().newXPath();
     /**
-     * hash map to hold db configurations as key value pairs.
+     * hash map to hold message store configurations as key value pairs.
      */
     private HashMap<Object, String> messageStoreConfiguration =
             new HashMap<Object, String>();
 
+    /**
+     * hash map to hold context store configurations as key value pairs.
+     */
     private HashMap<Object, String> contextStoreConfiguration =
             new HashMap<Object, String>();
 
@@ -80,7 +94,7 @@ public class DataSourceConfiguration {
      */
     public void loadDbConfiguration(String filePath) throws ConfigurationException {
 
-        String[] dataSourceNameArray = new String[2];
+        String[] dataSourceNameArray = new String[MessageBrokerDBUtil.NUMBER_OF_DATA_STORES];
 
         dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE] = AndesContext.
                 getInstance().getStoreConfiguration().getMessageStoreProperties().
@@ -112,11 +126,9 @@ public class DataSourceConfiguration {
                 Document xmlDocument = builder.parse(new FileInputStream(filePath));
 
                 if(!dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE].isEmpty()) {
-                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
-                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
-                                        dataSourceNameArray[MessageBrokerDBUtil.
-                                                MESSAGE_STORE_DATA_SOURCE] +
-                                        "' and ../@type='RDBMS']";
+                    String xpathQuery = XPATH_DATASOURCE_CONFIGURATION + "'" +
+                                        dataSourceNameArray[MessageBrokerDBUtil.MESSAGE_STORE_DATA_SOURCE] +
+                                        XPATH_RDBMS_ATTRIBUTE;
                     //read an xml node using xpath
                     Node configurationNode = (Node) xPath.compile(xpathQuery).
                             evaluate(xmlDocument, XPathConstants.NODE);
@@ -125,11 +137,9 @@ public class DataSourceConfiguration {
                 }
 
                 if(!dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE].isEmpty()) {
-                    String xpathQuery = "//datasources-configuration/datasources/datasource/"+
-                                        "definition/configuration[ ../../jndiConfig/name/text()='"+
-                                        dataSourceNameArray[MessageBrokerDBUtil.
-                                                CONTEXT_STORE_DATA_SOURCE] +
-                                        "' and ../@type='RDBMS']";
+                    String xpathQuery = XPATH_DATASOURCE_CONFIGURATION + "'" +
+                                        dataSourceNameArray[MessageBrokerDBUtil.CONTEXT_STORE_DATA_SOURCE] +
+                                        XPATH_RDBMS_ATTRIBUTE;
                     //read an xml node using xpath
                     Node configurationNode = (Node) xPath.compile(xpathQuery).
                             evaluate(xmlDocument, XPathConstants.NODE);

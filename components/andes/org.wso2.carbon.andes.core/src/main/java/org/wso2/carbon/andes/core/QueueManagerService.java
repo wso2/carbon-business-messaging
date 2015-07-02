@@ -146,7 +146,7 @@ public interface QueueManagerService {
      * @param nameOfQueue   name of the queue
      * @param userName      user name of the amqp url
      * @param accessKey     the access key of the amqp url
-     * @param startingIndex the starting index of the messages
+     * @param nextMessageIdToRead next start message id to get message list
      * @param maxMsgCount   the maximum messages to return
      * @return an array of messages
      * @throws QueueManagerException
@@ -154,7 +154,7 @@ public interface QueueManagerService {
     public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
                                                                   String userName,
                                                                   String accessKey,
-                                                                  int startingIndex,
+                                                                  long nextMessageIdToRead,
                                                                   int maxMsgCount)
             throws QueueManagerException;
 

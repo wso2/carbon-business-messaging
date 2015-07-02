@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  ~ Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ WSO2 Inc. licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file except
@@ -138,10 +138,16 @@ expression of the property. -->
 
         <messageStore class="org.wso2.andes.store.rdbms.RDBMSMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="storeUnavailableSQLStateClasses">08</property>
+            <property name="integrityViolationSQLStateClasses">23,27,44</property>
+            <property name="dataErrorSQLStateClasses">21,22</property>
         </messageStore>
 
         <contextStore class="org.wso2.andes.store.rdbms.RDBMSAndesContextStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <property name="storeUnavailableSQLStateClasses">08</property>
+            <property name="integrityViolationSQLStateClasses">23,27,44</property>
+            <property name="dataErrorSQLStateClasses">21,22</property>
         </contextStore>
 
 
@@ -275,6 +281,16 @@ expression of the property. -->
             <!--rough estimate for size of a slot-->
             <windowSize>1000</windowSize>
 
+            <!-- Published message information is sent to slot coordinator by the node when it
+            either reaches the slot window size or the window creation timeout. This configures
+            the timeout for slot window creation task.
+
+            In a slow message publishing scenario, this is the delay for each message for delivery.
+            For instance if we publish one message per minute then each message will have to wait
+            till this timeout before the messages are submitted to the slot coordinator. Note that
+            Messages are delivered only after the slot coordinator is informed -->
+            <windowCreationTimeout>3000</windowCreationTimeout>
+
             <!--Number of SlotDeliveryWorker threads that should be started-->
             <workerThreadCount>5</workerThreadCount>
 
@@ -302,7 +318,7 @@ expression of the property. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
 
             <!-- The size of the batch represents, at a given time the number of messages that could 
-            be retrived from the database. -->
+            be retrieved from the database. -->
             <contentReadBatchSize>65000</contentReadBatchSize>
         </delivery>
 
@@ -325,6 +341,27 @@ expression of the property. -->
             <maxUnackedMessages>1000</maxUnackedMessages>
         </ackHandling>
 
+        <contentHandling>
+
+            <!-- Within Andes there are content chunk handlers which convert incoming large content
+            chunks into max content chunk size allowed by Andes core. These handlers run in parallel
+            converting large content chunks to smaller chunks.
+
+            If the protocol specific content chunk size is different from the max chunk size allowed
+            by Andes core and there are significant number of large messages published, then having
+            multiple handlers will increase performance. -->
+            <contentChunkHandlerCount>3</contentChunkHandlerCount>
+
+            <!-- Andes core will store message content chunks according to this chunk size. Different
+            database will have limits and performance gains by tuning this parameter.
+
+            For instance in MySQL the maximum table column size for content is less than 65534, which
+            is the default chunk size of AMQP. By changing this parameter to a lesser value we can
+            store large content chunks converted to smaller content chunks within the DB with this
+            parameter. -->
+            <maxContentChunkSize>65500</maxContentChunkSize>
+        </contentHandling>
+
         <inboundEvents>
             <!--Number of parallel writers used to write content to message store. Increasing this
             value will speed-up the message receiving mechanism. But the load on the data store will
@@ -344,10 +381,10 @@ expression of the property. -->
             high throughput messaging scenarios to regulate the hit on database from MB -->
             <messageWriterBatchSize>70</messageWriterBatchSize>
 
-            <!--Timeout for waiting for a queue purge event to end to get the purged count. Doesn't affect actual purging.
-            If purge takes time, increasing the value will improve the possibility of retrieving the correct purged count.
-            Having a lower value doesn't stop purge event. Getting the purged count is affected by this
-            -->
+            <!--Timeout for waiting for a queue purge event to end to get the purged count. Doesn't
+            affect actual purging. If purge takes time, increasing the value will improve the
+            possibility of retrieving the correct purged count. Having a lower value doesn't stop
+            purge event. Getting the purged count is affected by this -->
             <purgedCountTimeout>180</purgedCountTimeout>
         </inboundEvents>
 
@@ -383,7 +420,7 @@ expression of the property. -->
 
         <!--
             SIMPLE - Default Selector Mechanism
-	        BITMAPS - BitMaps
+            BITMAPS - BitMaps
             When using the subscriptions and topics in large quantity, BitMaps are faster than
             the existing ones
          -->
@@ -396,7 +433,7 @@ expression of the property. -->
     <managementConsole>
         <!--Maximum number of messages to be fetched using Andes message browser when browsing
         queues -->
-        <messageBatchSizeForBrowserSubscriptions>200</messageBatchSizeForBrowserSubscriptions>
+        <messageBatchSizeForBrowserSubscriptions>100</messageBatchSizeForBrowserSubscriptions>
 
         <!-- This property defines the maximum message content length that can be displayed at the
         management console when browsing queues. If the message length exceeds the value, a
@@ -438,5 +475,44 @@ expression of the property. -->
         <!--Enable RDBMS slot information store-->
         <useRdbmsSlotStore>true</useRdbmsSlotStore>
     </slotManagement>
+
+
+    <!--
+    Message broker keeps track of all messages it has received as groups. These groups are termed
+    'Slots' (To know more information about Slots and message broker install please refer to online wiki).
+    Size of a slot is loosely determined by the configuration <windowSize> (and the number of
+    parallel publishers for specific topic/queue). Message broker cluster (or in single node) keeps
+    track of slots which constitutes for a large part of operating state before the cluster went down.
+
+    When first message broker node of the cluster starts up, it will read the database to recreate
+    the internal state to previous state. In a deployment where Cassandra is the message storage, this
+    broker node has to avoid (please refer to Cassandra documentation for more information) tombstones
+    when reading messages. Each message stored in message store has a unique internal ID. This id is
+    based on time on which the message was published. To minimize the effect of tombstones, MB will use
+    'range queries' where ranges are defined using these messages ID. During this start up, message broker
+    will calculate a starting message ID based on date given below. This significantly improves the (warm)
+    start up time. So If you are going to warm start message broker, set this value closer to the date
+    (but before) which oldest message was received by this broker cluster. For example: date of cluster
+    set setup, 1st of this month/year.
+     -->
+    <recovery>
+        <!-- NOTE: please define date and time as yyyy-MM-dd HH:mm:ss -->
+        <startRecoveryFrom>2015-05-27 00:00:00</startRecoveryFrom>
+        <!--
+        We will reading following number of message ids in a particular database call. Please note that
+        increasing value of below property may cause TombstoneOverwhelmingException in Cassandra as
+        message store
+         -->
+        <recoveryWindowSize>100000</recoveryWindowSize>
+        <!--
+        There could be multiple storage queues worked before entire cluster (or single node) went down.
+        We need to recover all remaining messages of each storage queue when first node startup and we can
+        read remaining message concurrently of each storage queue. Default value to set here to 5. You can
+        increase this value based on number of storage queues exist. Please note that increasing value may
+        cause to heavy load in Cassandra due to multiple read calls. Please use optimal value based on
+        number of storage queues to speed up warm startup.
+        -->
+        <concurrentStorageQueueReads>5</concurrentStorageQueueReads>
+    </recovery>
 
 </broker>
