@@ -100,7 +100,36 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
                     QUEUE_NAME VARCHAR NOT NULL,
                     MESSAGE_COUNT BIGINT,
                     PRIMARY KEY (QUEUE_NAME)
-                    );
+);
+                    
+CREATE TABLE IF NOT EXISTS MB_SLOT (
+                        SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
+                        START_MESSAGE_ID bigint(20) NOT NULL,
+                        END_MESSAGE_ID bigint(20) NOT NULL,
+                        STORAGE_QUEUE_NAME varchar(100) NOT NULL,
+                        SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
+                        ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
+                        ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
+                        PRIMARY KEY (SLOT_ID)
+);
+
+CREATE TABLE IF NOT EXISTS MB_SLOT_MESSAGE_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
+);
+
+CREATE TABLE IF NOT EXISTS MB_NODE_TO_LAST_PUBLISHED_ID (
+                        NODE_ID varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (NODE_ID)
+);
+
+CREATE TABLE IF NOT EXISTS MB_QUEUE_TO_LAST_ASSIGNED_ID (
+                        QUEUE_NAME varchar(512) NOT NULL,
+                        MESSAGE_ID bigint(20) NOT NULL,
+                        PRIMARY KEY (QUEUE_NAME)
+);
 
 CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
                         MESSAGE_ID BIGINT,

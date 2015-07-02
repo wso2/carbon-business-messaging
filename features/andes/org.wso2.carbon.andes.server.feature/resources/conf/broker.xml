@@ -293,6 +293,7 @@ expression of the property. -->
 
             <!--Number of SlotDeliveryWorker threads that should be started-->
             <workerThreadCount>5</workerThreadCount>
+
         </slots>
 
         <delivery>
@@ -469,6 +470,12 @@ expression of the property. -->
             <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
         </connectionBased>
     </flowControl>
+
+    <slotManagement>
+        <!--Set slot storage mode (RDBMS/HazelCast)-->
+        <storage>HazelCast</storage>
+    </slotManagement>
+
 
     <!--
     Message broker keeps track of all messages it has received as groups. These groups are termed
