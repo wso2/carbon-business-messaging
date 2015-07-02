@@ -65,7 +65,7 @@ public interface QueueManagerService {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
             throws QueueManagerException;
 
     /**
@@ -76,7 +76,7 @@ public interface QueueManagerService {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs,
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String destination,
                                                                            String deadLetterQueueName)
             throws QueueManagerException;
@@ -88,7 +88,7 @@ public interface QueueManagerService {
      * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
             throws QueueManagerException;
 
     /**

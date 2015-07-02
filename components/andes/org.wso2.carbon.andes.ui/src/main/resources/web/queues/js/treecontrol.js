@@ -276,3 +276,21 @@ function validateForm(){
         });
     }
 }
+
+/**
+ * Removes the 'first' and 'last' links in pagination.
+ */
+function removeFirstAndLastPaginations(){
+    $('#workArea').find('table:not([class]) a').each(function () {
+        $(this).text($(this).text().replace(/<<first/g, ""));
+    });
+    $('#workArea').find('table:not([class]) a').each(function () {
+        $(this).text($(this).text().replace(/last.>>/g, ""));
+    });
+    $('#workArea').find('table:not([class]) span').each(function () {
+        $(this).text($(this).text().replace(/last>>/g, ""));
+    });
+    $('#workArea').find('table:not([class]) span').each(function () {
+        $(this).text($(this).text().replace(/<<.first/g, ""));
+    });
+}

@@ -20,8 +20,6 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.configuration.AndesConfigurationManager;
-import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
@@ -42,11 +40,8 @@ import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.Queue;
-import javax.jms.QueueBrowser;
 import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSender;
@@ -58,12 +53,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -234,7 +225,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void restoreMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
             throws
             QueueManagerException {
         QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
@@ -244,7 +235,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(String[] messageIDs,
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String destination,
                                                                            String deadLetterQueueName)
             throws
@@ -257,7 +248,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void deleteMessagesFromDeadLetterQueue(String[] messageIDs, String deadLetterQueueName)
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
             throws
             QueueManagerException {
         QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);

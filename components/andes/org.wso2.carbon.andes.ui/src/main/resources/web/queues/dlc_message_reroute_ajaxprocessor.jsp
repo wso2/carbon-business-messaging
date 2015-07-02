@@ -6,12 +6,17 @@
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     String idList = request.getParameter("msgList");
-    String newQueueName =  request.getParameter("newQueueName");
+    String newQueueName = request.getParameter("newQueueName");
     String nameOfQueue = request.getParameter("nameOfQueue");
 
     String[] idArray = idList.split(",");
-    try{
-        stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(idArray, newQueueName, nameOfQueue);
+    long[] andesMessageIDs = new long[idArray.length];
+    for (int i = 0; i < idArray.length; i++) {
+        andesMessageIDs[i] = Long.parseLong(idArray[i]);
+    }
+
+    try {
+        stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(andesMessageIDs, newQueueName, nameOfQueue);
 
     } catch (Exception e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
