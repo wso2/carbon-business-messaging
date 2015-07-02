@@ -386,6 +386,11 @@ expression of the property. -->
             possibility of retrieving the correct purged count. Having a lower value doesn't stop
             purge event. Getting the purged count is affected by this -->
             <purgedCountTimeout>180</purgedCountTimeout>
+
+            <!--Number of parallel writers used to write content to message store for transaction
+            based publishing. Increasing this value will speedup commit duration for a transaction.
+            But the load on the data store will increase.-->
+            <transactionMessageWriters>1</transactionMessageWriters>
         </inboundEvents>
 
         <failover>
