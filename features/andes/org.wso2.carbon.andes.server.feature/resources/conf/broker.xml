@@ -57,7 +57,6 @@ expression of the property. -->
             messaging model during AMQP.-->
             <port>5672</port>
             <sslPort>8672</sslPort>
-            <sendExpiredMessagesToDLC>false</sendExpiredMessagesToDLC>
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
         </amqp>
