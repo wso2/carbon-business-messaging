@@ -33,7 +33,7 @@
                 success:function(data){
                     data = data.trim();
                     //$('#msg-'+subscriptionId).html(data);
-                    $(document.getElementById('msg-'+subscriptionId)).html(data);
+                    $(aTag).parent().prev().html(data)
                     aTag.css('font-weight', 'normal');
                     // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
                 }
