@@ -83,6 +83,12 @@
         <operation name="deleteMessagesFromDeadLetterQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
         </operation>
+        <operation name="getNumberMessagesInDLCForQueue">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+        </operation>
+        <operation name="getMessageInDLCForQueue">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+        </operation>
         <operation name="getAllSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
         </operation>

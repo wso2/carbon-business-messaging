@@ -10,16 +10,6 @@
             </xs:complexType>
         </xs:schema>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.admin.andes.carbon.wso2.org/xsd">
-            <xs:complexType name="Queue">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="createdFrom" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"/>
-                    <xs:element minOccurs="0" name="messageCount" type="xs:long"/>
-                    <xs:element minOccurs="0" name="queueDepth" type="xs:long"/>
-                    <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime"/>
-                </xs:sequence>
-            </xs:complexType>
             <xs:complexType name="Subscription">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="active" type="xs:boolean"/>
@@ -31,13 +21,6 @@
                     <xs:element minOccurs="0" name="subscriberQueueBoundExchange" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="subscriberQueueName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="subscriptionIdentifier" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="QueueRolePermission">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="allowedToConsume" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"/>
-                    <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="Message">
@@ -55,6 +38,23 @@
                     <xs:element minOccurs="0" name="dlcMsgDestination" nillable="true" type="xs:string"/>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="messageContent" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="msgProperties" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Queue">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="createdFrom" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="messageCount" type="xs:long"/>
+                    <xs:element minOccurs="0" name="queueDepth" type="xs:long"/>
+                    <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="QueueRolePermission">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="allowedToConsume" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -75,15 +75,93 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllQueues">
+            <xs:element name="getAllSubscriptions">
                 <xs:complexType>
                     <xs:sequence/>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllQueuesResponse">
+            <xs:element name="getAllSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Queue"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllDurableQueueSubscriptions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllDurableQueueSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllLocalTempQueueSubscriptions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllLocalTempQueueSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllDurableTopicSubscriptions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllDurableTopicSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllLocalTempTopicSubscriptions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllLocalTempTopicSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNumberMessagesInDLCForQueue">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNumberMessagesInDLCForQueueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageInDLCForQueue">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="nextMessageIdToRead" type="xs:long"/>
+                        <xs:element minOccurs="0" name="maxMsgCount" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageInDLCForQueueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Message"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -149,63 +227,15 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllSubscriptions">
+            <xs:element name="getAllQueues">
                 <xs:complexType>
                     <xs:sequence/>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllSubscriptionsResponse">
+            <xs:element name="getAllQueuesResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllDurableQueueSubscriptions">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllDurableQueueSubscriptionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllLocalTempQueueSubscriptions">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllLocalTempQueueSubscriptionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllDurableTopicSubscriptions">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllDurableTopicSubscriptionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllLocalTempTopicSubscriptions">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllLocalTempTopicSubscriptionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Queue"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -288,18 +318,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAccessKey">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAccessKeyResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="sendMessage">
                 <xs:complexType>
                     <xs:sequence>
@@ -318,6 +336,18 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAccessKey">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAccessKeyResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -342,17 +372,23 @@
     <wsdl:message name="getAccessKeyResponse">
         <wsdl:part name="parameters" element="ns:getAccessKeyResponse"/>
     </wsdl:message>
-    <wsdl:message name="getAllQueuesRequest">
-        <wsdl:part name="parameters" element="ns:getAllQueues"/>
+    <wsdl:message name="getMessageInDLCForQueueRequest">
+        <wsdl:part name="parameters" element="ns:getMessageInDLCForQueue"/>
     </wsdl:message>
-    <wsdl:message name="getAllQueuesResponse">
-        <wsdl:part name="parameters" element="ns:getAllQueuesResponse"/>
+    <wsdl:message name="getMessageInDLCForQueueResponse">
+        <wsdl:part name="parameters" element="ns:getMessageInDLCForQueueResponse"/>
     </wsdl:message>
     <wsdl:message name="getAllLocalTempQueueSubscriptionsRequest">
         <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptions"/>
     </wsdl:message>
     <wsdl:message name="getAllLocalTempQueueSubscriptionsResponse">
         <wsdl:part name="parameters" element="ns:getAllLocalTempQueueSubscriptionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getAllQueuesRequest">
+        <wsdl:part name="parameters" element="ns:getAllQueues"/>
+    </wsdl:message>
+    <wsdl:message name="getAllQueuesResponse">
+        <wsdl:part name="parameters" element="ns:getAllQueuesResponse"/>
     </wsdl:message>
     <wsdl:message name="getAllDurableQueueSubscriptionsRequest">
         <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptions"/>
@@ -432,6 +468,12 @@
     <wsdl:message name="getUserRolesResponse">
         <wsdl:part name="parameters" element="ns:getUserRolesResponse"/>
     </wsdl:message>
+    <wsdl:message name="getNumberMessagesInDLCForQueueRequest">
+        <wsdl:part name="parameters" element="ns:getNumberMessagesInDLCForQueue"/>
+    </wsdl:message>
+    <wsdl:message name="getNumberMessagesInDLCForQueueResponse">
+        <wsdl:part name="parameters" element="ns:getNumberMessagesInDLCForQueueResponse"/>
+    </wsdl:message>
     <wsdl:message name="getAllSubscriptionsRequest">
         <wsdl:part name="parameters" element="ns:getAllSubscriptions"/>
     </wsdl:message>
@@ -457,15 +499,20 @@
             <wsdl:input message="tns:getAccessKeyRequest" wsaw:Action="urn:getAccessKey"/>
             <wsdl:output message="tns:getAccessKeyResponse" wsaw:Action="urn:getAccessKeyResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <wsdl:input message="tns:getAllQueuesRequest" wsaw:Action="urn:getAllQueues"/>
-            <wsdl:output message="tns:getAllQueuesResponse" wsaw:Action="urn:getAllQueuesResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllQueuesAndesAdminServiceBrokerManagerAdminException"/>
+        <wsdl:operation name="getMessageInDLCForQueue">
+            <wsdl:input message="tns:getMessageInDLCForQueueRequest" wsaw:Action="urn:getMessageInDLCForQueue"/>
+            <wsdl:output message="tns:getMessageInDLCForQueueResponse" wsaw:Action="urn:getMessageInDLCForQueueResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageInDLCForQueueAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
             <wsdl:input message="tns:getAllLocalTempQueueSubscriptionsRequest" wsaw:Action="urn:getAllLocalTempQueueSubscriptions"/>
             <wsdl:output message="tns:getAllLocalTempQueueSubscriptionsResponse" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllLocalTempQueueSubscriptionsAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllQueues">
+            <wsdl:input message="tns:getAllQueuesRequest" wsaw:Action="urn:getAllQueues"/>
+            <wsdl:output message="tns:getAllQueuesResponse" wsaw:Action="urn:getAllQueuesResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllQueuesAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
             <wsdl:input message="tns:getAllDurableQueueSubscriptionsRequest" wsaw:Action="urn:getAllDurableQueueSubscriptions"/>
@@ -542,6 +589,11 @@
             <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getUserRolesAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
+        <wsdl:operation name="getNumberMessagesInDLCForQueue">
+            <wsdl:input message="tns:getNumberMessagesInDLCForQueueRequest" wsaw:Action="urn:getNumberMessagesInDLCForQueue"/>
+            <wsdl:output message="tns:getNumberMessagesInDLCForQueueResponse" wsaw:Action="urn:getNumberMessagesInDLCForQueueResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getNumberMessagesInDLCForQueueAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
         <wsdl:operation name="getAllSubscriptions">
             <wsdl:input message="tns:getAllSubscriptionsRequest" wsaw:Action="urn:getAllSubscriptions"/>
             <wsdl:output message="tns:getAllSubscriptionsResponse" wsaw:Action="urn:getAllSubscriptionsResponse"/>
@@ -579,18 +631,6 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <soap:operation soapAction="urn:getAllQueues" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
-            </wsdl:fault>
-        </wsdl:operation>
         <wsdl:operation name="getAccessKey">
             <soap:operation soapAction="urn:getAccessKey" style="document"/>
             <wsdl:input>
@@ -602,6 +642,30 @@
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
             <soap:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageInDLCForQueue">
+            <soap:operation soapAction="urn:getMessageInDLCForQueue" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllQueues">
+            <soap:operation soapAction="urn:getAllQueues" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -804,6 +868,18 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getNumberMessagesInDLCForQueue">
+            <soap:operation soapAction="urn:getNumberMessagesInDLCForQueue" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <soap:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"/>
             <wsdl:input>
@@ -843,18 +919,6 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <soap12:operation soapAction="urn:getAllQueues" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
-                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
-            </wsdl:fault>
-        </wsdl:operation>
         <wsdl:operation name="getAccessKey">
             <soap12:operation soapAction="urn:getAccessKey" style="document"/>
             <wsdl:input>
@@ -866,6 +930,30 @@
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
             <soap12:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageInDLCForQueue">
+            <soap12:operation soapAction="urn:getMessageInDLCForQueue" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllQueues">
+            <soap12:operation soapAction="urn:getAllQueues" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1068,6 +1156,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getNumberMessagesInDLCForQueue">
+            <soap12:operation soapAction="urn:getNumberMessagesInDLCForQueue" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <soap12:operation soapAction="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination" style="document"/>
             <wsdl:input>
@@ -1101,15 +1201,6 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getAllQueues">
-            <http:operation location="getAllQueues"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="parameters"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="getAccessKey">
             <http:operation location="getAccessKey"/>
             <wsdl:input>
@@ -1121,6 +1212,24 @@
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
             <http:operation location="getAllLocalTempQueueSubscriptions"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageInDLCForQueue">
+            <http:operation location="getMessageInDLCForQueue"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllQueues">
+            <http:operation location="getAllQueues"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -1272,6 +1381,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getNumberMessagesInDLCForQueue">
+            <http:operation location="getNumberMessagesInDLCForQueue"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <http:operation location="restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
             <wsdl:input>
@@ -1284,13 +1402,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.5.197:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://192.168.0.108:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.197:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://192.168.0.108:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://10.100.5.197:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://192.168.0.108:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
