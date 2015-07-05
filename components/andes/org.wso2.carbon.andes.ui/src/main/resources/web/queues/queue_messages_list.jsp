@@ -11,6 +11,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="org.wso2.andes.store.cassandra.ServerStartupRecoveryUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
@@ -125,8 +126,12 @@
                             count++;
                 %>
                 <tr>
-                    <td><img src="images/<%= contentType.toLowerCase()%>.png"
+                    <td><% if(StringUtils.isNotBlank(contentType)) { %>
+                        <img src="images/<%= contentType.toLowerCase()%>.png"
                              alt=""/>&nbsp;&nbsp;<%= contentType%>
+                        <% } else { %>
+                            null
+                        <% } %>
                     </td>
                     <td><%= queueMessage.getJMSMessageId()%>
                     </td>
