@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.management.common.mbeans.QueueManagementInformation;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
@@ -28,6 +29,7 @@ import org.wso2.carbon.andes.core.internal.ds.QueueManagerServiceValueHolder;
 import org.wso2.carbon.andes.core.internal.registry.QueueManagementBeans;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
 import org.wso2.carbon.andes.core.internal.util.Utils;
+import org.wso2.carbon.andes.core.types.Message;
 import org.wso2.carbon.andes.core.types.QueueRolePermission;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
@@ -48,11 +50,19 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
+import javax.management.openmbean.CompositeData;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
+import java.lang.management.ManagementFactory;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +75,6 @@ import java.util.Properties;
 public class QueueManagerServiceImpl implements QueueManagerService {
 
     private static Log log = LogFactory.getLog(QueueManagerServiceImpl.class);
-    private static final String URLEncodingFormat = "UTF-8";
     private static final String PERMISSION_CHANGE_PERMISSION = "changePermission";
     private static final String ROLE_EVERY_ONE = "everyone";
     private static final String ANDES_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
@@ -121,9 +130,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 // Queue exists in the system.
                 throw new QueueManagerException("Queue with the name: " + queueName + " already exists!");
             }
-        } catch (UserStoreException e) {
-            throw new QueueManagerException("Error in creating the queue : " + queueName, e);
-        } catch (RegistryClientException e) {
+        } catch (UserStoreException | RegistryClientException e) {
             throw new QueueManagerException("Error in creating the queue : " + queueName, e);
         }
     }
@@ -139,8 +146,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         //show queues belonging to current domain of user
         //also set queue name used by user
         List<org.wso2.carbon.andes.core.types.Queue> queues = Utils.filterDomainSpecificQueues(allQueues);
-        List<org.wso2.carbon.andes.core.types.Queue> filteredQueueByUser = new ArrayList<org.wso2.carbon.andes.core
-                .types.Queue>();
+        List<org.wso2.carbon.andes.core.types.Queue> filteredQueueByUser = new ArrayList<>();
         try {
             if (Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
                 filteredQueueByUser.addAll(queues);
@@ -403,7 +409,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                                       "/", "");
             String queueID = CommonsUtil.getQueueID(queueName);
             UserRealm userRealm;
-            List<QueueRolePermission> queueRolePermissions = new ArrayList<QueueRolePermission>();
+            List<QueueRolePermission> queueRolePermissions = new ArrayList<>();
             try {
                 userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
                         (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
@@ -490,16 +496,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 }
             }
             return true;
-        } catch (NamingException e) {
+        } catch (NamingException | JMSException | XMLStreamException | UnknownHostException | FileNotFoundException e) {
             throw new QueueManagerException("Unable to send message.", e);
-        } catch (JMSException e) {
-            throw new QueueManagerException("Unable to send message.", e);
-        } catch (FileNotFoundException e) {
-            throw new QueueManagerException("Unable to send message.", e);
-        } catch (XMLStreamException e) {
-            throw new QueueManagerException("Unable to send message.", e);
-        } catch (UnknownHostException e) {
-            throw new QueueManagerException("Unable to send message(s) due to invalid host address", e);
         } finally {
             try {
                 queueConnection.close();
@@ -517,6 +515,84 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 log.error("Unable to close queue sender", e);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getNumberMessagesInDLCForQueue(String queueName) throws QueueManagerException {
+        long messageCount = 0;
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+            String operationName = "getNumberMessagesInDLCForQueue";
+            Object[] parameters = new Object[]{queueName};
+            String[] signature = new String[]{String.class.getName()};
+            Object result = mBeanServer.invoke(
+                    objectName,
+                    operationName,
+                    parameters,
+                    signature);
+            if (result != null) {
+                messageCount = (Long) result;
+            }
+
+            return messageCount;
+
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException |
+                                                                    InstanceNotFoundException e) {
+            throw new QueueManagerException("Cannot access mBean operations for message count in " +
+                                            "DLC for a queue:" + queueName, e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Message[] getMessageInDLCForQueue(String queueName, long nextMessageIdToRead,
+                                             int maxMessageCount) throws QueueManagerException{
+        List<Message> messageList = new ArrayList<>();
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "getMessageInDLCForQueue";
+            Object[] parameters = new Object[]{queueName, nextMessageIdToRead, maxMessageCount};
+            String[] signature = new String[]{String.class.getName(), long.class.getName(), int.class.getName()};
+            Object result = mBeanServer.invoke(
+                    objectName,
+                    operationName,
+                    parameters,
+                    signature);
+            if (result != null) {
+                CompositeData[] messageDataList = (CompositeData[]) result;
+                for (CompositeData messageData : messageDataList) {
+                    Message message = new Message();
+                    message.setMsgProperties((String) messageData.get(QueueManagementInformation.JMS_PROPERTIES));
+                    message.setContentType((String) messageData.get(QueueManagementInformation.CONTENT_TYPE));
+                    message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
+                    message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
+                    message.setJMSCorrelationId((String) messageData.get(QueueManagementInformation.JMS_CORRELATION_ID));
+                    message.setJMSType((String) messageData.get(QueueManagementInformation.JMS_TYPE));
+                    message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
+                    message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation.JMS_DELIVERY_MODE));
+                    message.setJMSPriority((Integer) messageData.get(QueueManagementInformation.JMS_PRIORITY));
+                    message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
+                    message.setJMSExpiration((Long) messageData.get(QueueManagementInformation.JMS_EXPIRATION));
+                    message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
+                    message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
+                    messageList.add(message);
+                }
+            }
+        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
+            throw new QueueManagerException("Cannot get message in DLC for a queue : " + queueName, e);
+        }
+
+        return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
     }
 
     /**

@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.andes.core;
 
+import org.wso2.carbon.andes.core.types.Message;
+
 import java.util.List;
 
 /**
@@ -189,4 +191,25 @@ public interface QueueManagerService {
                                String message, int deliveryMode, int priority,
                                long expireTime) throws QueueManagerException;
 
+    /**
+     * Gets the number of messages in DLC for a specific queue.
+     *
+     * @param queueName The name of the queue.
+     * @return The number of messages.
+     * @throws QueueManagerException
+     */
+    long getNumberMessagesInDLCForQueue(String queueName) throws QueueManagerException;
+
+    /**
+     * Gets the messages in the DLC for a specific queue.
+     *
+     * @param queueName           name of the queue
+     * @param nextMessageIdToRead next start message id to get message list
+     * @param maxMessageCount     the maximum messages to return
+     * @return an array of messages
+     * @throws QueueManagerException
+     */
+    Message[] getMessageInDLCForQueue(String queueName,
+                                      long nextMessageIdToRead, int maxMessageCount)
+            throws QueueManagerException;
 }

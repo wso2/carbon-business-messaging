@@ -14,6 +14,9 @@
 <%@ page import="javax.xml.bind.SchemaOutputResolver" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.wso2.andes.kernel.AndesConstants" %>
+<%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <jsp:include page="resources-i18n-ajaxprocessor.jsp"/>
@@ -53,8 +56,22 @@
             }
         }
 
+        function filterByQueue() {
+            var filterQueueText = $("#queueName").val();
+            if (filterQueueText == "") {
+                $("#filterQueueName").val("DeadLetterChannel");
+            } else {
+                $("#filterQueueName").val(filterQueueText);
+            }
+            document.getElementById('dummyForm').submit();
+        }
+
         $(document).ready(function () {
             removeFirstAndLastPaginations();
+
+//            $("#queueName").autocomplete({
+//                source: getAllQueues()
+//            });
         })
     </script>
 
@@ -80,14 +97,19 @@
         long nextMessageIdToRead = 0L;
 
         Message[] filteredMsgArray = null;
-        if (nameOfQueue == null) {
-            nameOfQueue = "DeadLetterChannel";
+        if (null == nameOfQueue) {
+            nameOfQueue = AndesConstants.DEAD_LETTER_QUEUE_SUFFIX;
         }
-        if (pageNumberAsStr != null) {
+        if (null != pageNumberAsStr) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
         }
         try {
-            totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
+            // The total number of messages depends on whether the filter was used or not
+            if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+                totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
+            } else {
+                totalMsgsInQueue = stub.getNumberMessagesInDLCForQueue(nameOfQueue);
+            }
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
             if (totalMsgsInQueue == 0L) {
                 nextMessageIdToRead = ServerStartupRecoveryUtils.getMessageIdToCompleteRecovery();
@@ -96,7 +118,12 @@
                     nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
                 }
             }
-            filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
+            // The source of the messages depends on whether the filter was used or not
+            if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+                filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
+            } else {
+                filteredMsgArray = stub.getMessageInDLCForQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
+            }
             if (filteredMsgArray != null && filteredMsgArray.length > 0) {
                 startMessageIdOfPage = filteredMsgArray[0].getAndesMsgMetadataId();
                 pageNumberToMessageIdMap.put(pageNumber, startMessageIdOfPage);
@@ -106,7 +133,13 @@
             }
         } catch (AndesAdminServiceBrokerManagerAdminException e) {
             CarbonUIMessage.sendCarbonUIMessage(e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(),
-                                                                                    CarbonUIMessage.ERROR, request, e);
+                                                CarbonUIMessage.ERROR, request, e);
+        }
+
+        // When searched for a queue, the queue name should persist in the text box.
+        String previouslySearchedQueueName = StringUtils.EMPTY;
+        if (!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+            previouslySearchedQueueName = nameOfQueue;
         }
     %>
     <carbon:breadcrumb
@@ -119,31 +152,52 @@
         <h2><fmt:message key="dlc.queue.content"/> <%=nameOfQueue%>
         </h2>
 
-        <div id="iconArea">
-            <table align="right">
+        <div id="workArea">
+            <table id="queueAddTable" class="styledLeft" style="width:100%">
                 <thead>
-                <tr align="right">
-                    <th align="right">
-                        <a style="background-image: url(../admin/images/delete.gif);"
-                           class="icon-link"
-                           onclick="doDeleteDLC('<%=nameOfQueue%>')">Delete</a>
-                    </th>
-                    <th align="right">
-                        <a style="background-image: url(../admin/images/move.gif);"
-                           class="icon-link"
-                           onclick="deRestoreMessages('<%=nameOfQueue%>')">Restore</a>
-                    </th>
-                    <th align="right">
-                        <a style="background-image: url(images/move.gif);"
-                           class="icon-link"
-                           onclick="doReRouteMessages('<%=nameOfQueue%>')">ReRoute</a>
-                    </th>
+                <tr>
+                    <th colspan="2">Enter Queue Name to Filter</th>
                 </tr>
                 </thead>
-            </table>
-        </div>
+                <tbody>
+                <tr>
+                    <td class="formRaw leftCol-big">Queue Name:</td>
+                    <td><input type="text" id="queueName" value="<%= previouslySearchedQueueName %>">
+                        <input id="searchButton" class="button" type="button"
+                               onclick="return filterByQueue();" value="Filter">
 
-        <div id="workArea">
+                        <form id="dummyForm" action="dlc_messages_list.jsp" method="post">
+                            <input type="hidden" name="nameOfQueue" id="filterQueueName" value=""/>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p>&nbsp;</p>
+
+            <div id="iconArea">
+                <table align="right">
+                    <thead>
+                    <tr align="right">
+                        <th align="right">
+                            <a style="background-image: url(../admin/images/delete.gif);"
+                               class="icon-link"
+                               onclick="doDeleteDLC('<%=nameOfQueue%>')">Delete</a>
+                        </th>
+                        <th align="right">
+                            <a style="background-image: url(../admin/images/move.gif);"
+                               class="icon-link"
+                               onclick="deRestoreMessages('<%=nameOfQueue%>')">Restore</a>
+                        </th>
+                        <th align="right">
+                            <a style="background-image: url(images/move.gif);"
+                               class="icon-link"
+                               onclick="doReRouteMessages('<%=nameOfQueue%>')">ReRoute</a>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
             <input type="hidden" name="pageNumber" value="<%=pageNumber%>"/>
             <carbon:paginator pageNumber="<%=pageNumber%>" numberOfPages="<%=numberOfPages%>"
                               page="dlc_messages_list.jsp" pageNumberParameterName="pageNumber"
@@ -154,7 +208,8 @@
             <table class="styledLeft" style="width:100%">
                 <thead>
                 <tr>
-                    <th><input type="checkbox" name="selectAllCheckBox" onClick="toggleCheck(this)"/></th>
+                    <th><input type="checkbox" name="selectAllCheckBox"
+                               onClick="toggleCheck(this)"/></th>
                     <th><fmt:message key="message.contenttype"/></th>
                     <th><fmt:message key="message.messageId"/></th>
                     <th><fmt:message key="message.correlationId"/></th>
@@ -221,18 +276,20 @@
         </div>
     </div>
     <div>
-        <form id="deleteForm" name="input" action="dlc_messages_list.jsp" method="get"><input type="HIDDEN"
-                                                                                              name="deleteMsg"
-                                                                                              value=""/>
+        <form id="deleteForm" name="input" action="dlc_messages_list.jsp" method="get"><input
+                type="HIDDEN"
+                name="deleteMsg"
+                value=""/>
             <input type="HIDDEN"
                    name="nameOfQueue"
                    value=""/>
             <input type="HIDDEN"
                    name="msgList"
                    value=""/></form>
-        <form id="restoreForm" name="input" action="dlc_messages_list.jsp" method="get"><input type="HIDDEN"
-                                                                                               name="restoreMsgs"
-                                                                                               value=""/>
+        <form id="restoreForm" name="input" action="dlc_messages_list.jsp" method="get"><input
+                type="HIDDEN"
+                name="restoreMsgs"
+                value=""/>
             <input type="HIDDEN"
                    name="nameOfQueue"
                    value=""/>

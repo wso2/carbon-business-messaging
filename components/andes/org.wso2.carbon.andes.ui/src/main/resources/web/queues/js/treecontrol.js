@@ -294,3 +294,28 @@ function removeFirstAndLastPaginations(){
         $(this).text($(this).text().replace(/<<.first/g, ""));
     });
 }
+
+/**
+ * Gets all the queues in MB.
+ * @returns An array of queue names.
+ */
+function getAllQueues() {
+    var queueList = {};
+    jQuery.ajax({
+        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp",
+        type: "POST",
+        async: false,
+        success: function (data) {
+            data = jQuery.trim(data);
+            queueList = data.split("#");
+        },
+        failure: function (transport) {
+            CARBON.showErrorDialog(trim(transport.responseText), function () {
+                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                return queueList;
+            });
+        }
+    });
+
+    return queueList;
+}
