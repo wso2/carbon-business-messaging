@@ -244,8 +244,7 @@ public class AndesAuthorizationHandler {
 
             try {
                 // authorise if admin user
-                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
-                        .getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
+                if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                     accessResult = Result.ALLOWED;
 
                     // authorise consume
@@ -287,8 +286,7 @@ public class AndesAuthorizationHandler {
 
             try {
                 // authorise if admin user
-                if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
-                        .getRealmConfiguration()) && isOwnDomain(tenantDomain, queueName)) {
+                if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                     accessResult = Result.ALLOWED;
 
                     // authorise browse
@@ -336,8 +334,7 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
-                        && isOwnDomain(tenantDomain, queueName)) {
+                    if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                         accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -356,8 +353,7 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(queueName);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
-                        && isOwnDomain(tenantDomain, queueName)) {
+                    if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                         accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -390,9 +386,7 @@ public class AndesAuthorizationHandler {
                         authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
                                                                 tempQueueId, userRealm);
                         accessResult = Result.ALLOWED;
-                    } else if (UserCoreUtil.isPrimaryAdminUser(username, userRealm
-                            .getRealmConfiguration())
-                               && isOwnDomain(tenantDomain, queueName)) {
+                    } else if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                         // admin user who is in the same tenant domain get permission
 
                         // Store subscription
@@ -451,8 +445,7 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize admin user
-                    if (UserCoreUtil
-                            .isPrimaryAdminUser(username, userRealm.getRealmConfiguration())) {
+                    if (isTenantAdmin(username, userRealm, tenantDomain, routingKey)) {
                         accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -478,8 +471,7 @@ public class AndesAuthorizationHandler {
                     String queueID = CommonsUtil.getQueueID(routingKey);
 
                     // Authorize
-                    if (UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
-                        && isOwnDomain(tenantDomain, routingKey)) {
+                    if (isTenantAdmin(username, userRealm, tenantDomain, routingKey)) {
                         accessResult = Result.ALLOWED;
                     } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                             username, queueID,
@@ -493,6 +485,26 @@ public class AndesAuthorizationHandler {
         }
 
         return accessResult;
+    }
+
+    /**
+     * Check if the current user is tenant Admin user
+     *
+     * @param username
+     *         Username
+     * @param userRealm
+     *         User's Realm
+     * @param tenantDomain
+     *         Tenant domain name
+     * @param routingKey
+     *         Routing Key
+     * @return True if the user is the admin user of the given domain
+     * @throws UserStoreException
+     */
+    private static boolean isTenantAdmin(String username, UserRealm userRealm, String tenantDomain, String routingKey)
+            throws UserStoreException {
+        return UserCoreUtil.isPrimaryAdminUser(username, userRealm.getRealmConfiguration())
+               && isOwnDomain(tenantDomain, routingKey);
     }
 
     /**
