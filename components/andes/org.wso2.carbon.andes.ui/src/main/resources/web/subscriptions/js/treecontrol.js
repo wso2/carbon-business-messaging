@@ -116,8 +116,12 @@ function doReRouteMessages() {
         CARBON.showInfoDialog(msg);
         return;
     }
+    else if (nameOfQueue.contains(":")){
+        CARBON.showInfoDialog("Cannot re-route from a durable subscription");
+        return;
+    }
     jQuery.ajax({
-        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp",
+        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp?nameOfQueue=" + nameOfQueue,
         type: "POST",
         success: function (data) {
             //Let's say data is something like the following string

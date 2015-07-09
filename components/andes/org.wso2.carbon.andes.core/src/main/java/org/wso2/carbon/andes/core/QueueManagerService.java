@@ -64,33 +64,33 @@ public interface QueueManagerService {
      * Restore messages from the Dead Letter Queue to their original queues.
      *
      * @param messageIDs          Browser Message Id / External Message Id list
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException;
 
     /**
      * Restore messages from the Dead Letter Queue to another queue in the same tenant.
      *
      * @param messageIDs          Browser Message Id / External Message Id list
-     * @param destination         The new destination queue for the messages in the same tenant
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param newDestinationQueueName         The new destination queue for the messages in the same tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
-                                                                           String destination,
-                                                                           String deadLetterQueueName)
+                                                                           String newDestinationQueueName,
+                                                                           String destinationQueueName)
             throws QueueManagerException;
 
     /**
      * Delete messages from the Dead Letter Queue and delete their content.
      *
      * @param messageIDs          Browser Message Id / External Message Id list to be deleted
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException;
 
     /**

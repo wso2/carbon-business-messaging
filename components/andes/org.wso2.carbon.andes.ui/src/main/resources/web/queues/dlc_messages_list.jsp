@@ -114,7 +114,10 @@
             if (totalMsgsInQueue == 0L) {
                 nextMessageIdToRead = ServerStartupRecoveryUtils.getMessageIdToCompleteRecovery();
             } else if (pageNumberToMessageIdMap.size() > 0) {
-                if (pageNumberToMessageIdMap.get(pageNumber) != null) {
+                if (0 == pageNumber){
+                    nextMessageIdToRead = 0;
+                }
+                else if (pageNumberToMessageIdMap.get(pageNumber) != null) {
                     nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
                 }
             }
@@ -226,13 +229,15 @@
                 <tbody>
                 <%
                     if (filteredMsgArray != null) {
+                        int count = 1;
                         for (Message queueMessage : filteredMsgArray) {
                             if (queueMessage != null) {
                                 String msgProperties = queueMessage.getMsgProperties();
                                 String contentType = queueMessage.getContentType();
                                 String[] messageContent = queueMessage.getMessageContent();
                                 String dlcMsgDestination = queueMessage.getDlcMsgDestination();
-
+                                long contentDisplayID = queueMessage.getJMSTimeStamp()+count;
+                                count ++;
                 %>
                 <tr>
                     <td><input type="checkbox" name="checkbox" onClick="checkSelectAll(this)"
@@ -259,9 +264,12 @@
                     <td><%= msgProperties%>
                     </td>
                     <td><%= messageContent[0]%>
-                        <% if (messageContent[1].length() > messageContent[0].length()) { %>
-                        <a href="message_content.jsp?message=<%=messageContent[1]%>">&nbsp;&nbsp;&nbsp;more...</a>
-                        <% } %>
+                        <!-- This is converted to a POST to avoid message length eating up the URI request length. -->
+                        <form name="msgViewForm<%=contentDisplayID%>" method="POST" action="message_content.jsp">
+                            <input type="hidden" name="message" value="<%=messageContent[1]%>">
+                            <a href="javascript:document.msgViewForm<%=contentDisplayID%>.submit()">&nbsp;&nbsp;&nbsp;more..</a>
+                        </form>
+
                     </td>
                 </tr>
 

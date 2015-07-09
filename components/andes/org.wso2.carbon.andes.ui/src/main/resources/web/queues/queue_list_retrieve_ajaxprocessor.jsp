@@ -10,12 +10,37 @@
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     Queue[] queueList = null;
     String queueListString = "";
-    try{
+    try {
+        String queueName = request.getParameter("nameOfQueue");
         queueList = stub.getAllQueues();
-        for(int count=0 ; count < queueList.length ; count ++) {
-             if(!queueList[count].getQueueName().equals(Constants.DEAD_LETTER_QUEUE_NAME)) {
-                 queueListString = queueListString + queueList[count].getQueueName() + "#";
-             }
+        //the queueName is not set, it is assumed that the requirement is to get all queues
+        if ("".equals(queueName) || null == queueName) {
+            for (Queue queue : queueList) {
+                if (!queue.getQueueName().equals(Constants.DEAD_LETTER_QUEUE_NAME)) {
+                    queueListString = queueListString + queue.getQueueName() + "#";
+                }
+            }
+        } else {
+            //If the queue name contains ":" then it's a durable topic. Therefore, we should only show durable topics
+            //else, we only show queues
+            if (queueName.contains(":")) {
+                for (Queue queue : queueList) {
+                    String currentQueueName = queue.getQueueName();
+                    if (currentQueueName.contains(":")) {
+                        queueListString = queueListString + currentQueueName + "#";
+                    }
+
+                }
+            } else {
+                for (Queue queue : queueList) {
+                    String currentQueueName = queue.getQueueName();
+                    if (!currentQueueName.equals(Constants.DEAD_LETTER_QUEUE_NAME)) {
+                        if (!currentQueueName.contains(":")) {
+                            queueListString = queueListString + currentQueueName + "#";
+                        }
+                    }
+                }
+            }
         }
 
         //We can remove the # tag only if the queueList is not empty
