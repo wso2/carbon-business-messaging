@@ -107,8 +107,9 @@ expression of the property. -->
     </transports>
 
     <!-- Depending on the database type selected in master-datasources.xml, you must enable the
-    relevant Data access classes here. Currently supported stores are RDBMS(any RDBMS store) and
-    Cassandra(CQL, Hector). These stores are accessed for two purposes.
+    relevant Data access classes here. Currently WSO2 MB Supports RDBMS(any RDBMS store). 
+	These stores are accessed for two purposes.
+	
     1. For message persistence ("messageStore")
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
@@ -123,13 +124,6 @@ expression of the property. -->
     Data source entry should be present in
     <MB_HOME>/repository/conf/datasources/master-datasources.xml.
 
-    Cassandra
-    =========
-    For Cassandra depending on the driver (CQL or Hector) you use to connect to data store
-    uncomment the relevant entry and COMMENT out the RDBMS entry.
-
-    Update the <MB_HOME>/repository/conf/datasources/master-datasources.xml with Cassandra
-    data source and update "dataSource" property for stores here.
     -->
     <persistence>
 
@@ -158,82 +152,6 @@ expression of the property. -->
         <contextStore class="org.wso2.andes.store.rdbms.h2.H2MemAndesContextStoreImpl">
         </contextStore>
 
--->
-
-        <!-- External Cassandra Store Configuration -->
-
-        <!-- NOTE: Update the master-datasources.xml file to connect to Cassandra data source
-             READ the documentation to set advanced Cassandra tuning parameters.
-
-            Advanced Tuning Parameters.
-
-            gcGraceSeconds:
-            Specifies the time to wait before garbage collecting tombstones (deletion markers).
-            Defaults to 864000, or 10 days, which allows a great deal of time for consistency
-            to be achieved prior to deletion. In many deployments this interval can be reduced,
-            and in a single-node cluster it can be safely set to zero
-
-            Replication strategy class:
-            Strategy to determine the physical location of nodes to replication and their proximity
-            to each other
-
-            Replication factor:
-            replication is the process of storing copies of data on multiple nodes to ensure
-            reliability and fault tolerance. This value specify how many copies of same data should
-            persisted.
-
-            Read consistency level:
-            Specifies how many replicas must respond to a read request before returning data
-            Valid values are 'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY'
-
-            Write consistency level:
-            Determines the number of replicas on which the write must succeed before returning an
-            acknowledgement Valid values are
-            'ONE','ALL','EACH_QUORUM','QUORUM','ONE','TWO','THREE','ANY' -->
-
-        <!--CQL Based MB stores-->
-<!--
-        <messageStore class="org.wso2.andes.store.cassandra.CQLBasedMessageStoreImpl">
-            <property name="dataSource">WSO2MBStoreDB</property>
-            <property name="keyspace">MB_KEYSPACE</property>
-            <property name="gcGraceSeconds">864000</property>
-            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
-            <property name="replicationFactor">1</property>
-            <property name="readConsistencyLevel">ONE</property>
-            <property name="writeConsistencyLevel">ONE</property>
-        </messageStore>
-
-        <contextStore class="org.wso2.andes.store.cassandra.CQLBasedAndesContextStoreImpl">
-            <property name="dataSource">WSO2MBStoreDB</property>
-            <property name="keyspace">MB_KEYSPACE</property>
-            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
-            <property name="replicationFactor">1</property>
-            <property name="readConsistencyLevel">ONE</property>
-            <property name="writeConsistencyLevel">ONE</property>
-        </contextStore>
--->
-
-        <!--Hector based MB stores-->
-<!--
-        <messageStore class="org.wso2.andes.store.cassandra.HectorBasedMessageStoreImpl">
-            <property name="dataSource">WSO2MBStoreDB</property>
-            <property name="keyspace">MB_KEYSPACE</property>
-            <property name="gcGraceSeconds">864000</property>
-            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
-            <property name="replicationFactor">1</property>
-            <property name="readConsistencyLevel">ONE</property>
-            <property name="writeConsistencyLevel">ONE</property>
-        </messageStore>
-
-        <contextStore class="org.wso2.andes.store.cassandra.HectorBasedAndesContextStoreImpl">
-            <property name="dataSource">WSO2MBStoreDB</property>
-            <property name="keyspace">MB_KEYSPACE</property>
-            <property name="gcGraceSeconds">864000</property>
-            <property name="strategyClass">org.apache.cassandra.locator.SimpleStrategy</property>
-            <property name="replicationFactor">1</property>
-            <property name="readConsistencyLevel">ONE</property>
-            <property name="writeConsistencyLevel">ONE</property>
-        </contextStore>
 -->
 
         <!-- This class decides how unique IDs are generated for the MB node. This id generator is
@@ -451,6 +369,12 @@ expression of the property. -->
     <!-- Memory and resource exhaustion is something we should prevent and recover from.
     This section allows you to specify the threshold at which to reduce/stop frequently intensive
     operations within MB temporarily. -->
+	<!--
+	highLimit - flow control is enabled when message chunk pending to be handled by inbound 
+	 disruptor reaches above this limit
+    lowLimit - flow control is disabled (if enabled) when message chunk pending to be handled
+	 by inbound disruptor reaches below this limit	
+	-->	
     <flowControl>
         <!-- This is the global buffer limits which enable/disable the flow control globally -->
         <global>
@@ -458,8 +382,8 @@ expression of the property. -->
             <highLimit>8000</highLimit>
         </global>
 
-        <!-- This is the channel specific buffer limits which enable/disable the flow control
-        locally -->
+        <!-- This is the channel specific buffer limits which enable/disable the flow control locally.
+		-->
         <bufferBased>
             <lowLimit>100</lowLimit>
             <highLimit>1000</highLimit>
@@ -479,41 +403,22 @@ expression of the property. -->
         <!--Set slot storage mode (RDBMS/HazelCast)-->
         <storage>HazelCast</storage>
     </slotManagement>
-
-
+	
     <!--
     Message broker keeps track of all messages it has received as groups. These groups are termed
     'Slots' (To know more information about Slots and message broker install please refer to online wiki).
     Size of a slot is loosely determined by the configuration <windowSize> (and the number of
     parallel publishers for specific topic/queue). Message broker cluster (or in single node) keeps
     track of slots which constitutes for a large part of operating state before the cluster went down.
-
-    When first message broker node of the cluster starts up, it will read the database to recreate
-    the internal state to previous state. In a deployment where Cassandra is the message storage, this
-    broker node has to avoid (please refer to Cassandra documentation for more information) tombstones
-    when reading messages. Each message stored in message store has a unique internal ID. This id is
-    based on time on which the message was published. To minimize the effect of tombstones, MB will use
-    'range queries' where ranges are defined using these messages ID. During this start up, message broker
-    will calculate a starting message ID based on date given below. This significantly improves the (warm)
-    start up time. So If you are going to warm start message broker, set this value closer to the date
-    (but before) which oldest message was received by this broker cluster. For example: date of cluster
-    set setup, 1st of this month/year.
-     -->
+	When first message broker node of the cluster starts up, it will read the database to recreate
+    the internal state to previous state. 
+    -->
     <recovery>
-        <!-- NOTE: please define date and time as yyyy-MM-dd HH:mm:ss -->
-        <startRecoveryFrom>2015-05-27 00:00:00</startRecoveryFrom>
-        <!--
-        We will reading following number of message ids in a particular database call. Please note that
-        increasing value of below property may cause TombstoneOverwhelmingException in Cassandra as
-        message store
-         -->
-        <recoveryWindowSize>100000</recoveryWindowSize>
         <!--
         There could be multiple storage queues worked before entire cluster (or single node) went down.
         We need to recover all remaining messages of each storage queue when first node startup and we can
         read remaining message concurrently of each storage queue. Default value to set here to 5. You can
-        increase this value based on number of storage queues exist. Please note that increasing value may
-        cause to heavy load in Cassandra due to multiple read calls. Please use optimal value based on
+        increase this value based on number of storage queues exist. Please use optimal value based on
         number of storage queues to speed up warm startup.
         -->
         <concurrentStorageQueueReads>5</concurrentStorageQueueReads>
