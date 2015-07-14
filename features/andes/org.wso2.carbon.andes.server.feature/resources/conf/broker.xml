@@ -134,6 +134,7 @@ expression of the property. -->
             <property name="storeUnavailableSQLStateClasses">08</property>
             <property name="integrityViolationSQLStateClasses">23,27,44</property>
             <property name="dataErrorSQLStateClasses">21,22</property>
+            <property name="transactionRollbackSQLStateClasses">40</property>
         </messageStore>
 
         <contextStore class="org.wso2.andes.store.rdbms.RDBMSAndesContextStoreImpl">
@@ -141,6 +142,7 @@ expression of the property. -->
             <property name="storeUnavailableSQLStateClasses">08</property>
             <property name="integrityViolationSQLStateClasses">23,27,44</property>
             <property name="dataErrorSQLStateClasses">21,22</property>
+            <property name="transactionRollbackSQLStateClasses">40</property>
         </contextStore>
 
 
