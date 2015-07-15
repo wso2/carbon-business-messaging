@@ -53,6 +53,7 @@ expression of the property. -->
         <bindAddress>127.0.0.1</bindAddress>
 
         <amqp enabled="true">
+            <bindAddress>localhost</bindAddress>
             <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid
             messaging model during AMQP.-->
             <port>5672</port>
@@ -61,6 +62,7 @@ expression of the property. -->
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
         </amqp>
         <mqtt enabled="true">
+            <bindAddress>localhost</bindAddress>
             <port>1883</port>
             <!-- put proper default SSL port -->
             <sslPort>8883</sslPort>
