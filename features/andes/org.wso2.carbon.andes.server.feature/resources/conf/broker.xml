@@ -168,11 +168,6 @@ expression of the property. -->
         <storeHealthCheckInterval>10</storeHealthCheckInterval>
     </persistence>
 
-    <!-- Alter the flow that is triggered during a node fail -->
-    <failoverBehaviour>
-
-    </failoverBehaviour>
-
     <!--Publisher transaction related configurations.-->
     <transaction>
 
