@@ -322,7 +322,7 @@ public class Utils {
 
         // getting host address from andes configuration mentioned in broker.xml
         String andesConfigHostAddress =
-                String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_BIND_ADDRESS));
+                String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS));
         String hostAddress = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
 
         // getting port from andes configuration mentioned in broker.xml

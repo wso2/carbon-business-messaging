@@ -47,20 +47,17 @@ expression of the property. -->
     transports are enabled. This section also allows you to customize the messaging flows used 
     within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
-        <!-- In a clustered setup this should be updated with the IP address of this node
-        Setting the value to 127.0.0.1 in a clustered setup is wrong. Please note that this is 
-        the address exposed by the server. NOT the hostname inferred from carbon.xml -->
-        <bindAddress>127.0.0.1</bindAddress>
-
         <amqp enabled="true">
             <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid
             messaging model during AMQP.-->
+            <bindAddress>0.0.0.0</bindAddress>
             <port>5672</port>
             <sslPort>8672</sslPort>
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
         </amqp>
         <mqtt enabled="true">
+            <bindAddress>0.0.0.0</bindAddress>
             <port>1883</port>
             <!-- put proper default SSL port -->
             <sslPort>8883</sslPort>
