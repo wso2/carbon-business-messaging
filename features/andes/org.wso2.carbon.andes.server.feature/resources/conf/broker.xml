@@ -48,16 +48,16 @@ expression of the property. -->
     within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
         <amqp enabled="true">
-            <bindAddress>localhost</bindAddress>
             <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid
             messaging model during AMQP.-->
+            <bindAddress>0.0.0.0</bindAddress>
             <port>5672</port>
             <sslPort>8672</sslPort>
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
         </amqp>
         <mqtt enabled="true">
-            <bindAddress>localhost</bindAddress>
+            <bindAddress>0.0.0.0</bindAddress>
             <port>1883</port>
             <!-- put proper default SSL port -->
             <sslPort>8883</sslPort>

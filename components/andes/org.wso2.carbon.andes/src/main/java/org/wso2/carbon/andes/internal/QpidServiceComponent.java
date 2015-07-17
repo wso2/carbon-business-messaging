@@ -406,7 +406,7 @@ public class QpidServiceComponent {
 
     }
 
-    
+
 
     /**
      * check whether the tcp port has started. some times the server started thread may return
@@ -450,8 +450,8 @@ public class QpidServiceComponent {
                             socket.close();
                         }
                     } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server " +
-                                  "status ", e);
+                        log.error("Can not close the socket which is used to check the server "
+                                  + "status ", e);
                     }
                 }
             }
@@ -503,8 +503,8 @@ public class QpidServiceComponent {
                             socket.close();
                         }
                     } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server " +
-                                  "status ", e);
+                        log.error("Can not close the socket which is used to check the server "
+                                  + "status ", e);
                     }
                 }
             }
