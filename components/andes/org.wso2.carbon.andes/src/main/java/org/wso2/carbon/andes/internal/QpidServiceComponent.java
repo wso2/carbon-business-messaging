@@ -37,14 +37,12 @@ import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
-import org.wso2.carbon.andes.service.CoordinatedActivityImpl;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.event.core.EventBundleNotificationService;
 import org.wso2.carbon.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
@@ -351,10 +349,6 @@ public class QpidServiceComponent {
             messageBrokerDBUtil.initialize();
         }
         // Start andes broker
-
-        //register coordinatedActivityImpl to get coordinator changes notification.
-        //When is node is appointed as the coordinator execute method of coordinatedActivityImpl will be called
-        registrations.push(bundleContext.registerService(CoordinatedActivity.class.getName(), new CoordinatedActivityImpl(), null));
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
