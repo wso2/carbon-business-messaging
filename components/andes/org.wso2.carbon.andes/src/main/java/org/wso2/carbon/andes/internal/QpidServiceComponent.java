@@ -336,110 +336,6 @@ public class QpidServiceComponent {
 
 
     /**
-     * check whether the tcp port has started. some times the server started thread may return
-     * before Qpid server actually bind to the tcp port. in that case there are some connection
-     * time out issues.
-     *
-     * @throws ConfigurationException
-     */
-    private void startAMQPServer() throws ConfigurationException {
-
-        boolean isServerStarted = false;
-        int port;
-        if (qpidServiceImpl.getIfSSLOnly()) {
-            port = qpidServiceImpl.getAMQPSSLPort();
-        } else {
-            port = qpidServiceImpl.getAMQPPort();
-        }
-
-        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
-            while (!isServerStarted) {
-                Socket socket = null;
-                try {
-                    InetAddress address = InetAddress.getByName(getAMQPTransportBindAddress());
-                    socket = new Socket(address, port);
-                    log.info("AMQP Host Address : " + address.getHostAddress() + " Port : " + port);
-                    isServerStarted = socket.isConnected();
-                    if (isServerStarted) {
-                        log.info("WSO2 Message Broker is Started. Successfully connected to AMQP server "
-                                 + "on port " + port);
-                    }
-                } catch (IOException e) {
-                    log.error("Wait until Qpid server starts on port " + port, e);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ignore) {
-                        // Ignore
-                    }
-                } finally {
-                    try {
-                        if ((socket != null) && (socket.isConnected())) {
-                            socket.close();
-                        }
-                    } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server " +
-                                "status ", e);
-                    }
-                }
-            }
-        } else {
-            log.warn("AMQP Transport is disabled as per configuration.");
-        }
-    }
-
-    /**
-     * check whether the tcp port has started. some times the server started thread may return
-     * before MQTT server actually bind to the tcp port. in that case there are some connection
-     * time out issues.
-     *
-     * @throws ConfigurationException
-     */
-    private void startMQTTServer() throws ConfigurationException {
-
-        boolean isServerStarted = false;
-        int port;
-
-        if (qpidServiceImpl.getIfSSLOnly()) {
-            port = qpidServiceImpl.getMqttSSLPort();
-        } else {
-            port = qpidServiceImpl.getMqttPort();
-        }
-
-        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_MQTT_ENABLED)) {
-            while (!isServerStarted) {
-                Socket socket = null;
-                try {
-                    InetAddress address = InetAddress.getByName(getMQTTTransportBindAddress());
-                    socket = new Socket(address, port);
-                    log.info("MQTT Host Address : " + address.getHostAddress() + " Port : " + port);
-                    isServerStarted = socket.isConnected();
-                    if (isServerStarted) {
-                        log.info("Successfully connected to the MQTT server on port " + port);
-                    }
-                } catch (IOException e) {
-                    log.error("Wait until server starts on port " + port, e);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ignore) {
-                        // Ignore
-                    }
-                } finally {
-                    try {
-                        if ((socket != null) && (socket.isConnected())) {
-                            socket.close();
-                        }
-                    } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server " +
-                                  "status ", e);
-                    }
-                }
-            }
-        } else {
-            log.warn("MQTT Transport is disabled as per configuration.");
-        }
-    }
-
-    /**
      * Start Andes Broker and related components with given configurations.
      *
      * @throws ConfigurationException
@@ -509,4 +405,112 @@ public class QpidServiceComponent {
         QpidServiceDataHolder.getInstance().getEventBundleNotificationService().notifyStart(qpidServerDetails);
 
     }
+
+    
+
+    /**
+     * check whether the tcp port has started. some times the server started thread may return
+     * before Qpid server actually bind to the tcp port. in that case there are some connection
+     * time out issues.
+     *
+     * @throws ConfigurationException
+     */
+    private void startAMQPServer() throws ConfigurationException {
+
+        boolean isServerStarted = false;
+        int port;
+        if (qpidServiceImpl.getIfSSLOnly()) {
+            port = qpidServiceImpl.getAMQPSSLPort();
+        } else {
+            port = qpidServiceImpl.getAMQPPort();
+        }
+
+        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
+            while (!isServerStarted) {
+                Socket socket = null;
+                try {
+                    InetAddress address = InetAddress.getByName(getAMQPTransportBindAddress());
+                    socket = new Socket(address, port);
+                    log.info("AMQP Host Address : " + address.getHostAddress() + " Port : " + port);
+                    isServerStarted = socket.isConnected();
+                    if (isServerStarted) {
+                        log.info("WSO2 Message Broker is Started. Successfully connected to AMQP server "
+                                 + "on port " + port);
+                    }
+                } catch (IOException e) {
+                    log.error("Wait until Qpid server starts on port " + port, e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignore) {
+                        // Ignore
+                    }
+                } finally {
+                    try {
+                        if ((socket != null) && (socket.isConnected())) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                        log.error("Can not close the socket which is used to check the server " +
+                                  "status ", e);
+                    }
+                }
+            }
+        } else {
+            log.warn("AMQP Transport is disabled as per configuration.");
+        }
+    }
+
+
+    /**
+     * check whether the tcp port has started. some times the server started thread may return
+     * before MQTT server actually bind to the tcp port. in that case there are some connection
+     * time out issues.
+     *
+     * @throws ConfigurationException
+     */
+    private void startMQTTServer() throws ConfigurationException {
+
+        boolean isServerStarted = false;
+        int port;
+
+        if (qpidServiceImpl.getIfSSLOnly()) {
+            port = qpidServiceImpl.getMqttSSLPort();
+        } else {
+            port = qpidServiceImpl.getMqttPort();
+        }
+
+        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_MQTT_ENABLED)) {
+            while (!isServerStarted) {
+                Socket socket = null;
+                try {
+                    InetAddress address = InetAddress.getByName(getMQTTTransportBindAddress());
+                    socket = new Socket(address, port);
+                    log.info("MQTT Host Address : " + address.getHostAddress() + " Port : " + port);
+                    isServerStarted = socket.isConnected();
+                    if (isServerStarted) {
+                        log.info("Successfully connected to the MQTT server on port " + port);
+                    }
+                } catch (IOException e) {
+                    log.error("Wait until server starts on port " + port, e);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ignore) {
+                        // Ignore
+                    }
+                } finally {
+                    try {
+                        if ((socket != null) && (socket.isConnected())) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                        log.error("Can not close the socket which is used to check the server " +
+                                  "status ", e);
+                    }
+                }
+            }
+        } else {
+            log.warn("MQTT Transport is disabled as per configuration.");
+        }
+    }
+
 }
