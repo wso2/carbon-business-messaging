@@ -25,11 +25,6 @@ relevant, org.wso2.andes.configuration.enums.AndesConfiguration, enum value usin
 expression of the property. -->
 <broker>
 
-    <!--Paths of externally organized configurations specific to Andes component (Qpid configurations
-    are referred by Qpid component separately. (MB_HOME/repository/conf/advanced/qpid-config.xml)-->
-    <links>
-    </links>
-
     <coordination>
         <!-- You can override the cluster node identifier of this MB node using the nodeID. 
         If it is left as "default", the default node ID will be generated for it. (Using IP + UUID).
@@ -48,20 +43,41 @@ expression of the property. -->
     within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
         <amqp enabled="true">
-            <!-- most of the AMQP configurations reside in qpid-config.xml since we inherit the Qpid
-            messaging model during AMQP.-->
             <bindAddress>0.0.0.0</bindAddress>
-            <port>5672</port>
-            <sslPort>8672</sslPort>
+
+            <defaultConnection enabled="true" port="5672" />
+
+            <sslConnection enabled="true" port="8672">
+                <keyStore>
+                     <location>repository/resources/security/wso2carbon.jks</location>
+                     <password>wso2carbon</password>
+                </keyStore>
+                <trustStore>
+                    <location>repository/resources/security/client-truststore.jks</location>
+                    <password>wso2carbon</password>
+                </trustStore>
+            </sslConnection>
+
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
+
+            <!-- Refer repository/conf/advanced/qpid-config.xml for further AMQP-specific configurations.-->
         </amqp>
         <mqtt enabled="true">
             <bindAddress>0.0.0.0</bindAddress>
-            <port>1883</port>
-            <!-- put proper default SSL port -->
-            <sslPort>8883</sslPort>
-            <!-- These two properties are temporary. Ideally, MQTT should use carbon users. -->
+
+            <defaultConnection enabled="true" port="1883" />
+
+            <sslConnection enabled="true" port="8883">
+                <keyStore>
+                    <location>repository/resources/security/wso2carbon.jks</location>
+                    <password>wso2carbon</password>
+                </keyStore>
+                <trustStore>
+                    <location>repository/resources/security/client-truststore.jks</location>
+                    <password>wso2carbon</password>
+                </trustStore>
+            </sslConnection>
 
             <!--Ring buffer size of MQTT inbound event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance

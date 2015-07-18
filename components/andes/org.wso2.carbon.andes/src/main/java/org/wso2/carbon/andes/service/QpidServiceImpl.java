@@ -337,7 +337,7 @@ public class QpidServiceImpl implements QpidService {
      * @return Port used for AMQP transports with offset if specified.
      */
     private Integer readPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT);
     }
 
     /**
@@ -346,7 +346,7 @@ public class QpidServiceImpl implements QpidService {
      * @return The port value
      */
     private Integer readSSLPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT);
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT);
     }
 
     /**
@@ -355,7 +355,7 @@ public class QpidServiceImpl implements QpidService {
      * @return The port value
      */
     private Integer readMQTTPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_PORT);
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_DEFAULT_CONNECTION_PORT);
 
     }
 
@@ -365,7 +365,7 @@ public class QpidServiceImpl implements QpidService {
      * @return The port value
      */
     private Integer readMQTTSSLPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_PORT);
+        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_PORT);
     }
 
     /**
