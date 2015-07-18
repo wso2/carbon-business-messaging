@@ -72,29 +72,6 @@
                 }
             }
 
-            if (inputValidated && request.getParameter("expire") != null && !request.getParameter("expire").equals("")) {
-                try {
-                    String expire_time = request.getParameter("expire");
-                    time_to_live = Long.parseLong(expire_time);
-                    if(time_to_live < 0) {
-                        inputValidated = false;
-                        %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Please enter a valid number of milliseconds to expire message', function
-                                    () {
-                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
-                            });</script>
-                        <%
-                    }
-                } catch (NumberFormatException e) {
-                        inputValidated = false;
-                        %>
-                            <script type="text/javascript">CARBON.showErrorDialog('Milliseconds to expire message(s) is not a number', function
-                                    () {
-                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
-                            });</script>
-                        <%
-                }
-            }
             if(inputValidated) {
                 try {
                     // set correlation id
@@ -164,7 +141,7 @@
                 </tr>--%>
                 <tr>
                     <td>Number of Messages:<span class="required">*</span></td><td><input type="text" id="num_of_msgs" name="num_of_msgs"></td>
-                    <td>Duration to expire (in ms): </td><td><input type="text" id="expire" name="expire"></td>
+                    <td></td><td></td>
                 </tr>
                 </tbody>
                 </table>
