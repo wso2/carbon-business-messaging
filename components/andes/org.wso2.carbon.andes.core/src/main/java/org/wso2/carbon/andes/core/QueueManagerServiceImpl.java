@@ -112,7 +112,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                         .getTenantId());
 
                 String queueID = CommonsUtil.getQueueID(queueName);
-                authorizePermissionsToLoggedInUser(queueName, queueID, userRealm);
+                authorizePermissionsToLoggedInUser(tenantBasedQueueName, queueID, userRealm);
                 UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                 //Get all the roles of the logged in user and check whether the role is existing
                 String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
