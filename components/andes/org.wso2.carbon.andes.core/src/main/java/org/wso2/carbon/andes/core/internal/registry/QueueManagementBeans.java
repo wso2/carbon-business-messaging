@@ -116,10 +116,8 @@ public class QueueManagementBeans {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, QueueManagementConstants.QUEUES_MBEAN_ATTRIBUTE);
-
             if (result != null) {
                 String[] queueNamesList = (String[]) result;
-
                 for (String queueName : queueNamesList) {
                     Queue queue = new Queue();
                     queue.setQueueName(queueName);
@@ -203,10 +201,10 @@ public class QueueManagementBeans {
      * Invoke service bean for permanently deleting messages from the Dead Letter Channel.
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName) throws
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
             QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
@@ -215,7 +213,7 @@ public class QueueManagementBeans {
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
             String operationName = "deleteMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
+            Object[] parameters = new Object[]{messageIDs, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
@@ -224,7 +222,7 @@ public class QueueManagementBeans {
                     signature);
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error deleting messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
+                    destinationQueueName, e);
         }
     }
 
@@ -232,10 +230,10 @@ public class QueueManagementBeans {
      * Invoke service bean for restoring messages from Dead Letter Channel to their original destinations.
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName) throws
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
             QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -243,7 +241,7 @@ public class QueueManagementBeans {
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
             String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, deadLetterQueueName};
+            Object[] parameters = new Object[]{messageIDs, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
@@ -252,7 +250,7 @@ public class QueueManagementBeans {
                     signature);
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName, e);
+                    destinationQueueName, e);
         }
     }
 
@@ -260,20 +258,19 @@ public class QueueManagementBeans {
      * Invoke service bean for restoring messages from Dead Letter Channel to a given destination.
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
-     * @param destination         The new destination for the messages in the same tenant
-     * @param deadLetterQueueName Dead Letter Queue name for the respective tenant
+     * @param newDestinationQueueName         The new destination for the messages in the same tenant
+     * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs, String destination,
-                                                                           String deadLetterQueueName) throws
-            QueueManagerException {
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+            String newDestinationQueueName, String destinationQueueName) throws QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
             String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, destination, deadLetterQueueName};
+            Object[] parameters = new Object[]{messageIDs, newDestinationQueueName, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,
@@ -282,7 +279,7 @@ public class QueueManagementBeans {
                     signature);
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
-                    deadLetterQueueName + " to " + destination, e);
+                    destinationQueueName + " to " + newDestinationQueueName, e);
         }
     }
 

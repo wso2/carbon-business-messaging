@@ -231,10 +231,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws
             QueueManagerException {
-        QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
+        QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
     }
 
     /**
@@ -242,22 +242,22 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
-                                                                           String destination,
-                                                                           String deadLetterQueueName)
+                                                                           String newDestinationQueueName,
+                                                                           String destinationQueueName)
             throws
             QueueManagerException {
         QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
-                                                                                                      destination, deadLetterQueueName);
+                newDestinationQueueName, destinationQueueName);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String deadLetterQueueName)
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws
             QueueManagerException {
-        QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, deadLetterQueueName);
+        QueueManagementBeans.getInstance().deleteMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
     }
 
     /**
