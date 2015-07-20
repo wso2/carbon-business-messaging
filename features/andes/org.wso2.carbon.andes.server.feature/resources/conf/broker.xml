@@ -370,17 +370,16 @@ expression of the property. -->
 	 by inbound disruptor reaches below this limit	
 	-->	
     <flowControl>
-        <!-- This is the global buffer limits which enable/disable the flow control globally -->
+        <!-- These are the global buffer limits in Bytes which enable/disable the flow control globally -->
         <global>
-            <lowLimit>800</lowLimit>
-            <highLimit>8000</highLimit>
+            <lowLimit>40</lowLimit>
+            <highLimit>400</highLimit>
         </global>
 
-        <!-- This is the channel specific buffer limits which enable/disable the flow control locally.
-		-->
+        <!-- These are the channel specific buffer limits in Bytes which enable/disable the flow control locally -->
         <bufferBased>
-            <lowLimit>100</lowLimit>
-            <highLimit>1000</highLimit>
+            <lowLimit>5</lowLimit>
+            <highLimit>50</highLimit>
         </bufferBased>
 
         <memoryBased>
