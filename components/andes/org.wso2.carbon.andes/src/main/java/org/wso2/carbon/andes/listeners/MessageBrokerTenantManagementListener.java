@@ -16,7 +16,6 @@ public class MessageBrokerTenantManagementListener implements TenantMgtListener 
 
     private static final Logger logger = Logger.getLogger(MessageBrokerTenantManagementListener.class);
 
-
     /**
      * {@inheritDoc}
      */
@@ -26,12 +25,8 @@ public class MessageBrokerTenantManagementListener implements TenantMgtListener 
         String tenantOwner = tenantInfoBean.getAdmin();
 
         try {
-            // Create DLC if this is the coordinator
-            if (AndesContext.getInstance().isClusteringEnabled()) {
-                if (AndesContext.getInstance().getClusteringAgent().isCoordinator()) {
-                    DLCQueueUtils.createDLCQueue(tenantName, tenantOwner);
-                }
-            } else {
+            // Create DLC if not clustered or else Create DLC if this is the coordinator
+            if (!AndesContext.getInstance().isClusteringEnabled() || AndesContext.getInstance().getClusterAgent().isCoordinator()) {
                 DLCQueueUtils.createDLCQueue(tenantName, tenantOwner);
             }
         } catch (AndesException e) {
