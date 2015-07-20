@@ -81,7 +81,7 @@
         String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
         String pageNumberAsStr = request.getParameter("pageNumber");
         int msgCountPerPage = AndesConfigurationManager.readValue(
-                AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BATCH_SIZE_FOR_BROWSER_SUBSCRIPTIONS);
+                AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BROWSE_PAGE_SIZE);
 
         Map<Integer, Long> pageNumberToMessageIdMap = null;
         if (request.getSession().getAttribute("pageNumberToMessageIdMap") != null) {
