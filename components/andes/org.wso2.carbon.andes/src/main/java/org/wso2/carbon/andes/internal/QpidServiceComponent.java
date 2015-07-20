@@ -387,6 +387,9 @@ public class QpidServiceComponent {
         // Start MQTT Server with given configurations
         startMQTTServer();
 
+        // Message broker is started with both AMQP and MQTT
+        log.info("WSO2 Message Broker is started.");
+
         // Publish Qpid properties
         registrations.push(bundleContext.registerService(
                 QpidService.class.getName(), qpidServiceImpl, null));
@@ -434,7 +437,7 @@ public class QpidServiceComponent {
                     log.info("AMQP Host Address : " + address.getHostAddress() + " Port : " + port);
                     isServerStarted = socket.isConnected();
                     if (isServerStarted) {
-                        log.info("WSO2 Message Broker is Started. Successfully connected to AMQP server "
+                        log.info("Successfully connected to AMQP server "
                                  + "on port " + port);
                     }
                 } catch (IOException e) {
@@ -488,7 +491,7 @@ public class QpidServiceComponent {
                     log.info("MQTT Host Address : " + address.getHostAddress() + " Port : " + port);
                     isServerStarted = socket.isConnected();
                     if (isServerStarted) {
-                        log.info("Successfully connected to the MQTT server on port " + port);
+                        log.info("Successfully connected to MQTT server on port " + port);
                     }
                 } catch (IOException e) {
                     log.error("Wait until server starts on port " + port, e);
