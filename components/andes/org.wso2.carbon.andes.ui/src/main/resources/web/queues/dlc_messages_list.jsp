@@ -17,6 +17,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.wso2.andes.kernel.AndesConstants" %>
 <%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <jsp:include page="resources-i18n-ajaxprocessor.jsp"/>
@@ -263,13 +264,13 @@
                     </td>
                     <td><%= msgProperties%>
                     </td>
-                    <td><%= messageContent[0]%>
+                    <td>
+                        <%=StringEscapeUtils.escapeHtml(messageContent[0])%>
                         <!-- This is converted to a POST to avoid message length eating up the URI request length. -->
                         <form name="msgViewForm<%=contentDisplayID%>" method="POST" action="message_content.jsp">
-                            <input type="hidden" name="message" value="<%=messageContent[1]%>">
+                            <input type="hidden" name="message" value="<%=StringEscapeUtils.escapeHtml(messageContent[1])%>" />
                             <a href="javascript:document.msgViewForm<%=contentDisplayID%>.submit()">&nbsp;&nbsp;&nbsp;more..</a>
                         </form>
-
                     </td>
                 </tr>
 
