@@ -22,7 +22,9 @@ associated libraries are also specified here.
 
 [Note for developers] - If you intend to rename or modify a property name, remember to update 
 relevant, org.wso2.andes.configuration.enums.AndesConfiguration, enum value using the Xpath 
-expression of the property. -->
+expression of the property.
+
+This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/cipher-text.properties for examples.-->
 <broker>
 
     <coordination>
