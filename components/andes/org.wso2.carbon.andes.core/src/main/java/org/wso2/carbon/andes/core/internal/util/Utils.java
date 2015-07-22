@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.configuration.modules.JKSStore;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.internal.ds.QueueManagerServiceValueHolder;
 import org.wso2.carbon.andes.core.types.Queue;
@@ -66,11 +67,6 @@ public class Utils {
     private static final String ANDES_CONF_FILE = "qpid-config.xml";
     private static final String ANDES_CONF_CONNECTOR_NODE = "connector";
     private static final String ANDES_CONF_SSL_NODE = "ssl";
-    private static final String ANDES_CONF_SSL_ONLY_NODE = "sslOnly";
-    private static final String ANDES_CONF_SSL_KEYSTORE_PATH = "keystorePath";
-    private static final String ANDES_CONF_SSL_KEYSTORE_PASSWORD = "keystorePassword";
-    private static final String ANDES_CONF_SSL_TRUSTSTORE_PATH = "truststorePath";
-    private static final String ANDES_CONF_SSL_TRUSTSTORE_PASSWORD = "truststorePassword";
     private static final String CARBON_CLIENT_ID = "carbon";
     private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
     private static final int CHARACTERS_TO_SHOW = 15;
@@ -326,33 +322,15 @@ public class Utils {
         String hostAddress = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
 
         // getting port from andes configuration mentioned in broker.xml
-        Integer carbonPort = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_PORT);
+        Integer carbonPort = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT);
         String port = String.valueOf(carbonPort);
 
         // getting ssl port from andes configuration mentioned in broker.xml
         // these are the properties which needs to be passed when ssl is enabled
-        String sslPort = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_PORT));
+        String sslPort = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT));
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR + ANDES_CONF_FILE);
-        OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                getDocumentElement();
-        OMElement connectorNode = docRootNode.getFirstChildWithName(
-                new QName(ANDES_CONF_CONNECTOR_NODE));
-        OMElement sslNode = connectorNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_NODE));
-        OMElement sslKeyStorePath = sslNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_KEYSTORE_PATH));
-        OMElement sslKeyStorePwd = sslNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_KEYSTORE_PASSWORD));
-        OMElement sslTrustStorePath = sslNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_TRUSTSTORE_PATH));
-        OMElement sslTrustStorePwd = sslNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_TRUSTSTORE_PASSWORD));
-
-        String keyStorePath = sslKeyStorePath.getText();
-        String trustStorePath = sslTrustStorePath.getText();
-        String sslKeyStorePassword = sslKeyStorePwd.getText();
-        String sslTrustStorePassword = sslTrustStorePwd.getText();
+        JKSStore keyStore = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_KEYSTORE);
+        JKSStore trustStore = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_TRUSTSTORE);
 
         // as it is not possible to obtain the password of for the given user, we use service generated access key
         // to authenticate the user
@@ -363,9 +341,9 @@ public class Utils {
 
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostAddress +
-                   ":" + sslPort + "?ssl='true'&trust_store='" + trustStorePath +
-                   "'&trust_store_password='" + sslTrustStorePassword + "'&key_store='" +
-                   keyStorePath + "'&key_store_password='" + sslKeyStorePassword + "''";
+                   ":" + sslPort + "?ssl='true'&trust_store='" + trustStore.getStoreLocation() +
+                   "'&trust_store_password='" + trustStore.getPassword() + "'&key_store='" +
+                   keyStore.getStoreLocation() + "'&key_store_password='" + keyStore.getPassword() + "''";
         } else {
             // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
 
@@ -540,17 +518,7 @@ public class Utils {
      */
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR +
-                                                                                ANDES_CONF_FILE);
-        OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
-                getDocumentElement();
-        OMElement connectorNode = docRootNode.getFirstChildWithName(
-                new QName(ANDES_CONF_CONNECTOR_NODE));
-        OMElement sslNode = connectorNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_NODE));
-        OMElement sslOnlyNode = sslNode.getFirstChildWithName(
-                new QName(ANDES_CONF_SSL_ONLY_NODE));
-
-        return Boolean.parseBoolean(sslOnlyNode.getText());
+        return (Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
+                !(Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
     }
 }

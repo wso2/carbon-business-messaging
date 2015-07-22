@@ -26,17 +26,6 @@
     <cache-directory>${QPID_WORK}/cache</cache-directory>
 
     <connector>
-        <!-- To enable SSL edit the keystorePath and keystorePassword
-     and set enabled to true.
-             To disable Non-SSL port set sslOnly to true -->
-        <ssl>
-            <enabled>true</enabled>
-            <sslOnly>false</sslOnly>
-            <keystorePath>repository/resources/security/wso2carbon.jks</keystorePath>
-            <keystorePassword>wso2carbon</keystorePassword>
-            <truststorePath>repository/resources/security/client-truststore.jks</truststorePath>
-            <truststorePassword>wso2carbon</truststorePassword>
-        </ssl>
         <qpidnio>false</qpidnio>
         <protectio>
             <enabled>false</enabled>
@@ -44,8 +33,6 @@
             <writeBufferLimitSize>262144</writeBufferLimitSize>
         </protectio>
         <transport>nio</transport>
-        <!--<port>5672</port>
-        <sslport>8672</sslport--> <!-- These 2 properties have been moved to andes -> broker.xml for easier maintenance.-->
         <socketReceiveBuffer>32768</socketReceiveBuffer>
         <socketSendBuffer>32768</socketSendBuffer>
     </connector>
