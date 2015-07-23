@@ -249,6 +249,17 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <!-- The size of the batch represents, at a given time the number of messages that could 
             be retrieved from the database. -->
             <contentReadBatchSize>65000</contentReadBatchSize>
+			
+			<!--When delivering topic messages to multimple topic subscribers one of following stratigies
+		    can be choosen. 
+			   1. DISCARD_NONE - broker do not loose any message to any subscriber. When there are slow 
+			      subscribers this can cause broker go Out of Memory.
+			   2. SLOWEST_SUB_RATE - we deliver to the speed of the slowest topic subscriber. This can cause fast 
+			      subscribers to starve. But eliminate Out of Memory issue
+			   3. DISCARD_ALLOWED - broker will try best to deliver. To eliminate Out of Memory threat broker limits
+			      sent but not acked message count to <maxUnackedMessages>. If it is breached, message can 
+			      either be lost or actually sent but ack is not honoured--> 
+			<topicMessageDeliveryStrategy>DISCARD_NONE</topicMessageDeliveryStategy>
         </delivery>
 
         <ackHandling>
