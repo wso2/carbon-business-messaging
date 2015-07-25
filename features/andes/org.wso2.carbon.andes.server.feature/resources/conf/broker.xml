@@ -254,14 +254,14 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 		    can be choosen. 
 			   1. DISCARD_NONE - broker do not loose any message to any subscriber. When there are slow 
 			      subscribers this can cause broker go Out of Memory.
-			   2. SLOWEST_SUB_RATE - we deliver to the speed of the slowest topic subscriber. This can cause fast 
+			   2. SLOWEST_SUB_RATE - broker deliver to the speed of the slowest topic subscriber. This can cause fast 
 			      subscribers to starve. But eliminate Out of Memory issue
 			   3. DISCARD_ALLOWED - broker will try best to deliver. To eliminate Out of Memory threat broker limits
 			      sent but not acked message count to <maxUnackedMessages>. If it is breached, and <deliveryTimeout> 
 			      is also breached message can either be lost or actually sent but ack is not honoured--> 
 			<topicMessageDeliveryStrategy>
 				<strategyName>DISCARD_NONE</strategyName>
-				<!-- If you choose DISCARD_ALLOWED topic message delivery strategy, we keep messages in memory
+				<!-- If you choose DISCARD_ALLOWED topic message delivery strategy, broker keep messages in memory
 			      	 until ack is done until this timeout. If an ack is not received under this timeout, ack will
 				     be simulated internally and real acknowledgement is discarded.-->
 				<deliveryTimeout>60</deliveryTimeout>
