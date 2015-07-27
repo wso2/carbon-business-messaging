@@ -261,7 +261,6 @@ public class QpidServiceComponent {
     protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
         ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration()
                 .getClusteringAgent();
-        AndesContext.getInstance().setClusteringAgent(agent);
         AndesContext.getInstance().setClusteringEnabled(agent != null);
     }
 
