@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS MB_SLOT (
                         SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
                         START_MESSAGE_ID bigint(20) NOT NULL,
                         END_MESSAGE_ID bigint(20) NOT NULL,
-                        STORAGE_QUEUE_NAME varchar(100) NOT NULL,
+                        STORAGE_QUEUE_NAME varchar(512) NOT NULL,
                         SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
                         ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
                         ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
