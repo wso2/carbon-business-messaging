@@ -192,10 +192,7 @@ No subscriptions are created.
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
-        <th><fmt:message key="subscription.exchange"/></th>
-        <th><fmt:message key="subscription.internal.queueName"/></th>
-        <th><fmt:message key="subscription.queueOrTopic"/></th>
-        <th><fmt:message key="subscription.durable"/></th>
+        <th><fmt:message key="subscription.topicName"/></th>
         <th><fmt:message key="subscription.active"/></th>
         <th><fmt:message key="subscription.nodeAddress"/></th>
     </tr>
@@ -208,13 +205,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getSubscriberQueueBoundExchange()%>
-        </td>
-        <td><%=sub.getSubscriberQueueName()%>
-        </td>
-        <td><%=sub.getSubscribedQueueOrTopicName()%>
-        </td>
-        <td><%=sub.getDurable()%>
+        <td><%=sub.getDestination()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -253,13 +244,10 @@ No subscriptions are created.
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
-        <th><fmt:message key="subscription.exchange"/></th>
-        <th><fmt:message key="subscription.queueName"/></th>
-        <th><fmt:message key="subscription.queueOrTopic"/></th>
-        <th><fmt:message key="subscription.durable"/></th>
+        <th><fmt:message key="subscription.topicName"/></th>
         <th><fmt:message key="subscription.active"/></th>
         <th><fmt:message key="subscription.nodeAddress"/></th>
-        <th colspan="2"><fmt:message key="subscription.numOfMessages"/></th>
+        <th colspan="3"><fmt:message key="subscription.numOfMessages"/></th>
     </tr>
     </thead>
     <tbody>
@@ -270,13 +258,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getSubscriberQueueBoundExchange()%>
-        </td>
-        <td><%=sub.getSubscriberQueueName()%>
-        </td>
-        <td><%=sub.getSubscribedQueueOrTopicName()%>
-        </td>
-        <td><%=sub.getDurable()%>
+        <td><%=sub.getDestination()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -285,6 +267,7 @@ No subscriptions are created.
 
         <td id="msg-<%=sub.getSubscriptionIdentifier()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
         </td>
+        <td><a href="../queues/queue_messages_list.jsp?nameOfQueue=<%=sub.getSubscriberQueueName()%>">Browse</a></td>
         <td>
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
@@ -326,13 +309,10 @@ No subscriptions are created.
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
-        <th><fmt:message key="subscription.exchange"/></th>
-        <th><fmt:message key="subscription.queueName"/></th>
-        <th><fmt:message key="subscription.queueOrTopic"/></th>
-        <th><fmt:message key="subscription.durable"/></th>
+        <th><fmt:message key="subscription.topicName"/></th>
         <th><fmt:message key="subscription.active"/></th>
         <th><fmt:message key="subscription.nodeAddress"/></th>
-        <th colspan="2"><fmt:message key="subscription.numOfMessages"/></th>
+        <th colspan="3"><fmt:message key="subscription.numOfMessages"/></th>
         <th><fmt:message key="subscription.operations"/></th>
     </tr>
     </thead>
@@ -344,13 +324,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getSubscriberQueueBoundExchange()%>
-        </td>
-        <td><%=sub.getSubscriberQueueName()%>
-        </td>
-        <td><%=sub.getSubscribedQueueOrTopicName()%>
-        </td>
-        <td><%=sub.getDurable()%>
+        <td><%=sub.getDestination()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -366,6 +340,7 @@ No subscriptions are created.
                onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
+        <td><a href="../queues/queue_messages_list.jsp?nameOfQueue=<%=sub.getSubscriberQueueName()%>">Browse</a></td>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
