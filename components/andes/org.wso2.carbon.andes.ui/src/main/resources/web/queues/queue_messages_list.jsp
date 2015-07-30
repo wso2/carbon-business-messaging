@@ -34,6 +34,16 @@
         String nameOfQueue = request.getParameter("nameOfQueue");
         String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
         String pageNumberAsStr = request.getParameter("pageNumber");
+        String headerPrefix;
+        // ':' is a forbidden letter for a queue name
+        // It is used for create a durable subscription using the tenant name and the topic
+        // Therefore, the presence of ':' in a queue name is and indication that it is a durable subscription
+        if (nameOfQueue.contains(":")){
+            headerPrefix = "durable.subscription.content";
+        }
+        else{
+            headerPrefix = "queue.content";
+        }
 
         int msgCountPerPage = AndesConfigurationManager.readValue(
                 AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BROWSE_PAGE_SIZE);
@@ -82,13 +92,13 @@
     %>
 
     <carbon:breadcrumb
-            label="queue.content"
+            label="<%=headerPrefix%>"
             resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
             topPage="false"
             request="<%=request%>"/>
 
     <div id="middle">
-        <h2><fmt:message key="queue.content"/>  <%=nameOfQueue%></h2>
+        <h2><fmt:message key="<%=headerPrefix%>"/>  <%=nameOfQueue%></h2>
 
         <div id="workArea">
             <input type="hidden" name="pageNumber" value="<%=pageNumber%>"/>
@@ -103,13 +113,9 @@
                 <tr>
                     <th><fmt:message key="message.contenttype"/></th>
                     <th><fmt:message key="message.messageId"/></th>
-                    <th><fmt:message key="message.correlationId"/></th>
-                    <th><fmt:message key="message.type"/></th>
                     <th><fmt:message key="message.redelivered"/></th>
                     <th><fmt:message key="message.deliverymode"/></th>
-                    <th><fmt:message key="message.priority"/></th>
                     <th><fmt:message key="message.timestamp"/></th>
-                    <th><fmt:message key="message.expiration"/></th>
                     <th><fmt:message key="message.properties"/></th>
                     <th><fmt:message key="message.summary"/></th>
                 </tr>
@@ -136,19 +142,11 @@
                     </td>
                     <td><%= queueMessage.getJMSMessageId()%>
                     </td>
-                    <td><%= queueMessage.getJMSCorrelationId()%>
-                    </td>
-                    <td><%= queueMessage.getJMSType()%>
-                    </td>
                     <td><%= queueMessage.getJMSReDelivered()%>
                     </td>
                     <td><%= queueMessage.getJMSDeliveredMode()%>
                     </td>
-                    <td><%= queueMessage.getJMSPriority()%>
-                    </td>
                     <td><%= queueMessage.getJMSTimeStamp()%>
-                    </td>
-                    <td><%= queueMessage.getJMSExpiration()%>
                     </td>
                     <td><%= msgProperties%>
                     </td>

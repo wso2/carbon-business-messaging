@@ -216,11 +216,8 @@
                                onClick="toggleCheck(this)"/></th>
                     <th><fmt:message key="message.contenttype"/></th>
                     <th><fmt:message key="message.messageId"/></th>
-                    <th><fmt:message key="message.correlationId"/></th>
-                    <th><fmt:message key="message.type"/></th>
                     <th><fmt:message key="message.redelivered"/></th>
                     <th><fmt:message key="message.deliverymode"/></th>
-                    <th><fmt:message key="message.priority"/></th>
                     <th><fmt:message key="message.timestamp"/></th>
                     <th><fmt:message key="message.destination"/></th>
                     <th><fmt:message key="message.properties"/></th>
@@ -248,15 +245,9 @@
                     </td>
                     <td><%= queueMessage.getJMSMessageId()%>
                     </td>
-                    <td><%= queueMessage.getJMSCorrelationId()%>
-                    </td>
-                    <td><%= queueMessage.getJMSType()%>
-                    </td>
                     <td><%= queueMessage.getJMSReDelivered()%>
                     </td>
                     <td><%= queueMessage.getJMSDeliveredMode()%>
-                    </td>
-                    <td><%= queueMessage.getJMSPriority()%>
                     </td>
                     <td><%= queueMessage.getJMSTimeStamp()%>
                     </td>
