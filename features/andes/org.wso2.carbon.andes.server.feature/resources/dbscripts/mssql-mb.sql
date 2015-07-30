@@ -151,7 +151,7 @@ CREATE TABLE MB_SLOT (
                         SLOT_ID bigint IDENTITY(1,1) NOT NULL,
                         START_MESSAGE_ID bigint NOT NULL,
                         END_MESSAGE_ID bigint NOT NULL,
-                        STORAGE_QUEUE_NAME varchar(100) NOT NULL,
+                        STORAGE_QUEUE_NAME varchar(512) NOT NULL,
                         SLOT_STATE tinyint NOT NULL DEFAULT '1',
                         ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
                         ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
