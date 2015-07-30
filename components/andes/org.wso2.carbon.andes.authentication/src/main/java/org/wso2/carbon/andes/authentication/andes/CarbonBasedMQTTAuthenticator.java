@@ -45,17 +45,19 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
 
         boolean isAuthenticated = false;
 
+        // Carbon kernel uses '@' to separate domain while MB uses '!'
+        String carbonCompliantUsername = username.replace('!', '@');
+
         try {
-            int tenantId = getTenantIdOfUser(username);
+            int tenantId = getTenantIdOfUser(carbonCompliantUsername);
 
             if (MultitenantConstants.INVALID_TENANT_ID != tenantId) {
                 UserRealm userRealm =
                                       AuthenticationServiceDataHolder.getInstance().getRealmService()
                                                                      .getTenantUserRealm(tenantId);
                 UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-                isAuthenticated =
-                                  userStoreManager.authenticate(MultitenantUtils.getTenantAwareUsername(username),
-                                                                password);
+                isAuthenticated = userStoreManager.authenticate(
+                                          MultitenantUtils.getTenantAwareUsername(carbonCompliantUsername), password);
             } else {
                 logger.error(String.format("access denied, unable to find a tenant for user name : %s", username));
             }
