@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
 CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
                         MESSAGE_ID BIGINT,
                         CONTENT_OFFSET INT,
-                        MESSAGE_CONTENT BLOB NOT NULL,
+                        MESSAGE_CONTENT VARBINARY(65500),
                         PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 -- End of Andes Context Store Tables --
