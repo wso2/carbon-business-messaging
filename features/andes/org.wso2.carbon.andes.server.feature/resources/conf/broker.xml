@@ -146,6 +146,8 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
         <messageStore class="org.wso2.andes.store.rdbms.RDBMSMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
+            <!-- Size of the messages cache in MBs -->
+            <property name="cacheSize">256</property> 
             <property name="storeUnavailableSQLStateClasses">08</property>
             <property name="integrityViolationSQLStateClasses">23,27,44</property>
             <property name="dataErrorSQLStateClasses">21,22</property>
