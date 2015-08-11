@@ -427,15 +427,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <lowLimit>100</lowLimit>
             <highLimit>1000</highLimit>
         </bufferBased>
-
-        <memoryBased>
-            <memoryCheckInterval>20000</memoryCheckInterval>
-            <globalMemoryThresholdRatio>1.0</globalMemoryThresholdRatio>
-            <globalMemoryRecoveryThresholdRatio>1.0</globalMemoryRecoveryThresholdRatio>
-        </memoryBased>
-        <connectionBased>
-            <perConnectionMessageThreshold>1000</perConnectionMessageThreshold>
-        </connectionBased>
     </flowControl>
 
     <slotManagement>
