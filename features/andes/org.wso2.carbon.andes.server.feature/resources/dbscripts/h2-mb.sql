@@ -114,6 +114,8 @@ CREATE TABLE IF NOT EXISTS MB_SLOT (
                         PRIMARY KEY (SLOT_ID)
 );
 
+-- Default value '1' for SLOT_STATE stands for CREATED state of slot
+
 CREATE TABLE IF NOT EXISTS MB_SLOT_MESSAGE_ID (
                         QUEUE_NAME varchar(512) NOT NULL,
                         MESSAGE_ID bigint(20) NOT NULL,
