@@ -145,7 +145,6 @@ CREATE TABLE MB_MSG_STORE_STATUS (
 );
 
 --create slot info
---CREATED slot state is used as '1' default value for new created slots
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT]') AND TYPE IN (N'U'))
 CREATE TABLE MB_SLOT (
                         SLOT_ID bigint IDENTITY(1,1) NOT NULL,
@@ -157,6 +156,8 @@ CREATE TABLE MB_SLOT (
                         ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
                         PRIMARY KEY (SLOT_ID)
 );
+
+-- Default value '1' for SLOT_STATE stands for CREATED state of slot
 
 --create slot message ids
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_SLOT_MESSAGE_ID]') AND TYPE IN (N'U'))
