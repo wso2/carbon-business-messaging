@@ -146,8 +146,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
         <messageStore class="org.wso2.andes.store.rdbms.RDBMSMessageStoreImpl">
             <property name="dataSource">WSO2MBStoreDB</property>
-            <!-- Size of the messages cache in MBs -->
-            <property name="cacheSize">256</property> 
             <property name="storeUnavailableSQLStateClasses">08</property>
             <property name="integrityViolationSQLStateClasses">23,27,44</property>
             <property name="dataErrorSQLStateClasses">21,22</property>
@@ -161,6 +159,27 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <property name="dataErrorSQLStateClasses">21,22</property>
             <property name="transactionRollbackSQLStateClasses">40</property>
         </contextStore>
+
+        <cache>
+            <!-- Size of the messages cache in MBs. Setting '0' will disable the cache. -->
+            <size>256</size>
+            <!-- Expected concurrency for the cache (4 is guava default) -->					
+            <concurrencyLevel>4</concurrencyLevel>
+            <!--Number of seconds cache will keep messages after they are 
+                              added (unless they are consumed and deleted).-->					
+            <expirySeconds>2</expirySeconds>
+
+            <!--Reference type used to hold messages in memory.
+                    weak   - Using java weak references ( - results higher cache misses)
+                    strong - ordinary references ( - higher cache hits, but not good if server 
+                             is going to run with limited heap size + under severe load).
+            -->
+            <valueReferenceType>strong</valueReferenceType>
+
+            <!--Prints cache statistics in 2 minites intervals 
+                                                   in carbon log ( and console)-->					
+            <printStats>false</printStats>
+        </cache>
 
 
         <!-- H2 Based In-Memory Store Configuration -->
@@ -255,25 +274,35 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <contentCache>
                 <!-- Specify the maximum number of entries the cache may contain. -->
                 <maximumSize>100</maximumSize>
-                <!-- Specify the time in seconds that each entry should be automatically removed from the cache
-                after the entry's creation. -->
+                <!-- Specify the time in seconds that each entry should be 
+                     automatically removed from the cache after the entry's creation. -->
                 <expiryTime>120</expiryTime>
             </contentCache>
 
-            <!--When delivering topic messages to multiple topic subscribers one of following stratigies
-            can be choosen.
-               1. DISCARD_NONE - broker do not loose any message to any subscriber. When there are slow
-                  subscribers this can cause broker go Out of Memory.
-               2. SLOWEST_SUB_RATE - broker deliver to the speed of the slowest topic subscriber. This can cause fast
-                  subscribers to starve. But eliminate Out of Memory issue
-               3. DISCARD_ALLOWED - broker will try best to deliver. To eliminate Out of Memory threat broker limits
-                  sent but not acked message count to <maxUnackedMessages>. If it is breached, and <deliveryTimeout>
-                  is also breached message can either be lost or actually sent but ack is not honoured-->
+            <!--When delivering topic messages to multiple topic 
+                subscribers one of following stratigies can be choosen.
+            
+               1. DISCARD_NONE     - Broker do not loose any message to any subscriber. 
+                                     When there are slow subscribers this can cause broker 
+                                     go Out of Memory.
+
+               2. SLOWEST_SUB_RATE - Broker deliver to the speed of the slowest
+                                     topic subscriber. This can cause fast subscribers
+                                     to starve. But eliminate Out of Memory issue.
+
+               3. DISCARD_ALLOWED  - Broker will try best to deliver. To eliminate Out
+                                     of Memory threat broker limits sent but not acked message 
+                                     count to <maxUnackedMessages>. 
+                                     If it is breached, and <deliveryTimeout> is also 
+                                     breached message can either be lost or actually 
+                                     sent but ack is not honoured.
+            -->
             <topicMessageDeliveryStrategy>
                 <strategyName>DISCARD_NONE</strategyName>
-                <!-- If you choose DISCARD_ALLOWED topic message delivery strategy, broker keep messages in memory
-                       until ack is done until this timeout. If an ack is not received under this timeout, ack will
-                     be simulated internally and real acknowledgement is discarded.-->
+                <!-- If you choose DISCARD_ALLOWED topic message delivery strategy, 
+                     broker keep messages in memory until ack is done until this timeout.
+                     If an ack is not received under this timeout, ack will be simulated 
+                     internally and real acknowledgement is discarded.-->
                 <deliveryTimeout>60</deliveryTimeout>
             </topicMessageDeliveryStrategy>
         </delivery>
@@ -431,7 +460,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
     <slotManagement>
         <!--Set slot storage mode (RDBMS/HazelCast)-->
-        <storage>HazelCast</storage>
+        <storage>RDBMS</storage>
     </slotManagement>
 	
     <!--
