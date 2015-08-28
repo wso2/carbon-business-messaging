@@ -25,6 +25,36 @@
         request.getSession().removeAttribute("pageNumberToMessageIdMap");
 
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
+    %>
+
+    <%
+
+        String queueName = request.getParameter("queueName");
+        if (queueName != null) {
+            try {
+                stub.deleteQueue(queueName);
+    %>
+    <script type="text/javascript">
+
+        CARBON.showInfoDialog('Queue <%=queueName %> successfully deleted.', function() {
+            location.href = 'queue_details.jsp';
+        });
+    </script>
+    <%
+    } catch (AndesAdminServiceBrokerManagerAdminException e) {
+    %>
+    <script type="text/javascript">
+        CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
+                () {
+            location.href = 'queue_details.jsp#';
+        });</script>
+    <%
+            }
+        }
+    %>
+
+    <%
+
         Queue[] filteredQueueList = null;
         Queue[] queueList;
         int queueCountPerPage = 20;
@@ -88,31 +118,7 @@
             topPage="false"
             request="<%=request%>"/>
 
-    <%
 
-        String queueName = request.getParameter("queueName");
-        if (queueName != null) {
-            try {
-                stub.deleteQueue(queueName);
-    %>
-    <script type="text/javascript">
-
-        CARBON.showInfoDialog('Queue <%=queueName %> successfully deleted.', function() {
-            location.href = 'queue_details.jsp';
-        });
-    </script>
-    <%
-    } catch (AndesAdminServiceBrokerManagerAdminException e) {
-    %>
-            <script type="text/javascript">
-            CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
-                    () {
-                location.href = 'queue_details.jsp#';
-            });</script>
-    <%
-            }
-        }
-    %>
 
     <div id="middle">
         <h2><fmt:message key="queues.list"/></h2>
