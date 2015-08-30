@@ -25,12 +25,15 @@ import org.wso2.carbon.andes.admin.internal.Queue;
 import org.wso2.carbon.andes.admin.internal.QueueRolePermission;
 import org.wso2.carbon.andes.admin.internal.Subscription;
 import org.wso2.carbon.andes.admin.util.AndesBrokerManagerAdminServiceDSHolder;
+import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
+import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.core.authorization.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -734,6 +737,39 @@ public class AndesAdminService extends AbstractAdmin {
         }
 
         return remainingMessages;
+    }
+
+    /**
+     * Check if current user is has publish permission for a queue.
+     * Suppressing "unused" warning as this is an API.
+     *
+     * @param queueName The name of the queue
+     * @return true if current user has publishing permissions, false otherwise.
+     * @throws BrokerManagerAdminException
+     */
+    @SuppressWarnings("unused")
+    public boolean checkCurrentUserHasPublishPermission(String queueName) throws BrokerManagerAdminException {
+        return checkUserHasPublishPermission(queueName, CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if a user has publishing permission for a queue.
+     *
+     * @param queueName The name of the queue
+     * @param userName  The username of the user
+     * @return true if current user has publishing permissions, false otherwise.
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasPublishPermission(String queueName, String userName) throws BrokerManagerAdminException {
+        try {
+            String queueID = CommonsUtil.getQueueID(queueName);
+            return CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(userName, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase());
+        } catch (UserStoreException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
     }
 
     /**

@@ -71,6 +71,12 @@
         <operation name="deleteQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
         </operation>
+        <operation name="checkCurrentUserHasPublishPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+        </operation>
+        <operation name="checkUserHasPublishPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+        </operation>
         <operation name="deleteTopicFromRegistry">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic</parameter>
         </operation>
