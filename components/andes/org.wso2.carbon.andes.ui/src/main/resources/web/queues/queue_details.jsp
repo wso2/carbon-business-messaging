@@ -164,7 +164,16 @@
                     <td><%=queue.getMessageCount()%>
                     </td>
                     <td><a href="queue_messages_list.jsp?nameOfQueue=<%=nameOfQueue%>">Browse</a></td>
-                    <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+                    <% try {
+                        if(stub.checkCurrentUserHasPublishPermission(nameOfQueue)){ %>
+                            <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+                        <% } else { %>
+                            <td><img src="images/move.gif" alt=""/>&nbsp;
+                                <a title="You cannot publish messages to this queue as you have no publish permissions." class="disabled-ahref" href="#">Publish Messages</a></td>
+                        <% }
+                    } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+                    <% } %>
                     <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>">Purge Messages</a></td>
                     <td>
                         <a style="background-image: url(../admin/images/delete.gif);"

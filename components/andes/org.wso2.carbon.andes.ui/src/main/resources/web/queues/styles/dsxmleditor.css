@@ -80,3 +80,8 @@ border-right:1px solid #DFDFDF !important;
 font-weight:bold;
 text-align:center;
 }
+
+.disabled-ahref{
+    color: grey !important;
+    cursor: default;
+}
