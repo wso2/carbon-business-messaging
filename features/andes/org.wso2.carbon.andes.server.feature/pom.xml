@@ -191,6 +191,7 @@
                                         <include>dbscripts/mssql-mb.sql</include>
                                         <include>dbscripts/mysql-mb.sql</include>
                                         <include>dbscripts/oracle-mb.sql</include>
+                                        <include>dbscripts/oracle-rac-mb.sql</include>
                                         <include>dbscripts/h2-mb.sql</include>
                                         <include>databases/WSO2MB_DB.h2.db</include>
                                         <include>p2.inf</include>
