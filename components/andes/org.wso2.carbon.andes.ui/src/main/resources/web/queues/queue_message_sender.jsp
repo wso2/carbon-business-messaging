@@ -93,10 +93,7 @@
                     }
                     int delivery_mode = 2;
                     int priority = 4;
-                    // set delivery mode 1- non persistent, 2- persistent
-                    if (request.getParameter("delivery_mode") == null) {
-                        delivery_mode = 1;
-                    }
+
                     boolean success = stub.sendMessage(nameOfQueue, jms_type, cor_id, msg_count, message_txt, delivery_mode, priority, time_to_live);
                     if(success) {
                     %>
