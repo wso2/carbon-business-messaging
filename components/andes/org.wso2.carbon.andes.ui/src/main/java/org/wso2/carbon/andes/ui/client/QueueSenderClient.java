@@ -83,10 +83,6 @@ public class QueueSenderClient {
                 int priority = 4;
                 long time_to_live = 0;
 
-                // set delivery mode 1- non persistent, 2- persistent
-                if (request.getParameter("delivery_mode") == null) {
-                    delivery_mode = 1;
-                }
                 // set time to live
                 if (!request.getParameter("expire").equals("")) {
                     String expire_time = request.getParameter("expire");
