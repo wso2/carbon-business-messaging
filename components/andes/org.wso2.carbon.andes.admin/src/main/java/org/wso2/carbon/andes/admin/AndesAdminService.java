@@ -435,6 +435,7 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
                         sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
+                subscriptionDTO.setDestination(sub.getDestination());
 
                 allSubscriptions.add(subscriptionDTO);
             }
