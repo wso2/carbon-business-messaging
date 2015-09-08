@@ -24,7 +24,7 @@
             <parent-menu>manage_menu</parent-menu>
             <link>#</link>
             <region>region1</region>
-            <order>25</order>
+            <order>24</order>
             <style-class>home</style-class>
             <icon>../queues/images/queues.gif</icon>
             <require-permission>/permission/admin/manage/queue</require-permission>
