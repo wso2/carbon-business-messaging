@@ -280,6 +280,14 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="addQueueAndAssignPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="queueRolePermissionsDTO" nillable="true" type="ax24:QueueRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getUserRoles">
                 <xs:complexType>
                     <xs:sequence/>
@@ -429,6 +437,10 @@
         <wsdl:part name="parameters" element="ns:updatePermission"/>
     </wsdl:message>
     <wsdl:message name="updatePermissionResponse"/>
+    <wsdl:message name="addQueueAndAssignPermissionRequest">
+        <wsdl:part name="parameters" element="ns:addQueueAndAssignPermission"/>
+    </wsdl:message>
+    <wsdl:message name="addQueueAndAssignPermissionResponse"/>
     <wsdl:message name="sendMessageRequest">
         <wsdl:part name="parameters" element="ns:sendMessage"/>
     </wsdl:message>
@@ -564,6 +576,11 @@
             <wsdl:input message="tns:updatePermissionRequest" wsaw:Action="urn:updatePermission"/>
             <wsdl:output message="tns:updatePermissionResponse" wsaw:Action="urn:updatePermissionResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:updatePermissionAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="addQueueAndAssignPermission">
+            <wsdl:input message="tns:addQueueAndAssignPermissionRequest" wsaw:Action="urn:addQueueAndAssignPermission"/>
+            <wsdl:output message="tns:addQueueAndAssignPermissionResponse" wsaw:Action="urn:addQueueAndAssignPermissionResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:addQueueAndAssignPermissionAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="sendMessage">
             <wsdl:input message="tns:sendMessageRequest" wsaw:Action="urn:sendMessage"/>
@@ -753,6 +770,18 @@
         </wsdl:operation>
         <wsdl:operation name="updatePermission">
             <soap:operation soapAction="urn:updatePermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addQueueAndAssignPermission">
+            <soap:operation soapAction="urn:addQueueAndAssignPermission" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1075,6 +1104,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="addQueueAndAssignPermission">
+            <soap12:operation soapAction="urn:addQueueAndAssignPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="createQueue">
             <soap12:operation soapAction="urn:createQueue" style="document"/>
             <wsdl:input>
@@ -1356,6 +1397,15 @@
         </wsdl:operation>
         <wsdl:operation name="updatePermission">
             <http:operation location="updatePermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addQueueAndAssignPermission">
+            <http:operation location="addQueueAndAssignPermission"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

@@ -18,10 +18,24 @@
 
 package org.wso2.carbon.andes.admin.internal;
 
+/**
+ * Defines a role and the associated permissions as to whether consuming and publishing is permitted.
+ */
 public class QueueRolePermission {
 
+    /**
+     * The name of the role.
+     */
     private String roleName;
+
+    /**
+     * True if users with the role are allowed to publish.
+     */
     private boolean isAllowedToConsume;
+
+    /**
+     * True if users with the role are allowed to consume.
+     */
     private boolean isAllowedToPublish;
 
     public String getRoleName() {
@@ -46,5 +60,14 @@ public class QueueRolePermission {
 
     public void setAllowedToPublish(boolean isAllowedToPublish) {
         this.isAllowedToPublish = isAllowedToPublish;
+    }
+
+    /**
+     * convert the QueueRolePermission into {@link org.wso2.carbon.andes.core.types.QueueRolePermission}
+     * @return the converted {@link org.wso2.carbon.andes.core.types.QueueRolePermission} object
+     */
+    public org.wso2.carbon.andes.core.types.QueueRolePermission convert(){
+        return new org.wso2.carbon.andes.core.types.QueueRolePermission(roleName, isAllowedToConsume,
+                isAllowedToPublish);
     }
 }

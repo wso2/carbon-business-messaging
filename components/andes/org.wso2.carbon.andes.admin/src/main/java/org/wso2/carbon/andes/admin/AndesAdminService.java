@@ -531,20 +531,41 @@ public class AndesAdminService extends AbstractAdmin {
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
         try {
             if (queueRolePermissionsDTO != null && queueRolePermissionsDTO.length > 0) {
-                List<org.wso2.carbon.andes.core.types.QueueRolePermission> permissionList =
-                                new ArrayList<org.wso2.carbon.andes.core.types.QueueRolePermission>();
-                for (QueueRolePermission queueRolePermission : queueRolePermissionsDTO) {
-                    org.wso2.carbon.andes.core.types.QueueRolePermission permission =
-                                        new org.wso2.carbon.andes.core.types.QueueRolePermission();
-                    permission.setRoleName(queueRolePermission.getRoleName());
-                    permission.setAllowedToConsume(queueRolePermission.isAllowedToConsume());
-                    permission.setAllowedToPublish(queueRolePermission.isAllowedToPublish());
-                    permissionList.add(permission);
-                }
+
                 rolePermissions =
-                    new org.wso2.carbon.andes.core.types.QueueRolePermission[permissionList.size()];
-                permissionList.toArray(rolePermissions);
+                        new org.wso2.carbon.andes.core.types.QueueRolePermission[queueRolePermissionsDTO.length];
+                for (int i = 0; i < queueRolePermissionsDTO.length; i++) {
+                    rolePermissions[i] = queueRolePermissionsDTO[i].convert();
+                }
                 queueManagerService.updatePermission(queueName, rolePermissions);
+            }
+        } catch (QueueManagerException e) {
+            log.error("Unable to update permission of the queue.", e);
+            throw new BrokerManagerAdminException("Unable to update permission of the queue.", e);
+        }
+    }
+
+    /**
+     * Add a queue with the given name and assign permissions
+     *
+     * @param queueName               Name of the queue
+     * @param queueRolePermissionsDTO A {@link org.wso2.carbon.andes.admin.internal.QueueRolePermission}
+     * @throws BrokerManagerAdminException
+     */
+    public void addQueueAndAssignPermission(String queueName, QueueRolePermission[] queueRolePermissionsDTO)
+            throws BrokerManagerAdminException {
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
+                .getQueueManagerService();
+        org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
+        try {
+            if (null != queueRolePermissionsDTO && queueRolePermissionsDTO.length > 0) {
+
+                rolePermissions =
+                        new org.wso2.carbon.andes.core.types.QueueRolePermission[queueRolePermissionsDTO.length];
+                for (int i = 0; i < queueRolePermissionsDTO.length; i++) {
+                    rolePermissions[i] = queueRolePermissionsDTO[i].convert();
+                }
+                queueManagerService.addQueueAndAssignPermission(queueName, rolePermissions);
             }
         } catch (QueueManagerException e) {
             log.error("Unable to update permission of the queue.", e);
