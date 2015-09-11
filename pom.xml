@@ -563,8 +563,8 @@
         <project.scm.id>my-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.4.5</carbon.commons.version>
-        <carbon.multitenancy.version>4.4.0</carbon.multitenancy.version>
+        <carbon.commons.version>4.4.7</carbon.commons.version>
+        <carbon.multitenancy.version>4.4.3</carbon.multitenancy.version>
         <carbon.messaging.version>3.0.0-SNAPSHOT</carbon.messaging.version>
         <andes.dependency.version>3.0.0-SNAPSHOT</andes.dependency.version>
         <andes.export.version>2.6.1</andes.export.version>
@@ -573,7 +573,7 @@
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
         </carbon.platform.package.import.version.range>
-        <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
+        <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
         <xmlsec.version>1.4.2-patched</xmlsec.version>
         <!-- Apache  -->
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
