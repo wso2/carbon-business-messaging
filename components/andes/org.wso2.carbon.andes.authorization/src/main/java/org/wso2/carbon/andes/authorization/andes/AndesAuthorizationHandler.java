@@ -243,8 +243,11 @@ public class AndesAuthorizationHandler {
             String queueID = CommonsUtil.getQueueID(queueName);
 
             try {
-                // authorise if admin user
-                if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
+                if (!isOwnDomain(tenantDomain, queueName)) {
+                    accessResult = Result.DENIED;
+
+                    // authorise if admin user
+                } else if (isTenantAdmin(username, userRealm, tenantDomain, queueName)) {
                     accessResult = Result.ALLOWED;
 
                     // authorise consume
