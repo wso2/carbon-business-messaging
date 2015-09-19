@@ -8,15 +8,16 @@
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     String message = "";
 
-    String queue = (String) session.getAttribute("queue");
-
-    ArrayList<QueueRolePermission> queueRolePermissionArrayList = (ArrayList<QueueRolePermission>) session.getAttribute("queueRolePermissions");
+    String queue = request.getParameter("queue");
+    ArrayList<QueueRolePermission> queueRolePermissionArrayList =
+            (ArrayList<QueueRolePermission>) session.getAttribute("queueRolePermissions");
     QueueRolePermission[] queueRolePermissions = new QueueRolePermission[queueRolePermissionArrayList.size()];
     queueRolePermissions = queueRolePermissionArrayList.toArray(queueRolePermissions);
 
     try {
-        stub.updatePermission(queue, queueRolePermissions);
+        stub.addQueueAndAssignPermission(queue, queueRolePermissions);
         message = "Queue added successfully";
+        session.removeAttribute("queue");
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         message = "Error in adding queue : " + e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
     }

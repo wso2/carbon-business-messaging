@@ -287,8 +287,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissions)
-            throws
-            QueueManagerException {
+            throws QueueManagerException {
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
 
         if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
@@ -329,8 +328,27 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             }
 
         } else {
-            throw new QueueManagerException("Queue with the name: " + queueName + " not already exists!",
-                                            new RuntimeException("Queue with the name: " + queueName + " not already exists!"));
+            throw new QueueManagerException("Queue with the name: " + queueName + " not already exists!");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addQueueAndAssignPermission(String queueName, QueueRolePermission[] queueRolePermissions)
+            throws QueueManagerException {
+        String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
+
+        if (!QueueManagementBeans.queueExists(tenantBasedQueueName)) {
+
+            // create a queue with the provided name and assign permissions for the current user as well as for the
+            // explicitly provided roles
+            createQueue(tenantBasedQueueName);
+            updatePermission(tenantBasedQueueName, queueRolePermissions);
+
+        } else {
+            throw new QueueManagerException("Queue with the name: " + queueName + " already exists!");
         }
     }
 
@@ -351,7 +369,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             UserStoreManager userStoreManager = userRealm.getUserStoreManager();
             //Get all the roles of the logged in user
             String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
-                                                                            .getUsername());
+                    .getUsername());
             //Check current user has admin role
             String[] rolesExceptAdminRole = null;
             boolean adminRoleExistInAllRoles = false;
@@ -400,8 +418,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public QueueRolePermission[] getQueueRolePermission(String queueName)
-            throws QueueManagerException {
+    public QueueRolePermission[] getQueueRolePermission(String queueName) throws QueueManagerException {
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
         if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
             queueName = CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
@@ -420,12 +437,11 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 for (String role : userRealm.getUserStoreManager().getRoleNames()) {
                     if (!(role.equals(adminRole) ||
                           CarbonConstants.REGISTRY_ANONNYMOUS_ROLE_NAME.equals(role))) {
-                        QueueRolePermission queueRolePermission = new QueueRolePermission();
-                        queueRolePermission.setRoleName(role);
-                        queueRolePermission.setAllowedToConsume(userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()));
-                        queueRolePermission.setAllowedToPublish(userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()));
+                        QueueRolePermission queueRolePermission = new QueueRolePermission(role,
+                                userRealm.getAuthorizationManager().isRoleAuthorized(
+                                        role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()),
+                                userRealm.getAuthorizationManager().isRoleAuthorized(
+                                        role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()));
                         queueRolePermissions.add(queueRolePermission);
                     }
                 }
@@ -434,8 +450,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 throw new QueueManagerException("Unable to retrieve permission of the queue.", e);
             }
         } else {
-            throw new QueueManagerException("Queue with the name: " + queueName + " not already " +
-                                            "exists!");
+            throw new QueueManagerException("Queue with the name: " + queueName + " not already exists!");
         }
     }
 

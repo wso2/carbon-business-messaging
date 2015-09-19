@@ -125,6 +125,16 @@ public interface QueueManagerService {
             throws QueueManagerException;
 
     /**
+     * Create a queue and assign permissions which could be be pub, consume, change permission and etc.
+     *
+     * @param queueName            the queue name
+     * @param queueRolePermissions the new permissions for the queue
+     * @throws QueueManagerException
+     */
+    public void addQueueAndAssignPermission(String queueName,
+            org.wso2.carbon.andes.core.types.QueueRolePermission[] queueRolePermissions) throws QueueManagerException;
+
+    /**
      * Gets roles except for admin
      *
      * @return an array of roles

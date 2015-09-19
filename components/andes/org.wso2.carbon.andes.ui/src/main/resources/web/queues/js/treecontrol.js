@@ -12,7 +12,7 @@ function addQueue(createdFrom) {
         CARBON.showErrorDialog(error);
         return;
     }
-    addQueueToBackEnd(topic.value, createdFrom)
+    addQueueAndAssignPermissions(topic.value, createdFrom);
 }
 
 function isValidQueueName(queueName){
@@ -43,7 +43,7 @@ function addQueueToBackEnd(queue, createdFrom) {
 
 }
 
-function addPermissions() {
+function addQueueAndAssignPermissions(queue, createdFrom) {
     var callback =
     {
         success:function(o) {
@@ -65,7 +65,7 @@ function addPermissions() {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_from_session_ajaxprocessor.jsp", callback, "type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_and_assign_role_permissions_ajaxprocessor.jsp", callback, "queue=" + queue + "&type=input");
 }
 
 function updatePermissions() {

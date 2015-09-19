@@ -41,7 +41,8 @@ function addQueueToBackEnd(queue, createdFrom) {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback, "queue=" + queue + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback,
+                                                  "queue=" + queue + "&type=input");
 
 }
  function doDelete(queueName) {
