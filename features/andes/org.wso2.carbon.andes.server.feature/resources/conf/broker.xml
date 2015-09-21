@@ -181,17 +181,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <printStats>false</printStats>
         </cache>
 
-
-        <!-- H2 Based In-Memory Store Configuration -->
-<!--
-        <messageStore class="org.wso2.andes.store.rdbms.h2.H2MemMessageStoreImpl">
-        </messageStore>
-
-        <contextStore class="org.wso2.andes.store.rdbms.h2.H2MemAndesContextStoreImpl">
-        </contextStore>
-
--->
-
         <!-- This class decides how unique IDs are generated for the MB node. This id generator is
         expected to be thread safe and a implementation of interface
         org.wso2.andes.server.cluster.coordination.MessageIdGenerator
