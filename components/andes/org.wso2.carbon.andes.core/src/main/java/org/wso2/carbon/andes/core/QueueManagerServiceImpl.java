@@ -81,15 +81,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
-    private static final String UI_EXECUTE = "ui.execute";
 
-    private static final String PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC = "/permission/admin/manage/dlc/browseDlc";
     private static final String AT_REPLACE_CHAR = "_";
     private static final String QUEUE_ROLE_PREFIX = "Q_";
-
-    private QueueConnection queueConnection;
-    private QueueSession queueSession;
-    private QueueSender queueSender;
 
     /**
      * {@inheritDoc}
@@ -102,7 +96,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             if (!QueueManagementBeans.queueExists(tenantBasedQueueName)) {
                 RegistryClient.createQueue(tenantBasedQueueName, userName);
                 QueueManagementBeans.getInstance().createQueue(tenantBasedQueueName, userName);
-
+                //We have to stay in busy wait loop until queue created, because in next method which is
+                //updatePermission(), first check is queueExists. If it fails then throws an exception
+                //saying queue not exist.
+                while (true) {
+                    if(QueueManagementBeans.queueExists(tenantBasedQueueName)) {
+                        break;
+                    }
+                }
                 //Adding change permissions to the current logged in user
                 UserRealm userRealm =
                         QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
@@ -143,45 +144,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             throws QueueManagerException {
         UserRealm userRealm;
         List<org.wso2.carbon.andes.core.types.Queue> allQueues = QueueManagementBeans.getInstance().getAllQueues();
-        //show queues belonging to current domain of user
-        //also set queue name used by user
-        List<org.wso2.carbon.andes.core.types.Queue> queues = Utils.filterDomainSpecificQueues(allQueues);
-        List<org.wso2.carbon.andes.core.types.Queue> filteredQueueByUser = new ArrayList<>();
-        try {
-            if (Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
-                filteredQueueByUser.addAll(queues);
-            } else {
-                userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
-                        (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                         MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
-                                .getTenantId());
-                UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-                //Get all the roles of the logged in user
-                String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
-                                                                                .getUsername());
-                for (org.wso2.carbon.andes.core.types.Queue queue : queues) {
-                    String queueName = queue.getQueueName();
-                    String queueID = CommonsUtil.getQueueID(queueName);
-                    for (String role : roleNames) {
-
-                        if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()) ||
-                            userRealm.getAuthorizationManager().isRoleAuthorized(
-                                    role, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase()) ||
-                            userRealm.getAuthorizationManager().isUserAuthorized(
-                                    CarbonContext.getThreadLocalCarbonContext().getUsername(),
-                                    PERMISSION_ADMIN_MANAGE_DLC_BROWSE_DLC, UI_EXECUTE)) {
-                            if (!filteredQueueByUser.contains(queue)) {
-                                filteredQueueByUser.add(queue);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (UserStoreException e) {
-            throw new QueueManagerException("Unable to get all queues.", e);
-        }
-        return filteredQueueByUser;
+        //show queues belonging to current domain
+        return Utils.filterDomainSpecificQueues(allQueues);
     }
 
     /**
@@ -301,7 +265,8 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                          MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
                 if (!userRealm.getAuthorizationManager().isUserAuthorized(
-                        loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION) && !Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
+                        loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION) &&
+                        !Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
                     throw new QueueManagerException(" User " + loggedInUser + " can not change" +
                                                     " the permissions of " + queueName);
                 }
@@ -459,7 +424,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
-                                                                  String userName, String accessKey,
                                                                   long nextMessageIdToRead, int maxMsgCount)
             throws QueueManagerException {
 
@@ -486,8 +450,54 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                String jmsCorrelationID,
                                int numberOfMessages, String message, int deliveryMode, int priority,
                                long expireTime) throws QueueManagerException {
+        UserRealm userRealm;
+        String queueID = CommonsUtil.getQueueID(nameOfQueue);
+        boolean isSend = false;
         try {
-            Queue queue = getQueue(nameOfQueue, userName, accessKey);
+            userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
+                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                            .getTenantId());
+            String tenantDomain = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantManager()
+                        .getDomain(CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                                MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                                .getTenantId());
+            if (!Utils.isOwnDomain(tenantDomain, nameOfQueue)) {
+                throw new QueueManagerException("Permission denied.");
+            } else if (Utils.isAdmin(userName)) { // Authorize admin user
+                send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
+                        deliveryMode, priority, expireTime);
+               isSend = true;
+            } else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                    userName, queueID,
+                    TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
+                        deliveryMode, priority, expireTime);
+                isSend = true;
+            }
+        } catch (UserStoreException e) {
+            throw new QueueManagerException("Unable to send message.", e);
+        }
+        return isSend;
+    }
+
+    private void send(String nameOfQueue, String userName, String accessKey, String jmsType, String jmsCorrelationID,
+                      int numberOfMessages, String message, int deliveryMode, int priority, long expireTime)
+            throws QueueManagerException {
+        QueueConnectionFactory connFactory;
+        QueueConnection queueConnection = null;
+        QueueSession queueSession = null;
+        QueueSender queueSender = null;
+        try {
+            Properties properties = new Properties();
+            properties.put(Context.INITIAL_CONTEXT_FACTORY, ANDES_ICF);
+            properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
+            properties.put(QUEUE_NAME_PREFIX + nameOfQueue, nameOfQueue);
+            properties.put(CarbonConstants.REQUEST_BASE_CONTEXT, "true");
+            InitialContext ctx = new InitialContext(properties);
+            connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
+            queueConnection = connFactory.createQueueConnection();
+            Queue queue = (Queue) ctx.lookup(nameOfQueue);
             queueSession = queueConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             queueSender = queueSession.createSender(queue);
             queueConnection.start();
@@ -510,22 +520,27 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     queueSender.send(textMessage, deliveryMode, priority, expireTime);
                 }
             }
-            return true;
-        } catch (NamingException | JMSException | XMLStreamException | UnknownHostException | FileNotFoundException e) {
+        } catch (FileNotFoundException | NamingException | UnknownHostException | XMLStreamException | JMSException e) {
             throw new QueueManagerException("Unable to send message.", e);
         } finally {
             try {
-                queueConnection.close();
+                if (queueConnection != null) {
+                    queueConnection.close();
+                }
             } catch (JMSException e) {
                 log.error("Unable to close queue connection", e);
             }
             try {
-                queueSession.close();
+                if (queueSession != null) {
+                    queueSession.close();
+                }
             } catch (JMSException e) {
                 log.error("Unable to close queue session", e);
             }
             try {
-                queueSender.close();
+                if (queueSender != null) {
+                    queueSender.close();
+                }
             } catch (JMSException e) {
                 log.error("Unable to close queue sender", e);
             }
@@ -608,32 +623,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         }
 
         return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
-    }
-
-    /**
-     * Gets a JMS queue object
-     *
-     * @param nameOfQueue name of the user
-     * @param userName    username for the amqp url
-     * @param accessKey   access key for the amqp url
-     * @return a queue
-     * @throws FileNotFoundException
-     * @throws XMLStreamException
-     * @throws NamingException
-     * @throws JMSException
-     */
-    private Queue getQueue(String nameOfQueue, String userName, String accessKey)
-            throws FileNotFoundException,
-                   XMLStreamException, NamingException, JMSException, UnknownHostException {
-        Properties properties = new Properties();
-        properties.put(Context.INITIAL_CONTEXT_FACTORY, ANDES_ICF);
-        properties.put(CF_NAME_PREFIX + CF_NAME, Utils.getTCPConnectionURL(userName, accessKey));
-        properties.put(QUEUE_NAME_PREFIX + nameOfQueue, nameOfQueue);
-        properties.put(CarbonConstants.REQUEST_BASE_CONTEXT, "true");
-        InitialContext ctx = new InitialContext(properties);
-        QueueConnectionFactory connFactory = (QueueConnectionFactory) ctx.lookup(CF_NAME);
-        queueConnection = connFactory.createQueueConnection();
-        return (Queue) ctx.lookup(nameOfQueue);
     }
 
     /**

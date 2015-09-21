@@ -169,8 +169,7 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
                         return AndesAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
                     }
                 case PURGE:
-                    return AndesAuthorizationHandler.handlePurgeQueue(username, userRealm
-                    );
+                    return AndesAuthorizationHandler.handlePurgeQueue(username, userRealm, properties);
             }
         } catch (AndesAuthorizationHandlerException e) {
             logger.error("Error while invoking AndesAuthorizationHandler", e);
@@ -193,12 +192,9 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
         if (null != realmService) {
             try {
                 // Get tenant ID
-                int tenantID = MultitenantConstants.SUPER_TENANT_ID;
-                int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
-                if (-1 != domainNameSeparatorIndex) { // Service case
-                    String domainName = username.substring(domainNameSeparatorIndex + 1);
-                    tenantID = realmService.getTenantManager().getTenantId(domainName);
-                }
+                int tenantID = !username.contains(DOMAIN_NAME_SEPARATOR) ?
+                        MultitenantConstants.SUPER_TENANT_ID :
+                        realmService.getTenantManager().getTenantId(username.substring(username.indexOf(DOMAIN_NAME_SEPARATOR) + 1));
 
                 // Get Realm
                 userRealm = realmService.getTenantUserRealm(tenantID);

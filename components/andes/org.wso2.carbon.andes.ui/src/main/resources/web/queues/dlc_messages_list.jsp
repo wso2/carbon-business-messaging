@@ -183,21 +183,77 @@
                 <table align="right">
                     <thead>
                     <tr align="right">
-                        <th align="right">
-                            <a style="background-image: url(../admin/images/delete.gif);"
-                               class="icon-link"
-                               onclick="doDeleteDLC('<%=nameOfQueue%>')">Delete</a>
-                        </th>
-                        <th align="right">
-                            <a style="background-image: url(../admin/images/move.gif);"
-                               class="icon-link"
-                               onclick="deRestoreMessages('<%=nameOfQueue%>')">Restore</a>
-                        </th>
-                        <th align="right">
-                            <a style="background-image: url(images/move.gif);"
-                               class="icon-link"
-                               onclick="doReRouteMessages('<%=nameOfQueue%>')">ReRoute</a>
-                        </th>
+                        <%--Delete messages--%>
+                            <% try {
+                                if(stub.checkCurrentUserHasDeleteMessagesInDLCPermission()){ %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/delete.gif);"
+                                   class="icon-link"
+                                   onclick="doDeleteDLC('<%=nameOfQueue%>')">Delete</a>
+                            </th>
+                            <% } else { %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/delete.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">Delete</a>
+                            </th>
+                            <% }
+                            } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/delete.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">Delete</a>
+                            </th>
+                            <% } %>
+
+
+                        <%--Restore messages--%>
+                            <% try {
+                                if(stub.checkCurrentUserHasRestoreMessagesInDLCPermission()){ %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/move.gif);"
+                                   class="icon-link"
+                                   onclick="deRestoreMessages('<%=nameOfQueue%>')">Restore</a>
+                            </th>
+                            <% } else { %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/move.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">Restore</a>
+                            </th>
+                            <% }
+                            } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                            <th align="right">
+                                <a style="background-image: url(../admin/images/move.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">Restore</a>
+                            </th>
+                            <% } %>
+
+
+                        <%--Reroute messages--%>
+                            <% try {
+                                if(stub.checkCurrentUserHasRerouteMessagesInDLCPermission()){ %>
+                            <th align="right">
+                                <a style="background-image: url(images/move.gif);"
+                                   class="icon-link"
+                                   onclick="doReRouteMessages('<%=nameOfQueue%>')">ReRoute</a>
+                            </th>
+                            <% } else { %>
+                            <th align="right">
+                                <a style="background-image: url(images/move.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">ReRoute</a>
+                            </th>
+                            <% }
+                            } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                            <th align="right">
+                                <a style="background-image: url(images/move.gif);"
+                                   class="icon-link disabled-ahref"
+                                   href="#">ReRoute</a>
+                            </th>
+                            <% } %>
+
                     </tr>
                     </thead>
                 </table>
