@@ -27,7 +27,7 @@
             <order>32</order>
             <style-class>home</style-class>
             <icon>../andes-cluster-mgt/images/cluster_info.png</icon>
-            <require-permission>/permission/admin/login</require-permission>
+            <require-permission>/permission/admin</require-permission>
         </menu>
         <menu>
             <id>test_menu</id>
@@ -39,7 +39,7 @@
             <order>10</order>
             <style-class>manage</style-class>
             <icon>../andes-cluster-mgt/images/list.gif</icon>
-            <require-permission>/permission/admin/login</require-permission>
+            <require-permission>/permission/admin</require-permission>
         </menu>
 
 	</menus>
