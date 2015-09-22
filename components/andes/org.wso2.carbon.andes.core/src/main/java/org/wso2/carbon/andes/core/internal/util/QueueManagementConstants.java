@@ -19,6 +19,7 @@ package org.wso2.carbon.andes.core.internal.util;
 
 public class QueueManagementConstants {
     public static final String QUEUES_MBEAN_ATTRIBUTE = "AllQueueNames";
+    public static final String QUEUES_COUNT_MBEAN_ATTRIBUTE = "AllQueueCounts";
     public static final String BROKER_SUBSCRIPTION_ATTRIBUTE = "AllSubscriptionInformation";
     public static final String QPID_VHOST_NAME = "carbon";
     public static final String MB_QUEUE_STORAGE_PATH = "event/queues/jms";

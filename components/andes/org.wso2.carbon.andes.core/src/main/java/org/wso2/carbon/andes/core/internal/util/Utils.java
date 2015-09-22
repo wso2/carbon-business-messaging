@@ -126,7 +126,16 @@ public class Utils {
     }
 
     /**
-     * Checks if a given user has admin privileges
+     * Method to retrieve the tenant domain of the current user.
+     *
+     * @return the domain name of the tenant
+     */
+    public static String getTenantDomain() {
+        return CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+    }
+
+    /**
+     * Checks if a given user has admin privileges.
      *
      * @param username Name of the user
      * @return true if the user has admin rights or false otherwise
@@ -162,34 +171,43 @@ public class Utils {
     }
 
     /**
-     * Filter queues to suit the tenant domain
+     * Filter queues to suit the tenant domain.
      *
      * @param fullList Full queue list
      * @return List<Queue>
      */
     public static List<Queue> filterDomainSpecificQueues(List<Queue> fullList) {
-        String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         ArrayList<Queue> tenantFilteredQueues = new ArrayList<>();
-        if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
-                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
-            for (Queue aQueue : fullList) {
-                if (aQueue.getQueueName().startsWith(domainName)) {
-                    tenantFilteredQueues.add(aQueue);
-                }
+        for (Queue queue : fullList) {
+            if (isQueueInDomain(queue)) {
+                tenantFilteredQueues.add(queue);
+            }
+        }
+        return tenantFilteredQueues;
+    }
+
+    /**
+     * Method to check if the queue is allowed in the tenant domain.
+     *
+     * @param queue The queue to check if allowed
+     * @return true is queue is allowed
+     */
+    public static boolean isQueueInDomain(Queue queue) {
+        String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        // If the current tenant is not the super tenant,
+        if (!(domainName.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
+            if (queue.getQueueName().startsWith(domainName)) {
+                return true;
             }
         }
         //for super tenant load all queues not specific to a domain. That means queues created by external
         //JMS clients are visible, and those names should not have "/" in their queue names
-        else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
-                equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
-            for (Queue aQueue : fullList) {
-                if (!aQueue.getQueueName().contains("/")) {
-                    tenantFilteredQueues.add(aQueue);
-                }
+        else {
+            if (!queue.getQueueName().contains("/")) {
+                return true;
             }
         }
-
-        return tenantFilteredQueues;
+        return false;
     }
 
     /**

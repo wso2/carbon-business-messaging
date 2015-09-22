@@ -8,7 +8,6 @@
 <%@ page import="javax.jms.JMSException" %>
 <%@ page import="javax.naming.NamingException" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
-<%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:jsi18n
@@ -26,21 +25,9 @@
 
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         Queue dlcQueue = null;
-        Queue[] queueList;
         try {
-        	//TODO- using this for testing purposes. Need to change to getDLCQueue.
-        	//dlcQueue=stub.getAllDLCQueues();
-        	queueList = stub.getAllQueues();
+        	dlcQueue = stub.getDLCQueue();
 
-            if (queueList != null) {
-                for(Queue queue:queueList){
-                    String nameOfQueue = queue.getQueueName();
-                    if(DLCQueueUtils.isDeadLetterQueue(nameOfQueue)){
-                        dlcQueue = queue;
-                        break;
-                    }
-                }
-            }
         } catch (AndesAdminServiceBrokerManagerAdminException e) {
             CarbonUIMessage.sendCarbonUIMessage(e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), CarbonUIMessage.ERROR, request, e);
     %>

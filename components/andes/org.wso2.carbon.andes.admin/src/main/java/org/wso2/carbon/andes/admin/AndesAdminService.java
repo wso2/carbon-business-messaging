@@ -93,6 +93,51 @@ public class AndesAdminService extends AbstractAdmin {
     private static final String PERMISSION_ADMIN_MANAGE_DLC_REROUTE_MESSAGE = "/permission/admin/manage/dlc/reroute";
 
     /**
+     * Retrieve an {@link org.wso2.carbon.andes.admin.internal.Queue} with the number of messages remaining in the
+     * database by passing a queue name
+     *
+     * @param queueName name of the queue
+     * @return org.wso2.carbon.andes.admin.internal.Queue if the queue exists, null if it doesn't exists
+     */
+    public org.wso2.carbon.andes.admin.internal.Queue getQueueByName(String queueName)
+            throws BrokerManagerAdminException {
+        org.wso2.carbon.andes.admin.internal.Queue queue = null;
+        try {
+
+            QueueManagerService queueManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+            if (null != queueManagerService.getQueueByName(queueName)) {
+                queue = new org.wso2.carbon.andes.admin.internal.Queue(queueManagerService.getQueueByName(queueName));
+            }
+        } catch (QueueManagerException e) {
+            log.error("Problem in getting queues from back end", e);
+            throw new BrokerManagerAdminException("Problem in getting queues from back-end", e);
+        }
+        return queue;
+    }
+
+    /**
+     * Retrieve the DLC queue for the domain
+     *
+     * @return {@link org.wso2.carbon.andes.admin.internal.Queue} with the number of messages in the dlc
+     */
+    public org.wso2.carbon.andes.admin.internal.Queue getDLCQueue() throws BrokerManagerAdminException {
+        org.wso2.carbon.andes.admin.internal.Queue queue;
+        try {
+
+            String tenantDomain = Utils.getTenantDomain();
+            QueueManagerService queueManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+            queue = new org.wso2.carbon.andes.admin.internal.Queue(queueManagerService.getDLCQueue(tenantDomain));
+
+        } catch (QueueManagerException e) {
+            log.error("Problem in getting queues from back end", e);
+            throw new BrokerManagerAdminException("Problem in getting queues from back-end", e);
+        }
+        return queue;
+    }
+
+    /**
      * Gets all queues.
      * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allQueues' is used to sort and to
      * convert to an array.
@@ -604,6 +649,9 @@ public class AndesAdminService extends AbstractAdmin {
                     rolePermissions[i] = queueRolePermissionsDTO[i].convert();
                 }
                 queueManagerService.addQueueAndAssignPermission(queueName, rolePermissions);
+            }
+            else{
+                queueManagerService.createQueue(queueName);
             }
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
