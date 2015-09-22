@@ -20,11 +20,15 @@ package org.wso2.carbon.andes.event.core;
 import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
 
 /**
- * this service is used to nofify from the Qpid compoent if it is present.
- * Qpid compoent has an decalrative service to listen for this. so we know
- * it will start up after event compoent.
+ * This service is used to notify from the Qpid component if it is present. Qpid component has an declarative service
+ * to listen for this. so we know it will start up after event component.
  */
 public interface EventBundleNotificationService {
 
+    /**
+     * Notify to register qpidServerDetails
+     *
+     * @param qpidServerDetails qpidServerDetails
+     */
     public void notifyStart(QpidServerDetails qpidServerDetails);
 }

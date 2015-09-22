@@ -40,6 +40,9 @@ public class CarbonEventBrokerFactory implements EventBrokerFactory {
     public static final String EB_MAX_QUEUED_REQUESTS = "maxQueuedRequests";
     public static final String EB_KEEP_ALIVE_TIME = "keepAliveTime";
 
+    /**
+     * {@inheritDoc}
+     */
     public EventBroker getEventBroker(OMElement config) throws EventBrokerConfigurationException {
 
         CarbonEventBroker carbonEventBroker = new CarbonEventBroker();

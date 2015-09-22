@@ -19,8 +19,18 @@ package org.wso2.carbon.andes.event.core;
 import org.apache.axiom.om.OMElement;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerConfigurationException;
 
+/**
+ * Implementation of this interface used to create and get topic manager service from given configuration
+ */
 public interface TopicManagerServiceFactory {
 
+    /**
+     * Return topic manager service from given configuration
+     *
+     * @param config configuration object
+     * @return topic manager service object
+     * @throws EventBrokerConfigurationException
+     */
     public TopicManagerService getTopicManagerService(OMElement config) throws EventBrokerConfigurationException;
 
 }

@@ -21,7 +21,7 @@ package org.wso2.carbon.andes.event.ui;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.event.client.broker.BrokerClient;
-import org.wso2.carbon.event.stub.internal.xsd.TopicRolePermission;
+import org.wso2.carbon.andes.event.stub.core.TopicRolePermission;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.ServerConstants;
 

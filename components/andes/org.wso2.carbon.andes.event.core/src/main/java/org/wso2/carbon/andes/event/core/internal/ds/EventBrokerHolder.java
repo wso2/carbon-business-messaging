@@ -22,6 +22,9 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.api.UserRealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+/**
+ * Data holder of EventBrokerBuilderDS
+ */
 public class EventBrokerHolder {
 
     private static EventBrokerHolder instance = new EventBrokerHolder();

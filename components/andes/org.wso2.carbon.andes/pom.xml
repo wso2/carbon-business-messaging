@@ -48,8 +48,8 @@
             <artifactId>org.wso2.carbon.andes.authentication</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.commons</groupId>
-            <artifactId>org.wso2.carbon.event.core</artifactId>
+            <groupId>org.wso2.carbon.messaging</groupId>
+            <artifactId>org.wso2.carbon.andes.event.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>

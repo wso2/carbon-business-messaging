@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * keeps all the subscription related data.
+ * Keeps all the subscription related data.
  * 
  */
 public class Subscription implements Serializable {

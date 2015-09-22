@@ -1,5 +1,5 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2004,2015 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,30 +44,68 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * this class provides a JMS based delivary manager
+ * This class provides a JMS based delivery manager.
  */
 public abstract class JMSDeliveryManager implements DeliveryManager {
 
-     private static final Log log = LogFactory.getLog(JMSDeliveryManager.class);
+    private static final Log log = LogFactory.getLog(JMSDeliveryManager.class);
 
+    /**
+     * Notification manager object used to initialize jms listener
+     */
     private NotificationManager notificationManager;
 
+    /**
+     * Hold Jms subscription details
+     */
     private Map<String, JMSSubscriptionDetails> subscriptionIDSessionDetailsMap;
 
+    /**
+     * JMSDeliveryManager constructor initialize subscription details map
+     */
     protected JMSDeliveryManager() {
-        this.subscriptionIDSessionDetailsMap
-                = new ConcurrentHashMap<String, JMSSubscriptionDetails>();
+        this.subscriptionIDSessionDetailsMap = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Jms delivery deactivate flag
+     */
+    private boolean isDeactivated;
+
+    /**
+     * Return initial context property object for given username and password
+     *
+     * @param userName username
+     * @param password password
+     * @return properties
+     */
     protected abstract Properties getInitialContextProperties(String userName, String password);
 
+    /**
+     * Return topic connection factory for given initial context properties
+     *
+     * @param initialContext initial context proeprties
+     * @return topic connection factory
+     * @throws EventBrokerException
+     */
     protected abstract TopicConnectionFactory getTopicConnectionFactory(
             InitialContext initialContext) throws EventBrokerException;
 
+    /**
+     * Return formatted topic name for given topic
+     *
+     * @param topicName topic name
+     * @return formatted topic name
+     */
     protected abstract String getTopicName(String topicName);
 
-    private boolean isDeactivated;
-
+    /**
+     * Initialize and return topic connection
+     *
+     * @param userName username
+     * @return topic connection
+     * @throws EventBrokerException
+     */
     public TopicConnection getTopicConnection(String userName) throws EventBrokerException {
         InitialContext initialContext = null;
         try {
@@ -82,9 +120,7 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
             return topicConnection;
         } catch (NamingException e) {
             throw new EventBrokerException("Can not create the initial context", e);
-        } catch (JMSException e) {
-            throw new EventBrokerException("Can not create topic connection", e);
-        } catch (Exception e){
+        } catch (EventBrokerException | JMSException e){
             throw new EventBrokerException("Can not create topic connection", e);
         } finally {
             if (initialContext != null){
@@ -97,13 +133,16 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void subscribe(Subscription subscription) throws EventBrokerException {
 
         if (isDeactivated()){
             return;
         }
 
-        // in a multi tenant envirionment deployment synchronizer may creates subscriptions before
+        // in a multi tenant environment deployment synchronize may creates subscriptions before
         // the event observer get activated.
         if (this.subscriptionIDSessionDetailsMap.containsKey(subscription.getId())){
             log.warn("There is an subscription already exists for the subscription with id " + subscription.getId());
@@ -145,10 +184,16 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void publish(Message message, String topicName, int deliveryMode) throws EventBrokerException {
 
         if (isDeactivated()){
@@ -209,6 +254,9 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void unSubscribe(String id) throws EventBrokerException {
 
         JMSSubscriptionDetails jmsSubscriptionDetails =
@@ -218,6 +266,9 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void renewSubscription(Subscription subscription) throws EventBrokerException {
         JMSSubscriptionDetails jmsSubscriptionDetails =
                 this.subscriptionIDSessionDetailsMap.get(subscription.getId());
@@ -231,10 +282,13 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void cleanUp() throws EventBrokerException {
         setDeactivated(true);
         try {
-            // allowed to countine with the threads which going to publish events
+            // allowed to counting with the threads which going to publish events
             Thread.sleep(3000);
         } catch (InterruptedException e) {}
 
@@ -244,6 +298,11 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         }
     }
 
+    /**
+     * Return current user name
+     *
+     * @return username
+     */
     private String getLoggedInUserName() {
         String userName = "";
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != 0) {
@@ -255,14 +314,27 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
         return userName;
     }
 
+    /**
+     * Getter method of deactivated flag
+     *
+     * @return status
+     */
     public synchronized boolean isDeactivated() {
         return isDeactivated;
     }
 
+    /**
+     * Setter method of deactivated flag
+     *
+     * @param deactivated status
+     */
     public synchronized void setDeactivated(boolean deactivated) {
         isDeactivated = deactivated;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void initializeTenant() throws EventBrokerException {
         // there is no tenant specific initialization for jms deliveary manager
     }

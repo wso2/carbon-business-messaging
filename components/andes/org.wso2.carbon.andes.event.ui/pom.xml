@@ -43,10 +43,10 @@
             <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
         </dependency>
-        <!--<dependency>
-            <groupId>org.wso2.carbon.commons</groupId>
-            <artifactId>org.wso2.carbon.event.stub</artifactId>
-        </dependency>-->
+        <dependency>
+            <groupId>org.wso2.carbon.messaging</groupId>
+            <artifactId>org.wso2.carbon.andes.event.stub</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -62,16 +62,15 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Import-Package>
-                            <!--org.wso2.carbon.event.stub.*;version="${carbon.commons.imp.package.version}",-->
-                            org.wso2.carbon.event.api.*,
+                            org.wso2.carbon.andes.event.*;version="${andes.import.version}",
                             org.wso2.carbon.event.client.*,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*; version="${imp.pkg.version.axis2}",
-                            org.apache.axiom.*; version="${imp.pkg.version.axis2}",
+                            org.apache.axiom.*; version="${imp.pkg.version.axiom}",
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.event.ui.*
+                            org.wso2.carbon.andes.event.ui.*
                         </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>

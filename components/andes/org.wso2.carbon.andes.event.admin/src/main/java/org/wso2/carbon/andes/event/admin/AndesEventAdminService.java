@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004,2015 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.wso2.carbon.andes.event.admin;
 
 import org.apache.commons.logging.Log;
@@ -9,6 +25,7 @@ import org.wso2.carbon.andes.event.core.TopicManagerService;
 import org.wso2.carbon.andes.event.core.TopicNode;
 import org.wso2.carbon.andes.event.core.TopicRolePermission;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
+import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 
 import java.util.Calendar;
@@ -225,12 +242,120 @@ public class AndesEventAdminService extends AbstractAdmin {
         }
     }
 
+    /**
+     * Evaluate current logged in user has add topic permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
     public boolean checkCurrentUserHasAddTopicPermission() throws EventAdminException {
-        return false;
+        return checkUserHasAddTopicPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
     }
 
+    /**
+     * Evaluate given username has add topic permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
     public boolean checkUserHasAddTopicPermission(String username) throws EventAdminException {
-        return false;
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            return eventBroker.getTopicManagerService().checkUserHasAddTopicPermission(username);
+        } catch (EventBrokerException e) {
+            String errorMessage = "Error in evaluating permission of user.";
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
+    }
+
+    /**
+     * Evaluate current logged in user has delete topic permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkCurrentUserHasDeleteTopicPermission() throws EventAdminException {
+        return checkUserHasDeleteTopicPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Evaluate given username has delete topic permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkUserHasDeleteTopicPermission(String username) throws EventAdminException {
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            return eventBroker.getTopicManagerService().checkUserHasDeleteTopicPermission(username);
+        } catch (EventBrokerException e) {
+            String errorMessage = "Error in evaluating permission of user.";
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
+    }
+
+    /**
+     * Evaluate current logged in user has view topic details permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkCurrentUserHasDetailsTopicPermission() throws EventAdminException {
+        return checkUserHasDetailsTopicPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Evaluate given username has view topic details permission. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkUserHasDetailsTopicPermission(String username) throws EventAdminException {
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            return eventBroker.getTopicManagerService().checkUserHasDetailsTopicPermission(username);
+        } catch (EventBrokerException e) {
+            String errorMessage = "Error in evaluating permission of user.";
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
+    }
+
+    /**
+     * Evaluate current logged in user has publish permission for given topic. This service mainly used to restrict UI
+     * control for un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkCurrentUserHasPublishTopicPermission(String topicName, String username) throws EventAdminException {
+        return checkUserHasPublishTopicPermission(topicName, CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Evaluate given username has publish permission for given topic. This service mainly used to restrict UI control for
+     * un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws EventAdminException
+     */
+    public boolean checkUserHasPublishTopicPermission(String topicName, String username) throws EventAdminException {
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            return eventBroker.getTopicManagerService().checkUserHasPublishTopicPermission(topicName, username);
+        } catch (EventBrokerException e) {
+            String errorMessage = "Error in evaluating permission of user.";
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
     }
 
     /**

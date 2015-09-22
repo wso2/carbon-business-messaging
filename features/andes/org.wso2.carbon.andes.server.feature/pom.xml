@@ -64,6 +64,14 @@
             <artifactId>org.wso2.carbon.andes.admin</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.messaging</groupId>
+            <artifactId>org.wso2.carbon.andes.event.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.messaging</groupId>
+            <artifactId>org.wso2.carbon.andes.event.admin</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
         </dependency>
@@ -186,6 +194,7 @@
                                     <directory>resources</directory>
                                     <includes>
                                         <include>conf/broker.xml</include>
+                                        <include>conf/event-broker.xml</include>
                                         <include>conf/qpid-config.xml</include>
                                         <include>conf/qpid-virtualhosts.xml</include>
                                         <include>dbscripts/mssql-mb.sql</include>
@@ -232,6 +241,8 @@
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.commons:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.core:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.core:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.admin:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes:${andes.dependency.version}</bundleDef>
                                 <bundleDef>org.wso2.lmax:disruptor</bundleDef>

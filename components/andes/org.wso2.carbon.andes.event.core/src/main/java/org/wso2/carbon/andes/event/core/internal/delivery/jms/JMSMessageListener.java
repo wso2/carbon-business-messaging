@@ -32,23 +32,40 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
 
+/**
+ * JMS message listener class which trigger based on message receive
+ */
 public class JMSMessageListener implements MessageListener {
 
     private Log log = LogFactory.getLog(JMSMessageListener.class);
-
     private NotificationManager notificationManager;
     private Subscription subscription;
 
+    /**
+     * JMS message listener class constructor which initialize notification manager and subscription
+     * @param notificationManager
+     * @param subscription
+     */
     public JMSMessageListener(NotificationManager notificationManager, Subscription subscription) {
         this.notificationManager = notificationManager;
         this.subscription = subscription;
     }
 
+    /**
+     * Renew subscription object
+     *
+     * @param subscription subscription
+     */
     public void renewSubscription(Subscription subscription){
         this.subscription.setExpires(subscription.getExpires());
         this.subscription.setProperties(subscription.getProperties());
     }
 
+    /**
+     * Fire when message receive and send notification to carbon notification manager
+     *
+     * @param message message
+     */
     public void onMessage(Message message) {
         try {
             PrivilegedCarbonContext.startTenantFlow();

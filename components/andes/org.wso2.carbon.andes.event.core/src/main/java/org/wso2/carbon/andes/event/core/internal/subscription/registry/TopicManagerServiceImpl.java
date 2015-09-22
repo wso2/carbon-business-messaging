@@ -58,6 +58,25 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     private static final String TOPIC_ROLE_PREFIX = "T_";
     private String topicStoragePath;
     private RegistryService registryService;
+    /**
+     * Permission value for changing permissions through UI.
+     */
+    private static final String UI_EXECUTE = "ui.execute";
+
+    /**
+     * permission path for adding a topic.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD = "/permission/admin/manage/topic/add";
+
+    /**
+     * Permission path for deleting a topic.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE = "/permission/admin/manage/topic/delete";
+
+    /**
+     * Permission path for view topic details
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DETAILS = "/permission/admin/manage/topic/details";
 
     /**
      * Initializes Registry Topic Manager
@@ -525,6 +544,91 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkUserHasAddTopicPermission(String username) throws EventBrokerException {
+        boolean hasPermission = false;
+        try {
+            if (JavaUtil.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new EventBrokerException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkUserHasDeleteTopicPermission(String username) throws EventBrokerException {
+        boolean hasPermission = false;
+        try {
+            if (JavaUtil.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_DELETE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new EventBrokerException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkUserHasDetailsTopicPermission(String username) throws EventBrokerException {
+        boolean hasPermission = false;
+        try {
+            if (JavaUtil.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_DETAILS, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new EventBrokerException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkUserHasPublishTopicPermission(String topicName, String username) throws EventBrokerException {
+        boolean hasPermission = false;
+        String topicResourcePath = JavaUtil.getResourcePath(topicName, this.topicStoragePath);
+        try {
+            if (JavaUtil.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, topicResourcePath, EventBrokerConstants.EB_PERMISSION_PUBLISH)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new EventBrokerException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
      * Create a new role which has the same name as the destinationName and assign the logged in
      * user to the newly created role. Then, authorize the newly created role to subscribe and
      * publish to the destination.
@@ -544,6 +648,8 @@ public class TopicManagerServiceImpl implements TopicManagerService {
         String newDestinationName = destinationName.replace("@", AT_REPLACE_CHAR);
 
         // creating the internal role name
+        newDestinationName = newDestinationName.substring(0, 1)
+                .equalsIgnoreCase("/") ? newDestinationName.replaceFirst("/", "") : newDestinationName;
         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
                                                              newDestinationName.replace("/", "-"));
 

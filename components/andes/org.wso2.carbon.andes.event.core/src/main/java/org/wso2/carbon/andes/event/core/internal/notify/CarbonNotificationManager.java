@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Notification manager of the carbon. This implements the send notification
- * method which can be used by any delivary manager interface
+ * Notification manager of the carbon. This implements the send notification method which can be used by any delivery
+ * manager interface
  */
 public class CarbonNotificationManager implements NotificationManager {
 
@@ -38,8 +38,10 @@ public class CarbonNotificationManager implements NotificationManager {
         this.eventDispatchMap = new ConcurrentHashMap();
     }
 
-    public void sendNotification(Message message, Subscription subscription)
-            throws EventBrokerException {
+    /**
+     * {@inheritDoc}
+     */
+    public void sendNotification(Message message, Subscription subscription) throws EventBrokerException {
 
         if (subscription.getExpires() != null){
             Calendar calendar = Calendar.getInstance();
@@ -48,7 +50,6 @@ public class CarbonNotificationManager implements NotificationManager {
                 return;
             }
         }
-
          //send the message using the appropriate method of the subscription attributes
         if (subscription.getEventDispatcher() != null){
             subscription.getEventDispatcher().notify(message, subscription);
@@ -66,6 +67,12 @@ public class CarbonNotificationManager implements NotificationManager {
 
     }
 
+    /**
+     * Register event dispatcher for given name
+     *
+     * @param name name
+     * @param eventDispatcher event dispatcher
+     */
     public void registerEventDispatcher(String name, EventDispatcher eventDispatcher){
         this.eventDispatchMap.put(name, eventDispatcher);
     }

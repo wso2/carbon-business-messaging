@@ -9,18 +9,24 @@ import org.wso2.carbon.utils.AbstractAxis2ConfigurationContextObserver;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Axis2 configuration context for eventing
+ */
 public class EventAxis2ConfigurationContextObserver extends AbstractAxis2ConfigurationContextObserver {
 	
     private static Log log = LogFactory.getLog(EventAxis2ConfigurationContextObserver.class);
-
     private EventBroker eventBroker;
-
     private Set<Integer> loadedTenants;
 
     public EventAxis2ConfigurationContextObserver() {
-        this.loadedTenants = new HashSet<Integer>();
+        this.loadedTenants = new HashSet<>();
     }
 
+    /**
+     * Initialize configuration context
+     *
+     * @param tenantId tenant to init config
+     */
     @Override
     public void creatingConfigurationContext(int tenantId) {
         try {
@@ -37,6 +43,11 @@ public class EventAxis2ConfigurationContextObserver extends AbstractAxis2Configu
         }
     }
 
+    /**
+     * Event broker setter method
+     *
+     * @param eventBroker event broker object
+     */
     public void setEventBroker(EventBroker eventBroker) {
         this.eventBroker = eventBroker;
     }

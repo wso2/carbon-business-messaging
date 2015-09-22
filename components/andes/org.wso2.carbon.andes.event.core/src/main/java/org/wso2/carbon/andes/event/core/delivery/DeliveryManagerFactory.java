@@ -20,14 +20,14 @@ import org.apache.axiom.om.OMElement;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerConfigurationException;
 
 /**
- * factory interface to create Delivary managers
+ * factory interface to create Delivery managers
  */
 public interface DeliveryManagerFactory {
 
     /**
-     * creates and returns the delivary manager from the omElement config.
-     * @param config
-     * @return
+     * creates and returns the delivery manager from the omElement config.
+     * @param config OMElement
+     * @return delivery manager object
      * @throws EventBrokerConfigurationException
      */
     DeliveryManager getDeliveryManger(OMElement config) throws EventBrokerConfigurationException;

@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.andes.event.core;
 
+/**
+ * Keep topic node data
+ */
 public class TopicNode {
 
     private String nodeName;

@@ -104,4 +104,41 @@ public interface TopicManagerService {
      */
     public boolean isTopicExists(String topicName) throws EventBrokerException;
 
+    /**
+     * Check if given user has add topic permission. We bypass permission evaluating if user is admin.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws EventBrokerException
+     */
+    public boolean checkUserHasAddTopicPermission(String username) throws EventBrokerException;
+
+    /**
+     * Check if given user has delete topic permission.  We bypass permission evaluating if user is admin.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws EventBrokerException
+     */
+    public boolean checkUserHasDeleteTopicPermission(String username) throws EventBrokerException;
+
+    /**
+     * Check if given user has permission to view topic details. We bypass permission evaluating if user is admin.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws EventBrokerException
+     */
+    public boolean checkUserHasDetailsTopicPermission(String username) throws EventBrokerException;
+
+    /**
+     * Check if given user has permission to publish to topic. We bypass permission evaluating if user is admin.
+     *
+     * @param topicName topic name to check against
+     * @param username username
+     * @return true/false based on permission
+     * @throws EventBrokerException
+     */
+    public boolean checkUserHasPublishTopicPermission(String topicName, String username) throws EventBrokerException;
+
 }

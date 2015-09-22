@@ -24,7 +24,7 @@ import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 
 /**
- * this class use as the worker for the executor pool which publish the message
+ * This class use as the worker for the executor pool which publish the message
  */
 public class EventPublisher implements Runnable {
 

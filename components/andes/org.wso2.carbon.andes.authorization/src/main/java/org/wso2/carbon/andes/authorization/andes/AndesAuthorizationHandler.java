@@ -84,38 +84,32 @@ public class AndesAuthorizationHandler {
     /**
      * Permission path for adding a queue.
      */
-    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE =
-                                                        "/permission/admin/manage/queue/add";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD = "/permission/admin/manage/queue/add";
 
     /**
      * Permission path for deleting a queue.
      */
-    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE =
-                                                    "/permission/admin/manage/queue/delete";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE = "/permission/admin/manage/queue/delete";
 
     /**
      * Permission path for purging a queue messages.
      */
-    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE =
-                                                        "/permission/admin/manage/queue/purge";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_PURGE = "/permission/admin/manage/queue/purge";
 
     /**
      * Permission path for browsing a queue
      */
-    private static final String PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE =
-                                                        "/permission/admin/manage/queue/browse";
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE = "/permission/admin/manage/queue/browse";
 
     /**
      * permission path for adding a topic.
      */
-    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC =
-                                                        "/permission/admin/manage/topic/add";
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_ADD = "/permission/admin/manage/topic/add";
 
     /**
      * Permission path for deleting a topic.
      */
-    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC =
-                                                    "/permission/admin/manage/topic/delete";
+    private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DELETE = "/permission/admin/manage/topic/delete";
 
     /**
      * Prefix for creating an internal role for queues.
@@ -155,11 +149,11 @@ public class AndesAuthorizationHandler {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                            PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE, UI_EXECUTE)) {
+                        PERMISSION_ADMIN_MANAGE_QUEUE_ADD, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                            PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
+                        PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
                 } else if (isDurableTopicSubscriberQueue(
@@ -293,7 +287,7 @@ public class AndesAuthorizationHandler {
 
                     // authorise browse
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                        username, PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE, UI_EXECUTE)) {
+                        username, PERMISSION_ADMIN_MANAGE_QUEUE_BROWSE, UI_EXECUTE)) {
                     accessResult = Result.ALLOWED;
 
                 }
@@ -385,7 +379,7 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.DENIED;
                         } else if (!userStoreManager.isExistingRole(roleName) && userRealm
                                 .getAuthorizationManager().isUserAuthorized(username,
-                                        PERMISSION_ADMIN_MANAGE_TOPIC_ADD_TOPIC, UI_EXECUTE)) {
+                                        PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
 
                             //This is triggered when a topic is created.So the user who creates the
                             // topic will get publish/subscribe permissions
@@ -581,11 +575,11 @@ public class AndesAuthorizationHandler {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                            PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
+                        PERMISSION_ADMIN_MANAGE_QUEUE_DELETE, UI_EXECUTE)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                            PERMISSION_ADMIN_MANAGE_TOPIC_DELETE_TOPIC, UI_EXECUTE)) {
+                        PERMISSION_ADMIN_MANAGE_TOPIC_DELETE, UI_EXECUTE)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
@@ -625,7 +619,7 @@ public class AndesAuthorizationHandler {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                        PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE)) {
+                        PERMISSION_ADMIN_MANAGE_QUEUE_PURGE, UI_EXECUTE)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),

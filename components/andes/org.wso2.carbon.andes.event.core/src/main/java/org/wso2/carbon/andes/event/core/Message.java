@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * this class is used to keep the OMMessage and 
+ * This class is used to keep the OMMessage and
  */
 public class Message {
 

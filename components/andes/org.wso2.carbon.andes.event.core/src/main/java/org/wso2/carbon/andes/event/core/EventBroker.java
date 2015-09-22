@@ -24,16 +24,13 @@ import org.wso2.carbon.user.api.UserStoreException;
 import java.util.List;
 
 /**
- * The main eventing interface for the other components. this interface supports two kinds of
- * subscriptions.
- * 1. Subscriptions with event dispatcher.
- *      Event broker does not persists these subscriptions and call the on message method upon
- *      receiving an event.
- * 2. Subscriptions with event dispatcher's name.
- *      Event broker persists these subscriptions. It is responsibility of the user who calls this
- *      method to register the {@link EventDispatcher} with
- *      the given name. In a server restart again caller has to register the
- *      {@link EventDispatcher}.
+ * The main eventing interface for the other components. this interface supports two kinds of subscriptions.
+ * 1. Subscriptions with event dispatcher. Event broker does not persists these subscriptions and call the on message
+ * method upon receiving an event.
+ *
+ * 2. Subscriptions with event dispatcher's name. Event broker persists these subscriptions. It is responsibility of
+ * the user who calls this method to register the {@link EventDispatcher} with the given name. In a server restart
+ * again caller has to register the {@link EventDispatcher}.
  */
 public interface EventBroker {
 

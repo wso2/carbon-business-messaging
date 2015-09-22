@@ -37,6 +37,9 @@ import javax.xml.namespace.QName;
 import java.net.SocketException;
 import java.rmi.RemoteException;
 
+/**
+ * WSO2 MB specific delivery manager factory implementation
+ */
 public class QpidJMSDeliveryManagerFactory implements DeliveryManagerFactory {
 
     public static final String EB_REMOTE_MESSGE_BROKER = "remoteMessageBroker";
@@ -51,6 +54,9 @@ public class QpidJMSDeliveryManagerFactory implements DeliveryManagerFactory {
     public static final String EB_TYPE = "type";
     public static final String EB_REMOTE_MESSAGE_BROKER_PASSWORD_ALIAS = "eventBrokerConfig.eventBroker.deliveryManager.remoteMessageBroker.password";
 
+    /**
+     * {@inheritDoc}
+     */
     public DeliveryManager getDeliveryManger(OMElement config)
             throws EventBrokerConfigurationException {
 

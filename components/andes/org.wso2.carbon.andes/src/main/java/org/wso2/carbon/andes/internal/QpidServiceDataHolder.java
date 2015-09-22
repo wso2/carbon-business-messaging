@@ -19,7 +19,7 @@
 package org.wso2.carbon.andes.internal;
 
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.event.core.EventBundleNotificationService;
+import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
 
 /**
  * This is a singleton class that holds data that is shared within this component.

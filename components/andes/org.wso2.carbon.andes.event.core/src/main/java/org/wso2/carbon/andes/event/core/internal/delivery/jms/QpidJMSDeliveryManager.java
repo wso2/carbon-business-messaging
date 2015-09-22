@@ -1,5 +1,5 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2004,2015 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,16 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Properties;
 
+/**
+ * WSO2 MB delivery manager specific delivery manager implementation
+ */
 public class QpidJMSDeliveryManager extends JMSDeliveryManager {
 
     public static final String QPID_ICF = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory";
     public static final String CF_NAME_PREFIX = "connectionfactory.";
     public static final String CF_NAME = "qpidConnectionfactory";
-
     public static final String MB_TYPE_LOCAL = "local";
     public static final String MB_TYPE_REMOTE = "remote";
-
     private String type;
     private String hostName;
     private String qpidPort;
@@ -47,6 +48,9 @@ public class QpidJMSDeliveryManager extends JMSDeliveryManager {
         this.type = type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected Properties getInitialContextProperties(String userName, String password) {
 
         Properties initialContextProperties = new Properties();
@@ -65,6 +69,9 @@ public class QpidJMSDeliveryManager extends JMSDeliveryManager {
         return initialContextProperties;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected TopicConnectionFactory getTopicConnectionFactory(InitialContext initialContext)
                                               throws EventBrokerException {
         try {
@@ -74,6 +81,9 @@ public class QpidJMSDeliveryManager extends JMSDeliveryManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getTopicName(String topicName) {
         if (topicName.startsWith("/")){
             topicName = topicName.substring(1);

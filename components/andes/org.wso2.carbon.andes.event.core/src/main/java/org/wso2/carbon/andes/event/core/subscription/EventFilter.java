@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.andes.event.core.subscription;
 
+/**
+ * Event filter details
+ */
 public class EventFilter {
 
     private String dialect;

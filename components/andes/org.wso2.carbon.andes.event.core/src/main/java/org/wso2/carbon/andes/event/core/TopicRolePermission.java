@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.andes.event.core;
 
+/**
+ * Keep topic role permission data
+ */
 public class TopicRolePermission {
 
     private String roleName;

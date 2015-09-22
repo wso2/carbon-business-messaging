@@ -33,22 +33,30 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
+/**
+ * Event bundle notification service implementation
+ */
 public class EventBrokerHandler implements EventBundleNotificationService {
 
     private static final Log log = LogFactory.getLog(EventBrokerHandler.class);
-
     private ComponentContext context;
-
     private ServiceRegistration eventServiceRegistration;
 
+    /**
+     * Event broker constructor which initialize context
+     * @param context component context
+     */
     public EventBrokerHandler(ComponentContext context) {
         this.context = context;
     }
 
+    /**
+     * Start event broker
+     */
     public void startEventBroker() {
         try {
-            // set incarnate this thread to supper tenat since carbon contexes can only be
-            // run is supertenants
+            // set incarnate this thread to supper tenant since carbon context can only be
+            // run is super tenants
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME);
@@ -74,6 +82,9 @@ public class EventBrokerHandler implements EventBundleNotificationService {
         }
     }
 
+    /**
+     * Stop event broker
+     */
     public void stopEventBroker() {
         ServiceReference serviceReference =
                 this.context.getBundleContext().getServiceReference(EventBroker.class.getName());
@@ -91,6 +102,9 @@ public class EventBrokerHandler implements EventBundleNotificationService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void notifyStart(QpidServerDetails qpidServerDetails) {
         EventBrokerHolder.getInstance().registerQpidServerDetails(qpidServerDetails);
         this.startEventBroker();

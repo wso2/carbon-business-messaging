@@ -43,8 +43,8 @@ import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.event.core.EventBundleNotificationService;
-import org.wso2.carbon.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
+import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
@@ -81,7 +81,7 @@ import java.util.Stack;
  * bind="setServerConfiguration"
  * unbind="unsetServerConfiguration"
  * @scr.reference name="event.broker"
- * interface="org.wso2.carbon.event.core.EventBundleNotificationService"
+ * interface="org.wso2.carbon.andes.event.core.EventBundleNotificationService"
  * cardinality="1..1"
  * policy="dynamic"
  * bind="setEventBundleNotificationService"

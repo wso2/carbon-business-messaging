@@ -19,7 +19,17 @@ package org.wso2.carbon.andes.event.core;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import org.wso2.carbon.andes.event.core.subscription.Subscription;
 
+/**
+ * Implementation of this interface used to send notification to any delivery manager
+ */
 public interface NotificationManager {
 
+    /**
+     * Notification message send to given subscription
+     *
+     * @param message message
+     * @param subscription subscription
+     * @throws EventBrokerException
+     */
     public void sendNotification(Message message, Subscription subscription) throws EventBrokerException;
 }

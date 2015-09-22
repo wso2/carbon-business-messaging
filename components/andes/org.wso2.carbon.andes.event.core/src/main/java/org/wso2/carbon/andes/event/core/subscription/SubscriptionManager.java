@@ -22,7 +22,7 @@ import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import java.util.List;
 
 /**
- * interface to mange the subscriptions with a persistence storage. Event Broker implementation
+ * Interface to mange the subscriptions with a persistence storage. Event Broker implementation
  * call this interface to add new subscriptions.
  * At the restart of the server it can retrieve all the subscriptions and resubscribes.
  */

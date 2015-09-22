@@ -20,7 +20,7 @@ package org.wso2.carbon.andes.event.core.subscription;
 import org.wso2.carbon.andes.event.core.Message;
 
 /**
- * this interface can be used to receive the Events from the EventBroker interface
+ * This interface can be used to receive the Events from the EventBroker interface
  */
 public interface EventDispatcher {
 

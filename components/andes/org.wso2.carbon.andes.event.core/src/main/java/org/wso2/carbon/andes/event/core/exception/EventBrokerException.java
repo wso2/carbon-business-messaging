@@ -17,7 +17,7 @@
 package org.wso2.carbon.andes.event.core.exception;
 
 /**
- * this exceptions is thrown to any problem which occures at the message processing time.
+ * This exceptions is thrown to any problem which occurs at the message processing time.
  */
 public class EventBrokerException extends Exception {
 

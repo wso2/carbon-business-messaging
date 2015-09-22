@@ -1,20 +1,36 @@
-package org.wso2.carbon.andes.event.admin;
+/*
+ * Copyright 2004,2015 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package org.wso2.carbon.andes.event.admin;
 
 import org.wso2.carbon.andes.event.core.subscription.EventDispatcher;
 import org.wso2.carbon.andes.event.core.subscription.EventFilter;
 
 import java.util.Calendar;
 
+/**
+ * Keep subscription related information to handle necessary operation in AndesEventAdminService.
+ */
 public class Subscription {
+
     // these properties are come from the eventing specification
     private String eventSinkURL;
     private Calendar expires;
     private EventFilter eventFilter;
-
-    //TODO : add support for following
     // Delivary mode
-
     // these properites are used in wso2 carbon implementation.
     private String id;
     private String topicName;

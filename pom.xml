@@ -326,6 +326,16 @@
                 <version>${carbon.messaging.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.stub</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.ui</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>

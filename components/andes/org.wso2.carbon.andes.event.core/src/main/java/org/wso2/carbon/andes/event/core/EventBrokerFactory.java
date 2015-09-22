@@ -20,13 +20,13 @@ import org.apache.axiom.om.OMElement;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerConfigurationException;
 
 /**
- * factory to get the Event broker instances
+ * Factory to get the Event broker instances
  */
 public interface EventBrokerFactory {
 
     /**
      * returns the event broker from the configuration element
-     * @param config
+     * @param config configuration
      * @return
      * @throws EventBrokerConfigurationException
      */

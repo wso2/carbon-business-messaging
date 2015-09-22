@@ -28,6 +28,9 @@ import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
 /**
+ * Service references initialize by this class. All necessary services references get initialize in bundle
+ * activation.
+ *
  * @scr.component name="eventbrokerbuilder.component" immediate="true"
  * @scr.reference name="registry.service"
  * interface="org.wso2.carbon.registry.core.service.RegistryService" cardinality="1..1"

@@ -33,7 +33,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * some utility classes.
+ * Contains utility methods.
  */
 public class JavaUtil {
 
@@ -121,7 +121,7 @@ public class JavaUtil {
     }
 
     /**
-     * Check if the given user has the admin role privileges
+     * Check if the given user has the admin role
      *
      * @param username - the user to be checked for permissions
      * @return - true if given user is a admin role owned user, false otherwise

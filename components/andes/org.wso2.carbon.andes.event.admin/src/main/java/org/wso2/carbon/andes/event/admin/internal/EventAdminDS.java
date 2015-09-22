@@ -1,5 +1,5 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2004,2015 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.andes.event.core.EventBroker;
 
 /**
- * @scr.component name="wsevent.component.admin" immediate="true"
+ * Service references initialize by this class. All necessary services references get initialize in bundle
+ * activation.
+ *
+ * @scr.component name="AndesEventManagerAdmin.component" immediate="true"
  * @scr.reference name="eventbroker.service"
  * interface="org.wso2.carbon.andes.event.core.EventBroker" cardinality="1..1"
  * policy="dynamic" bind="setEventBroker" unbind="unSetEventBroker"

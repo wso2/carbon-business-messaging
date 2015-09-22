@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**
- * factory class for registry based subscription manager
+ * Factory class for registry based subscription manager
  */
 public class RegistrySubscriptionManagerFactory implements SubscriptionManagerFactory {
 
@@ -44,6 +44,9 @@ public class RegistrySubscriptionManagerFactory implements SubscriptionManagerFa
     public static final String EB_ELE_EXPIRES = "expires";
     public static final String EB_ELE_OWNER = "owner";
 
+    /**
+     * {@inheritDoc}
+     */
     public SubscriptionManager getSubscriptionManager(OMElement config)
             throws EventBrokerConfigurationException {
 

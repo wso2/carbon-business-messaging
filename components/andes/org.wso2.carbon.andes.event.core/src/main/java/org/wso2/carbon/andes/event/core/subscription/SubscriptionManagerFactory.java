@@ -19,7 +19,17 @@ package org.wso2.carbon.andes.event.core.subscription;
 import org.apache.axiom.om.OMElement;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerConfigurationException;
 
+/**
+ * Implementation of this interface used to create and get subscription manager object from given config
+ */
 public interface SubscriptionManagerFactory {
 
+    /**
+     * Return subscription manager object from given config
+     *
+     * @param config configuration object
+     * @return subscription manager
+     * @throws EventBrokerConfigurationException
+     */
     public SubscriptionManager getSubscriptionManager(OMElement config) throws EventBrokerConfigurationException;
 }

@@ -18,6 +18,9 @@ package org.wso2.carbon.andes.event.core.qpid;
 
 import org.wso2.carbon.utils.ServerConstants;
 
+/**
+ * Qpid service details container
+ */
 public class QpidServerDetails {
 
     private static final String DOMAIN_NAME_SEPARATOR = "@";
@@ -56,6 +59,13 @@ public class QpidServerDetails {
         this.sslOnly=sslOnly;
     }
 
+    /**
+     * Return amqp connection url
+     *
+     * @param username username
+     * @param password password
+     * @return connection url
+     */
      public String getTCPConnectionURL(String username, String password) {
 
         // Qpid uses @ to seperate the user name and the client id so
