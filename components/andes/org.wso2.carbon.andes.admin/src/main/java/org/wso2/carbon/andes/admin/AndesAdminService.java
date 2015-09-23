@@ -35,6 +35,7 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.authorization.TreeNode;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1121,7 +1122,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     private String getCurrentUser() {
         String userName;
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > MultitenantConstants.INVALID_TENANT_ID) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
                     + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         } else {

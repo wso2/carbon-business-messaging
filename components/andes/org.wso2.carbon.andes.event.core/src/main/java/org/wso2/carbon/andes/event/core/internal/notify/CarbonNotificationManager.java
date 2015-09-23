@@ -35,7 +35,7 @@ public class CarbonNotificationManager implements NotificationManager {
     private Map<String, EventDispatcher> eventDispatchMap;
 
     public CarbonNotificationManager() {
-        this.eventDispatchMap = new ConcurrentHashMap();
+        this.eventDispatchMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -43,20 +43,20 @@ public class CarbonNotificationManager implements NotificationManager {
      */
     public void sendNotification(Message message, Subscription subscription) throws EventBrokerException {
 
-        if (subscription.getExpires() != null){
+        if (null != subscription.getExpires()) {
             Calendar calendar = Calendar.getInstance();
-            if (calendar.after(subscription.getExpires())){
-                // this sequence has already expied.
+            if (calendar.after(subscription.getExpires())) {
+                // this sequence has already expired.
                 return;
             }
         }
-         //send the message using the appropriate method of the subscription attributes
-        if (subscription.getEventDispatcher() != null){
+        //send the message using the appropriate method of the subscription attributes
+        if (null != subscription.getEventDispatcher()) {
             subscription.getEventDispatcher().notify(message, subscription);
-        } else if (subscription.getEventDispatcherName() != null){
+        } else if (null != subscription.getEventDispatcherName()) {
             EventDispatcher eventDispatcher =
                     this.eventDispatchMap.get(subscription.getEventDispatcherName());
-            if (eventDispatcher == null){
+            if (null == eventDispatcher) {
                 throw new EventBrokerException("Event dispatcher with name "
                         + subscription.getEventDispatcherName() + " is not exists");
             }

@@ -138,13 +138,13 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
      */
     public void subscribe(Subscription subscription) throws EventBrokerException {
 
-        if (isDeactivated()){
+        if (isDeactivated()) {
             return;
         }
 
         // in a multi tenant environment deployment synchronize may creates subscriptions before
         // the event observer get activated.
-        if (this.subscriptionIDSessionDetailsMap.containsKey(subscription.getId())){
+        if (this.subscriptionIDSessionDetailsMap.containsKey(subscription.getId())) {
             log.warn("There is an subscription already exists for the subscription with id " + subscription.getId());
             return;
         }
@@ -170,11 +170,11 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
             Topic topic = topicSession.createTopic(topicName);
             //Some times we are not getting the proper topic with the required syntax, if it is not
             //appropriate we need to check and add the BURL syntax to fix the issue https://wso2.org/jira/browse/MB-185
-            if(!topic.toString().startsWith("topic://amq.topic")){
-                topic = topicSession.createTopic("BURL:"+topicName);
+            if (!topic.toString().startsWith("topic://amq.topic")) {
+                topic = topicSession.createTopic("BURL:" + topicName);
             }
             TopicSubscriber topicSubscriber =
-                             topicSession.createDurableSubscriber(topic, subscription.getId());
+                    topicSession.createDurableSubscriber(topic, subscription.getId());
             topicSubscriber.setMessageListener(jmsMessageListener);
 
             this.subscriptionIDSessionDetailsMap.put(subscription.getId(),
@@ -234,8 +234,8 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
                     topicSession.createTextMessage(message.getMessage().toString());
 
             Map<String, String> properties = message.getProperties();
-            for (String key : properties.keySet()){
-                textMessage.setStringProperty(key, properties.get(key));
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                textMessage.setStringProperty(entry.getKey(), entry.getValue());
             }
 
             // saving the domain to be used send with the soap header
@@ -287,13 +287,8 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
      */
     public void cleanUp() throws EventBrokerException {
         setDeactivated(true);
-        try {
-            // allowed to counting with the threads which going to publish events
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {}
 
-        for (JMSSubscriptionDetails jmsSubscriptionDetails :
-                this.subscriptionIDSessionDetailsMap.values()) {
+        for (JMSSubscriptionDetails jmsSubscriptionDetails : this.subscriptionIDSessionDetailsMap.values()) {
             jmsSubscriptionDetails.close();
         }
     }
