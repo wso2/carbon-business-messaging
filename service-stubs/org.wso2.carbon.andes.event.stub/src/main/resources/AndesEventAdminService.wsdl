@@ -1,0 +1,1114 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax29="http://exception.admin.event.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/event/admin/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax214="http://subscription.core.event.andes.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ax213="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/event/admin" xmlns:ax211="http://core.event.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/event/admin">
+    <wsdl:documentation>AndesEventAdminService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema xmlns:ax215="http://subscription.core.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.event.andes.carbon.wso2.org/xsd">
+            <xs:import namespace="http://subscription.core.event.andes.carbon.wso2.org/xsd"/>
+            <xs:complexType name="Subscription">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="eventDispatcher" nillable="true" type="ax214:EventDispatcher"/>
+                    <xs:element minOccurs="0" name="eventDispatcherName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="eventFilter" nillable="true" type="ax214:EventFilter"/>
+                    <xs:element minOccurs="0" name="eventSinkURL" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="expires" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="id" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="mode" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="owner" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax216="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:ax212="http://core.event.andes.carbon.wso2.org/xsd" xmlns:ax210="http://exception.admin.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/event/admin/xsd">
+            <xs:import namespace="http://exception.admin.event.andes.carbon.wso2.org/xsd"/>
+            <xs:import namespace="http://core.event.andes.carbon.wso2.org/xsd"/>
+            <xs:import namespace="http://admin.event.andes.carbon.wso2.org/xsd"/>
+            <xs:element name="AndesEventAdminServiceEventAdminException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="EventAdminException" nillable="true" type="ax29:EventAdminException"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTopics">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTopicsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax212:TopicNode"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="updatePermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="topicRolePermissions" nillable="true" type="ax212:TopicRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRoles">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRolesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTopicRolePermissions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTopicRolePermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax212:TopicRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionsForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startingIndex" type="xs:int"/>
+                        <xs:element minOccurs="0" name="maxSubscriptionCount" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionsForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getWsSubscriptionsForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getWsSubscriptionsForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getJMSSubscriptionsForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getJMSSubscriptionsForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasAddTopicPermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasAddTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasAddTopicPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasAddTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasDeleteTopicPermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasDeleteTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasDeleteTopicPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasDeleteTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasDetailsTopicPermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasDetailsTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasDetailsTopicPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasDetailsTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasPublishTopicPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasPublishTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasPublishTopicPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasPublishTopicPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://core.event.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="TopicNode">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="ax211:TopicNode"/>
+                    <xs:element minOccurs="0" name="nodeName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TopicRolePermission">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="allowedToSubscribe" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://exception.admin.event.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="EventAdminException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://subscription.core.event.andes.carbon.wso2.org/xsd">
+            <xs:complexType abstract="true" name="EventDispatcher">
+                <xs:sequence/>
+            </xs:complexType>
+            <xs:complexType name="EventFilter">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="dialect" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getWsSubscriptionsForTopicRequest">
+        <wsdl:part name="parameters" element="ns:getWsSubscriptionsForTopic"/>
+    </wsdl:message>
+    <wsdl:message name="getWsSubscriptionsForTopicResponse">
+        <wsdl:part name="parameters" element="ns:getWsSubscriptionsForTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="AndesEventAdminServiceEventAdminException">
+        <wsdl:part name="parameters" element="ns:AndesEventAdminServiceEventAdminException"/>
+    </wsdl:message>
+    <wsdl:message name="getAllWSSubscriptionsForTopicRequest">
+        <wsdl:part name="parameters" element="ns:getAllWSSubscriptionsForTopic"/>
+    </wsdl:message>
+    <wsdl:message name="getAllWSSubscriptionsForTopicResponse">
+        <wsdl:part name="parameters" element="ns:getAllWSSubscriptionsForTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="updatePermissionRequest">
+        <wsdl:part name="parameters" element="ns:updatePermission"/>
+    </wsdl:message>
+    <wsdl:message name="updatePermissionResponse"/>
+    <wsdl:message name="checkCurrentUserHasDetailsTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasDetailsTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasDetailsTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasDetailsTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getAllWSSubscriptionCountForTopicRequest">
+        <wsdl:part name="parameters" element="ns:getAllWSSubscriptionCountForTopic"/>
+    </wsdl:message>
+    <wsdl:message name="getAllWSSubscriptionCountForTopicResponse">
+        <wsdl:part name="parameters" element="ns:getAllWSSubscriptionCountForTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addTopicRequest">
+        <wsdl:part name="parameters" element="ns:addTopic"/>
+    </wsdl:message>
+    <wsdl:message name="addTopicResponse"/>
+    <wsdl:message name="checkUserHasDeleteTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkUserHasDeleteTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasDeleteTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkUserHasDeleteTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getAllTopicsRequest">
+        <wsdl:part name="parameters" element="ns:getAllTopics"/>
+    </wsdl:message>
+    <wsdl:message name="getAllTopicsResponse">
+        <wsdl:part name="parameters" element="ns:getAllTopicsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getUserRolesRequest">
+        <wsdl:part name="parameters" element="ns:getUserRoles"/>
+    </wsdl:message>
+    <wsdl:message name="getUserRolesResponse">
+        <wsdl:part name="parameters" element="ns:getUserRolesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="removeTopicRequest">
+        <wsdl:part name="parameters" element="ns:removeTopic"/>
+    </wsdl:message>
+    <wsdl:message name="removeTopicResponse">
+        <wsdl:part name="parameters" element="ns:removeTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getTopicRolePermissionsRequest">
+        <wsdl:part name="parameters" element="ns:getTopicRolePermissions"/>
+    </wsdl:message>
+    <wsdl:message name="getTopicRolePermissionsResponse">
+        <wsdl:part name="parameters" element="ns:getTopicRolePermissionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasDetailsTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkUserHasDetailsTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasDetailsTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkUserHasDetailsTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasPublishTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkUserHasPublishTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasPublishTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkUserHasPublishTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasPublishTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasPublishTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasPublishTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasPublishTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getJMSSubscriptionsForTopicRequest">
+        <wsdl:part name="parameters" element="ns:getJMSSubscriptionsForTopic"/>
+    </wsdl:message>
+    <wsdl:message name="getJMSSubscriptionsForTopicResponse">
+        <wsdl:part name="parameters" element="ns:getJMSSubscriptionsForTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasDeleteTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasDeleteTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasDeleteTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasDeleteTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasAddTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasAddTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasAddTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasAddTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasAddTopicPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkUserHasAddTopicPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasAddTopicPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkUserHasAddTopicPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="AndesEventAdminServicePortType">
+        <wsdl:operation name="getWsSubscriptionsForTopic">
+            <wsdl:input message="tns:getWsSubscriptionsForTopicRequest" wsaw:Action="urn:getWsSubscriptionsForTopic"/>
+            <wsdl:output message="tns:getWsSubscriptionsForTopicResponse" wsaw:Action="urn:getWsSubscriptionsForTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getWsSubscriptionsForTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionsForTopic">
+            <wsdl:input message="tns:getAllWSSubscriptionsForTopicRequest" wsaw:Action="urn:getAllWSSubscriptionsForTopic"/>
+            <wsdl:output message="tns:getAllWSSubscriptionsForTopicResponse" wsaw:Action="urn:getAllWSSubscriptionsForTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getAllWSSubscriptionsForTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <wsdl:input message="tns:updatePermissionRequest" wsaw:Action="urn:updatePermission"/>
+            <wsdl:output message="tns:updatePermissionResponse" wsaw:Action="urn:updatePermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:updatePermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDetailsTopicPermission">
+            <wsdl:input message="tns:checkCurrentUserHasDetailsTopicPermissionRequest" wsaw:Action="urn:checkCurrentUserHasDetailsTopicPermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasDetailsTopicPermissionResponse" wsaw:Action="urn:checkCurrentUserHasDetailsTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkCurrentUserHasDetailsTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionCountForTopic">
+            <wsdl:input message="tns:getAllWSSubscriptionCountForTopicRequest" wsaw:Action="urn:getAllWSSubscriptionCountForTopic"/>
+            <wsdl:output message="tns:getAllWSSubscriptionCountForTopicResponse" wsaw:Action="urn:getAllWSSubscriptionCountForTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getAllWSSubscriptionCountForTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="addTopic">
+            <wsdl:input message="tns:addTopicRequest" wsaw:Action="urn:addTopic"/>
+            <wsdl:output message="tns:addTopicResponse" wsaw:Action="urn:addTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:addTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDeleteTopicPermission">
+            <wsdl:input message="tns:checkUserHasDeleteTopicPermissionRequest" wsaw:Action="urn:checkUserHasDeleteTopicPermission"/>
+            <wsdl:output message="tns:checkUserHasDeleteTopicPermissionResponse" wsaw:Action="urn:checkUserHasDeleteTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkUserHasDeleteTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTopics">
+            <wsdl:input message="tns:getAllTopicsRequest" wsaw:Action="urn:getAllTopics"/>
+            <wsdl:output message="tns:getAllTopicsResponse" wsaw:Action="urn:getAllTopicsResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getAllTopicsAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <wsdl:input message="tns:getUserRolesRequest" wsaw:Action="urn:getUserRoles"/>
+            <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getUserRolesAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeTopic">
+            <wsdl:input message="tns:removeTopicRequest" wsaw:Action="urn:removeTopic"/>
+            <wsdl:output message="tns:removeTopicResponse" wsaw:Action="urn:removeTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:removeTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getTopicRolePermissions">
+            <wsdl:input message="tns:getTopicRolePermissionsRequest" wsaw:Action="urn:getTopicRolePermissions"/>
+            <wsdl:output message="tns:getTopicRolePermissionsResponse" wsaw:Action="urn:getTopicRolePermissionsResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getTopicRolePermissionsAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDetailsTopicPermission">
+            <wsdl:input message="tns:checkUserHasDetailsTopicPermissionRequest" wsaw:Action="urn:checkUserHasDetailsTopicPermission"/>
+            <wsdl:output message="tns:checkUserHasDetailsTopicPermissionResponse" wsaw:Action="urn:checkUserHasDetailsTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkUserHasDetailsTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasPublishTopicPermission">
+            <wsdl:input message="tns:checkUserHasPublishTopicPermissionRequest" wsaw:Action="urn:checkUserHasPublishTopicPermission"/>
+            <wsdl:output message="tns:checkUserHasPublishTopicPermissionResponse" wsaw:Action="urn:checkUserHasPublishTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkUserHasPublishTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasPublishTopicPermission">
+            <wsdl:input message="tns:checkCurrentUserHasPublishTopicPermissionRequest" wsaw:Action="urn:checkCurrentUserHasPublishTopicPermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasPublishTopicPermissionResponse" wsaw:Action="urn:checkCurrentUserHasPublishTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkCurrentUserHasPublishTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getJMSSubscriptionsForTopic">
+            <wsdl:input message="tns:getJMSSubscriptionsForTopicRequest" wsaw:Action="urn:getJMSSubscriptionsForTopic"/>
+            <wsdl:output message="tns:getJMSSubscriptionsForTopicResponse" wsaw:Action="urn:getJMSSubscriptionsForTopicResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getJMSSubscriptionsForTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDeleteTopicPermission">
+            <wsdl:input message="tns:checkCurrentUserHasDeleteTopicPermissionRequest" wsaw:Action="urn:checkCurrentUserHasDeleteTopicPermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasDeleteTopicPermissionResponse" wsaw:Action="urn:checkCurrentUserHasDeleteTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkCurrentUserHasDeleteTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasAddTopicPermission">
+            <wsdl:input message="tns:checkCurrentUserHasAddTopicPermissionRequest" wsaw:Action="urn:checkCurrentUserHasAddTopicPermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasAddTopicPermissionResponse" wsaw:Action="urn:checkCurrentUserHasAddTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkCurrentUserHasAddTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasAddTopicPermission">
+            <wsdl:input message="tns:checkUserHasAddTopicPermissionRequest" wsaw:Action="urn:checkUserHasAddTopicPermission"/>
+            <wsdl:output message="tns:checkUserHasAddTopicPermissionResponse" wsaw:Action="urn:checkUserHasAddTopicPermissionResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:checkUserHasAddTopicPermissionAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="AndesEventAdminServiceSoap11Binding" type="tns:AndesEventAdminServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getWsSubscriptionsForTopic">
+            <soap:operation soapAction="urn:getWsSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <soap:operation soapAction="urn:updatePermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionsForTopic">
+            <soap:operation soapAction="urn:getAllWSSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDetailsTopicPermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasDetailsTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionCountForTopic">
+            <soap:operation soapAction="urn:getAllWSSubscriptionCountForTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addTopic">
+            <soap:operation soapAction="urn:addTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDeleteTopicPermission">
+            <soap:operation soapAction="urn:checkUserHasDeleteTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTopics">
+            <soap:operation soapAction="urn:getAllTopics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap:operation soapAction="urn:getUserRoles" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeTopic">
+            <soap:operation soapAction="urn:removeTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTopicRolePermissions">
+            <soap:operation soapAction="urn:getTopicRolePermissions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDetailsTopicPermission">
+            <soap:operation soapAction="urn:checkUserHasDetailsTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasPublishTopicPermission">
+            <soap:operation soapAction="urn:checkUserHasPublishTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasPublishTopicPermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasPublishTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getJMSSubscriptionsForTopic">
+            <soap:operation soapAction="urn:getJMSSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasAddTopicPermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasAddTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDeleteTopicPermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasDeleteTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasAddTopicPermission">
+            <soap:operation soapAction="urn:checkUserHasAddTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AndesEventAdminServiceSoap12Binding" type="tns:AndesEventAdminServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getWsSubscriptionsForTopic">
+            <soap12:operation soapAction="urn:getWsSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <soap12:operation soapAction="urn:updatePermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionsForTopic">
+            <soap12:operation soapAction="urn:getAllWSSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDetailsTopicPermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasDetailsTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionCountForTopic">
+            <soap12:operation soapAction="urn:getAllWSSubscriptionCountForTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addTopic">
+            <soap12:operation soapAction="urn:addTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDeleteTopicPermission">
+            <soap12:operation soapAction="urn:checkUserHasDeleteTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTopics">
+            <soap12:operation soapAction="urn:getAllTopics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap12:operation soapAction="urn:getUserRoles" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeTopic">
+            <soap12:operation soapAction="urn:removeTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTopicRolePermissions">
+            <soap12:operation soapAction="urn:getTopicRolePermissions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDetailsTopicPermission">
+            <soap12:operation soapAction="urn:checkUserHasDetailsTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasPublishTopicPermission">
+            <soap12:operation soapAction="urn:checkUserHasPublishTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasPublishTopicPermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasPublishTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getJMSSubscriptionsForTopic">
+            <soap12:operation soapAction="urn:getJMSSubscriptionsForTopic" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasAddTopicPermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasAddTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDeleteTopicPermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasDeleteTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasAddTopicPermission">
+            <soap12:operation soapAction="urn:checkUserHasAddTopicPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AndesEventAdminServiceHttpBinding" type="tns:AndesEventAdminServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getWsSubscriptionsForTopic">
+            <http:operation location="getWsSubscriptionsForTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updatePermission">
+            <http:operation location="updatePermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionsForTopic">
+            <http:operation location="getAllWSSubscriptionsForTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDetailsTopicPermission">
+            <http:operation location="checkCurrentUserHasDetailsTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllWSSubscriptionCountForTopic">
+            <http:operation location="getAllWSSubscriptionCountForTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addTopic">
+            <http:operation location="addTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDeleteTopicPermission">
+            <http:operation location="checkUserHasDeleteTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllTopics">
+            <http:operation location="getAllTopics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <http:operation location="getUserRoles"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="removeTopic">
+            <http:operation location="removeTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTopicRolePermissions">
+            <http:operation location="getTopicRolePermissions"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasDetailsTopicPermission">
+            <http:operation location="checkUserHasDetailsTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasPublishTopicPermission">
+            <http:operation location="checkUserHasPublishTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasPublishTopicPermission">
+            <http:operation location="checkCurrentUserHasPublishTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getJMSSubscriptionsForTopic">
+            <http:operation location="getJMSSubscriptionsForTopic"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasAddTopicPermission">
+            <http:operation location="checkCurrentUserHasAddTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasDeleteTopicPermission">
+            <http:operation location="checkCurrentUserHasDeleteTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasAddTopicPermission">
+            <http:operation location="checkUserHasAddTopicPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="AndesEventAdminService">
+        <wsdl:port name="AndesEventAdminServiceHttpsSoap11Endpoint" binding="tns:AndesEventAdminServiceSoap11Binding">
+            <soap:address location="https://10.100.5.49:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AndesEventAdminServiceHttpsSoap12Endpoint" binding="tns:AndesEventAdminServiceSoap12Binding">
+            <soap12:address location="https://10.100.5.49:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AndesEventAdminServiceHttpsEndpoint" binding="tns:AndesEventAdminServiceHttpBinding">
+            <http:address location="https://10.100.5.49:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

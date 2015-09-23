@@ -20,13 +20,14 @@ package org.wso2.carbon.andes.cluster.mgt;
 
 import org.wso2.carbon.andes.cluster.mgt.internal.ClusterMgtException;
 import org.wso2.carbon.andes.cluster.mgt.internal.managementBeans.ClusterManagementBeans;
+import org.wso2.carbon.core.AbstractAdmin;
 
 import java.util.List;
 
 /**
  * Admin service class for cluster management
  */
-public class ClusterManagerService {
+public class ClusterManagerService extends AbstractAdmin {
 
     /**
      * Gets the IP addresses and ports of the nodes in a cluster

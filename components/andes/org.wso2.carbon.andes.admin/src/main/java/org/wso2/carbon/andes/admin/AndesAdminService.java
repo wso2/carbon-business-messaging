@@ -30,6 +30,7 @@ import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
+import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.user.api.UserStoreException;
@@ -45,23 +46,50 @@ import java.util.List;
  */
 public class AndesAdminService extends AbstractAdmin {
     private static Log log = LogFactory.getLog(AndesAdminService.class);
+    /**
+     * Permission value for changing permissions through UI.
+     */
+    private static final String UI_EXECUTE = "ui.execute";
 
     /**
-     * Creates a queue.
-     *
-     * @param queueName New queue name.
-     * @throws BrokerManagerAdminException
+     * Permission path for adding a queue.
      */
-    public void createQueue(String queueName) throws BrokerManagerAdminException {
-        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
-                                                                        .getQueueManagerService();
-        try {
-            queueManagerService.createQueue(queueName);
-        } catch (QueueManagerException e) {
-            log.error("Error in creating the queue. " + e.getMessage(), e);
-            throw new BrokerManagerAdminException("Error in creating the queue. " + e.getMessage(), e);
-        }
-    }
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE = "/permission/admin/manage/queue/add";
+
+    /**
+     * Permission path for deleting a queue.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE = "/permission/admin/manage/queue/delete";
+
+    /**
+     * Permission path for purging a queue messages.
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE = "/permission/admin/manage/queue/purge";
+
+    /**
+     * Permission path for browsing a queue
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE = "/permission/admin/manage/queue/browse";
+
+    /**
+     * Permission path for browsing message in dlc
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_BROWSE_DLC = "/permission/admin/manage/dlc/browse";
+
+    /**
+     * Permission path for delete message in dlc
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_DLC_DELETE_MESSAGE = "/permission/admin/manage/dlc/delete";
+
+    /**
+     * Permission path for restore message in dlc
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_DLC_RESTORE_MESSAGE = "/permission/admin/manage/dlc/restore";
+
+    /**
+     * Permission path for reroute message in dlc
+     */
+    private static final String PERMISSION_ADMIN_MANAGE_DLC_REROUTE_MESSAGE = "/permission/admin/manage/dlc/reroute";
 
     /**
      * Gets all queues.
@@ -75,7 +103,7 @@ public class AndesAdminService extends AbstractAdmin {
     public org.wso2.carbon.andes.admin.internal.Queue[] getAllQueues()
             throws BrokerManagerAdminException {
         List<org.wso2.carbon.andes.admin.internal.Queue> allQueues
-                                        = new ArrayList<org.wso2.carbon.andes.admin.internal.Queue>();
+                = new ArrayList<org.wso2.carbon.andes.admin.internal.Queue>();
         org.wso2.carbon.andes.admin.internal.Queue[] queuesDTO;
         try {
             QueueManagerService queueManagerService =
@@ -84,7 +112,7 @@ public class AndesAdminService extends AbstractAdmin {
             queuesDTO = new org.wso2.carbon.andes.admin.internal.Queue[queues.size()];
             for (org.wso2.carbon.andes.core.types.Queue queue : queues) {
                 org.wso2.carbon.andes.admin.internal.Queue queueDTO =
-                                                    new org.wso2.carbon.andes.admin.internal.Queue();
+                        new org.wso2.carbon.andes.admin.internal.Queue();
                 queueDTO.setQueueName(queue.getQueueName());
                 queueDTO.setMessageCount(queue.getMessageCount());
                 queueDTO.setCreatedTime(queue.getCreatedTime());
@@ -252,9 +280,9 @@ public class AndesAdminService extends AbstractAdmin {
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
-                AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions =
-                                                    subscriptionManagerService.getAllSubscriptions();
+                    subscriptionManagerService.getAllSubscriptions();
             subscriptionsDTO = new Subscription[subscriptions.size()];
             for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
                 Subscription subscriptionDTO = new Subscription();
@@ -265,7 +293,7 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                                                    sub.getNumberOfMessagesRemainingForSubscriber());
+                        sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -348,7 +376,7 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                                                    sub.getNumberOfMessagesRemainingForSubscriber());
+                        sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
 
                 allSubscriptions.add(subscriptionDTO);
@@ -465,7 +493,7 @@ public class AndesAdminService extends AbstractAdmin {
         } catch (QueueManagerException e) {
             log.error("Unable to get total message count in DLC for a specific queue.", e);
             throw new BrokerManagerAdminException("Unable to get total message count in DLC for a" +
-                                                  " specific queue.", e);
+                    " specific queue.", e);
         }
     }
 
@@ -486,7 +514,7 @@ public class AndesAdminService extends AbstractAdmin {
         List<Message> messageDTOList = new ArrayList<>();
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
-            queueManagerService.getMessageInDLCForQueue(queueName, nextMessageIdToRead, maxMsgCount);
+                    queueManagerService.getMessageInDLCForQueue(queueName, nextMessageIdToRead, maxMsgCount);
             for (org.wso2.carbon.andes.core.types.Message message : messages) {
                 Message messageDTO = new Message();
                 messageDTO.setMsgProperties(message.getMsgProperties());
@@ -511,7 +539,7 @@ public class AndesAdminService extends AbstractAdmin {
         } catch (QueueManagerException e) {
             log.error("Unable to get messages in DLC for a specific queue.", e);
             throw new BrokerManagerAdminException("Unable to get messages in DLC for a specific " +
-                                                  "queue.", e);
+                    "queue.", e);
         }
         return messageDTOList.toArray(new Message[messageDTOList.size()]);
     }
@@ -616,7 +644,7 @@ public class AndesAdminService extends AbstractAdmin {
                 queueRolePermissionDTOList.add(queueRolePermissionDTO);
             }
             return queueRolePermissionDTOList.toArray(
-                                        new QueueRolePermission[queueRolePermissionDTOList.size()]);
+                    new QueueRolePermission[queueRolePermissionDTOList.size()]);
         } catch (QueueManagerException e) {
             log.error("Unable to retrieve queue permission", e);
             throw new BrokerManagerAdminException("Unable to retrieve queue permission.", e);
@@ -639,8 +667,7 @@ public class AndesAdminService extends AbstractAdmin {
         List<Message> messageDTOList = new ArrayList<Message>();
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
-                    queueManagerService.browseQueue(queueName, getCurrentUser(), getAccessKey(),
-                                                                        nextMessageIdToRead, maxMsgCount);
+                    queueManagerService.browseQueue(queueName, nextMessageIdToRead, maxMsgCount);
             for (org.wso2.carbon.andes.core.types.Message message : messages) {
                 Message messageDTO = new Message();
                 messageDTO.setMsgProperties(message.getMsgProperties());
@@ -710,8 +737,8 @@ public class AndesAdminService extends AbstractAdmin {
                 .getQueueManagerService();
         try {
             return queueManagerService.sendMessage(queueName, getCurrentUser(), getAccessKey(), jmsType,
-                                                   jmsCorrelationID,
-                                                   numberOfMessages, message, deliveryMode, priority, expireTime);
+                    jmsCorrelationID,
+                    numberOfMessages, message, deliveryMode, priority, expireTime);
         } catch (QueueManagerException e) {
             log.error("Unable to send message", e);
             throw new BrokerManagerAdminException("Unable to send message.", e);
@@ -722,7 +749,7 @@ public class AndesAdminService extends AbstractAdmin {
      * Gets the access key for a amqp url.
      * @return The access key.
      */
-    public String getAccessKey() {
+    private String getAccessKey() {
         return AndesBrokerManagerAdminServiceDSHolder.getInstance().getAccessKey();
     }
 
@@ -783,15 +810,309 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkUserHasPublishPermission(String queueName, String userName) throws BrokerManagerAdminException {
+        boolean hasPermission = false;
+        String queueID = CommonsUtil.getQueueID(queueName);
         try {
-            String queueID = CommonsUtil.getQueueID(queueName);
-            return CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
-                    .isUserAuthorized(userName, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase());
-        } catch (UserStoreException e) {
+            if (Utils.isAdmin(userName)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(userName, queueID, TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
             String errorMessage = "Unable to get user store to check permissions.";
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has add permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasAddQueuePermission() throws BrokerManagerAdminException {
+        return checkUserHasAddQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has add permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasAddQueuePermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_ADD_QUEUE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has browse permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasBrowseQueuePermission() throws BrokerManagerAdminException {
+        return checkUserHasBrowseQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has browse permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasBrowseQueuePermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_BROWSE_QUEUE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has delete permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasDeleteQueuePermission() throws BrokerManagerAdminException {
+        return checkUserHasDeleteQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has delete permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasDeleteQueuePermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_DELETE_QUEUE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has purge permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasPurgeQueuePermission() throws BrokerManagerAdminException {
+        return checkUserHasPurgeQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has purge permission. This is global level permission. Usage of service is to control UI
+     * action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasPurgeQueuePermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_PURGE_QUEUE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has browse messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasBrowseMessagesInDLCPermission() throws BrokerManagerAdminException {
+        return checkUserHasBrowseMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has browse messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasBrowseMessagesInDLCPermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_BROWSE_DLC, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has delete messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasDeleteMessagesInDLCPermission() throws BrokerManagerAdminException {
+        return checkUserHasDeleteMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has delete messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasDeleteMessagesInDLCPermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_DLC_DELETE_MESSAGE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has restore messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasRestoreMessagesInDLCPermission() throws BrokerManagerAdminException {
+        return checkUserHasRestoreMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has restore messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasRestoreMessagesInDLCPermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_DLC_RESTORE_MESSAGE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
+
+    /**
+     * Check if current user has reroute messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkCurrentUserHasRerouteMessagesInDLCPermission() throws BrokerManagerAdminException {
+        return checkUserHasRerouteMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+    }
+
+    /**
+     * Check if given user has reroute messages in dlc permission. This is global level permission. Usage of service
+     * is to control UI action.
+     *
+     * @param username username
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException
+     */
+    public boolean checkUserHasRerouteMessagesInDLCPermission(String username) throws  BrokerManagerAdminException {
+        boolean hasPermission = false;
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_DLC_REROUTE_MESSAGE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = "Unable to get user store to check permissions.";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
     }
 
     /**
@@ -800,9 +1121,9 @@ public class AndesAdminService extends AbstractAdmin {
      */
     private String getCurrentUser() {
         String userName;
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != 0) {
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
-                       + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+                    + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         } else {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername();
         }

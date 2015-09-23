@@ -26,40 +26,52 @@
             <ResourceId>/permission/admin/manage/queue</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Add Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/queue/addQueue</ResourceId>
+            <DisplayName>Add</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/add</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Browse Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/queue/browseQueue</ResourceId>
+            <DisplayName>Browse</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/browse</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Delete Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/queue/deleteQueue</ResourceId>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/delete</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Purge Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/queue/purgeQueue</ResourceId>
+            <DisplayName>Purge</DisplayName>
+            <ResourceId>/permission/admin/manage/queue/purge</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
             <DisplayName>Dead Letter Channel</DisplayName>
             <ResourceId>/permission/admin/manage/dlc</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Browse DLC</DisplayName>
-            <ResourceId>/permission/admin/manage/dlc/browseDlc</ResourceId>
+            <DisplayName>Browse</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc/browse</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc/delete</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Restore</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc/restore</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Reroute</DisplayName>
+            <ResourceId>/permission/admin/manage/dlc/reroute</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
             <DisplayName>Subscription</DisplayName>
             <ResourceId>/permission/admin/manage/subscriptions</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Queue Subscription</DisplayName>
-            <ResourceId>/permission/admin/manage/subscriptions/queueSubscription</ResourceId>
+            <DisplayName>Queue</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/queue</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Topic Subscription</DisplayName>
-            <ResourceId>/permission/admin/manage/subscriptions/topicSubscription</ResourceId>
+            <DisplayName>Topic</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/topic</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>

@@ -157,29 +157,99 @@
                             if(!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)){
                 %>
                 <tr>
-                    <td>
-                        <a href="javascript:void(0);" onclick="showManageQueueWindow('<%=queue.getQueueName()%>')"
-                                    title="<fmt:message key='queues.queueDetailsToolTip'/>"><%=queue.getQueueName()%></a>
-                    </td>
-                    <td><%=queue.getMessageCount()%>
-                    </td>
-                    <td><a href="queue_messages_list.jsp?nameOfQueue=<%=nameOfQueue%>">Browse</a></td>
-                    <% try {
-                        if(stub.checkCurrentUserHasPublishPermission(nameOfQueue)){ %>
-                            <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+
+                    <%--Queue manage--%>
+                        <% try {
+                            if(stub.checkCurrentUserHasAddQueuePermission()){ %>
+                        <td>
+                            <a href="javascript:void(0);" onclick="showManageQueueWindow('<%=queue.getQueueName()%>')"
+                               title="<fmt:message key='queues.queueDetailsToolTip'/>"><%=queue.getQueueName()%></a>
+                        </td>
                         <% } else { %>
-                            <td><img src="images/move.gif" alt=""/>&nbsp;
-                                <a title="You cannot publish messages to this queue as you have no publish permissions." class="disabled-ahref" href="#">Publish Messages</a></td>
+                        <td>
+                            <a href="#" title="<fmt:message key='queues.queueDetailsToolTip'/>"
+                               class="disabled-ahref"><%=queue.getQueueName()%></a>
+                        </td>
                         <% }
-                    } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
-                        <td><img src="images/move.gif" alt=""/>&nbsp;<a href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
-                    <% } %>
-                    <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>">Purge Messages</a></td>
-                    <td>
-                        <a style="background-image: url(../admin/images/delete.gif);"
-                           class="icon-link"
-                           onclick="doDelete('<%=queue.getQueueName()%>')">Delete</a>
-                    </td>
+                        } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td>
+                            <a href="#" title="<fmt:message key='queues.queueDetailsToolTip'/>"
+                               class="disabled-ahref"><%=queue.getQueueName()%></a>
+                        </td>
+                        <% } %>
+
+
+                    <%--Message count--%>
+                        <td><%=queue.getMessageCount()%></td>
+
+
+                    <%--Browse--%>
+                        <% try {
+                            if(stub.checkCurrentUserHasBrowseQueuePermission()){ %>
+                        <td><a href="queue_messages_list.jsp?nameOfQueue=<%=nameOfQueue%>">Browse</a></td>
+                        <% } else { %>
+                        <td><a href="#" class="disabled-ahref">Browse</a></td>
+                        <% }
+                        } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td><a href="#" class="disabled-ahref">Browse</a></td>
+                        <% } %>
+
+
+                    <%--Publish--%>
+                        <% try {
+                            if (stub.checkCurrentUserHasPublishPermission(nameOfQueue)) { %>
+                        <td><img src="images/move.gif" alt=""/>&nbsp;<a
+                                href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+                        <% } else { %>
+                        <td><img src="images/move.gif" alt=""/>&nbsp;
+                            <a title="You cannot publish messages to this queue as you have no publish permissions."
+                               class="disabled-ahref" href="#">Publish Messages</a></td>
+                        <% }
+                        } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td><img src="images/move.gif" alt=""/>&nbsp;
+                            <a title="You cannot publish messages to this queue as you have no publish permissions."
+                               class="disabled-ahref" href="#">Publish Messages</a></td>
+                        <% } %>
+
+
+                    <%--Purge--%>
+                        <% try {
+                            if (stub.checkCurrentUserHasPurgeQueuePermission()) { %>
+                        <td><img src="images/minus.gif" alt=""/>&nbsp;<a
+                                href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>">Purge Messages</a></td>
+                        <% } else { %>
+                        <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="#" class="disabled-ahref">Purge
+                            Messages</a></td>
+                        <% }
+                        } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="#" class="disabled-ahref">Purge
+                            Messages</a></td>
+                        <% } %>
+
+
+                    <%--Delete--%>
+                        <% try {
+                            if(stub.checkCurrentUserHasDeleteQueuePermission()){ %>
+                        <td>
+                            <a style="background-image: url(../admin/images/delete.gif);"
+                               class="icon-link"
+                               onclick="doDelete('<%=queue.getQueueName()%>')">Delete</a>
+                        </td>
+                        <% } else { %>
+                        <td>
+                            <a style="background-image: url(../admin/images/delete.gif);"
+                               class="icon-link disabled-ahref"
+                               href="#">Delete</a>
+                        </td>
+                        <% }
+                        } catch (AndesAdminServiceBrokerManagerAdminException e) { %>
+                        <td>
+                            <a style="background-image: url(../admin/images/delete.gif);"
+                               class="icon-link disabled-ahref"
+                               href="#">Delete</a>
+                        </td>
+                        <% } %>
+
                 </tr>
                 <%
                         	}

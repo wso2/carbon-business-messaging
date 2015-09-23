@@ -27,11 +27,10 @@
             <order>24</order>
             <style-class>home</style-class>
             <icon>../queues/images/queues.gif</icon>
-            <require-permission>/permission/admin/manage/queue</require-permission>
         </menu>
         <menu>
-            <id>queue_browse</id>
-            <i18n-key>browse</i18n-key>
+            <id>queue_list</id>
+            <i18n-key>list</i18n-key>
             <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
             <parent-menu>queue_menu</parent-menu>
             <link>../queues/queue_details.jsp</link>
@@ -39,7 +38,12 @@
             <order>10</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/queue/browseQueue</require-permission>
+            <at-least>
+                <require-permission>/permission/admin/manage/queue/add</require-permission>
+                <require-permission>/permission/admin/manage/queue/browse</require-permission>
+                <require-permission>/permission/admin/manage/queue/purge</require-permission>
+                <require-permission>/permission/admin/manage/queue/delete</require-permission>
+            </at-least>
         </menu>
         <menu>
             <id>queues_add</id>
@@ -49,9 +53,9 @@
             <link>../queues/queue_add.jsp</link>
             <region>region1</region>
             <order>45</order>
-            <style-class>home</style-class>
+            <style-class>manage</style-class>
             <icon>../queues/images/add.gif</icon>
-            <require-permission>/permission/admin/manage/queue/addQueue</require-permission>
+            <require-permission>/permission/admin/manage/queue/add</require-permission>
         </menu>
         <menu>
             <id>dead_letter_channel_menu</id>
@@ -63,11 +67,10 @@
             <order>26</order>
             <style-class>home</style-class>
             <icon>../queues/images/queues.gif</icon>
-            <require-permission>/permission/admin/manage/dlc</require-permission>
         </menu>
         <menu>
-            <id>dlc_browse</id>
-            <i18n-key>browse</i18n-key>
+            <id>dlc_list</id>
+            <i18n-key>list</i18n-key>
             <i18n-bundle>org.wso2.carbon.andes.ui.i18n.Resources</i18n-bundle>
             <parent-menu>dead_letter_channel_menu</parent-menu>
             <link>../queues/dlc_queue_details.jsp</link>
@@ -75,7 +78,12 @@
             <order>10</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/dlc/browseDlc</require-permission>
+            <at-least>
+                <require-permission>/permission/admin/manage/dlc/browse</require-permission>
+                <require-permission>/permission/admin/manage/dlc/delete</require-permission>
+                <require-permission>/permission/admin/manage/dlc/restore</require-permission>
+                <require-permission>/permission/admin/manage/dlc/reroute</require-permission>
+            </at-least>
         </menu>
         <menu>
             <id>broker_subscriptions_menu</id>
@@ -87,7 +95,6 @@
             <order>30</order>
             <style-class>home</style-class>
             <icon>../subscriptions/images/subscribe.png</icon>
-            <require-permission>/permission/admin/manage/subscriptions</require-permission>
         </menu>
         <menu>
             <id>queue_subscriptions</id>
@@ -99,7 +106,7 @@
             <order>50</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/subscriptions/queueSubscription</require-permission>
+            <require-permission>/permission/admin/manage/subscriptions/queue</require-permission>
         </menu>
         <menu>
             <id>topic_subscriptions</id>
@@ -111,7 +118,7 @@
             <order>51</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/subscriptions/topicSubscription</require-permission>
+            <require-permission>/permission/admin/manage/subscriptions/topic</require-permission>
         </menu>
 	</menus>
 </component>

@@ -316,6 +316,26 @@
                 <version>${carbon.messaging.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.core</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.admin</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.stub</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.event.ui</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>
@@ -555,6 +575,27 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
+            <!--Securevault-->
+            <dependency>
+                <groupId>org.wso2.securevault</groupId>
+                <artifactId>org.wso2.securevault</artifactId>
+                <version>${org.wso2.securevault.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.commons</groupId>
+                <artifactId>org.wso2.carbon.qpid.stub</artifactId>
+                <version>${carbon.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.commons</groupId>
+                <artifactId>org.wso2.carbon.event.client.stub</artifactId>
+                <version>${carbon.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.commons</groupId>
+                <artifactId>org.wso2.carbon.event.client</artifactId>
+                <version>${carbon.commons.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -635,6 +676,7 @@
         <version.tomcat>7.0.34</version.tomcat>
         <version.apacheds.shared.ldap>0.9.18</version.apacheds.shared.ldap>
         <atomikos.version>3.7.0</atomikos.version>
+        <org.wso2.securevault.version>1.0.0</org.wso2.securevault.version>
         <!--Apache Geronimo-->
         <version.geronimo.specs.geronimo-jpa_2.0_spec>1.0
         </version.geronimo.specs.geronimo-jpa_2.0_spec>

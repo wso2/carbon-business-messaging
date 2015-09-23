@@ -16,6 +16,14 @@
   ~   under the License.
   -->
 <component xmlns="http://products.wso2.org/carbon">
-
-	<!-- <ManagementPermissions> </ManagementPermissions> -->
+    <ManagementPermissions>
+        <ManagementPermission>
+            <DisplayName>Cluster Information</DisplayName>
+            <ResourceId>/permission/admin/manage/cluster</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Nodes</DisplayName>
+            <ResourceId>/permission/admin/manage/cluster/list</ResourceId>
+        </ManagementPermission>
+    </ManagementPermissions>
 </component>

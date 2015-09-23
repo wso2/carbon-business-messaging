@@ -36,6 +36,7 @@ import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.utils.ServerConstants;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
@@ -130,10 +131,13 @@ public class Utils {
         boolean isAdmin = false;
 
         try {
-            UserRealm userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService()
-                    .getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId());
+            UserRealm userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
+                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                            .getTenantId());
 
-            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+            String qualifiedUsername = username.replace("!", "@");
+            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(qualifiedUsername);
             String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
             for (String userRole : userRoles) {
                 if (userRole.equals(adminRole)) {
@@ -520,5 +524,34 @@ public class Utils {
 
         return (Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
                 !(Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
+    }
+
+    /**
+     * Check whether a queue/topic belongs to given domain in order to avoid other tenant domains'
+     * users operate on the given queue/topic
+     *
+     * @param tenantDomain - domain name of tenant
+     * @param routingKey   - queue/topic name to be verified against tenantDomain
+     * @return true if queue/topic belongs to given domain and false otherwise
+     */
+    public static boolean isOwnDomain(String tenantDomain, String routingKey) {
+        boolean isOwnDomain = false;
+        if (tenantDomain != null) {
+            if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
+                    tenantDomain.length() + 1).equals(tenantDomain + "/")) {
+                isOwnDomain = true;
+            } else if (tenantDomain.equalsIgnoreCase("carbon.super")) {
+                if (!routingKey.contains("/")) {
+                    isOwnDomain = true;
+                }
+            }
+        } else {
+            // tenantDomain is null,this implies this is a normal user.
+            if (!routingKey.contains("/")) {
+                isOwnDomain = true;
+            }
+        }
+
+        return isOwnDomain;
     }
 }

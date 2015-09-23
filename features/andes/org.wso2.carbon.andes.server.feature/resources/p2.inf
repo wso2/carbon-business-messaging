@@ -8,4 +8,4 @@ org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../featur
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/oracle-rac-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/oracle-rac-mb.sql,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/dbscripts/h2-mb.sql,target:${installFolder}/../../../dbscripts/mb-store/h2-mb.sql,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/databases/WSO2MB_DB.h2.db,target:${installFolder}/../../database/WSO2MB_DB.h2.db,overwrite:true);\
-
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.andes.server_${feature.version}/conf/event-broker.xml,target:${installFolder}/../../conf/event-broker.xml,overwrite:true);\

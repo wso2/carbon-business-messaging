@@ -19,30 +19,6 @@ function isValidQueueName(queueName){
     return !/[~!@#;%^*()+={}|\<>"',]/g.test(queueName);
 }
 
-function addQueueToBackEnd(queue, createdFrom) {
-    var callback =
-    {
-        success:function(o) {
-            if (o.responseText !== undefined) {
-                if (o.responseText.indexOf("Error") > -1) {
-                    CARBON.showErrorDialog("" + o.responseText, function() {
-                    });
-                } else {
-                    addPermissions();
-                }
-
-            }
-        },
-        failure:function(o) {
-            if (o.responseText !== undefined) {
-                alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
-            }
-        }
-    };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback, "queue=" + queue + "&type=input");
-
-}
-
 function addQueueAndAssignPermissions(queue, createdFrom) {
     var callback =
     {

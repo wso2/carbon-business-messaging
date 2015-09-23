@@ -34,8 +34,8 @@
         <parameter name="ServiceClass">org.wso2.carbon.andes.cluster.mgt.ClusterManagerService</parameter>
     </service>
 
-    <parameter name="adminService" locked="true">false</parameter>
-    <parameter name="hiddenService" locked="true">false</parameter>
-    <parameter name="AuthorizationAction" locked="false">/permission/protected/manage</parameter>
+    <parameter name="adminService" locked="true">true</parameter>
+    <parameter name="hiddenService" locked="true">true</parameter>
+    <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list</parameter>
     
 </serviceGroup>

@@ -8,8 +8,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 
-<script type="text/javascript" src="js/treecontrol.js"></script>
-
 <script>
     function refreshMessageCount(obj, durable){
         var aTag = jQuery(obj);

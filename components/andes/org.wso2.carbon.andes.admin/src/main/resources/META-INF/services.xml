@@ -39,85 +39,127 @@
         <parameter name="adminService" locked="true">true</parameter>
         <parameter name="hiddenService" locked="true">true</parameter>
         <operation name="browseQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue,/permission/admin/manage/dlc</parameter>
-        </operation>
-        <operation name="createQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/browse,/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="getAllQueues">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue,/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete,/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="getUserRoles">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add</parameter>
         </operation>
         <operation name="getQueueRolePermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add</parameter>
         </operation>
         <operation name="updatePermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add</parameter>
         </operation>
         <operation name="addQueueAndAssignPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add</parameter>
         </operation>
         <operation name="getMessageCount">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete,/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute,/permission/admin/manage/subscriptions/queue</parameter>
         </operation>
         <operation name="getTotalMessagesInQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue,/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete,/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="purgeMessagesOfQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/purge</parameter>
         </operation>
         <operation name="sendMessage">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
         </operation>
         <operation name="deleteQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/delete</parameter>
         </operation>
         <operation name="checkCurrentUserHasPublishPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
         </operation>
         <operation name="checkUserHasPublishPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasAddQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkUserHasAddQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasBrowseQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkUserHasBrowseQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasDeleteQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkUserHasDeleteQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasPurgeQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
+        <operation name="checkUserHasPurgeQueuePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
         </operation>
         <operation name="deleteTopicFromRegistry">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/delete</parameter>
         </operation>
         <operation name="restoreMessagesFromDeadLetterQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/restore</parameter>
         </operation>
         <operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="deleteMessagesFromDeadLetterQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/delete</parameter>
         </operation>
         <operation name="getNumberMessagesInDLCForQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="getMessageInDLCForQueue">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasBrowseMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkUserHasBrowseMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasDeleteMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkUserHasDeleteMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkUserHasRestoreMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasRerouteMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="checkUserHasRerouteMessagesInDLCPermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="getAllSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="getAllDurableQueueSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue</parameter>
         </operation>
         <operation name="getAllDurableTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="getAllLocalTempQueueSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue</parameter>
         </operation>
         <operation name="getAllLocalTempTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
-        </operation>
-        <operation name="getAccessKey">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/getAccessKey</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="getMessageCountForSubscriber">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
     </service>
 </serviceGroup>
