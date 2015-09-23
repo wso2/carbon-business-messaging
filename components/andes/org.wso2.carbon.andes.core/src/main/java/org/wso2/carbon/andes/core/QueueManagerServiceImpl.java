@@ -613,13 +613,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     message.setContentType((String) messageData.get(QueueManagementInformation.CONTENT_TYPE));
                     message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
                     message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
-                    message.setJMSCorrelationId((String) messageData.get(QueueManagementInformation.JMS_CORRELATION_ID));
-                    message.setJMSType((String) messageData.get(QueueManagementInformation.JMS_TYPE));
                     message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
                     message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation.JMS_DELIVERY_MODE));
-                    message.setJMSPriority((Integer) messageData.get(QueueManagementInformation.JMS_PRIORITY));
                     message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
-                    message.setJMSExpiration((Long) messageData.get(QueueManagementInformation.JMS_EXPIRATION));
                     message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
                     message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
                     messageList.add(message);

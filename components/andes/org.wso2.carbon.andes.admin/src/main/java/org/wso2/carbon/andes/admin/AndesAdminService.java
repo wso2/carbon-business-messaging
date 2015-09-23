@@ -522,17 +522,13 @@ public class AndesAdminService extends AbstractAdmin {
                 messageDTO.setContentType(message.getContentType());
                 messageDTO.setMessageContent(message.getMessageContent());
                 messageDTO.setJMSMessageId(message.getJMSMessageId());
-                messageDTO.setJMSCorrelationId(message.getJMSCorrelationId());
-                messageDTO.setJMSType(message.getJMSType());
                 messageDTO.setJMSReDelivered(message.getJMSReDelivered());
                 if (message.getJMSDeliveredMode() == 1) {
                     messageDTO.setJMSDeliveredMode("NON PERSISTENT");
                 } else if (message.getJMSDeliveredMode() == 2) {
                     messageDTO.setJMSDeliveredMode("PERSISTENT");
                 }
-                messageDTO.setMsgProperties(message.getMsgProperties());
                 messageDTO.setJMSTimeStamp(message.getJMSTimeStamp());
-                messageDTO.setJMSExpiration(message.getJMSExpiration());
                 messageDTO.setDlcMsgDestination(message.getDlcMsgDestination());
                 messageDTO.setAndesMsgMetadataId(message.getAndesMsgMetadataId());
                 messageDTOList.add(messageDTO);
