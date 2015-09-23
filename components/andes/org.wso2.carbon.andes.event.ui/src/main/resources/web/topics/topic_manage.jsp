@@ -232,89 +232,11 @@
     </tbody>
 </table>
 <div style="clear:both">&nbsp;</div>
-<h3><fmt:message key="ws.subscription.details"/></h3>
 <carbon:paginator pageNumber="<%=pageNumberInt%>" numberOfPages="<%=pageCount%>"
                   page="topic_manage.jsp" pageNumberParameterName="pageNumber"
                   resourceBundle="org.wso2.carbon.andes.event.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
                   parameters="<%=parameters%>"/>
-<table class="styledLeft"
-       <%if (topicWsSubscriptions == null || topicWsSubscriptions.length < 1 ) {%>style="display:none"<%}%>
-       id="wsSubscriptionsTable">
-    <tbody>
-    <tr>
-        <td>
-            <table class="normal" style="width:100%">
-                <thead>
-                <tr>
-                    <th>Topic</th>
-                    <th>Event Sink URL</th>
-                    <th>Mode</th>
-                    <th>Created Time</th>
-                    <th>Expiration Time</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <%
-                    if (topicWsSubscriptions != null) {
-                        int position = 0;
-                        for (Subscription subscription : topicWsSubscriptions) {
-                            String bgColor = ((position % 2) == 1) ? "#EEEFFB" : "white";
-                            position++;
-                            String expiryTime = "";
-                            if (subscription.getExpires() != null) {
-                                expiryTime = subscription.getExpires().getTime().toString();
-                            }
-                            String subTopic = subscription.getTopicName();
-                            if (subTopic.indexOf(topic) > 0) {
-                                subTopic = subTopic.substring(subTopic.indexOf(topic) + topic.length());
-                            }
-
-                            if (subTopic.startsWith("/")) {
-                                subTopic = subTopic.substring(1);
-                            }
-                %>
-                <tr bgcolor="<%= bgColor%>">
-                    <td><%=subTopic%>
-                    </td>
-                    <td><%=subscription.getEventSinkURL()%>
-                    </td>
-                    <td><%=UIUtils.getSubscriptionMode(subscription.getMode())%>
-                    </td>
-                    <td><%=subscription.getCreatedTime().getTime().toString()%>
-                    </td>
-                    <td><%=expiryTime%>
-                    </td>
-                    <td><a style="background-image: url(../admin/images/delete.gif);"
-                           class="icon-link"
-                           onclick="unsubscribe('<%=subscription.getId()%>','<%=topic%>')">Unsubscribe</a>
-
-                        <a style="background-image: url(images/refresh.gif);"
-                           class="icon-link"
-                           href="renewSubscriptions.jsp?isRenew=true&subId=<%=subscription.getId()%>">Renew</a>
-                    </td>
-                </tr>
-                <%
-                        }
-                    }
-                %>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<carbon:paginator pageNumber="<%=pageNumberInt%>" numberOfPages="<%=pageCount%>"
-                  page="topic_manage.jsp" pageNumberParameterName="pageNumber"
-                  resourceBundle="org.wso2.carbon.andes.event.ui.i18n.Resources"
-                  prevKey="prev" nextKey="next"
-                  parameters="<%=parameters%>"/>
-
-<div id="noWSSubscriptionsDiv" class="noDataDiv"
-     <%if (topicWsSubscriptions != null) {%>style="display:none"<%}%>>
-    No WS Subscriptions Defined
-</div>
 
 <div style="clear:both">&nbsp;</div>
 <h3><fmt:message key="jms.subscription.details"/></h3>
@@ -386,7 +308,7 @@
     <tr>
 
         <% try {
-            if(stub.checkCurrentUserHasAddTopicPermission()){ %>
+            if(stub.checkCurrentUserHasPublishTopicPermission(topic)){ %>
         <td>
             <input type="button" onclick="invokeService()" value="<fmt:message key="publish"/>">
         </td>

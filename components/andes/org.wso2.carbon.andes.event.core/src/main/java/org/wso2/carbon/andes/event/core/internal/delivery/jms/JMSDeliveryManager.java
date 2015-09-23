@@ -300,7 +300,7 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
      */
     private String getLoggedInUserName() {
         String userName = "";
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != 0) {
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > MultitenantConstants.INVALID_TENANT_ID) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "@"
                     + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         } else {

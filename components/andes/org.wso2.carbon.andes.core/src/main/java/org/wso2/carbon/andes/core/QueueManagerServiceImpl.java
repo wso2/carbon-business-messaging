@@ -96,14 +96,6 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             if (!QueueManagementBeans.queueExists(tenantBasedQueueName)) {
                 RegistryClient.createQueue(tenantBasedQueueName, userName);
                 QueueManagementBeans.getInstance().createQueue(tenantBasedQueueName, userName);
-                //We have to stay in busy wait loop until queue created, because in next method which is
-                //updatePermission(), first check is queueExists. If it fails then throws an exception
-                //saying queue not exist.
-                while (true) {
-                    if(QueueManagementBeans.queueExists(tenantBasedQueueName)) {
-                        break;
-                    }
-                }
                 //Adding change permissions to the current logged in user
                 UserRealm userRealm =
                         QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
