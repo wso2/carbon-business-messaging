@@ -16,11 +16,13 @@
 
 package org.wso2.carbon.andes.event.admin;
 
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.event.admin.exception.EventAdminException;
 import org.wso2.carbon.andes.event.admin.internal.EventAdminHolder;
 import org.wso2.carbon.andes.event.core.EventBroker;
+import org.wso2.carbon.andes.event.core.Message;
 import org.wso2.carbon.andes.event.core.TopicManagerService;
 import org.wso2.carbon.andes.event.core.TopicNode;
 import org.wso2.carbon.andes.event.core.TopicRolePermission;
@@ -28,6 +30,8 @@ import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 
 /**
@@ -243,6 +247,35 @@ public class AndesEventAdminService extends AbstractAdmin {
     }
 
     /**
+     * Publish a message to given topic
+     *
+     * @param content message to publish
+     * @param topicName topic
+     * @throws EventAdminException
+     */
+    public void publishToTopic(String content, String topicName) throws EventAdminException {
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            StAXOMBuilder builder = new StAXOMBuilder(new ByteArrayInputStream(content.getBytes()));
+            if (checkCurrentUserHasPublishTopicPermission(topicName)) {
+                if (eventBroker.getTopicManagerService().isTopicExists(topicName)) {
+                    Message message = new Message();
+                    message.setMessage(builder.getDocumentElement());
+                    eventBroker.publish(message, topicName);
+                } else {
+                    throw new EventAdminException("Topic with name : " + topicName + " not exists!");
+                }
+            } else {
+                throw new EventAdminException("Permission denied.");
+            }
+        } catch (EventBrokerException | XMLStreamException e) {
+            String errorMessage = "Error in publishing to a topic";
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
+    }
+
+    /**
      * Evaluate current logged in user has add topic permission. This service mainly used to restrict UI control for
      * un-authorize users
      *
@@ -336,7 +369,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      * @return true/false based on permission
      * @throws EventAdminException
      */
-    public boolean checkCurrentUserHasPublishTopicPermission(String topicName, String username) throws EventAdminException {
+    public boolean checkCurrentUserHasPublishTopicPermission(String topicName) throws EventAdminException {
         return checkUserHasPublishTopicPermission(topicName, CarbonContext.getThreadLocalCarbonContext().getUsername());
     }
 
