@@ -194,10 +194,13 @@
                     </td>
                     <td><input type="checkbox" id="<%=topicRolePermission.getRoleName()%>^subscribe"
                                value="subscribe" <% if (topicRolePermission.getAllowedToSubscribe()) { %>
-                               checked <% } %></td>
-                    <td><input type="checkbox" id="<%=topicRolePermission.getRoleName()%>^publish"
+                               checked <% } %>/>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="<%=topicRolePermission.getRoleName()%>^publish"
                                value="publish"  <% if (topicRolePermission.getAllowedToPublish()) { %>
-                               checked <% } %></td>
+                               checked <% } %>/>
+                    </td>
                 </tr>
                 <%
                         }
