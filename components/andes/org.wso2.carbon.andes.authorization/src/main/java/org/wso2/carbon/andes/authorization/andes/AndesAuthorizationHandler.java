@@ -143,7 +143,7 @@ public class AndesAuthorizationHandler {
                 getRawQueueName(properties.get(ObjectProperties.Property.NAME));
         try {
             if (null != userRealm) {
-                if (!isOwnDomain(queueName, userRealm)) {
+                if (!isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
                     accessResult = Result.DENIED;
                 } else if (isAdmin(username, userRealm)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
@@ -195,7 +195,7 @@ public class AndesAuthorizationHandler {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String queueName =
                 getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-        if (isOwnDomain(queueName, userRealm)) {
+        if (isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
 
             //For registry we use a modified queue name
             String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
@@ -237,7 +237,7 @@ public class AndesAuthorizationHandler {
 
             try {
                 // authorise if admin user
-                if (!isOwnDomain(routingKey, userRealm)) {
+                if (!isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
                     accessResult = Result.DENIED;
                 } else if (isAdmin(username, userRealm)) {
                     accessResult = Result.ALLOWED;
@@ -280,7 +280,7 @@ public class AndesAuthorizationHandler {
 
             try {
                 // authorise if admin user
-                if (!isOwnDomain(routingKey, userRealm)) {
+                if (!isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
                     accessResult = Result.DENIED;
                 } else if (isAdmin(username, userRealm)) {
                     accessResult = Result.ALLOWED;
@@ -332,7 +332,7 @@ public class AndesAuthorizationHandler {
                     case DEFAULT_EXCHANGE: {
 
                         // Authorize
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
@@ -354,7 +354,7 @@ public class AndesAuthorizationHandler {
                     case DIRECT_EXCHANGE: {
 
                         // Authorize
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
@@ -375,7 +375,7 @@ public class AndesAuthorizationHandler {
                         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                         String tempQueueId = CommonsUtil.getQueueID(queueName);
                         // Authorize
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (!userStoreManager.isExistingRole(roleName) && userRealm
                                 .getAuthorizationManager().isUserAuthorized(username,
@@ -448,7 +448,7 @@ public class AndesAuthorizationHandler {
                     case DIRECT_EXCHANGE: {  // Publish to queue
 
                         // Authorize admin user
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
@@ -462,7 +462,7 @@ public class AndesAuthorizationHandler {
                     case TOPIC_EXCHANGE:    // Publish to topic
 
                         // Authorize admin user
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
@@ -475,7 +475,7 @@ public class AndesAuthorizationHandler {
                     case DEFAULT_EXCHANGE: {  // Publish to queue
 
                         // Authorize
-                        if (!isOwnDomain(routingKey, userRealm)) {
+                        if (!isOwnDomain(routingKey, userRealm, properties)) {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
@@ -682,7 +682,8 @@ public class AndesAuthorizationHandler {
      * @return Raw routing key
      */
     private static String getRawRoutingKey(String routingKey) {
-        return routingKey.substring(routingKey.indexOf("carbon:") + 1, routingKey.length());
+        int startIndex = !routingKey.contains("carbon:") ? 0 : routingKey.indexOf("carbon:");
+        return routingKey.substring(startIndex, routingKey.length());
     }
 
     /**
@@ -704,10 +705,11 @@ public class AndesAuthorizationHandler {
      * @param  userRealm - User's Realm
      * @return true if queue/topic belongs to given domain and false otherwise
      */
-    private static boolean isOwnDomain(String routingKey, UserRealm userRealm) throws UserStoreException {
+    private static boolean isOwnDomain(String routingKey, UserRealm userRealm, ObjectProperties properties) throws UserStoreException {
         boolean isOwnDomain = false;
         RealmService realmService = AuthorizationServiceDataHolder.getInstance().getRealmService();
-        String tenantDomain = realmService.getTenantManager().getDomain(userRealm.getRealmConfiguration().getTenantId());
+        String tenantDomain = realmService.getTenantManager().getDomain(userRealm.getAuthorizationManager().getTenantId());
+        String virtualHost = properties.get(ObjectProperties.Property.OWNER);
         if (tenantDomain != null) {
             if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
                                             tenantDomain.length() + 1).equals(tenantDomain + "/")) {
@@ -716,6 +718,10 @@ public class AndesAuthorizationHandler {
                 if (!routingKey.contains("/")) {
                     isOwnDomain = true;
                 }
+            } else if (routingKey.startsWith(TEMP_QUEUE_SUFFIX)) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
+                isOwnDomain = true;
+            } else if (null != virtualHost && !virtualHost.isEmpty() && routingKey.startsWith(virtualHost)) { //allow permission to durable topics to create internal queue i.e. carbon:subId
+                isOwnDomain = true;
             }
         } else {
             // tenantDomain is null,this implies this is a normal user.
