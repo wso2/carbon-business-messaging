@@ -481,6 +481,21 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         return isSend;
     }
 
+    /**
+     * Publish message to given JMS queue
+     *
+     * @param nameOfQueue queue name
+     * @param userName username
+     * @param accessKey access key
+     * @param jmsType jms type
+     * @param jmsCorrelationID message correlation id
+     * @param numberOfMessages number of messages to publish
+     * @param message message body
+     * @param deliveryMode delivery mode
+     * @param priority message priority
+     * @param expireTime message expire time
+     * @throws QueueManagerException
+     */
     private void send(String nameOfQueue, String userName, String accessKey, String jmsType, String jmsCorrelationID,
                       int numberOfMessages, String message, int deliveryMode, int priority, long expireTime)
             throws QueueManagerException {

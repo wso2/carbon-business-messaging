@@ -140,8 +140,7 @@ public class RegistrySubscriptionManager implements SubscriptionManager {
             resource.setProperty(EventBrokerConstants.EB_RES_OWNER, subscription.getOwner());
             resource.setProperty(EventBrokerConstants.EB_RES_TOPIC_NAME, subscription
                     .getTopicName());
-            resource.setProperty(EventBrokerConstants.EB_RES_CREATED_TIME,
-                                 System.currentTimeMillis() + "");
+            resource.setProperty(EventBrokerConstants.EB_RES_CREATED_TIME, Long.toString(System.currentTimeMillis()));
             resource.setProperty(EventBrokerConstants.EB_RES_MODE, JavaUtil
                     .getSubscriptionMode(subscription
                             .getTopicName()));
