@@ -279,7 +279,7 @@ function addPermissions() {
     var rowCount = permissionTable.rows.length;
     var parameters = "";
     for (var i = 1; i < rowCount; i++) {
-        var roleName = permissionTable.rows[i].cells[0].innerHTML.replace(/^\s+|\s+$/g, "");
+        var roleName = encodeURIComponent(permissionTable.rows[i].cells[0].innerHTML.replace(/^\s+|\s+$/g, ""));
         var subscribeAllowed = permissionTable.rows[i].cells[1].getElementsByTagName("input")[0].checked;
         var publishAllowed = permissionTable.rows[i].cells[2].getElementsByTagName("input")[0].checked;
         if (i == 1) {
@@ -320,7 +320,7 @@ function updatePermissions() {
     var rowCount = permissionTable.rows.length;
     var parameters = "";
     for (var i = 1; i < rowCount; i++) {
-        var roleName = permissionTable.rows[i].cells[0].innerHTML.replace(/^\s+|\s+$/g, "");
+        var roleName = encodeURIComponent(permissionTable.rows[i].cells[0].innerHTML.replace(/^\s+|\s+$/g, ""));
         var subscribeAllowed = permissionTable.rows[i].cells[1].getElementsByTagName("input")[0].checked;
         var publishAllowed = permissionTable.rows[i].cells[2].getElementsByTagName("input")[0].checked;
         if (i == 1) {

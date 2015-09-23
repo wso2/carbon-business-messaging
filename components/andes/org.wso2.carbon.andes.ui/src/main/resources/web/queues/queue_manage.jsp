@@ -101,14 +101,18 @@
                             <tr>
                                 <td><%=queueRolePermission.getRoleName()%>
                                 </td>
-                                <td><input type="checkbox"
+                                <td>
+                                    <input type="checkbox"
                                            id="<%=queueRolePermission.getRoleName()%>^consume"
                                            value="consume" <% if (queueRolePermission.getAllowedToConsume()) { %>
-                                           checked <% } %></td>
-                                <td><input type="checkbox"
+                                           checked <% } %>/>
+                                </td>
+                                <td>
+                                    <input type="checkbox"
                                            id="<%=queueRolePermission.getRoleName()%>^publish"
                                            value="publish"  <% if (queueRolePermission.getAllowedToPublish()) { %>
-                                           checked <% } %></td>
+                                           checked <% } %>/>
+                                </td>
                             </tr>
                             <%
                                     }
