@@ -363,9 +363,9 @@ function validateInvoking() {
         CARBON.showWarningDialog("Topic is empty");
         return false;
     }
-    var message = document.getElementById('xmlMessage').value;
+    var message = document.getElementById('textMessage').value;
     if (message == '') {
-        CARBON.showWarningDialog("XML Message is empty");
+        CARBON.showWarningDialog("Text message is empty");
         return false;
     }
     /* $.post('try_it_out_invoke_ajaxprocessor.jsp', {topic : topic,xmlMessage:message}, function (data) {
@@ -378,7 +378,7 @@ function validateInvoking() {
 function invokeService() {
     if (validateInvoking()) {
         var topic = document.getElementById('topic').value;
-        var message = document.getElementById('xmlMessage').value;
+        var message = document.getElementById('textMessage').value;
 
         var callback =
         {
@@ -402,42 +402,4 @@ function invokeService() {
         };
         var request = YAHOO.util.Connect.asyncRequest('POST', "try_it_out_invoke_ajaxprocessor.jsp", callback, "topic=" + topic + "&xmlMessage=" + message);
     }
-}
-
-function performSubscribe() {
-    var topic = document.getElementById('topicId').value;
-    var subURL = document.getElementById('subURL').value;
-    var expiryDate = document.getElementById('expirationTime').value;
-    var hours = document.getElementById('hhid').value;
-    var minutes = document.getElementById('mmid').value;
-    var seconds = document.getElementById('ssid').value;
-    var subscriptionMode = document.getElementById("subscriptionModes")[document.getElementById("subscriptionModes").selectedIndex];
-
-
-    var parameters = "topic=" + topic + "&subURL=" + subURL + "&expirationTime=" + expiryDate + "&hours=" + hours
-                             + "&minutes=" + minutes + "&seconds=" + seconds + "&subMode=" + subscriptionMode.value;
-
-    var callback =
-    {
-        success:function(o) {
-            if (o.responseText !== undefined) {
-                if (o.responseText.search("Error:") > 0) {
-                    CARBON.showErrorDialog("" + o.responseText, function() {
-                    });
-                } else {
-                    CARBON.showInfoDialog("" + o.responseText, function() {
-
-                        location.href = "../topics/topics.jsp"
-                    });
-                }
-            }
-        },
-        failure:function(o) {
-            if (o.responseText !== undefined) {
-                alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
-            }
-        }
-    };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_subscription_ajaxprocessor.jsp", callback, parameters);
-
 }

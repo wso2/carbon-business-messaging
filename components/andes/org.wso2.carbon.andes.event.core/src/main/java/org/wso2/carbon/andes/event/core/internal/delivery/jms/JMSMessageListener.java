@@ -74,12 +74,9 @@ public class JMSMessageListener implements MessageListener {
             PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true);
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
-                StAXOMBuilder stAXOMBuilder =
-                        new StAXOMBuilder(new ByteArrayInputStream(
-                                textMessage.getText().getBytes()));
                 org.wso2.carbon.andes.event.core.Message messageToSend =
                         new org.wso2.carbon.andes.event.core.Message();
-                messageToSend.setMessage(stAXOMBuilder.getDocumentElement());
+                messageToSend.setMessage(textMessage.getText());
                 // set the properties
                 Enumeration propertyNames = message.getPropertyNames();
                 String key = null;
@@ -94,8 +91,6 @@ public class JMSMessageListener implements MessageListener {
             }
         } catch (JMSException e) {
             log.error("Can not read the text message ", e);
-        } catch (XMLStreamException e) {
-            log.error("Can not build the xml string", e);
         } catch (EventBrokerException e) {
             log.error("Can not send the notification ", e);
         } finally {

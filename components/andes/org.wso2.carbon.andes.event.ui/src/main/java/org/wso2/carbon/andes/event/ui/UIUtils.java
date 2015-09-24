@@ -18,44 +18,14 @@
 
 package org.wso2.carbon.andes.event.ui;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.wso2.carbon.CarbonConstants;
-import org.wso2.carbon.event.client.broker.BrokerClient;
 import org.wso2.carbon.andes.event.stub.core.TopicRolePermission;
-import org.wso2.carbon.ui.CarbonUIUtil;
-import org.wso2.carbon.utils.ServerConstants;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
 /**
  * This class is used by the UI to connect to services and provides utilities. Used by JSP pages.
  */
 public class UIUtils {
-
-    /**
-     * Gets the broker client for EventBrokerService
-     * Suppressing warning of unused declaration as it used by the UI (JSP pages)
-     *
-     * @param config the servlet configuration
-     * @param session the http session
-     * @param request the http servlet request
-     * @return the broker client
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public static BrokerClient getBrokerClient(ServletConfig config, HttpSession session,
-                                               HttpServletRequest request) {
-        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-        ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
-                .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
-
-        backendServerURL = backendServerURL + "EventBrokerService";
-
-        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
-        return new BrokerClient(configContext, backendServerURL, cookie);
-    }
 
     /**
      * Gets subscription mode description.

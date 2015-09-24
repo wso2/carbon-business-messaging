@@ -1,14 +1,14 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax29="http://exception.admin.event.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/event/admin/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax215="http://core.event.andes.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ax212="http://subscription.core.event.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/event/admin" xmlns:ax211="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/event/admin">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax29="http://exception.admin.event.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/event/admin/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax214="http://subscription.core.event.andes.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ax213="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/event/admin" xmlns:ax211="http://core.event.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/event/admin">
     <wsdl:documentation>AndesEventAdminService</wsdl:documentation>
     <wsdl:types>
-        <xs:schema xmlns:ax213="http://subscription.core.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.event.andes.carbon.wso2.org/xsd">
+        <xs:schema xmlns:ax215="http://subscription.core.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.event.andes.carbon.wso2.org/xsd">
             <xs:import namespace="http://subscription.core.event.andes.carbon.wso2.org/xsd"/>
             <xs:complexType name="Subscription">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="createdTime" nillable="true" type="xs:dateTime"/>
-                    <xs:element minOccurs="0" name="eventDispatcher" nillable="true" type="ax212:EventDispatcher"/>
+                    <xs:element minOccurs="0" name="eventDispatcher" nillable="true" type="ax214:EventDispatcher"/>
                     <xs:element minOccurs="0" name="eventDispatcherName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="eventFilter" nillable="true" type="ax212:EventFilter"/>
+                    <xs:element minOccurs="0" name="eventFilter" nillable="true" type="ax214:EventFilter"/>
                     <xs:element minOccurs="0" name="eventSinkURL" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="expires" nillable="true" type="xs:dateTime"/>
                     <xs:element minOccurs="0" name="id" nillable="true" type="xs:string"/>
@@ -18,14 +18,46 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax214="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:ax216="http://core.event.andes.carbon.wso2.org/xsd" xmlns:ax210="http://exception.admin.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/event/admin/xsd">
+        <xs:schema xmlns:ax216="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:ax212="http://core.event.andes.carbon.wso2.org/xsd" xmlns:ax210="http://exception.admin.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/event/admin/xsd">
             <xs:import namespace="http://exception.admin.event.andes.carbon.wso2.org/xsd"/>
-            <xs:import namespace="http://admin.event.andes.carbon.wso2.org/xsd"/>
             <xs:import namespace="http://core.event.andes.carbon.wso2.org/xsd"/>
+            <xs:import namespace="http://admin.event.andes.carbon.wso2.org/xsd"/>
             <xs:element name="AndesEventAdminServiceEventAdminException">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="EventAdminException" nillable="true" type="ax29:EventAdminException"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTopics">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllTopicsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax212:TopicNode"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="updatePermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="topicRolePermissions" nillable="true" type="ax212:TopicRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRoles">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRolesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -48,7 +80,7 @@
             <xs:element name="getAllWSSubscriptionsForTopicResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax214:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -62,55 +94,7 @@
             <xs:element name="getWsSubscriptionsForTopicResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax214:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getTopicRolePermissions">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getTopicRolePermissionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax215:TopicRolePermission"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="updatePermission">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="topicRolePermissions" nillable="true" type="ax215:TopicRolePermission"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getUserRoles">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getUserRolesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllWSSubscriptionCountForTopic">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllWSSubscriptionCountForTopicResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -124,7 +108,7 @@
             <xs:element name="getJMSSubscriptionsForTopicResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax214:Subscription"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax213:Subscription"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -257,32 +241,48 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllTopics">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllTopicsResponse">
+            <xs:element name="getTopicRolePermissions">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax215:TopicNode"/>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTopicRolePermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax212:TopicRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
         </xs:schema>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://core.event.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="TopicNode">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="ax211:TopicNode"/>
+                    <xs:element minOccurs="0" name="nodeName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
             <xs:complexType name="TopicRolePermission">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="allowedToSubscribe" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="TopicNode">
-                <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="ax215:TopicNode"/>
-                    <xs:element minOccurs="0" name="nodeName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>

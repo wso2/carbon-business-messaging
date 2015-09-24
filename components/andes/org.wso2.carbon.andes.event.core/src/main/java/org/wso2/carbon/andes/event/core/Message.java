@@ -28,7 +28,7 @@ public class Message {
 
     private Map<String, String> properties;
 
-    private OMElement message;
+    private String message;
 
     public Message() {
         this.properties = new HashMap();
@@ -46,11 +46,11 @@ public class Message {
         this.properties = properties;
     }
 
-    public OMElement getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(OMElement message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
