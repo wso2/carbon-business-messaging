@@ -45,6 +45,7 @@ import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
 import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.server.admin.common.IServerAdmin;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
 import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
@@ -97,6 +98,11 @@ import java.util.Stack;
  * cardinality="1..1" policy="dynamic"
  * bind="setConfigurationContextService"
  * unbind="unsetConfigurationContextService"
+ * @scr.reference name="org.wso2.carbon.server.admin.common.IServerAdmin"
+ * interface="org.wso2.carbon.server.admin.common.IServerAdmin"
+ * cardinality="1..1" policy="dynamic"
+ * bind="setIServerAdmin"
+ * unbind="unsetIServerAdmin"
  */
 public class QpidServiceComponent {
 
@@ -186,7 +192,8 @@ public class QpidServiceComponent {
     }
 
     protected void deactivate(ComponentContext ctx) {
-        // By this time, through the AndesServerShutDownListener, All other services/ workers including this service, have been closed.
+        // By this time, through the AndesServerShutDownListener, All other services/ workers including this service,
+        // have been closed.
         // Unregister services
         while (!registrations.empty()) {
             registrations.pop().unregister();
@@ -243,7 +250,7 @@ public class QpidServiceComponent {
                 this.startAndesBroker();
             } catch (ConfigurationException e) {
                 log.error("Invalid configuration found in a configuration file", e);
-                throw new RuntimeException("Invalid configuration found in a configuration file", e);
+                this.shutdown();
             }
         }
     }
@@ -268,6 +275,33 @@ public class QpidServiceComponent {
         // Do nothing
     }
 
+    /**
+     * Access IServerAdmin, which is exposed as an OSGi service, to call the graceful shutdown method in the carbon
+     * kernel.
+     */
+    protected void setIServerAdmin(IServerAdmin iServerAdmin) {
+        QpidServiceDataHolder.getInstance().setService(iServerAdmin);
+    }
+
+    /**
+     * Unset IServerAdmin OSGi service
+     */
+    protected void unsetIServerAdmin(IServerAdmin iServerAdmin) {
+        QpidServiceDataHolder.getInstance().setService(null);
+    }
+
+    /**
+     * Shutdown from the carbon kernel level.
+     */
+    private void shutdown() throws AndesException {
+        //Calling carbon kernel shutdown method, inside the ServerAdmin component
+        try {
+            QpidServiceDataHolder.getInstance().getService().shutdownGracefully();
+        } catch (Exception e) {
+            log.error("Error occurred while shutting down", e);
+            throw new AndesException("Error occurred while shutting down", e);
+        }
+    }
 
     /**
      * Check if the broker is up and running
@@ -303,7 +337,6 @@ public class QpidServiceComponent {
         }
     }
 
-
     /***
      * This applies the bindAddress from broker.xml instead of the hostname from carbon.xml within MB.
      * @return host name as derived from broker.xml
@@ -330,7 +363,6 @@ public class QpidServiceComponent {
         return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
 
     }
-
 
     /**
      * Start Andes Broker and related components with given configurations.
@@ -402,8 +434,6 @@ public class QpidServiceComponent {
 
     }
 
-
-
     /**
      * check whether the tcp port has started. some times the server started thread may return
      * before Qpid server actually bind to the tcp port. in that case there are some connection
@@ -455,7 +485,6 @@ public class QpidServiceComponent {
             log.warn("AMQP Transport is disabled as per configuration.");
         }
     }
-
 
     /**
      * check whether the tcp port has started. some times the server started thread may return

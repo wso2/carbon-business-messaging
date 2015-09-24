@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.internal;
 
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
+import org.wso2.carbon.server.admin.common.IServerAdmin;
 
 /**
  * This is a singleton class that holds data that is shared within this component.
@@ -31,6 +32,29 @@ public class QpidServiceDataHolder {
     private String accessKey = null;
     private ServerConfigurationService carbonConfiguration = null;
     private EventBundleNotificationService eventBundleNotificationService;
+
+    /**
+     * This OSGi service is used in the situation where we need to shutdown from the carbon kernel.
+     */
+    private IServerAdmin service;
+
+    /**
+     * Get IServerAdmin that was stored when the bundle started up
+     *
+     * @return
+     */
+    public IServerAdmin getService() {
+        return service;
+    }
+
+    /**
+     * Store IServerAdmin; that was received when the bundle started up
+     *
+     * @param service
+     */
+    public void setService(IServerAdmin service) {
+        this.service = service;
+    }
 
     private QpidServiceDataHolder() {
     }
