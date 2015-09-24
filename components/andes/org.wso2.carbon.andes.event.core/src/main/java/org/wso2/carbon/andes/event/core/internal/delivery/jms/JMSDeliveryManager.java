@@ -231,7 +231,7 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
             TopicPublisher topicPublisher = topicSession.createPublisher(topic);
             topicPublisher.setDeliveryMode(deliveryMode);
             TextMessage textMessage =
-                    topicSession.createTextMessage(message.getMessage().toString());
+                    topicSession.createTextMessage(message.getMessage());
 
             Map<String, String> properties = message.getProperties();
             for (Map.Entry<String, String> entry : properties.entrySet()) {

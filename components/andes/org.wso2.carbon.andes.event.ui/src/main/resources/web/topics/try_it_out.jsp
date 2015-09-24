@@ -29,9 +29,9 @@
                     CARBON.showWarningDialog("Topic is empty");
                     return false;
                 }
-                var message = document.getElementById('xmlMessage').value;
+                var message = document.getElementById('textMessage').value;
                 if (message == '') {
-                    CARBON.showWarningDialog("XML Message is empty");
+                    CARBON.showWarningDialog("Text message is empty");
                     return false;
                 }
                /* $.post('try_it_out_invoke.jsp', {topic : topic,xmlMessage:message}, function (data) {

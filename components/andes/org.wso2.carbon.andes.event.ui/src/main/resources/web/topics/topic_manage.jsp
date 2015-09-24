@@ -298,8 +298,8 @@
 
                 </tr>
                 <tr>
-                    <td><fmt:message key="xml.message"/></td>
-                    <td><textarea cols="50" rows="10" name="xmlMessage" id="xmlMessage"></textarea>
+                    <td><fmt:message key="text.message"/></td>
+                    <td><textarea cols="50" rows="10" name="textMessage" id="textMessage"></textarea>
                     </td>
                 </tr>
             </table>

@@ -256,11 +256,10 @@ public class AndesEventAdminService extends AbstractAdmin {
     public void publishToTopic(String content, String topicName) throws EventAdminException {
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
-            StAXOMBuilder builder = new StAXOMBuilder(new ByteArrayInputStream(content.getBytes()));
             if (checkCurrentUserHasPublishTopicPermission(topicName)) {
                 if (eventBroker.getTopicManagerService().isTopicExists(topicName)) {
                     Message message = new Message();
-                    message.setMessage(builder.getDocumentElement());
+                    message.setMessage(content);
                     eventBroker.publish(message, topicName);
                 } else {
                     throw new EventAdminException("Topic with name : " + topicName + " not exists!");
@@ -268,7 +267,7 @@ public class AndesEventAdminService extends AbstractAdmin {
             } else {
                 throw new EventAdminException("Permission denied.");
             }
-        } catch (EventBrokerException | XMLStreamException e) {
+        } catch (EventBrokerException e) {
             String errorMessage = "Error in publishing to a topic";
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
