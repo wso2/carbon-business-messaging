@@ -646,12 +646,14 @@ public class TopicManagerServiceImpl implements TopicManagerService {
 
         //For registry we use a modified queue name
         String newDestinationName = destinationName.replace("@", AT_REPLACE_CHAR);
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
 
         // creating the internal role name
         newDestinationName = newDestinationName.substring(0, 1)
                 .equalsIgnoreCase("/") ? newDestinationName.replaceFirst("/", "") : newDestinationName;
+        String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                                             newDestinationName.replace("/", "-"));
+                destinationWithTenantDomain.replace("/", "-"));
 
         // the interface to store user data
         UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
@@ -689,9 +691,10 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             throws EventBrokerException {
         //For registry we use a modified queue name
         String newDestinationName = destinationName.replace("@", AT_REPLACE_CHAR);
-
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                                             newDestinationName.replace("/", "-"));
+                destinationWithTenantDomain.replace("/", "-"));
 
         try {
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
