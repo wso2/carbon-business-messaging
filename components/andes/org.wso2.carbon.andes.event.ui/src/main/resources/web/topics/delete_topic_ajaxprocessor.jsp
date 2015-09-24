@@ -26,10 +26,8 @@
     session.removeAttribute("topicWsSubscriptions");
 
     try {
-        Subscription[] wsSubscriptionsForTopic = stub.getWsSubscriptionsForTopic(topic);
         Subscription[] jmsSubscriptionsForTopic = stub.getJMSSubscriptionsForTopic(topic);
-        if ((wsSubscriptionsForTopic != null && wsSubscriptionsForTopic.length > 0) ||
-                (jmsSubscriptionsForTopic != null && jmsSubscriptionsForTopic.length > 0)) {
+        if ((jmsSubscriptionsForTopic != null && jmsSubscriptionsForTopic.length > 0)) {
             message = "Error, Subscriptions exists for this topic, Please remove all subscriptions before deleting the topic";
         } else {
             stub.removeTopic(topic);

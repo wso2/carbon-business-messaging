@@ -19,6 +19,8 @@
 package org.wso2.carbon.andes.commons.registry;
 
 import org.apache.axis2.databinding.utils.ConverterUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
@@ -46,7 +48,7 @@ public class RegistryClient {
     private static final String CREATED_FROM = "createdFrom";
     private static final String CREATED_FROM_AMQP = "amqp";
     private static final String USER_COUNT = "userCount";
-
+    private static final Log log = LogFactory.getLog(RegistryClient.class);
     /**
      * Create an entry for a queue in the Registry
      *
@@ -264,7 +266,9 @@ public class RegistryClient {
                 );
 
                 // Delete subscription
-                String subscriptionID = CommonsUtil.getSubscriptionID(topic, subscriptionName);
+                String tenantBasedTopicName = getTenantBasedTopicName(topic);
+                String subscriptionID = CommonsUtil.getSubscriptionID(tenantBasedTopicName, subscriptionName);
+
                 if (registry.resourceExists(subscriptionID)) {
                     registry.delete(subscriptionID);
                 }
