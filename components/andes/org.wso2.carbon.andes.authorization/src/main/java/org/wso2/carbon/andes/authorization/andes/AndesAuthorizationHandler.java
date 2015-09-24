@@ -326,7 +326,7 @@ public class AndesAuthorizationHandler {
                         getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
                 String queueID = CommonsUtil.getQueueID(queueName);
-                String topicId = CommonsUtil.getTopicID(routingKey);
+                String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
 
                 switch (exchangeName) {
                     case DEFAULT_EXCHANGE: {
@@ -783,16 +783,9 @@ public class AndesAuthorizationHandler {
             return;
         }
 
-        //if the queue name has the tenant domain prefix we need to remove it
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > 0) {
-            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-            if (queueName.startsWith(tenantDomain)) {
-                queueName = queueName.substring(tenantDomain.length() + 1);
-            }
-        }
+        String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX
+                + queueName.replace("/", "-"));
 
-        String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                             queueName.replace("/", "-"));
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
 
         if (!userStoreManager.isExistingRole(roleName)) {
