@@ -291,7 +291,8 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                 <!-- If you choose DISCARD_ALLOWED topic message delivery strategy, 
                      broker keep messages in memory until ack is done until this timeout.
                      If an ack is not received under this timeout, ack will be simulated 
-                     internally and real acknowledgement is discarded.-->
+                     internally and real acknowledgement is discarded.
+                     deliveryTimeout is in seconds -->
                 <deliveryTimeout>60</deliveryTimeout>
             </topicMessageDeliveryStrategy>
         </delivery>
