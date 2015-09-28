@@ -38,6 +38,7 @@ import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.util.ArrayList;
@@ -645,15 +646,22 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                                                                                 UserStoreException {
 
         //For registry we use a modified queue name
+        String roleName;
         String newDestinationName = destinationName.replace("@", AT_REPLACE_CHAR);
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
 
         // creating the internal role name
         newDestinationName = newDestinationName.substring(0, 1)
                 .equalsIgnoreCase("/") ? newDestinationName.replaceFirst("/", "") : newDestinationName;
-        String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
-        String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                destinationWithTenantDomain.replace("/", "-"));
+
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() >= 0) {
+            String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
+            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                    destinationWithTenantDomain.replace("/", "-"));
+        } else {
+            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                    newDestinationName.replace("/", "-"));
+        }
 
         // the interface to store user data
         UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
@@ -690,11 +698,18 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     private static void removeRoleCreateForLoggedInUser(String destinationName)
             throws EventBrokerException {
         //For registry we use a modified queue name
+        String roleName;
         String newDestinationName = destinationName.replace("@", AT_REPLACE_CHAR);
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
-        String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                destinationWithTenantDomain.replace("/", "-"));
+
+        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() >= 0) {
+            String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
+            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                    destinationWithTenantDomain.replace("/", "-"));
+        } else {
+            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                    newDestinationName.replace("/", "-"));
+        }
 
         try {
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
