@@ -442,7 +442,7 @@ public class AndesAuthorizationHandler {
                         getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
                 String queueID = CommonsUtil.getQueueID(routingKey);
-                String permissionID = CommonsUtil.getTopicID(routingKey);
+                String permissionID = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
 
                 switch (exchangeName) {
                     case DIRECT_EXCHANGE: {  // Publish to queue
