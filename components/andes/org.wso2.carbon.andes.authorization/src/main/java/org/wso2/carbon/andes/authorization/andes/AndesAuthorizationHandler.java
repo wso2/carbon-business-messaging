@@ -323,7 +323,8 @@ public class AndesAuthorizationHandler {
                 String queueName =
                         getRawQueueName(properties.get(ObjectProperties.Property.QUEUE_NAME));
                 String routingKey =
-                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
+                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
+                                properties.get(ObjectProperties.Property.OWNER));
 
                 String queueID = CommonsUtil.getQueueID(queueName);
                 String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
@@ -439,7 +440,8 @@ public class AndesAuthorizationHandler {
                 String exchangeName =
                         getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
                 String routingKey =
-                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
+                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
+                                properties.get(ObjectProperties.Property.OWNER));
 
                 String queueID = CommonsUtil.getQueueID(routingKey);
                 String permissionID = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
@@ -536,7 +538,8 @@ public class AndesAuthorizationHandler {
         String queueName =
                 getRawQueueName(properties.get(ObjectProperties.Property.QUEUE_NAME));
         String routingKey =
-                getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
+                getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
+                        properties.get(ObjectProperties.Property.OWNER));
 
         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
@@ -681,8 +684,9 @@ public class AndesAuthorizationHandler {
      * @param routingKey Internal routing key
      * @return Raw routing key
      */
-    private static String getRawRoutingKey(String routingKey) {
-        int startIndex = !routingKey.contains("carbon:") ? 0 : routingKey.indexOf("carbon:");
+    private static String getRawRoutingKey(String routingKey, String virtualHost) {
+        String virtualHostFormatted = virtualHost + ":";
+        int startIndex = !routingKey.contains(virtualHostFormatted) ? 0 : routingKey.indexOf(virtualHostFormatted);
         return routingKey.substring(startIndex, routingKey.length());
     }
 
@@ -710,6 +714,8 @@ public class AndesAuthorizationHandler {
         RealmService realmService = AuthorizationServiceDataHolder.getInstance().getRealmService();
         String tenantDomain = realmService.getTenantManager().getDomain(userRealm.getAuthorizationManager().getTenantId());
         String virtualHost = properties.get(ObjectProperties.Property.OWNER);
+        boolean isTemporary  = Boolean.parseBoolean(properties.get(ObjectProperties.Property.TEMPORARY));
+        boolean isExclusive  = Boolean.parseBoolean(properties.get(ObjectProperties.Property.EXCLUSIVE));
         if (tenantDomain != null) {
             if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
                                             tenantDomain.length() + 1).equals(tenantDomain + "/")) {
@@ -718,9 +724,9 @@ public class AndesAuthorizationHandler {
                 if (!routingKey.contains("/")) {
                     isOwnDomain = true;
                 }
-            } else if (routingKey.startsWith(TEMP_QUEUE_SUFFIX)) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
+            } else if (routingKey.startsWith(TEMP_QUEUE_SUFFIX) && isTemporary) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
                 isOwnDomain = true;
-            } else if (null != virtualHost && !virtualHost.isEmpty() && routingKey.startsWith(virtualHost)) { //allow permission to durable topics to create internal queue i.e. carbon:subId
+            } else if (routingKey.startsWith(virtualHost) && isExclusive) { //allow permission to durable topics to create internal queue i.e. carbon:subId
                 isOwnDomain = true;
             }
         } else {
