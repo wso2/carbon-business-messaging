@@ -7,6 +7,8 @@ function addQueue(createdFrom) {
         error = "Queue name cannot be empty.\n";
     } else if (!isValidQueueName(topic.value)) {
         error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
+    } else if (isContainTmpPrefix(topic.value)) {
+        error = "Queue name cannot start with tmp_ prefix.\n";
     }
     if (error != "") {
         CARBON.showErrorDialog(error);
@@ -17,6 +19,10 @@ function addQueue(createdFrom) {
 
 function isValidQueueName(queueName){
     return !/[~!@#;%^*()+={}|\<>"',]/g.test(queueName);
+}
+
+function isContainTmpPrefix(queueName) {
+    return queueName.startsWith("tmp_");
 }
 
 function addQueueAndAssignPermissions(queue, createdFrom) {
