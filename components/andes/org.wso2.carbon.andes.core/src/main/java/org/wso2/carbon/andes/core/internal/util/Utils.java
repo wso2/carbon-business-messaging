@@ -90,6 +90,11 @@ public class Utils {
     public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
 
     /**
+     * Tenant domain name separator
+     */
+    public static final String DOMAIN_NAME_SEPARATOR = "!";
+
+    /**
      * Gets the user registry for the current tenant
      *
      * @return a {@link org.wso2.carbon.registry.core.session.UserRegistry}
@@ -136,8 +141,12 @@ public class Utils {
                             MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                             .getTenantId());
 
-            String qualifiedUsername = username.replace("!", "@");
-            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(qualifiedUsername);
+            String usernameWithoutDomainName = username;
+            int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
+            if (-1 != domainNameSeparatorIndex) {
+                usernameWithoutDomainName = username.substring(0, domainNameSeparatorIndex);
+            }
+            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(usernameWithoutDomainName);
             String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
             for (String userRole : userRoles) {
                 if (userRole.equals(adminRole)) {
