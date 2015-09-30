@@ -158,8 +158,8 @@ public class AndesAdminService extends AbstractAdmin {
             queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
         } catch (QueueManagerException e) {
             String message = e.getMessage();
-            throw new BrokerManagerAdminException("Error in deleting topic from registry. " +
-                    "" + message, e);
+            log.error("Error in deleting topic from registry.", e);
+            throw new BrokerManagerAdminException("Error in deleting topic from registry. " , e);
         }
     }
 
