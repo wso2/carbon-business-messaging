@@ -107,6 +107,11 @@
             <groupId>commons-dbcp.wso2</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!--MQTT related dependencies-->
         <dependency>
             <groupId>io.netty.wso2</groupId>
@@ -250,6 +255,7 @@
                                 <bundleDef>commons-configuration:commons-configuration</bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
+                                <bundleDef>com.google.guava:guava</bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
