@@ -10,7 +10,6 @@
 <%@ page import="javax.xml.bind.SchemaOutputResolver" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
-<%@ page import="org.wso2.andes.store.cassandra.ServerStartupRecoveryUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
@@ -66,9 +65,8 @@
         try {
             totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
-            if (totalMsgsInQueue == 0L) {
-                nextMessageIdToRead = ServerStartupRecoveryUtils.getMessageIdToCompleteRecovery();
-            } else if(pageNumberToMessageIdMap.size() > 0) {
+            
+            if(pageNumberToMessageIdMap.size() > 0) {
                 if(pageNumberToMessageIdMap.get(pageNumber) != null) {
                     nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
                 }

@@ -10,7 +10,6 @@
 <%@ page import="org.wso2.carbon.andes.stub.admin.types.Message" %>
 <%@ page import="org.wso2.andes.configuration.enums.AndesConfiguration" %>
 <%@ page import="org.wso2.andes.configuration.AndesConfigurationManager" %>
-<%@ page import="org.wso2.andes.store.cassandra.ServerStartupRecoveryUtils" %>
 <%@ page import="javax.xml.bind.SchemaOutputResolver" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
@@ -112,9 +111,8 @@
                 totalMsgsInQueue = stub.getNumberMessagesInDLCForQueue(nameOfQueue);
             }
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
-            if (totalMsgsInQueue == 0L) {
-                nextMessageIdToRead = ServerStartupRecoveryUtils.getMessageIdToCompleteRecovery();
-            } else if (pageNumberToMessageIdMap.size() > 0) {
+            
+            if (pageNumberToMessageIdMap.size() > 0) {
                 if (0 == pageNumber){
                     nextMessageIdToRead = 0;
                 }
