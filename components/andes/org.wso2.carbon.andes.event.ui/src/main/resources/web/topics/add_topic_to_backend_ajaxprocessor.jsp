@@ -3,8 +3,8 @@
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
-<%@ page import="org.wso2.carbon.andes.event.stub.core.TopicRolePermission" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
             .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -27,8 +27,8 @@
         stub.addTopic(topic);
         session.removeAttribute("topic");
         session.setAttribute("topic", topic);
-    } catch (Exception e) {
-        message = "Error: " + e.getMessage();
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
 
 %>
 <%=message%>
@@ -38,6 +38,6 @@
 
     session.removeAttribute("topicWsSubscriptions");
     session.removeAttribute("topicJMSSubscriptions");
-    message = "Topic Added successfully";
+    message = "Topic added successfully";
 %><%=message%>
 

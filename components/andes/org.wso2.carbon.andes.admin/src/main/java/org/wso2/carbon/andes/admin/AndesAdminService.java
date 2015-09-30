@@ -124,8 +124,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allQueues, Collections.reverseOrder(comparator));
             allQueues.toArray(queuesDTO);
         } catch (QueueManagerException e) {
-            log.error("Problem in getting queues from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting queues from back-end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return queuesDTO;
     }
@@ -149,8 +150,9 @@ public class AndesAdminService extends AbstractAdmin {
             messageCount = queueManagerService.getMessageCount(destinationName, msgPattern);
             return messageCount;
         } catch (Exception e) {
-            log.error("Error while getting message count for queue", e);
-            throw new BrokerManagerAdminException("Error while getting message count for queue", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -166,8 +168,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error(e.getMessage(), e);
-            throw new BrokerManagerAdminException(e.getMessage(), e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -183,9 +186,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
         } catch (QueueManagerException e) {
-            String message = e.getMessage();
-            throw new BrokerManagerAdminException("Error in deleting topic from registry. " +
-                    "" + message, e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -203,8 +206,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
         } catch (QueueManagerException e) {
-            log.error("Error in restoring message from dead letter queue", e);
-            throw new BrokerManagerAdminException("Error in restoring message from dead letter queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -226,8 +230,9 @@ public class AndesAdminService extends AbstractAdmin {
             queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
                     newDestinationQueueName, destinationQueueName);
         } catch (QueueManagerException e) {
-            log.error("Error in restoring message from dead letter queue", e);
-            throw new BrokerManagerAdminException("Error in restoring message from dead letter queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -245,8 +250,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
         } catch (QueueManagerException e) {
-            log.error("Error in deleting message from queue", e);
-            throw new BrokerManagerAdminException("Error in deleting message from queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -262,8 +268,9 @@ public class AndesAdminService extends AbstractAdmin {
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.purgeMessagesOfQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Error in purging message from queue. " + e.getMessage(), e);
-            throw new BrokerManagerAdminException("Error in purging message from queue. " + e.getMessage(), e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -303,8 +310,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            log.error("Problem in getting subscriptions from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting subscriptions from back end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
     }
@@ -344,8 +352,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            log.error("Problem in getting subscriptions from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting subscriptions from back end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
     }
@@ -386,8 +395,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            log.error("Problem in getting subscriptions from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting subscriptions from back end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
     }
@@ -429,8 +439,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            log.error("Problem in getting subscriptions from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting subscriptions from back end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
     }
@@ -472,8 +483,9 @@ public class AndesAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            log.error("Problem in getting subscriptions from back end", e);
-            throw new BrokerManagerAdminException("Problem in getting subscriptions from back end", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
     }
@@ -492,9 +504,9 @@ public class AndesAdminService extends AbstractAdmin {
         try {
             return queueManagerService.getNumberMessagesInDLCForQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Unable to get total message count in DLC for a specific queue.", e);
-            throw new BrokerManagerAdminException("Unable to get total message count in DLC for a" +
-                    " specific queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -534,9 +546,9 @@ public class AndesAdminService extends AbstractAdmin {
                 messageDTOList.add(messageDTO);
             }
         } catch (QueueManagerException e) {
-            log.error("Unable to get messages in DLC for a specific queue.", e);
-            throw new BrokerManagerAdminException("Unable to get messages in DLC for a specific " +
-                    "queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return messageDTOList.toArray(new Message[messageDTOList.size()]);
     }
@@ -565,8 +577,9 @@ public class AndesAdminService extends AbstractAdmin {
                 queueManagerService.updatePermission(queueName, rolePermissions);
             }
         } catch (QueueManagerException e) {
-            log.error("Unable to update permission of the queue.", e);
-            throw new BrokerManagerAdminException("Unable to update permission of the queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -593,8 +606,9 @@ public class AndesAdminService extends AbstractAdmin {
                 queueManagerService.addQueueAndAssignPermission(queueName, rolePermissions);
             }
         } catch (QueueManagerException e) {
-            log.error("Unable to update permission of the queue.", e);
-            throw new BrokerManagerAdminException("Unable to update permission of the queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -612,8 +626,9 @@ public class AndesAdminService extends AbstractAdmin {
         try {
             roles = queueManagerService.getBackendRoles();
         } catch (QueueManagerException e) {
-            log.error("Unable to get roles from user store", e);
-            throw new BrokerManagerAdminException("Unable to get roles from user store.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return roles;
     }
@@ -643,8 +658,9 @@ public class AndesAdminService extends AbstractAdmin {
             return queueRolePermissionDTOList.toArray(
                     new QueueRolePermission[queueRolePermissionDTOList.size()]);
         } catch (QueueManagerException e) {
-            log.error("Unable to retrieve queue permission", e);
-            throw new BrokerManagerAdminException("Unable to retrieve queue permission.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -687,8 +703,9 @@ public class AndesAdminService extends AbstractAdmin {
                 messageDTOList.add(messageDTO);
             }
         } catch (QueueManagerException e) {
-            log.error("Unable to browse queue", e);
-            throw new BrokerManagerAdminException("Unable to browse queue.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
         return messageDTOList.toArray(new Message[messageDTOList.size()]);
     }
@@ -706,8 +723,9 @@ public class AndesAdminService extends AbstractAdmin {
         try {
             return queueManagerService.getTotalMessagesInQueue(queueName);
         } catch (QueueManagerException e) {
-            log.error("Unable to get total message count", e);
-            throw new BrokerManagerAdminException("Unable to get total message count.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -737,8 +755,9 @@ public class AndesAdminService extends AbstractAdmin {
                     jmsCorrelationID,
                     numberOfMessages, message, deliveryMode, priority, expireTime);
         } catch (QueueManagerException e) {
-            log.error("Unable to send message", e);
-            throw new BrokerManagerAdminException("Unable to send message.", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
     }
 
@@ -777,7 +796,7 @@ public class AndesAdminService extends AbstractAdmin {
                 }
             }
         } catch (SubscriptionManagerException e) {
-            String errorMessage = "Unable to get remaining messages for subscription.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -817,7 +836,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -853,7 +872,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -889,7 +908,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -925,7 +944,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -961,7 +980,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -997,7 +1016,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -1033,7 +1052,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -1069,7 +1088,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
@@ -1105,7 +1124,7 @@ public class AndesAdminService extends AbstractAdmin {
                 hasPermission = true;
             }
         } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = "Unable to get user store to check permissions.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }

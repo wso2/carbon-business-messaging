@@ -6,6 +6,7 @@
 <%@ page import="org.wso2.carbon.andes.event.stub.core.TopicRolePermission" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
             .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -47,10 +48,10 @@
     TopicRolePermission[] topicRolePermissions = new TopicRolePermission[topicRolePermissionArrayList.size()];
     try {
         stub.updatePermission(topic, topicRolePermissionArrayList.toArray(topicRolePermissions));
+        session.setAttribute("topicRolePermission", stub.getTopicRolePermissions(topic));
         // message content is decided when showing the pop-up as this is used when adding a new topic and also when updating permission roles for a topic.
-        message = "";
-    } catch (Exception e) {
-        message = "Error in adding/updating permissions : " + e.getMessage();
+        message = "Permissions updated successfully";
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
     }
-    session.setAttribute("topicRolePermission", stub.getTopicRolePermissions(topic));
 %><%=message%>

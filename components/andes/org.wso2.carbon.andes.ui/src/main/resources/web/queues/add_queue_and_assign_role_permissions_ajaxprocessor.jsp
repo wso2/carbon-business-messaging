@@ -19,7 +19,7 @@
         message = "Queue added successfully";
         session.removeAttribute("queue");
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
-        message = "Error in adding queue : " + e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
+        message = "Error: " + e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
     }
 
     session.removeAttribute("queueRolePermissions");

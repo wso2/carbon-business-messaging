@@ -161,6 +161,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
         }
 
         String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
+        UserRealm userRealm = CarbonContext.getThreadLocalCarbonContext().getUserRealm();
 
         try {
             UserRegistry userRegistry =
@@ -173,22 +174,10 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                 Collection collection = userRegistry.newCollection();
                 userRegistry.put(resourcePath, collection);
 
-                // Grant this user (owner) rights to update permission on newly
-                // created topic. Ideally, loggedInUser
-                // cannot be null but sometimes components like rule mediator
-                // creates queues for internal use. So at
-                // that time username can be null.
-                if (loggedInUser != null) {
-                    UserRealm userRealm = EventBrokerHolder.getInstance().getRealmService().getTenantUserRealm(
-                            CarbonContext.getThreadLocalCarbonContext().getTenantId());
-
-                    userRealm.getAuthorizationManager().authorizeUser(
-                            loggedInUser, resourcePath, EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION);
-                    userRealm.getAuthorizationManager().authorizeUser(
-                            loggedInUser, resourcePath, EventBrokerConstants.EB_PERMISSION_PUBLISH);
-                    userRealm.getAuthorizationManager().authorizeUser(
-                            loggedInUser, resourcePath, EventBrokerConstants.EB_PERMISSION_SUBSCRIBE);
-                }
+                //Internal role create by topic name and grant subscribe and publish permission to it
+                //By this way we restricted permission to user who create topic and allow subscribe and publish
+                //Admin has to give permission to other roles to subscribe and publish if necessary
+                authorizePermissionsToLoggedInUser(loggedInUser, topicName, resourcePath, userRealm);
             }
         } catch (RegistryException e) {
             throw new EventBrokerException("Cannot access the config registry", e);
@@ -260,13 +249,21 @@ public class TopicManagerServiceImpl implements TopicManagerService {
         String role;
         String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
         try {
-            if (!userRealm.getAuthorizationManager().isUserAuthorized(
-                    loggedInUser, topicResourcePath,
-                    EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION)) {
-                if (!JavaUtil.isAdmin(loggedInUser)) {
-                    throw new EventBrokerException(" User " + loggedInUser + " cannot change" +
-                                                   " the permissions of " + topicName);
+            boolean isUserHasChangePermission = false;
+            if (JavaUtil.isAdmin(loggedInUser)) {
+                isUserHasChangePermission = true;
+            } else {
+                String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(loggedInUser);
+                for (String userRole : userRoles) {
+                    if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                            userRole, topicResourcePath, EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION)) {
+                        isUserHasChangePermission = true;
+                    }
                 }
+            }
+            if (!isUserHasChangePermission) {
+                throw new EventBrokerException(" User " + loggedInUser + " cannot change" +
+                        " the permissions of " + topicName);
             }
             for (TopicRolePermission topicRolePermission : topicRolePermissions) {
                 role = topicRolePermission.getRoleName();
@@ -298,10 +295,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                     }
                 }
             }
-            //Internal role create by topic name and grant subscribe and publish permission to it
-            //By this way we restricted permission to user who create topic and allow subscribe and publish
-            //Admin has to give permission to other roles to subscribe and publish if necessary
-            authorizePermissionsToLoggedInUser(loggedInUser, topicName, topicResourcePath, userRealm);
+
         } catch (UserStoreException e) {
             throw new EventBrokerException("Cannot access the user store manager", e);
         }

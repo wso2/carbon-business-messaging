@@ -118,24 +118,50 @@
     }
 
 
-    TopicRolePermission[] topicRolePermissions = stub.getTopicRolePermissions(topic);
+    TopicRolePermission[] topicRolePermissions = new TopicRolePermission[0];
+    try {
+        topicRolePermissions = stub.getTopicRolePermissions(topic);
+    } catch (AndesEventAdminServiceEventAdminException e) {
+%>
+<script type="text/javascript">
+    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
+</script>
+<%
+    }
     int pageNumberInt = 0;
     String pageNumberAsStr = request.getParameter("pageNumber");
     if (pageNumberAsStr != null) {
         pageNumberInt = Integer.parseInt(pageNumberAsStr);
     }
 
-    Subscription[] addedSubscriptions = stub.getAllWSSubscriptionsForTopic(topic, pageNumberInt * 10, 10);
+    Subscription[] addedSubscriptions = new Subscription[0];
+    try {
+        addedSubscriptions = stub.getAllWSSubscriptionsForTopic(topic, pageNumberInt * 10, 10);
+    } catch (AndesEventAdminServiceEventAdminException e) {
+%>
+<script type="text/javascript">
+    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
+</script>
+<%
+    }
     session.removeAttribute("topicWsSubscriptions");
     if (addedSubscriptions != null) {
         session.setAttribute("topicWsSubscriptions", addedSubscriptions);
     }
 
-    Subscription[] topicWsSubscriptions = (Subscription[]) session.getAttribute("topicWsSubscriptions");
     Subscription[] topicJMSSubscriptions = (Subscription[]) session.getAttribute("topicJMSSubscriptions");
 
 
-    int wsSubscriptionCount = stub.getAllWSSubscriptionCountForTopic(topic);
+    int wsSubscriptionCount = 0;
+    try {
+        wsSubscriptionCount = stub.getAllWSSubscriptionCountForTopic(topic);
+    } catch (AndesEventAdminServiceEventAdminException e) {
+%>
+<script type="text/javascript">
+    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
+</script>
+<%
+    }
     int pageCount = (int) Math.ceil(((float) wsSubscriptionCount) / 10);
     if (pageCount <= 0) {
         //this is to make sure it works with defualt values

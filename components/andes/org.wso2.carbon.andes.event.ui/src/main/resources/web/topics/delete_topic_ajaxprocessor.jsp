@@ -6,6 +6,7 @@
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="java.rmi.RemoteException" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
             .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -31,10 +32,10 @@
             message = "Error, Subscriptions exists for this topic, Please remove all subscriptions before deleting the topic";
         } else {
             stub.removeTopic(topic);
-            message = " Topic removed successfully";
+            message = "Topic removed successfully";
         }
-    } catch (RemoteException e) {
-        message = "Error in deleting topic  " + e;
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
 %> <%=message%>
 <%
     }

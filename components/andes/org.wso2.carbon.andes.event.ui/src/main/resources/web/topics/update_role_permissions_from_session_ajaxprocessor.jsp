@@ -6,6 +6,7 @@
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
             .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -29,8 +30,8 @@
     try {
         stub.updatePermission(topic, topicRolePermissionArrayList.toArray(topicRolePermissions));
         message = "Topic added successfully";
-    } catch (Exception e) {
-        message = "Error in adding/updating permissions : " + e.getMessage();
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
     }
 
     session.removeAttribute("topicRolePermissions");

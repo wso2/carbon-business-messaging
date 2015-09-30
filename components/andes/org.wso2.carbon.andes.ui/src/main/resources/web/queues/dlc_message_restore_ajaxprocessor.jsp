@@ -2,6 +2,7 @@
 <%@page import="org.wso2.carbon.ui.CarbonUIMessage"%>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
+<%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
@@ -16,8 +17,8 @@
     try {
         stub.restoreMessagesFromDeadLetterQueue(andesMessageIDs, nameOfQueue);
 
-    } catch (Exception e) {
-        CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
+    } catch (AndesAdminServiceBrokerManagerAdminException e) {
+        CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
     }
 %>

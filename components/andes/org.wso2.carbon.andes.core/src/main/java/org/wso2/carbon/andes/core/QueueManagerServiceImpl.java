@@ -106,16 +106,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
 
                 String queueID = CommonsUtil.getQueueID(queueName);
                 authorizePermissionsToLoggedInUser(tenantBasedQueueName, queueID, userRealm);
-                UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-                //Get all the roles of the logged in user and check whether the role is existing
-                String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
-                                                                                .getUsername());
-                for (String role : roleNames) {
-                    if (!role.equalsIgnoreCase(ROLE_EVERY_ONE) && userStoreManager.isExistingRole(role)) {
-                        userRealm.getAuthorizationManager().authorizeRole(
-                                role, queueID, PERMISSION_CHANGE_PERMISSION);
-                    }
-                }
+
             } else {
                 // TODO : Can we use error code for cleaner error handling ? this will hard bind to
                 //
@@ -256,11 +247,21 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                         (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
                          MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
-                if (!userRealm.getAuthorizationManager().isUserAuthorized(
-                        loggedInUser, queueID, PERMISSION_CHANGE_PERMISSION) &&
-                        !Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
+                boolean isUserHasChangePermission = false;
+                if (Utils.isAdmin(loggedInUser)) {
+                    isUserHasChangePermission = true;
+                } else {
+                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(loggedInUser);
+                    for (String userRole : userRoles) {
+                        if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                                userRole, queueID, PERMISSION_CHANGE_PERMISSION)) {
+                            isUserHasChangePermission = true;
+                        }
+                    }
+                }
+                if (!isUserHasChangePermission) {
                     throw new QueueManagerException(" User " + loggedInUser + " can not change" +
-                                                    " the permissions of " + queueName);
+                            " the permissions of " + queueName);
                 }
 
                 for (QueueRolePermission queueRolePermission : queueRolePermissions) {

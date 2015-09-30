@@ -82,10 +82,10 @@
                                 TopicNode topicNode = null;
                                 try {
                                     topicNode = stub.getAllTopics();
-                                } catch (Exception e) {
+                                } catch (AndesEventAdminServiceEventAdminException e) {
                                 %>
                             <script type="text/javascript">
-                                CARBON.showErrorDialog('<%= e.getMessage()%>');
+                                CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
                             </script>
                                 <%
                                 }

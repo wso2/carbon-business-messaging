@@ -55,8 +55,9 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().getTopicTree();
         } catch (EventBrokerException e) {
-            log.error("Error in accessing topic manager", e);
-            throw new EventAdminException("Error in accessing topic manager", e);
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
         }
     }
 
@@ -74,7 +75,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().getTopicRolePermission(topic);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in accessing topic manager";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -95,7 +96,7 @@ public class AndesEventAdminService extends AbstractAdmin {
                 throw new EventAdminException("Topic with name : " + topic + " already exists!");
             }
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in adding a topic";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -116,7 +117,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             eventBroker.getTopicManagerService().updatePermissions(topic, topicRolePermissions);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in updating permissions for topic";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -162,7 +163,7 @@ public class AndesEventAdminService extends AbstractAdmin {
             }
             return subscriptionsDTO;
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in accessing topic manager";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -182,7 +183,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return adaptSubscriptions(eventBroker.getTopicManagerService().getSubscriptions(topic, true));
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in accessing topic manager";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -202,7 +203,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().getSubscriptions(topic, true).length;
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in accessing topic manager";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -223,7 +224,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return adaptSubscriptions(eventBroker.getTopicManagerService().getJMSSubscriptions(topic));
         } catch (EventBrokerException e) {
-            String errorMessage = "Cannot get the jms subscriptions";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -240,7 +241,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().getBackendRoles();
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in getting user roles from topic manager";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -268,7 +269,7 @@ public class AndesEventAdminService extends AbstractAdmin {
                 throw new EventAdminException("Permission denied.");
             }
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in publishing to a topic";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -297,7 +298,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().checkUserHasAddTopicPermission(username);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in evaluating permission of user.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -326,7 +327,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().checkUserHasDeleteTopicPermission(username);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in evaluating permission of user.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -355,7 +356,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().checkUserHasDetailsTopicPermission(username);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in evaluating permission of user.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -384,7 +385,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().checkUserHasPublishTopicPermission(topicName, username);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in evaluating permission of user.";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }
@@ -404,7 +405,7 @@ public class AndesEventAdminService extends AbstractAdmin {
         try {
             return eventBroker.getTopicManagerService().removeTopic(topic);
         } catch (EventBrokerException e) {
-            String errorMessage = "Error in removing a topic";
+            String errorMessage = e.getMessage();
             log.error(errorMessage, e);
             throw new EventAdminException(errorMessage, e);
         }

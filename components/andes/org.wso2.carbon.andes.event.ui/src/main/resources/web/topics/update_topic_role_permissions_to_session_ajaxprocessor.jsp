@@ -9,9 +9,9 @@
     for(TopicRolePermission permission: topicRolePermissions){
         if(permission.getRoleName().equals(role)){
             if("subscribe".equals(action)){
-                permission.setAllowedToSubscribe("true".equals(checked) ? true : false);
+                permission.setAllowedToSubscribe("true".equals(checked));
             } else if ("publish".equals(action)){
-                permission.setAllowedToPublish("true".equals(checked) ? true : false);
+                permission.setAllowedToPublish("true".equals(checked));
             }
         }
     }
