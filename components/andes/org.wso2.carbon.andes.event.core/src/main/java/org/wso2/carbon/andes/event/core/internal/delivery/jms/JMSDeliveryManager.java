@@ -213,11 +213,7 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
 
             String tenantDomain= EventBrokerHolder.getInstance().getTenantDomain();
             if (tenantDomain != null && (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
-                if (!topicName.startsWith("/")) {
-                    topicName = getTopicName(tenantDomain + "/" + topicName);
-                } else {
-                    topicName = getTopicName(tenantDomain + topicName);
-                }
+                topicName = tenantDomain + "/" + getTopicName(topicName);
             } else {
                 topicName = getTopicName(topicName);
             }
@@ -301,7 +297,7 @@ public abstract class JMSDeliveryManager implements DeliveryManager {
     private String getLoggedInUserName() {
         String userName = "";
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > MultitenantConstants.INVALID_TENANT_ID) {
-            userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "@"
+            userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
                     + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         } else {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername();
