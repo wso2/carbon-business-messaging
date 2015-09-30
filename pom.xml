@@ -38,10 +38,8 @@
     <modules>
         <module>service-stubs</module>
         <module>components/andes</module>
-        <module>components/cassandra</module>
         <module>components/metrics</module>
         <module>features/andes</module>
-        <module>features/cassandra</module>
         <module>features/metrics</module>
     </modules>
 
@@ -312,11 +310,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.messaging</groupId>
-                <artifactId>org.wso2.carbon.cassandra.datareader</artifactId>
-                <version>${carbon.messaging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.messaging</groupId>
                 <artifactId>org.wso2.carbon.andes.event.core</artifactId>
                 <version>${carbon.messaging.version}</version>
             </dependency>
@@ -487,21 +480,6 @@
                 <groupId>libthrift.wso2</groupId>
                 <artifactId>libthrift</artifactId>
                 <version>${libthrift.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.orbit.org.apache.cassandra</groupId>
-                <artifactId>cassandra-thrift</artifactId>
-                <version>${cassandra.thrift.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
-                <version>${datastax.cassandra.driver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hectorclient</groupId>
-                <artifactId>hector-core</artifactId>
-                <version>${hector-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -697,9 +675,6 @@
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-cli.wso2.version>1.2.0.wso2v1</commons-cli.wso2.version>
         <libthrift.version>0.9.2.wso2v1</libthrift.version>
-        <cassandra.thrift.version>2.1.5.wso2v1</cassandra.thrift.version>
-        <datastax.cassandra.driver.version>2.1.5</datastax.cassandra.driver.version>
-        <hector-core.version>2.0-0</hector-core.version>
         <testng.version>6.3.1</testng.version>
         <junit.version>3.8.2</junit.version>
         <slf4j.version>1.7.2</slf4j.version>
