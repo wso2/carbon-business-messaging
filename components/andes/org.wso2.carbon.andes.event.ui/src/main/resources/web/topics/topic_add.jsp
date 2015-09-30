@@ -8,6 +8,7 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.regex.Pattern" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -147,10 +148,10 @@
                 topicRolePermissions.add(topicRolePermission);
             }
 
-        } catch (Exception e) {
+        } catch (AndesEventAdminServiceEventAdminException e) {
 %>
 <script type="text/javascript">
-    CARBON.showErrorDialog('<%= e.getMessage()%>');
+    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
 </script>
 <%
             return;

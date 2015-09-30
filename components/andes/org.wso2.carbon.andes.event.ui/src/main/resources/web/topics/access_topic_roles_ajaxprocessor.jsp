@@ -4,6 +4,7 @@
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
             .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -23,8 +24,8 @@
 
     try {
         session.setAttribute("userRoles", stub.getUserRoles());
-    } catch (Exception e) {
-        String message = e.getMessage();
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        String message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
 %><%=message%><%
     }
 %>

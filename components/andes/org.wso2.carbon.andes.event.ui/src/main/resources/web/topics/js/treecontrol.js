@@ -169,7 +169,6 @@ function addTopicToBackEnd(topic) {
                 }
                 else {
                     addPermissions();
-//                    updatePermissions();
                 }
             }
         },
@@ -298,8 +297,7 @@ function addPermissions() {
                         location.href = "../topics/topics.jsp"
                     });
                 } else {
-                    var message = "Topic added successfully";
-                    CARBON.showInfoDialog("" + message, function() {
+                    CARBON.showInfoDialog("" + o.responseText, function() {
                         location.href = "../topics/topics.jsp"
                     });
                 }
@@ -311,7 +309,7 @@ function addPermissions() {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "update_role_permissions_ajaxprocessor.jsp", callback, "permissions=" + parameters + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "update_role_permissions_from_session_ajaxprocessor.jsp", callback, "permissions=" + parameters + "&type=input");
 }
 
 // Updates permissions of a topic
@@ -339,8 +337,7 @@ function updatePermissions() {
                         location.href = "../topics/topic_manage.jsp"
                     });
                 } else {
-                    var message = "Updated permissions successfully";
-                    CARBON.showInfoDialog("" + message, function() {
+                    CARBON.showInfoDialog("" + o.responseText, function() {
                         location.href = "../topics/topic_manage.jsp"
                     });
                 }

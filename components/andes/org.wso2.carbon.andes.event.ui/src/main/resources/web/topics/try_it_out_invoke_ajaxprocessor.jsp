@@ -4,6 +4,7 @@
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%
 
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
@@ -32,8 +33,8 @@
         } else {
             messageToBePrinted = "Error: Failed to get document element from message " + textMsg;
         }
-    } catch (Exception e) {
-        messageToBePrinted = "Error: while publishing the message " + e.getMessage();
+    } catch (AndesEventAdminServiceEventAdminException e) {
+        messageToBePrinted = e.getFaultMessage().getEventAdminException().getErrorMessage();
     }
 
     if (messageToBePrinted == null) {
