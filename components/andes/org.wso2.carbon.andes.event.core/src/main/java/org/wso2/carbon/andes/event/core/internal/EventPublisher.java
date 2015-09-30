@@ -35,17 +35,20 @@ public class EventPublisher implements Runnable {
     private DeliveryManager delivaryManager;
     private int deliveryMode;
     private int tenantID;
+    private String username;
 
     public EventPublisher(Message message,
                           String topicName,
                           DeliveryManager delivaryManager,
                           int deliveryMode,
-                          int tenantID) {
+                          int tenantID,
+                          String username) {
         this.message = message;
         this.topicName = topicName;
         this.delivaryManager = delivaryManager;
         this.deliveryMode = deliveryMode;
         this.tenantID = tenantID;
+        this.username = username;
     }
 
     public void run() {
@@ -53,6 +56,7 @@ public class EventPublisher implements Runnable {
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantID);
             PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true);
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(username);
             this.delivaryManager.publish(this.message, this.topicName, this.deliveryMode);
         } catch (EventBrokerException e) {
             log.error("Can not publish the message ", e);

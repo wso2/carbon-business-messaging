@@ -217,7 +217,8 @@ public class CarbonEventBroker implements EventBroker {
                                    topicName,
                                    this.deliveryManager,
                                    deliveryMode,
-                                   CarbonContext.getThreadLocalCarbonContext().getTenantId());
+                                   CarbonContext.getThreadLocalCarbonContext().getTenantId(),
+                                   CarbonContext.getThreadLocalCarbonContext().getUsername());
         this.executor.execute(eventPublisher);
     }
 
