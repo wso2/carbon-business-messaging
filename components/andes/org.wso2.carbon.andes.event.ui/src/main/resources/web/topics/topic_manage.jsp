@@ -283,48 +283,50 @@
 </div>
 <div style="clear:both">&nbsp;</div>
 
-<h3><fmt:message key="publish"/></h3>
-<table class="styledLeft">
-    <tr>
-        <td class="formRaw">
-            <table class="normal">
-                <tr>
-                    <td><fmt:message key="topic"/>
-                    </td>
-                    <td>
-                        <input class="longInput" type="text" readonly="true" name="topic"
-                               id="topic" value="<%=topic%>"/>
-                    </td>
+<%if (!topic.equals("/")) { %>
+    <h3><fmt:message key="publish"/></h3>
+    <table class="styledLeft">
+        <tr>
+            <td class="formRaw">
+                <table class="normal">
+                    <tr>
+                        <td><fmt:message key="topic"/>
+                        </td>
+                        <td>
+                            <input class="longInput" type="text" readonly="true" name="topic"
+                                   id="topic" value="<%=topic%>"/>
+                        </td>
 
-                </tr>
-                <tr>
-                    <td><fmt:message key="text.message"/></td>
-                    <td><textarea cols="50" rows="10" name="textMessage" id="textMessage"></textarea>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
+                    </tr>
+                    <tr>
+                        <td><fmt:message key="text.message"/></td>
+                        <td><textarea cols="50" rows="10" name="textMessage" id="textMessage"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
 
-        <% try {
-            if(stub.checkCurrentUserHasPublishTopicPermission(topic)){ %>
-        <td>
-            <input type="button" onclick="invokeService()" value="<fmt:message key="publish"/>">
-        </td>
-        <% } else { %>
-        <td>
-            <input type="button" disabled onclick="invokeService()" value="<fmt:message key="publish"/>">
-        </td>
-        <% }
-        } catch (AndesEventAdminServiceEventAdminException e) { %>
-        <td>
-            <input type="button" disabled onclick="invokeService()" value="<fmt:message key="publish"/>">
-        </td>
-        <% } %>
+            <% try {
+                if(stub.checkCurrentUserHasPublishTopicPermission(topic)){ %>
+            <td>
+                <input type="button" onclick="invokeService()" value="<fmt:message key="publish"/>">
+            </td>
+            <% } else { %>
+            <td>
+                <input type="button" disabled onclick="invokeService()" value="<fmt:message key="publish"/>">
+            </td>
+            <% }
+            } catch (AndesEventAdminServiceEventAdminException e) { %>
+            <td>
+                <input type="button" disabled onclick="invokeService()" value="<fmt:message key="publish"/>">
+            </td>
+            <% } %>
 
-    </tr>
-</table>
+        </tr>
+    </table>
+<% } %>
 </div>
 </div>
 </div>
