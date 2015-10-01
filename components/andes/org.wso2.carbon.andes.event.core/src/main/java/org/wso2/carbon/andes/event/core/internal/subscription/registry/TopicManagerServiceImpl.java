@@ -43,6 +43,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -368,8 +369,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                     Subscription subscriptionDetails = new Subscription();
                     subscriptionDetails.setId(subscription.getProperty("Name"));
                     subscriptionDetails.setOwner(subscription.getProperty("Owner"));
-                    subscriptionDetails.setCreatedTime(ConverterUtil.convertToDate(subscription.getProperty("createdTime")));
-
+                    subscriptionDetails.setCreatedTime(new Date(subscription.getCreatedTime().getTime()));
                     subscriptionsArray[index++] = subscriptionDetails;
                 }
             }
