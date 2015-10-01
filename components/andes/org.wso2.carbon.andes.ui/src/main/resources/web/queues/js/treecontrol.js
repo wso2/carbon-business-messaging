@@ -305,26 +305,29 @@ function checkBoxStatus(queueName)
     var callback =
     {
         success:function(o) {
-            if (o.responseText.equals("true")) // if the queue has subscribers
-            {
-                 if(document.getElementById("isExclusiveConsumer").checked)
-                       {
-                           document.getElementById("isExclusiveConsumer").checked=true;
-                       }
-                 else  {
-                           document.getElementById("isExclusiveConsumer").checked=false;
-                       }
-             }
-            else { // queue has no subscribers
-                      if(document.getElementById("isExclusiveConsumer").checked)
-                      {
-                        document.getElementById("isExclusiveConsumer").checked=false;
-                      }
-                      else
-                      {
-                        document.getElementById("isExclusiveConsumer").checked=true;
-                      }
+            if (o.responseText.equals("true")) { // if the queue has subscribers
+
+                if(document.getElementById("isExclusiveConsumer").checked) {
+
+                    document.getElementById("isExclusiveConsumer").checked=true;
+
+                } else {
+                    document.getElementById("isExclusiveConsumer").checked=false;
                 }
+
+            } else { // queue has no subscribers
+
+                if(document.getElementById("isExclusiveConsumer").checked){
+
+                    document.getElementById("isExclusiveConsumer").checked=false;
+                }
+                if(document.getElementById("isExclusiveConsumer").checked){
+
+                    document.getElementById("isExclusiveConsumer").checked=false;
+                } else {
+                    document.getElementById("isExclusiveConsumer").checked=true;
+                }
+            }
         },
         failure:function(o) {
             if (o.responseText !== undefined) {
@@ -332,6 +335,7 @@ function checkBoxStatus(queueName)
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "check_subscription_from_backend_ajaxprocessor.jsp", callback, "queueName=" + queueName + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "check_subscription_from_backend_ajaxprocessor.jsp",
+        callback, "queueName=" + queueName + "&type=input");
 
 }
