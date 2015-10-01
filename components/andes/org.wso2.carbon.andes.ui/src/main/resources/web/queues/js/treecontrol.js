@@ -5,10 +5,9 @@ function addQueue(createdFrom) {
 
     if(exclusiveValue.checked){
          var exclusiveConsumer = exclusiveValue.value;
-         }
-    else {
+    } else {
          var exclusiveConsumer = "";
-         }
+    }
     var error = "";
 
     if (topic.value == "") {
