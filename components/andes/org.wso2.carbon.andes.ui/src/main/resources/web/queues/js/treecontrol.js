@@ -4,9 +4,9 @@ function addQueue(createdFrom) {
     var exclusiveValue = document.getElementById("isExclusiveConsumer");
 
     if(exclusiveValue.checked){
-         var exclusiveConsumer = exclusiveValue.value;
+        var exclusiveConsumer = exclusiveValue.value;
     } else {
-         var exclusiveConsumer = "";
+        var exclusiveConsumer = "";
     }
     var error = "";
 
@@ -48,8 +48,8 @@ function addQueueToBackEnd(queue, exclusiveConsumer, createdFrom) {
     };
 
     //sending queue name with exclusive consumer
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback, "queue="+
-                                                queue + "&exclusiveConsumer="+ exclusiveConsumer + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_to_backend_ajaxprocessor.jsp", callback,
+        "queue="+ queue + "&exclusiveConsumer="+ exclusiveConsumer + "&type=input");
 }
 
 function addPermissions() {
@@ -78,15 +78,14 @@ function addPermissions() {
 }
 
 function updatePermissions() {
-        //exclusive consumer value of the queue
-      var exclusiveConsumer = document.getElementById("isExclusiveConsumer");
+    //exclusive consumer value of the queue
+    var exclusiveConsumer = document.getElementById("isExclusiveConsumer");
 
-      if(exclusiveConsumer.checked){
-          var exclusiveValue = exclusiveConsumer.value;
-          }
-      else{
-          var exclusiveValue = "";
-          }
+    if(exclusiveConsumer.checked){
+        var exclusiveValue = exclusiveConsumer.value;
+    } else {
+        var exclusiveValue = "";
+    }
 
     var permissionTable = document.getElementById("permissionsTable");
     var rowCount = permissionTable.rows.length;
@@ -126,8 +125,8 @@ function updatePermissions() {
         }
     };
     //sending along with exclusive consumer value
-    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_ajaxprocessor.jsp", callback, "permissions=" +
-                                parameters + "&isExclusiveConsumer="+ exclusiveValue + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "update_queue_role_permissions_ajaxprocessor.jsp",
+        callback, "permissions=" + parameters + "&isExclusiveConsumer="+ exclusiveValue + "&type=input");
 }
 
 function showManageQueueWindow(queueName) {
@@ -147,70 +146,68 @@ function showManageQueueWindow(queueName) {
     var request = YAHOO.util.Connect.asyncRequest('POST', "load_queue_details_from_bEnd_ajaxprocessor.jsp", callback, "queueName=" + queueName + "&type=input");
 }
 
- function doDelete(queueName) {
-        var theform = document.getElementById('deleteForm');
-        theform.queueName.value = queueName;
-        theform.submit();
- }
- 
- 
- function doDeleteDLC(nameOfQueue) {
-	 var checkedValues = getCheckedValues();
-	 if(checkedValues == null || checkedValues == "" ){
-		  var msg = org_wso2_carbon_andes_ui_jsi18n["info.zero.items.selected"]+ " " + org_wso2_carbon_andes_ui_jsi18n["delete"];
-		  CARBON.showInfoDialog(msg);
-		  return;
-	 }
-	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.delete"], function(){
-		 $.ajax({
-	 				url:'../queues/dlc_message_delete_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
-	 				async:true,
-	 				dataType:"html",
-	 				success: function() {
-       	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.delete"], function(){
-       	                		location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-	                		 });
-       	                   
-       	                },
-	
-       	             failure: function(transport) {
-       	                 CARBON.showErrorDialog(trim(transport.responseText),function(){
-       	                	location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-       	                	 return;
-	                	      });
-       	                }
-       	            });
-			 });
+function doDelete(queueName) {
+    var theform = document.getElementById('deleteForm');
+    theform.queueName.value = queueName;
+    theform.submit();
 }
- 
- function deRestoreMessages(nameOfQueue){
-	 var checkedValues = getCheckedValues();
-	 if(checkedValues == null || checkedValues == ""){
-		  var msg = org_wso2_carbon_andes_ui_jsi18n["info.zero.items.selected"]+ " " + org_wso2_carbon_andes_ui_jsi18n["restore"];
-		  CARBON.showInfoDialog(msg);
-		  return;
-	 }
-	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.restore"], function(){
-		 $.ajax({
-	 				url:'../queues/dlc_message_restore_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
-	 				async:true,
-	 				dataType:"html",
-	 				success: function() {
-       	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.restore"], function(){
-       	                		location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-	                		 });
-       	                   
-       	                },
-	
-       	             failure: function(transport) {
-       	                 CARBON.showErrorDialog(trim(transport.responseText),function(){
-       	                	location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-       	                	 return;
-	                	      });
-       	                }
-       	            });
-			 });
- }
+
+
+function doDeleteDLC(nameOfQueue) {
+    var checkedValues = getCheckedValues();
+    if(checkedValues == null || checkedValues == "" ) {
+        var msg = org_wso2_carbon_andes_ui_jsi18n["info.zero.items.selected"]+ " " + org_wso2_carbon_andes_ui_jsi18n["delete"];
+        CARBON.showInfoDialog(msg);
+        return;
+    }
+    CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.delete"], function() {
+        $.ajax({
+            url:'../queues/dlc_message_delete_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
+            async:true,
+            dataType:"html",
+            success: function() {
+                CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.delete"], function(){
+                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                });
+            },
+            failure: function(transport) {
+                CARBON.showErrorDialog(trim(transport.responseText),function(){
+                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                    return;
+                });
+            }
+        });
+    });
+}
+
+function deRestoreMessages(nameOfQueue){
+    var checkedValues = getCheckedValues();
+    if(checkedValues == null || checkedValues == ""){
+        var msg = org_wso2_carbon_andes_ui_jsi18n["info.zero.items.selected"]+ " " + org_wso2_carbon_andes_ui_jsi18n["restore"];
+        CARBON.showInfoDialog(msg);
+        return;
+    }
+    CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.restore"], function(){
+        $.ajax({
+            url:'../queues/dlc_message_restore_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
+            async:true,
+            dataType:"html",
+            success: function() {
+                CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.restore"], function(){
+                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                });
+
+            },
+
+            failure: function(transport) {
+                CARBON.showErrorDialog(trim(transport.responseText),function(){
+                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                    return;
+                });
+            }
+        });
+    });
+}
 
 function doReRouteMessages(nameOfQueue) {
     var checkedValues = getCheckedValues();
@@ -273,13 +270,13 @@ function doReRouteMessages(nameOfQueue) {
     });
 }
 
- 
- function getCheckedValues(){
-	 	return $('input[name="checkbox"]:checked').map(
-	 			function() {
-	 				return this.value;
-	 				}).get().join(',');
- }
+
+function getCheckedValues(){
+    return $('input[name="checkbox"]:checked').map(
+        function() {
+            return this.value;
+        }).get().join(',');
+}
 
 function validateForm(){
     var msg_count = document.getElementById("num_of_msgs");
