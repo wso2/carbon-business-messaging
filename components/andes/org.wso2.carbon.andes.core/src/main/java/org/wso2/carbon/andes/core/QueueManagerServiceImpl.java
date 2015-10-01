@@ -587,14 +587,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public long getNumberMessagesInDLCForQueue(String queueName) throws QueueManagerException {
+    public long getNumberOfMessagesInDLCForQueue(String queueName) throws QueueManagerException {
         long messageCount = 0;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
-            String operationName = "getNumberMessagesInDLCForQueue";
+            String operationName = "getNumberOfMessagesInDLCForQueue";
             Object[] parameters = new Object[]{queueName};
             String[] signature = new String[]{String.class.getName()};
             Object result = mBeanServer.invoke(

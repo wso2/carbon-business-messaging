@@ -542,12 +542,12 @@ public class AndesAdminService extends AbstractAdmin {
      * @return The number of messages.
      * @throws BrokerManagerAdminException
      */
-    public long getNumberMessagesInDLCForQueue(String queueName)
+    public long getNumberOfMessagesInDLCForQueue(String queueName)
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService =
                 AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
         try {
-            return queueManagerService.getNumberMessagesInDLCForQueue(queueName);
+            return queueManagerService.getNumberOfMessagesInDLCForQueue(queueName);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
             log.error(errorMessage, e);

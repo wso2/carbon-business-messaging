@@ -220,7 +220,7 @@ public interface QueueManagerService {
      * @return The number of messages.
      * @throws QueueManagerException
      */
-    long getNumberMessagesInDLCForQueue(String queueName) throws QueueManagerException;
+    long getNumberOfMessagesInDLCForQueue(String queueName) throws QueueManagerException;
 
     /**
      * Gets the messages in the DLC for a specific queue.
