@@ -137,6 +137,8 @@
 
 
                                         <%--View details--%>
+                                    <%if (!node.getTopicName().equals("/")) {%>
+
                                     <% try {
                                         if(stub.checkCurrentUserHasAddTopicPermission() || stub.checkCurrentUserHasDetailsTopicPermission()){ %>
                                     <a class="topicDetailsStyle"
@@ -146,6 +148,8 @@
                                     <% }
                                     } catch (AndesEventAdminServiceEventAdminException e) { %>
                                     <a class="topicDetailsStyle disabled-ahref">Details</a>
+                                    <% } %>
+
                                     <% } %>
 
 
