@@ -382,6 +382,17 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
+     * Returns true if SSL port enabled and default port disabled.
+     *
+     * @return if only port enabled is SSL port
+     * @throws ConfigurationException
+     */
+    public boolean getMQTTSSLOnly() throws ConfigurationException {
+        return ApplicationRegistry.getInstance().getConfiguration().getMQTTSSLOnly();
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     @Override
