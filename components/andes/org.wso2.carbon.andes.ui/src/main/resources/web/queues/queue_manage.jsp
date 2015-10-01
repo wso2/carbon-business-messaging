@@ -48,15 +48,14 @@
     <%
             return;
         } else {
-              queue = (String) session.getAttribute("queue");
-              exclusiveConsumer = (Boolean)session.getAttribute("isExclusiveConsumer"+queue);
+            queue = (String) session.getAttribute("queue");
+            exclusiveConsumer = (Boolean)session.getAttribute("isExclusiveConsumer"+queue);
 
-              if( exclusiveConsumer){
-                  exclusiveCheck = "checked";
-                  }
-              else{
-                  exclusiveCheck = " ";
-                  }
+            if( exclusiveConsumer) {
+                exclusiveCheck = "checked";
+            } else {
+                exclusiveCheck = " ";
+            }
         }
 %>
     <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
