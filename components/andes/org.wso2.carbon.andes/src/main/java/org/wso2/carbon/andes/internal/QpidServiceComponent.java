@@ -469,7 +469,7 @@ public class QpidServiceComponent {
         boolean isServerStarted = false;
         int port;
 
-        if (qpidServiceImpl.getIfSSLOnly()) {
+        if (qpidServiceImpl.getMQTTSSLOnly()) {
             port = qpidServiceImpl.getMqttSSLPort();
         } else {
             port = qpidServiceImpl.getMqttPort();
