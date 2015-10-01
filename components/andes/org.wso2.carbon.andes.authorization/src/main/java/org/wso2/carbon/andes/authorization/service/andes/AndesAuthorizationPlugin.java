@@ -123,9 +123,6 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
 
             String username = principal.getName();
 
-            // Get User Realm
-            UserRealm userRealm = getUserRealm(username);
-
             if (username.contains(DOMAIN_NAME_SEPARATOR)) {
                 String tenantDomain = username.substring(username.indexOf(DOMAIN_NAME_SEPARATOR) + 1);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
@@ -135,6 +132,9 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(MultitenantConstants
                                                                                               .SUPER_TENANT_DOMAIN_NAME);
             }
+
+            // Get User Realm
+            UserRealm userRealm = getUserRealm(username);
 
             int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
             if (-1 != domainNameSeparatorIndex) {
