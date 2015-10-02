@@ -204,8 +204,22 @@ public class AndesAuthorizationHandler {
 
             String queueID = CommonsUtil.getQueueID(queueName);
 
-            authorizeQueuePermissionsToLoggedInUser(username, newQueueName, queueID,
-                                                    userRealm);
+            //we avoid creating role for non durable topic subscriber temporary queue and durable topic subscriber
+            //subscription id queue
+            boolean isCreateRole = true;
+            if (isDurableTopicSubscriberQueue(
+                    properties.get(ObjectProperties.Property.NAME),
+                    properties.get(ObjectProperties.Property.OWNER))
+                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                isCreateRole = false;
+            } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
+                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                isCreateRole = false;
+            }
+            if (isCreateRole) {
+                authorizeQueuePermissionsToLoggedInUser(username, newQueueName, queueID,
+                        userRealm);
+            }
         }
     }
 
@@ -406,8 +420,22 @@ public class AndesAuthorizationHandler {
                             // Store subscription
                             RegistryClient.createSubscription(newRoutingKey, newQName, username);
 
-                            authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
-                                    tempQueueId, userRealm);
+                            //Giving permissions for the temporary queue
+                            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+                            for (String userRole : userRoles) {
+                                if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                                        userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                            TreeNode.Permission.CONSUME.toString()
+                                                    .toLowerCase());
+                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                            TreeNode.Permission.PUBLISH.toString()
+                                                    .toLowerCase());
+                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                            PERMISSION_CHANGE_PERMISSION);
+                                }
+
+                            }
                             accessResult = Result.ALLOWED;
                         }
                         break;
@@ -829,7 +857,7 @@ public class AndesAuthorizationHandler {
                                                                     throws UserStoreException {
 
         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                                             topicName.replace("/", "-"));
+                                                             topicName.replace(".","-").replace("/", "-"));
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
         String[] user = {MultitenantUtils.getTenantAwareUsername(username)};
 
