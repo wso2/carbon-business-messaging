@@ -16,7 +16,7 @@
         //the queueName is not set, it is assumed that the requirement is to get all queues
         if ("".equals(queueName) || null == queueName) {
             for (Queue queue : queueList) {
-                if (!queue.getQueueName().equals(Constants.DEAD_LETTER_QUEUE_NAME)) {
+                if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(queue.getQueueName()))) {
                     queueListString = queueListString + queue.getQueueName() + "#";
                 }
             }
@@ -34,7 +34,7 @@
             } else {
                 for (Queue queue : queueList) {
                     String currentQueueName = queue.getQueueName();
-                    if (!currentQueueName.equals(Constants.DEAD_LETTER_QUEUE_NAME)) {
+                    if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(currentQueueName))) {
                         if (!currentQueueName.contains(":")) {
                             queueListString = queueListString + currentQueueName + "#";
                         }

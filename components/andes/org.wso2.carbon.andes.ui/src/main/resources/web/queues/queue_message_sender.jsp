@@ -95,7 +95,7 @@
                     int priority = 4;
 
                     boolean success = stub.sendMessage(nameOfQueue, jms_type, cor_id, msg_count, message_txt, delivery_mode, priority, time_to_live);
-                    if(success) {
+                    if (success) {
                     %>
                         <script type="text/javascript">CARBON.showInfoDialog('Successfully sent <%=numberOfMessagesToSend%> messages to Queue <%=nameOfQueue%>' , function
                                 () {

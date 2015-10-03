@@ -83,11 +83,11 @@
         int msgCountPerPage = AndesConfigurationManager.readValue(
                 AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BROWSE_PAGE_SIZE);
 
-        Map<Integer, Long> pageNumberToMessageIdMap = null;
-        if (request.getSession().getAttribute("pageNumberToMessageIdMap") != null) {
+        Map<Integer, Long> pageNumberToMessageIdMap;
+        if (null != request.getSession().getAttribute("pageNumberToMessageIdMap")) {
             pageNumberToMessageIdMap = (Map<Integer, Long>) request.getSession().getAttribute("pageNumberToMessageIdMap");
         } else {
-            pageNumberToMessageIdMap = new HashMap<Integer, Long>();
+            pageNumberToMessageIdMap = new HashMap<>();
         }
 
         int pageNumber = 0;
@@ -108,7 +108,7 @@
             if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
                 totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
             } else {
-                totalMsgsInQueue = stub.getNumberMessagesInDLCForQueue(nameOfQueue);
+                totalMsgsInQueue = stub.getNumberOfMessagesInDLCForQueue(nameOfQueue);
             }
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
             
@@ -116,7 +116,7 @@
                 if (0 == pageNumber){
                     nextMessageIdToRead = 0;
                 }
-                else if (pageNumberToMessageIdMap.get(pageNumber) != null) {
+                else if (null != pageNumberToMessageIdMap.get(pageNumber)) {
                     nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
                 }
             }
@@ -126,7 +126,7 @@
             } else {
                 filteredMsgArray = stub.getMessageInDLCForQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
             }
-            if (filteredMsgArray != null && filteredMsgArray.length > 0) {
+            if (null != filteredMsgArray && filteredMsgArray.length > 0) {
                 startMessageIdOfPage = filteredMsgArray[0].getAndesMsgMetadataId();
                 pageNumberToMessageIdMap.put(pageNumber, startMessageIdOfPage);
                 nextMessageIdToRead = filteredMsgArray[filteredMsgArray.length - 1].getAndesMsgMetadataId() + 1;
@@ -280,10 +280,10 @@
                 </thead>
                 <tbody>
                 <%
-                    if (filteredMsgArray != null) {
+                    if (null != filteredMsgArray) {
                         int count = 1;
                         for (Message queueMessage : filteredMsgArray) {
-                            if (queueMessage != null) {
+                            if (null != queueMessage) {
                                 String msgProperties = queueMessage.getMsgProperties();
                                 String contentType = queueMessage.getContentType();
                                 String[] messageContent = queueMessage.getMessageContent();

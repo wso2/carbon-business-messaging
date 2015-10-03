@@ -119,7 +119,7 @@
         <operation name="deleteMessagesFromDeadLetterQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/delete</parameter>
         </operation>
-        <operation name="getNumberMessagesInDLCForQueue">
+        <operation name="getNumberOfMessagesInDLCForQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="getMessageInDLCForQueue">

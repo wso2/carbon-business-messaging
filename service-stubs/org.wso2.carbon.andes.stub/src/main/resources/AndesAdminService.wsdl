@@ -543,14 +543,14 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getNumberMessagesInDLCForQueue">
+            <xs:element name="getNumberOfMessagesInDLCForQueue">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getNumberMessagesInDLCForQueueResponse">
+            <xs:element name="getNumberOfMessagesInDLCForQueueResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:long"/>
@@ -643,11 +643,11 @@
     <wsdl:message name="checkUserHasDeleteMessagesInDLCPermissionResponse">
         <wsdl:part name="parameters" element="ns:checkUserHasDeleteMessagesInDLCPermissionResponse"/>
     </wsdl:message>
-    <wsdl:message name="getNumberMessagesInDLCForQueueRequest">
-        <wsdl:part name="parameters" element="ns:getNumberMessagesInDLCForQueue"/>
+    <wsdl:message name="getNumberOfMessagesInDLCForQueueRequest">
+        <wsdl:part name="parameters" element="ns:getNumberOfMessagesInDLCForQueue"/>
     </wsdl:message>
-    <wsdl:message name="getNumberMessagesInDLCForQueueResponse">
-        <wsdl:part name="parameters" element="ns:getNumberMessagesInDLCForQueueResponse"/>
+    <wsdl:message name="getNumberOfMessagesInDLCForQueueResponse">
+        <wsdl:part name="parameters" element="ns:getNumberOfMessagesInDLCForQueueResponse"/>
     </wsdl:message>
     <wsdl:message name="restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest">
         <wsdl:part name="parameters" element="ns:restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
@@ -880,10 +880,10 @@
             <wsdl:output message="tns:checkUserHasDeleteMessagesInDLCPermissionResponse" wsaw:Action="urn:checkUserHasDeleteMessagesInDLCPermissionResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkUserHasDeleteMessagesInDLCPermissionAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
-        <wsdl:operation name="getNumberMessagesInDLCForQueue">
-            <wsdl:input message="tns:getNumberMessagesInDLCForQueueRequest" wsaw:Action="urn:getNumberMessagesInDLCForQueue"/>
-            <wsdl:output message="tns:getNumberMessagesInDLCForQueueResponse" wsaw:Action="urn:getNumberMessagesInDLCForQueueResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getNumberMessagesInDLCForQueueAndesAdminServiceBrokerManagerAdminException"/>
+        <wsdl:operation name="getNumberOfMessagesInDLCForQueue">
+            <wsdl:input message="tns:getNumberOfMessagesInDLCForQueueRequest" wsaw:Action="urn:getNumberOfMessagesInDLCForQueue"/>
+            <wsdl:output message="tns:getNumberOfMessagesInDLCForQueueResponse" wsaw:Action="urn:getNumberOfMessagesInDLCForQueueResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getNumberOfMessagesInDLCForQueueAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <wsdl:input message="tns:restoreMessagesFromDeadLetterQueueWithDifferentDestinationRequest" wsaw:Action="urn:restoreMessagesFromDeadLetterQueueWithDifferentDestination"/>
@@ -1140,8 +1140,8 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getNumberMessagesInDLCForQueue">
-            <soap:operation soapAction="urn:getNumberMessagesInDLCForQueue" style="document"/>
+        <wsdl:operation name="getNumberOfMessagesInDLCForQueue">
+            <soap:operation soapAction="urn:getNumberOfMessagesInDLCForQueue" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1659,8 +1659,8 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getNumberMessagesInDLCForQueue">
-            <soap12:operation soapAction="urn:getNumberMessagesInDLCForQueue" style="document"/>
+        <wsdl:operation name="getNumberOfMessagesInDLCForQueue">
+            <soap12:operation soapAction="urn:getNumberOfMessagesInDLCForQueue" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -2160,8 +2160,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getNumberMessagesInDLCForQueue">
-            <http:operation location="getNumberMessagesInDLCForQueue"/>
+        <wsdl:operation name="getNumberOfMessagesInDLCForQueue">
+            <http:operation location="getNumberOfMessagesInDLCForQueue"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
