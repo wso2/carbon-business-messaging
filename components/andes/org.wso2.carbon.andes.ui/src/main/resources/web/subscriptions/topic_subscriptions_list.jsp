@@ -84,7 +84,9 @@
     int normalTopicPageNumber = 0;
     int activeDurableTopicPageNumber = 0;
     int inactiveDurableTopicPageNumber = 0;
-    int numberOfPages = 1;
+    int numberOfNormalTopicSubscriptionPages = 1;
+    int numberOfActiveDurableSubscriptionPages = 1;
+    int numberOfInactiveDurableSubscriptionPages = 1;
     String concatenatedParams = "region=region1&item=Topic_subscriptions";
     try {
         normalTopicSubscriptionList = stub.getAllLocalTempTopicSubscriptions();
@@ -111,7 +113,7 @@
         long totalInactiveDurableTopicSubscriptionCount;
         String normalTopicPageNumberAsStr = request.getParameter("normalTopicPageNumber");
         String activeDurableTopicPageNumberAsStr = request.getParameter("activeDurableTopicPageNumber");
-        String inActiveDurableTopicPageNumberAsStr = request.getParameter("inActiveDurableTopicPageNumber");
+        String inactiveDurableTopicPageNumberAsStr = request.getParameter("inactiveDurableTopicPageNumber");
 
         if (normalTopicPageNumberAsStr != null) {
             normalTopicPageNumber = Integer.parseInt(normalTopicPageNumberAsStr);
@@ -119,25 +121,25 @@
         if (activeDurableTopicPageNumberAsStr != null) {
             activeDurableTopicPageNumber = Integer.parseInt(activeDurableTopicPageNumberAsStr);
         }
-        if (inActiveDurableTopicPageNumberAsStr != null) {
-            inactiveDurableTopicPageNumber = Integer.parseInt(inActiveDurableTopicPageNumberAsStr);
+        if (inactiveDurableTopicPageNumberAsStr != null) {
+            inactiveDurableTopicPageNumber = Integer.parseInt(inactiveDurableTopicPageNumberAsStr);
         }
 
         if (normalTopicSubscriptionList != null) {
             totalNormalTopicSubscriptionCount = normalTopicSubscriptionList.length;
-            numberOfPages = (int) Math.ceil(((float) totalNormalTopicSubscriptionCount) / subscriptionCountPerPage);
+            numberOfNormalTopicSubscriptionPages = (int) Math.ceil(((float) totalNormalTopicSubscriptionCount) / subscriptionCountPerPage);
             filteredNormalTopicSubscriptionList = UIUtils.getFilteredSubscriptionList(normalTopicSubscriptionList, normalTopicPageNumber * subscriptionCountPerPage, subscriptionCountPerPage);
         }
 
         if (activeDurableTopicSubscriptionList != null) {
             totalActiveDurableTopicSubscriptionCount = activeDurableTopicSubscriptionList.length;
-            numberOfPages = (int) Math.ceil(((float) totalActiveDurableTopicSubscriptionCount) / subscriptionCountPerPage);
+            numberOfActiveDurableSubscriptionPages = (int) Math.ceil(((float) totalActiveDurableTopicSubscriptionCount) / subscriptionCountPerPage);
             filteredActiveDurableTopicSubscriptionList = UIUtils.getFilteredSubscriptionList(activeDurableTopicSubscriptionList, activeDurableTopicPageNumber * subscriptionCountPerPage, subscriptionCountPerPage);
         }
 
         if (inActiveDurableTopicSubscriptionList != null) {
             totalInactiveDurableTopicSubscriptionCount = inActiveDurableTopicSubscriptionList.length;
-            numberOfPages = (int) Math.ceil(((float) totalInactiveDurableTopicSubscriptionCount) / subscriptionCountPerPage);
+            numberOfInactiveDurableSubscriptionPages = (int) Math.ceil(((float) totalInactiveDurableTopicSubscriptionCount) / subscriptionCountPerPage);
             filteredInActiveDurableTopicSubscriptionList = UIUtils.getFilteredSubscriptionList(inActiveDurableTopicSubscriptionList, inactiveDurableTopicPageNumber * subscriptionCountPerPage, subscriptionCountPerPage);
         }
 
@@ -181,7 +183,7 @@ No subscriptions are created.
 
 %>
 <input type="hidden" name="pageNumber" value="<%=normalTopicPageNumber%>"/>
-<carbon:paginator pageNumber="<%=normalTopicPageNumber%>" numberOfPages="<%=numberOfPages%>"
+<carbon:paginator pageNumber="<%=normalTopicPageNumber%>" numberOfPages="<%=numberOfNormalTopicSubscriptionPages%>"
                   page="topic_subscriptions_list.jsp" pageNumberParameterName="normalTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
@@ -232,8 +234,8 @@ No subscriptions are created.
 } else {
 
 %>
-<input type="hidden" name="pageNumber" value="<%=normalTopicPageNumber%>"/>
-<carbon:paginator pageNumber="<%=normalTopicPageNumber%>" numberOfPages="<%=numberOfPages%>"
+<input type="hidden" name="pageNumber" value="<%=activeDurableTopicPageNumber%>"/>
+<carbon:paginator pageNumber="<%=activeDurableTopicPageNumber%>" numberOfPages="<%=numberOfActiveDurableSubscriptionPages%>"
                   page="topic_subscriptions_list.jsp" pageNumberParameterName="activeDurableTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
@@ -297,9 +299,9 @@ No subscriptions are created.
 } else {
 
 %>
-<input type="hidden" name="pageNumber" value="<%=normalTopicPageNumber%>"/>
-<carbon:paginator pageNumber="<%=normalTopicPageNumber%>" numberOfPages="<%=numberOfPages%>"
-                  page="topic_subscriptions_list.jsp" pageNumberParameterName="inActiveDurableTopicPageNumber"
+<input type="hidden" name="pageNumber" value="<%=inactiveDurableTopicPageNumber%>"/>
+<carbon:paginator pageNumber="<%=inactiveDurableTopicPageNumber%>" numberOfPages="<%=numberOfInactiveDurableSubscriptionPages%>"
+                  page="topic_subscriptions_list.jsp" pageNumberParameterName="inactiveDurableTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
                   parameters="<%=concatenatedParams%>"/>
