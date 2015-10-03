@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.management.common.mbeans.QueueManagementInformation;
+import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
@@ -123,10 +124,37 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public List<org.wso2.carbon.andes.core.types.Queue> getAllQueues()
-            throws QueueManagerException {
+    public org.wso2.carbon.andes.core.types.Queue getQueueByName(String queueName) throws QueueManagerException {
+
+        if (QueueManagementBeans.getInstance().queueExists(queueName)) {
+
+            // create a queue with the message count
+            org.wso2.carbon.andes.core.types.Queue queue = new org.wso2.carbon.andes.core.types.Queue(queueName);
+            queue.setMessageCount(QueueManagementBeans.getInstance().getMessageCount(queueName, "queue"));
+
+            //show queue only if it belongs to the current tenant domain of user
+            if (Utils.isQueueInDomain(queue)) {
+                return queue;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public org.wso2.carbon.andes.core.types.Queue getDLCQueue(String tenantDomain) throws QueueManagerException {
+        return getQueueByName(DLCQueueUtils.generateDLCQueueNameFromTenant(tenantDomain));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<org.wso2.carbon.andes.core.types.Queue> getAllQueues() throws QueueManagerException {
         UserRealm userRealm;
-        List<org.wso2.carbon.andes.core.types.Queue> allQueues = QueueManagementBeans.getInstance().getAllQueues();
+        List<org.wso2.carbon.andes.core.types.Queue> allQueues = QueueManagementBeans.getInstance().getAllQueueCounts();
         //show queues belonging to current domain
         return Utils.filterDomainSpecificQueues(allQueues);
     }

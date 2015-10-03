@@ -36,9 +36,25 @@ public interface QueueManagerService {
     public void createQueue(String queueName) throws QueueManagerException;
 
     /**
-     * Gets a all the queues
+     * Retrieve a queue with the number of the messages remaining by passing the name
      *
-     * @return a list of queues
+     * @param queueName the name of the queue to be retrieved
+     * @return {@link org.wso2.carbon.andes.core.types.Queue} the queue
+     */
+    public org.wso2.carbon.andes.core.types.Queue getQueueByName(String queueName) throws QueueManagerException;
+
+    /**
+     * Retrieve the dlc queue associated to a tenant
+     *
+     * @param tenantDomain The name of the tenant domain
+     * @return {@link org.wso2.carbon.andes.core.types.Queue} the dlc queue
+     */
+    public org.wso2.carbon.andes.core.types.Queue getDLCQueue(String tenantDomain) throws QueueManagerException;
+
+    /**
+     * Gets all the queues
+     *
+     * @return a list of {@link org.wso2.carbon.andes.core.types.Queue} queues
      * @throws QueueManagerException
      */
     public List<org.wso2.carbon.andes.core.types.Queue> getAllQueues() throws QueueManagerException;

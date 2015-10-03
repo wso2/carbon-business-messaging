@@ -38,6 +38,15 @@ public class Queue {
     public Queue() {
     }
 
+    public Queue(org.wso2.carbon.andes.core.types.Queue queue){
+        this.queueName = queue.getQueueName();
+        this.queueDepth = queue.getQueueDepth();
+        this.messageCount = queue.getMessageCount();
+        this.createdTime = queue.getCreatedTime();
+        this.updatedTime = queue.getUpdatedTime();
+        this.createdFrom = queue.getCreatedFrom();
+    }
+
     public Queue(String queueName) {
         this.queueName = queueName;
     }

@@ -36,6 +36,7 @@ import javax.management.openmbean.CompositeData;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The following class contains the MBeans invoking services related to queue resources.
@@ -104,34 +105,30 @@ public class QueueManagementBeans {
     }
 
     /**
-     * Invoke service bean to get all the queues.
-     *
-     * @return A list of {@link Queue}.
-     * @throws QueueManagerException
+     * Invoke service bean to get the message count of each queue stored
      */
-    public ArrayList<Queue> getAllQueues() throws QueueManagerException {
-        ArrayList<Queue> queueDetailsList = new ArrayList<>();
+    public List<Queue> getAllQueueCounts() throws QueueManagerException {
+        List<Queue> queueList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-            Object result = mBeanServer.getAttribute(objectName, QueueManagementConstants.QUEUES_MBEAN_ATTRIBUTE);
+            Object result = mBeanServer.getAttribute(objectName, QueueManagementConstants.QUEUES_COUNT_MBEAN_ATTRIBUTE);
             if (result != null) {
-                String[] queueNamesList = (String[]) result;
-                for (String queueName : queueNamesList) {
+                Map<String, Integer> queueCountMap = (Map<String, Integer>) result;
+                for (Map.Entry<String, Integer> entry : queueCountMap.entrySet()) {
                     Queue queue = new Queue();
-                    queue.setQueueName(queueName);
-                    queue.setMessageCount(getMessageCount(queueName, "queue"));
-                    queueDetailsList.add(queue);
+                    queue.setQueueName(entry.getKey());
+                    queue.setMessageCount(entry.getValue());
+                    queueList.add(queue);
                 }
-
             }
-            return queueDetailsList;
-
-        } catch (MalformedObjectNameException | ReflectionException | MBeanException | AttributeNotFoundException |
-                                                                                        InstanceNotFoundException e) {
-            throw new QueueManagerException("Cannot access mBean operations to get queue list.", e);
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new QueueManagerException("Cannot access mBean operations for message counts:", e);
+        } catch (AttributeNotFoundException e) {
+            throw new QueueManagerException("Incompatible attributes for operation to retrieve all queues", e);
         }
+        return queueList;
     }
 
     /**
@@ -160,7 +157,6 @@ public class QueueManagementBeans {
             if (result != null) {
                 messageCount = (Long) result;
             }
-
             return messageCount;
 
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
