@@ -87,7 +87,7 @@
         if (null != request.getSession().getAttribute("pageNumberToMessageIdMap")) {
             pageNumberToMessageIdMap = (Map<Integer, Long>) request.getSession().getAttribute("pageNumberToMessageIdMap");
         } else {
-            pageNumberToMessageIdMap = new HashMap<>();
+            pageNumberToMessageIdMap = new HashMap<Integer, Long>();
         }
 
         int pageNumber = 0;
