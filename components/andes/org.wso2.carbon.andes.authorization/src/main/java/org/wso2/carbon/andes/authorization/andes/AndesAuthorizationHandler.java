@@ -406,8 +406,7 @@ public class AndesAuthorizationHandler {
 
                         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
                         String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                newRoutingKey
-                                        .replace("/", "-"));
+                                newRoutingKey.replace(".","-").replace("/", "-"));
                         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                         String tempQueueId = CommonsUtil.getQueueID(queueName);
@@ -852,7 +851,7 @@ public class AndesAuthorizationHandler {
         }
 
         String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX
-                + queueName.replace("/", "-"));
+                + queueName.replace(".","-").replace("/", "-"));
 
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
 
@@ -952,7 +951,7 @@ public class AndesAuthorizationHandler {
     private static void removeQueueRoleCreateForLoggedInUser(String queueName)
             throws UserStoreException {
         String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                             queueName.replace("/", "-"));
+                                                             queueName.replace(".","-").replace("/", "-"));
 
         UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
                 .getUserRealm().getUserStoreManager();
