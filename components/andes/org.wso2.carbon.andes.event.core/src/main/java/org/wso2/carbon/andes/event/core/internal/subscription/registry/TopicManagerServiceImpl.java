@@ -651,10 +651,10 @@ public class TopicManagerServiceImpl implements TopicManagerService {
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() >= 0) {
             String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
             roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                    destinationWithTenantDomain.replace("/", "-"));
+                    destinationWithTenantDomain.replace(".","-").replace("/", "-"));
         } else {
             roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                    newDestinationName.replace("/", "-"));
+                    newDestinationName.replace(".","-").replace("/", "-"));
         }
 
         // the interface to store user data
@@ -699,10 +699,10 @@ public class TopicManagerServiceImpl implements TopicManagerService {
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() >= 0) {
             String destinationWithTenantDomain = tenantDomain + "/" + newDestinationName;
             roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                    destinationWithTenantDomain.replace("/", "-"));
+                    destinationWithTenantDomain.replace(".","-").replace("/", "-"));
         } else {
             roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                    newDestinationName.replace("/", "-"));
+                    newDestinationName.replace(".","-").replace("/", "-"));
         }
 
         try {

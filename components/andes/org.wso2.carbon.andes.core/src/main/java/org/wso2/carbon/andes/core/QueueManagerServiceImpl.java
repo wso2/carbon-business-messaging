@@ -85,6 +85,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
 
     private static final String AT_REPLACE_CHAR = "_";
     private static final String QUEUE_ROLE_PREFIX = "Q_";
+    /**
+     * Tenant domain name separator
+     */
+    public static final String DOMAIN_NAME_SEPARATOR = "!";
 
     /**
      * {@inheritDoc}
@@ -483,14 +487,19 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                         .getDomain(CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
                                 MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
+            String usernameWithoutTenant = userName;
+            int domainNameSeparatorIndex = userName.indexOf(DOMAIN_NAME_SEPARATOR);
+            if (-1 != domainNameSeparatorIndex) {
+                usernameWithoutTenant = userName.substring(0, domainNameSeparatorIndex);
+            }
             if (!Utils.isOwnDomain(tenantDomain, nameOfQueue)) {
                 throw new QueueManagerException("Permission denied.");
-            } else if (Utils.isAdmin(userName)) { // Authorize admin user
+            } else if (Utils.isAdmin(usernameWithoutTenant)) { // Authorize admin user
                 send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
                         deliveryMode, priority, expireTime);
                isSend = true;
             } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                    userName, queueID,
+                    usernameWithoutTenant, queueID,
                     TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
                 send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
                         deliveryMode, priority, expireTime);
@@ -692,7 +701,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
         try {
             String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                                 queueName.replace("/", "-"));
+                                                                 queueName.replace(".","-").replace("/", "-"));
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
                     .getUserRealm().getUserStoreManager();
 
@@ -731,7 +740,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
 
         String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                             newQueueName.replace("/", "-"));
+                                                             newQueueName.replace(".","-").replace("/", "-"));
 
         try {
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
