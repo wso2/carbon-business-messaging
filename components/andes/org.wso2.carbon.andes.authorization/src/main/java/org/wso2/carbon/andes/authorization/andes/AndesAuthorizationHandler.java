@@ -38,6 +38,9 @@ import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class evaluates the user permissions that are allowed for a user when doing an action for a
  * certain queue, topic or durable topic.
@@ -125,6 +128,11 @@ public class AndesAuthorizationHandler {
      * The prefix used for temporary topic destination names.
      */
     private static final String TEMP_QUEUE_SUFFIX = "tmp_";
+
+    /**
+     * This map used to handle 'consume' authorization of non durable topic
+     */
+    private static Map<String, String> temporaryQueueToTopicMap = new HashMap<>();
 
     /**
      * Evaluates user permissions when creating a queue.
@@ -261,6 +269,20 @@ public class AndesAuthorizationHandler {
                         username, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                     accessResult = Result.ALLOWED;
 
+                    //check whether topic subscriber
+                } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
+                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    //retrieve topic passing tmp queue name
+                    String topicName = temporaryQueueToTopicMap.get(properties.get(ObjectProperties.Property.NAME));
+                    if (null != topicName) {
+                        //get resource path of topic
+                        String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(topicName));
+                        //check user has subscriber permission to given topic
+                        if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                            accessResult = Result.ALLOWED;
+                        }
+                    }
                 }
                 // if non of the above deny permission
                 return accessResult;
@@ -403,7 +425,7 @@ public class AndesAuthorizationHandler {
                             RegistryClient.createSubscription(newRoutingKey, newQName, username);
 
                             authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
-                                    tempQueueId, userRealm);
+                                    queueName, userRealm);
                             accessResult = Result.ALLOWED;
                         } else if (isAdmin(username, userRealm)) {
                             // admin user who is in the same tenant domain get permission
@@ -420,19 +442,29 @@ public class AndesAuthorizationHandler {
                             // Store subscription
                             RegistryClient.createSubscription(newRoutingKey, newQName, username);
 
-                            //Giving permissions for the temporary queue
-                            String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
-                            for (String userRole : userRoles) {
-                                if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                        userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
-                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
-                                            TreeNode.Permission.CONSUME.toString()
-                                                    .toLowerCase());
-                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
-                                            TreeNode.Permission.PUBLISH.toString()
-                                                    .toLowerCase());
-                                    userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
-                                            PERMISSION_CHANGE_PERMISSION);
+                            if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
+                                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                                //if user has consume permission to topic then map tmp queue with topic name because in
+                                //consume we are getting only tmp queue name
+                                temporaryQueueToTopicMap.put(queueName, routingKey);
+                            } else {
+                                //Giving permissions for the durable topic queue because this has to be persist in
+                                //permission table. We need to handle durable subscription even server shutdown and
+                                //start again. We cannot maintain durable subscription queue permission as above in memory.
+                                String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+                                for (String userRole : userRoles) {
+                                    if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                                            userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                                        userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                                TreeNode.Permission.CONSUME.toString()
+                                                        .toLowerCase());
+                                        userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                                TreeNode.Permission.PUBLISH.toString()
+                                                        .toLowerCase());
+                                        userRealm.getAuthorizationManager().authorizeRole(userRole, tempQueueId,
+                                                PERMISSION_CHANGE_PERMISSION);
+                                    }
+
                                 }
 
                             }
@@ -576,6 +608,8 @@ public class AndesAuthorizationHandler {
             if (TOPIC_EXCHANGE.equals(exchangeName)) {
                 // Delete subscription details
                 RegistryClient.deleteSubscription(newRoutingKey, newQName);
+                // delete tmp queue to topic mapping
+                temporaryQueueToTopicMap.remove(queueName);
             }
 
             return Result.ALLOWED;
@@ -847,12 +881,12 @@ public class AndesAuthorizationHandler {
      * @param username    name of the logged in user
      * @param topicName   destination name. Either topic or queue name
      * @param topicId     Id given to the destination
-     * @param tempQueueID Id given to the binding temp queue
+     * @param queueName   temp queue name
      * @param userRealm   User's Realm
      * @throws org.wso2.carbon.user.api.UserStoreException
      */
     private static void authorizeTopicPermissionsToLoggedInUser(String username, String topicName,
-                                                                String topicId, String tempQueueID,
+                                                                String topicId, String queueName,
                                                                 UserRealm userRealm)
                                                                     throws UserStoreException {
 
@@ -860,6 +894,7 @@ public class AndesAuthorizationHandler {
                                                              topicName.replace(".","-").replace("/", "-"));
         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
         String[] user = {MultitenantUtils.getTenantAwareUsername(username)};
+        String tempQueueId = CommonsUtil.getQueueID(queueName);
 
         if (!userStoreManager.isExistingRole(roleName)) {
             userStoreManager.addRole(roleName, user, null);
@@ -886,15 +921,24 @@ public class AndesAuthorizationHandler {
         userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
                                                           PERMISSION_CHANGE_PERMISSION);
 
-        //Giving permissions for the temporary queue
-        userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
-                                                          TreeNode.Permission.CONSUME.toString()
-                                                                  .toLowerCase());
-        userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
-                                                          TreeNode.Permission.PUBLISH.toString()
-                                                                  .toLowerCase());
-        userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueID,
-                                                          PERMISSION_CHANGE_PERMISSION);
+        if (isTopicSubscriberQueue(queueName)) {
+            //if user has add topic permission then map tmp queue with topic name because in
+            //consume we are getting only tmp queue name
+            temporaryQueueToTopicMap.put(queueName, topicName);
+        } else {
+            //Giving permissions for the durable topic queue because this has to be persist in permission table.
+            //We need to handle durable subscription even server shutdown and start again. We cannot maintain durable
+            //subscription queue permission as above in memory.
+            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
+                    TreeNode.Permission.CONSUME.toString()
+                            .toLowerCase());
+            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
+                    TreeNode.Permission.PUBLISH.toString()
+                            .toLowerCase());
+            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
+                    PERMISSION_CHANGE_PERMISSION);
+        }
+
     }
 
     /**
