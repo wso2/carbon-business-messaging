@@ -225,45 +225,20 @@ public class Utils {
         if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
-                //for temp queues filter by queue name queueName=<tenantDomain>/queueName
-                if (!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals(DIRECT_EXCHANGE)) {
-                    if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
-                }
+
+                //for queues filter by queue name queueName=<tenantDomain>/queueName
                 //for temp topics filter by topic name topicName=<tenantDomain>/topicName
-                else if (!subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals(TOPIC_EXCHANGE)) {
-                    if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
-                }
-                //if a queue subscription queueName = <tenantDomain>/queueName
-                else if (subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals(DIRECT_EXCHANGE)) {
-                    if (subscription.getSubscriberQueueName().startsWith(domainName + "/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
-                }
-                //if a durable topic subscription queueName = carbon:<tenantdomain>/subID
-                else if (subscription.isDurable() && subscription.getSubscriberQueueBoundExchange().equals(TOPIC_EXCHANGE)) {
-                    String durableTopicQueueName = subscription.getSubscriberQueueName();
-                    String subscriptionID = durableTopicQueueName.split(":")[1];
-                    if (subscriptionID.startsWith(domainName + "/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
+                //for durable topic subs filter by topic name topicName=<tenantDomain>/topicName
+                if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
+                    tenantFilteredSubscriptions.add(subscription);
                 }
             }
             //super tenant domain queue should not have '/'
         } else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
-                if (subscription.isDurable()) {
-                    if (!subscription.getSubscriberQueueName().contains("/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
-                } else {
-                    if (!subscription.getSubscribedQueueOrTopicName().contains("/")) {
-                        tenantFilteredSubscriptions.add(subscription);
-                    }
+                if (!subscription.getSubscribedQueueOrTopicName().contains("/")) {
+                    tenantFilteredSubscriptions.add(subscription);
                 }
             }
         }
