@@ -177,8 +177,11 @@ public class TopicManagerServiceImpl implements TopicManagerService {
 
                 //Internal role create by topic name and grant subscribe and publish permission to it
                 //By this way we restricted permission to user who create topic and allow subscribe and publish
+                //We avoid creating internal role if Admin user creating a topic
                 //Admin has to give permission to other roles to subscribe and publish if necessary
-                authorizePermissionsToLoggedInUser(loggedInUser, topicName, resourcePath, userRealm);
+                if (!JavaUtil.isAdmin(loggedInUser)) {
+                    authorizePermissionsToLoggedInUser(loggedInUser, topicName, resourcePath, userRealm);
+                }
             }
         } catch (RegistryException e) {
             throw new EventBrokerException("Cannot access the config registry", e);
