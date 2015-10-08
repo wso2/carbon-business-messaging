@@ -110,7 +110,15 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                         .getTenantId());
 
                 String queueID = CommonsUtil.getQueueID(queueName);
-                authorizePermissionsToLoggedInUser(tenantBasedQueueName, queueID, userRealm);
+                String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
+
+                //Internal role create by topic name and grant subscribe and publish permission to it
+                //By this way we restricted permission to user who create topic and allow subscribe and publish
+                //We avoid creating internal role if Admin user creating a queue
+                //Admin has to give permission to other roles to subscribe and publish if necessary
+                if (!Utils.isAdmin(loggedInUser)) {
+                    authorizePermissionsToLoggedInUser(tenantBasedQueueName, queueID, userRealm);
+                }
 
             } else {
                 // TODO : Can we use error code for cleaner error handling ? this will hard bind to

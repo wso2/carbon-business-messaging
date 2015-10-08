@@ -298,7 +298,8 @@ public class RegistryClient {
             );
 
             // Get subscriptions
-            String subscriptionsID = CommonsUtil.getSubscriptionsID(topic);
+            String tenantBasedTopicName = getTenantBasedTopicName(topic);
+            String subscriptionsID = CommonsUtil.getSubscriptionsID(tenantBasedTopicName);
             if (registry.resourceExists(subscriptionsID)) {
                 Collection subscriptionCollection = (Collection) registry.get(subscriptionsID);
                 subscriptionDetailsArray =
