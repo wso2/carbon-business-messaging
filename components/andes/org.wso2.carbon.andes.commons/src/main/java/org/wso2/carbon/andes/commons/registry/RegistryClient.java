@@ -323,4 +323,25 @@ public class RegistryClient {
             throw new RegistryClientException(e);
         }
     }
+
+    /**
+     * Check whether given resource exist in registry
+     *
+     * @param resourceId resource path to check
+     * @return is exist
+     * @throws RegistryClientException
+     */
+    public static boolean isResourceExist(String resourceId) throws RegistryClientException {
+        RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
+        try {
+            UserRegistry registry = registryService.getGovernanceSystemRegistry(
+                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID :
+                            PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId()
+            );
+            return registry.resourceExists(resourceId);
+        } catch (RegistryException e) {
+            throw new RegistryClientException(e);
+        }
+    }
 }
