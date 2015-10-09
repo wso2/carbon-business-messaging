@@ -37,17 +37,13 @@ import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
+import org.wso2.carbon.user.core.authorization.TreeNode;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -79,6 +75,11 @@ public class TopicManagerServiceImpl implements TopicManagerService {
      * Permission path for view topic details
      */
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_DETAILS = "/permission/admin/manage/topic/details";
+
+    /**
+     * Parent resource path of each topic
+     */
+    private static final String PARENT_RESOURCE_PATH = "\\bevent/topics/\\b";
 
     /**
      * Initializes Registry Topic Manager
@@ -181,6 +182,22 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                 //Admin has to give permission to other roles to subscribe and publish if necessary
                 if (!JavaUtil.isAdmin(loggedInUser)) {
                     authorizePermissionsToLoggedInUser(loggedInUser, topicName, resourcePath, userRealm);
+                } else {
+
+                    //get admin role of admin user (super tenant admin or tenant admin)
+                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(loggedInUser);
+                    String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
+                    String role = null;
+                    for (String userRole : userRoles) {
+                        if (userRole.equals(adminRole)) {
+                            role = userRole;
+                            break;
+                        }
+                    }
+
+                    // admin user who is in the same tenant domain get consume and publish permission for
+                    // all hierarchy in topic
+                    grantPermissionToHierarchyLevel(userRealm, resourcePath, role);
                 }
             }
         } catch (RegistryException e) {
@@ -189,6 +206,43 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             throw new EventBrokerException("Error while granting user " + loggedInUser +
                                            ", permission " + EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION +
                                            ", on topic " + topicName, e);
+        }
+    }
+
+    /**
+     * Admin user who create the hierarchy topic get permission to all level by default
+     *
+     * @param userRealm User's Realm
+     * @param topicId topic id
+     * @param role admin role
+     * @throws UserStoreException
+     */
+    private static void grantPermissionToHierarchyLevel(UserRealm userRealm, String topicId, String role)
+            throws UserStoreException {
+        //tokenize resource path
+        StringTokenizer tokenizer = new StringTokenizer(topicId, "/");
+        StringBuilder resourcePathBuilder = new StringBuilder();
+        //get token count
+        int tokenCount = tokenizer.countTokens();
+        int count = 0;
+        Pattern pattern = Pattern.compile(PARENT_RESOURCE_PATH);
+
+        while (tokenizer.hasMoreElements()) {
+            //get each element in topicId resource path
+            String resource = tokenizer.nextElement().toString();
+            //build resource path again
+            resourcePathBuilder.append(resource);
+            //we want to give permission to any resource after event/topics/ in build resource path
+            Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
+            if (matcher.find()) {
+                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+            }
+            count++;
+            if (count < tokenCount) {
+                resourcePathBuilder.append("/");
+            }
+
         }
     }
 

@@ -40,6 +40,9 @@ import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class evaluates the user permissions that are allowed for a user when doing an action for a
@@ -130,6 +133,11 @@ public class AndesAuthorizationHandler {
     private static final String TEMP_QUEUE_SUFFIX = "tmp_";
 
     /**
+     * Parent resource path of each topic
+     */
+    private static final String PARENT_RESOURCE_PATH = "\\bevent/topics/\\b";
+
+    /**
      * This map used to handle 'consume' authorization of non durable topic
      */
     private static Map<String, String> temporaryQueueToTopicMap = new HashMap<>();
@@ -179,55 +187,6 @@ public class AndesAuthorizationHandler {
         }
 
         return accessResult;
-    }
-
-    /**
-     * Register queue and authorize to login user if login user has permission
-     * Permission not validating when user subscribe to topic or durable topic and allow user to
-     * register queue because topic name (routing key) not pass by andes in first call (CREATE) of
-     * subscription. But permission check in the BIND operation to verify user has permission to
-     * subscribe to given topic. It is possible in bind operation because topic name (routing key)
-     * pass by andes.
-     *
-     * @param username   username of logged user
-     * @param userRealm  The {@link org.wso2.carbon.user.api.UserRealm}
-     * @param properties {@link org.wso2.andes.server.security.access.ObjectProperties} of the queue
-     * @throws org.wso2.carbon.andes.commons.registry.RegistryClientException
-     * @throws org.wso2.carbon.user.api.UserStoreException
-     */
-    private static void registerAndAuthorizeQueue(String username, UserRealm userRealm,
-                                                  ObjectProperties properties)
-            throws RegistryClientException, UserStoreException {
-        String queueName =
-                getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-        if (isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
-
-            //For registry we use a modified queue name
-            String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
-            // Store queue details
-            RegistryClient.createQueue(newQueueName, username);
-
-            String queueID = CommonsUtil.getQueueID(queueName);
-
-            //we avoid creating role for non durable topic subscriber temporary queue and durable topic subscriber
-            //subscription id queue
-            boolean isCreateRole = true;
-            if (isDurableTopicSubscriberQueue(
-                    properties.get(ObjectProperties.Property.NAME),
-                    properties.get(ObjectProperties.Property.OWNER))
-                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                isCreateRole = false;
-            } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
-                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                isCreateRole = false;
-            } else if (isAdmin(username, userRealm)) {
-                isCreateRole = false;
-            }
-            if (isCreateRole) {
-                authorizeQueuePermissionsToLoggedInUser(username, newQueueName, queueID,
-                        userRealm);
-            }
-        }
     }
 
     /**
@@ -296,15 +255,14 @@ public class AndesAuthorizationHandler {
                         //get resource path of topic
                         String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(topicName));
                         //check user has subscriber permission to given topic
-                        if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                        if (isAuthorizeToParentInHierarchy(username, userRealm, topicId)) {
                             accessResult = Result.ALLOWED;
                         }
                     }
                 }
                 // if non of the above deny permission
                 return accessResult;
-            } catch (UserStoreException e) {
+            } catch (UserStoreException | RegistryClientException e) {
                 throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
             }
         }
@@ -447,8 +405,9 @@ public class AndesAuthorizationHandler {
                             // durable topic internal queue or non durable topic tmp queue
                             userRealm.getAuthorizationManager().authorizeRole(role, queueID,
                                     TreeNode.Permission.CONSUME.toString().toLowerCase());
-                            userRealm.getAuthorizationManager().authorizeRole(role, topicId,
-                                    TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                            //grant permission to topic hierarchy
+                            grantPermissionToHierarchyLevel(userRealm, topicId, role);
+
 
                             accessResult = Result.ALLOWED;
                         } else if (!userStoreManager.isExistingRole(roleName) &&
@@ -466,41 +425,46 @@ public class AndesAuthorizationHandler {
                             authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
                                     queueName, userRealm);
                             accessResult = Result.ALLOWED;
-                        } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
-                            //This is triggered when a new subscriber is arrived when the topic
-                            // has already been created
+                        } else {
 
-                            // Store subscription
-                            RegistryClient.createSubscription(newRoutingKey, newQName, username);
+                            //check that user authorize to parent of topic hierarchy
+                            boolean isUserAuthorized = isAuthorizeToParentInHierarchy(username, userRealm, topicId);
 
-                            if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
-                                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                                //if user has consume permission to topic then map tmp queue with topic name because in
-                                //consume we are getting only tmp queue name
-                                temporaryQueueToTopicMap.put(queueName, routingKey);
-                            } else {
-                                //Giving permissions for the durable topic queue because this has to be persist in
-                                //permission table. We need to handle durable subscription even server shutdown and
-                                //start again. We cannot maintain durable subscription queue permission as above in memory.
-                                String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
-                                for (String userRole : userRoles) {
-                                    if (userRealm.getAuthorizationManager().isRoleAuthorized(
-                                            userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
-                                        userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                TreeNode.Permission.CONSUME.toString()
-                                                        .toLowerCase());
-                                        userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                TreeNode.Permission.PUBLISH.toString()
-                                                        .toLowerCase());
-                                        userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                PERMISSION_CHANGE_PERMISSION);
+                            if (isUserAuthorized) {
+                                //This is triggered when a new subscriber is arrived when the topic
+                                // has already been created
+
+                                // Store subscription
+                                RegistryClient.createSubscription(newRoutingKey, newQName, username);
+
+                                if (isTopicSubscriberQueue(queueName) &&
+                                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                                    //if user has consume permission to topic then map tmp queue with topic name
+                                    // because in consume we are getting only tmp queue name
+                                    temporaryQueueToTopicMap.put(queueName, routingKey);
+                                } else {
+                                    //Giving permissions for the durable topic queue because this has to be persist in
+                                    //permission table. We need to handle durable subscription even server shutdown and
+                                    //start again. We cannot maintain durable subscription queue permission as above in memory.
+                                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+                                    for (String userRole : userRoles) {
+                                        if (userRealm.getAuthorizationManager().isRoleAuthorized(
+                                                userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
+                                                    TreeNode.Permission.CONSUME.toString()
+                                                            .toLowerCase());
+                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
+                                                    TreeNode.Permission.PUBLISH.toString()
+                                                            .toLowerCase());
+                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
+                                                    PERMISSION_CHANGE_PERMISSION);
+                                        }
+
                                     }
 
                                 }
-
+                                accessResult = Result.ALLOWED;
                             }
-                            accessResult = Result.ALLOWED;
                         }
                         break;
                 }
@@ -587,32 +551,6 @@ public class AndesAuthorizationHandler {
         }
 
         return accessResult;
-    }
-
-    /**
-     * Check if the current user is tenant Admin user
-     *
-     * @param username
-     *         Username
-     * @param userRealm
-     *         User's Realm
-     * @return True if the user is the admin user of the given domain
-     * @throws org.wso2.carbon.user.api.UserStoreException
-     */
-    private static boolean isAdmin(String username, UserRealm userRealm)
-            throws UserStoreException {
-        boolean isAdmin = false;
-
-        String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
-        String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
-        for (String userRole : userRoles) {
-            if (userRole.equals(adminRole)) {
-                isAdmin = true;
-                break;
-            }
-        }
-
-        return isAdmin;
     }
 
     /**
@@ -734,6 +672,81 @@ public class AndesAuthorizationHandler {
             throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
         }
         return accessResult;
+    }
+
+    /**
+     * Register queue and authorize to login user if login user has permission
+     * Permission not validating when user subscribe to topic or durable topic and allow user to
+     * register queue because topic name (routing key) not pass by andes in first call (CREATE) of
+     * subscription. But permission check in the BIND operation to verify user has permission to
+     * subscribe to given topic. It is possible in bind operation because topic name (routing key)
+     * pass by andes.
+     *
+     * @param username   username of logged user
+     * @param userRealm  The {@link org.wso2.carbon.user.api.UserRealm}
+     * @param properties {@link org.wso2.andes.server.security.access.ObjectProperties} of the queue
+     * @throws org.wso2.carbon.andes.commons.registry.RegistryClientException
+     * @throws org.wso2.carbon.user.api.UserStoreException
+     */
+    private static void registerAndAuthorizeQueue(String username, UserRealm userRealm,
+                                                  ObjectProperties properties)
+            throws RegistryClientException, UserStoreException {
+        String queueName =
+                getRawQueueName(properties.get(ObjectProperties.Property.NAME));
+        if (isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
+
+            //For registry we use a modified queue name
+            String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
+            // Store queue details
+            RegistryClient.createQueue(newQueueName, username);
+
+            String queueID = CommonsUtil.getQueueID(queueName);
+
+            //we avoid creating role for non durable topic subscriber temporary queue and durable topic subscriber
+            //subscription id queue
+            boolean isCreateRole = true;
+            if (isDurableTopicSubscriberQueue(
+                    properties.get(ObjectProperties.Property.NAME),
+                    properties.get(ObjectProperties.Property.OWNER))
+                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                isCreateRole = false;
+            } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
+                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                isCreateRole = false;
+            } else if (isAdmin(username, userRealm)) {
+                isCreateRole = false;
+            }
+            if (isCreateRole) {
+                authorizeQueuePermissionsToLoggedInUser(username, newQueueName, queueID,
+                        userRealm);
+            }
+        }
+    }
+
+    /**
+     * Check if the current user is tenant Admin user
+     *
+     * @param username
+     *         Username
+     * @param userRealm
+     *         User's Realm
+     * @return True if the user is the admin user of the given domain
+     * @throws org.wso2.carbon.user.api.UserStoreException
+     */
+    private static boolean isAdmin(String username, UserRealm userRealm)
+            throws UserStoreException {
+        boolean isAdmin = false;
+
+        String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+        String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
+        for (String userRole : userRoles) {
+            if (userRole.equals(adminRole)) {
+                isAdmin = true;
+                break;
+            }
+        }
+
+        return isAdmin;
     }
 
     /**
@@ -995,6 +1008,97 @@ public class AndesAuthorizationHandler {
         if (userStoreManager.isExistingRole(roleName)) {
             userStoreManager.deleteRole(roleName);
         }
+    }
+
+    /**
+     * Admin user who create the hierarchy topic get permission to all level by default
+     *
+     * @param userRealm User's Realm
+     * @param topicId topic id
+     * @param role admin role
+     * @throws UserStoreException
+     */
+    private static void grantPermissionToHierarchyLevel(UserRealm userRealm, String topicId, String role)
+            throws UserStoreException {
+        //tokenize resource path
+        StringTokenizer tokenizer = new StringTokenizer(topicId, "/");
+        StringBuilder resourcePathBuilder = new StringBuilder();
+        //get token count
+        int tokenCount = tokenizer.countTokens();
+        int count = 0;
+        Pattern pattern = Pattern.compile(PARENT_RESOURCE_PATH);
+
+        while (tokenizer.hasMoreElements()) {
+            //get each element in topicId resource path
+            String resource = tokenizer.nextElement().toString();
+            //build resource path again
+            resourcePathBuilder.append(resource);
+            //we want to give permission to any resource after event/topics/ in build resource path
+            Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
+            if (matcher.find()) {
+                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+            }
+            count++;
+            if (count < tokenCount) {
+                resourcePathBuilder.append("/");
+            }
+
+        }
+    }
+
+    /**
+     * We want to check user is authorize for parent topic in case of hierarchical topic
+     * i.e. Let's say there is topic hierarchical topic country.province.city1
+     * user who has permission to either country or province should be able to subscribe or
+     * publish to city1 as well.
+     *
+     * @param username username of logged user
+     * @param userRealm User's Realm
+     * @param topicId topic id
+     * @return is user authorize
+     * @throws UserStoreException
+     */
+    private static boolean isAuthorizeToParentInHierarchy(String username, UserRealm userRealm, String topicId)
+            throws UserStoreException, RegistryClientException {
+
+        //check given resource path exist before check permission in parent hierarchy
+        if (!RegistryClient.isResourceExist(topicId)) {
+            return false;
+        }
+        //tokenize resource path
+        StringTokenizer tokenizer = new StringTokenizer(topicId, "/");
+        StringBuilder resourcePathBuilder = new StringBuilder();
+        //get token count
+        int tokenCount = tokenizer.countTokens();
+        int count = 0;
+        boolean userAuthorized = false;
+        Pattern pattern = Pattern.compile(PARENT_RESOURCE_PATH);
+
+        while (tokenizer.hasMoreElements()) {
+            //get each element in topicId resource path
+            String resource = tokenizer.nextElement().toString();
+            //build resource path again
+            resourcePathBuilder.append(resource);
+            //we want to check that build resource path has permission to any resource
+            // after event/topics/
+            Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
+            if (matcher.find()) {
+                if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                        resourcePathBuilder.toString(),
+                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                    userAuthorized = true;
+                    break;
+                }
+
+            }
+            count++;
+            if (count < tokenCount) {
+                resourcePathBuilder.append("/");
+            }
+
+        }
+        return userAuthorized;
     }
 }
 
