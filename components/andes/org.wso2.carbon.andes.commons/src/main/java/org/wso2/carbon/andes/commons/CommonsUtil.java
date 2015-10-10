@@ -70,7 +70,7 @@ public class CommonsUtil {
         String topicID = TOPICS;
 
         topicName = topicName.replaceAll("\\.", "/");
-
+        
         if (!topicName.startsWith("/")) {
             topicID += "/";
         }
@@ -80,9 +80,9 @@ public class CommonsUtil {
         // special character.
         // eg. if topic name is myTopic/*/* then topic name is myTopic
         if (topicName.contains("*")) {
-            topicName = topicName.substring(0, topicName.indexOf("*"));
+            topicName = topicName.substring(0, (topicName.indexOf("*") - 1));
         } else if (topicName.contains("#")) {
-            topicName = topicName.substring(0, topicName.indexOf("#"));
+            topicName = topicName.substring(0, (topicName.indexOf("#") - 1));
         }
 
         return topicID + topicName;
