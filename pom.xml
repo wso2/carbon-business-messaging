@@ -574,6 +574,11 @@
                 <artifactId>org.wso2.carbon.event.client</artifactId>
                 <version>${carbon.commons.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.registry</groupId>
+                <artifactId>org.wso2.carbon.registry.resource.stub</artifactId>
+                <version>${carbon.registry.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -584,6 +589,7 @@
         <carbon.platform.version>4.4.0</carbon.platform.version>
         <carbon.commons.version>4.4.7</carbon.commons.version>
         <carbon.multitenancy.version>4.4.3</carbon.multitenancy.version>
+        <carbon.registry.version>4.4.5</carbon.registry.version>
         <carbon.messaging.version>3.0.0-SNAPSHOT</carbon.messaging.version>
         <andes.dependency.version>3.0.0-SNAPSHOT</andes.dependency.version>
         <andes.export.version>2.6.3</andes.export.version>
