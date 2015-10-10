@@ -822,21 +822,24 @@ public class AndesAuthorizationHandler {
         RealmService realmService = AuthorizationServiceDataHolder.getInstance().getRealmService();
         String tenantDomain = realmService.getTenantManager().getDomain(userRealm.getAuthorizationManager().getTenantId());
         if (tenantDomain != null) {
-            if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
-                                            tenantDomain.length() + 1).equals(tenantDomain + "/")) {
-                isOwnDomain = true;
-            } else if (tenantDomain.equalsIgnoreCase(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
-                if (!routingKey.contains("/")) {
+            //first we check whether routing key - queue/topic name is valid i.e. tenant_domain/routing_key or routing_key
+            if(!(routingKey.substring(routingKey.contains("/") ? routingKey.indexOf("/") + 1 : 0).isEmpty())) {
+                if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
+                        tenantDomain.length() + 1).equals(tenantDomain + "/")) {
+                    isOwnDomain = true;
+                } else if (tenantDomain.equalsIgnoreCase(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
+                    if (!routingKey.contains("/")) {
+                        isOwnDomain = true;
+                    }
+                } else if (isTopicSubscriberQueue(routingKey) &&
+                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
+                    isOwnDomain = true;
+                } else if (isDurableTopicSubscriberQueue(
+                        routingKey,
+                        properties.get(ObjectProperties.Property.OWNER))
+                        && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
                     isOwnDomain = true;
                 }
-            } else if (isTopicSubscriberQueue(routingKey) &&
-                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
-                isOwnDomain = true;
-            } else if (isDurableTopicSubscriberQueue(
-                    routingKey,
-                    properties.get(ObjectProperties.Property.OWNER))
-                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
-                isOwnDomain = true;
             }
         } else {
             // tenantDomain is null,this implies this is a normal user.
