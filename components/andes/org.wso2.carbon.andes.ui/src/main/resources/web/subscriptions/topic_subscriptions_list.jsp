@@ -7,6 +7,8 @@
 <%@ page import="org.wso2.carbon.andes.stub.admin.types.Subscription" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
+<%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 
 <script>
     function refreshMessageCount(obj, durable){
@@ -72,7 +74,8 @@
 <link rel="stylesheet" href="styles/dsxmleditor.css"/>
 
 <%
-    AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
+    AndesAdminServiceStub andesAdminStub = UIUtils.getAndesAdminServiceStub(config, session, request);
+    AndesEventAdminServiceStub andesEventAdminStub = UIUtils.getAndesEventAdminServiceStub(config, session, request);
     Subscription[] filteredNormalTopicSubscriptionList = null;
     Subscription[] filteredActiveDurableTopicSubscriptionList = null;
     Subscription[] filteredInActiveDurableTopicSubscriptionList = null;
@@ -89,8 +92,8 @@
     int numberOfInactiveDurableSubscriptionPages = 1;
     String concatenatedParams = "region=region1&item=Topic_subscriptions";
     try {
-        normalTopicSubscriptionList = stub.getAllLocalTempTopicSubscriptions();
-        durableTopicSubscriptionList = stub.getAllDurableTopicSubscriptions();
+        normalTopicSubscriptionList = andesAdminStub.getAllLocalTempTopicSubscriptions();
+        durableTopicSubscriptionList = andesAdminStub.getAllDurableTopicSubscriptions();
 
         if (durableTopicSubscriptionList != null && durableTopicSubscriptionList.length != 0) {
             List<Subscription> activeSubs = new ArrayList<Subscription>();
@@ -333,6 +336,8 @@ No subscriptions are created.
 
         <td id="msg-<%=sub.getSubscriptionIdentifier()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
         </td>
+
+        <%--Refresh--%>
         <td>
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
@@ -340,7 +345,21 @@ No subscriptions are created.
                onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
+
+        <%--Browse--%>
+        <% try {
+            if(andesEventAdminStub.checkCurrentUserHasDetailsTopicPermission()){ %>
         <td><a href="../queues/queue_messages_list.jsp?nameOfQueue=<%=sub.getSubscriberQueueName()%>">Browse</a></td>
+        <% } else { %>
+        <td><a class="disabled-ahref" href="#">Browse</a></td>
+        <% }
+        } catch (AndesEventAdminServiceEventAdminException e) { %>
+        <td><a class="disabled-ahref" href="#">Browse</a></td>
+        <% } %>
+
+        <%--Unsubscribe--%>
+        <% try {
+            if(andesEventAdminStub.checkCurrentUserHasDeleteTopicPermission()){ %>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
@@ -349,6 +368,21 @@ No subscriptions are created.
                onclick="unSubscribe(this)">Unsubscribe
             </a>
         </td>
+        <% } else { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe.png);"
+               class="icon-link disabled-ahref">Unsubscribe
+            </a>
+        </td>
+        <% }
+        } catch (AndesEventAdminServiceEventAdminException e) { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe.png);"
+               class="icon-link disabled-ahref">Unsubscribe
+            </a>
+        </td>
+        <% } %>
+
     </tr>
     <%
             }

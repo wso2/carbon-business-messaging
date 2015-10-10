@@ -27,6 +27,7 @@ import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.configuration.modules.JKSStore;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
+import org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
 import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
@@ -57,7 +58,8 @@ public class UIUtils {
     private static final String CARBON_CLIENT_ID = "carbon";
     private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
     private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
-    private static final String ANDES_ADMIN_SERVER_NAME = "AndesAdminService";
+    private static final String ANDES_ADMIN_SERVICE_NAME = "AndesAdminService";
+    private static final String ANDES_ADMIN_EVENT_SERVICE_NAME = "AndesEventAdminService";
 
     /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
@@ -86,10 +88,38 @@ public class UIUtils {
                                                                  HttpServletRequest request)
             throws AxisFault {
         String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-        backendServerURL = backendServerURL + ANDES_ADMIN_SERVER_NAME;
+        backendServerURL = backendServerURL + ANDES_ADMIN_SERVICE_NAME;
         ConfigurationContext configContext =
                 (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
         AndesAdminServiceStub stub = new AndesAdminServiceStub(configContext, backendServerURL);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        if (cookie != null) {
+            Options option = stub._getServiceClient().getOptions();
+            option.setManageSession(true);
+            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+        }
+
+        return stub;
+    }
+
+    /**
+     * Get the AndesEventAdminService stub
+     *
+     * @param config the servlet configuration
+     * @param session the http session
+     * @param request the http servlet request
+     * @return an AndesEventAdminServiceStub
+     * @throws AxisFault
+     */
+    public static AndesEventAdminServiceStub getAndesEventAdminServiceStub(ServletConfig config,
+                                                                           HttpSession session,
+                                                                           HttpServletRequest request)
+            throws AxisFault {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        backendServerURL = backendServerURL + ANDES_ADMIN_EVENT_SERVICE_NAME;
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        AndesEventAdminServiceStub stub = new AndesEventAdminServiceStub(configContext, backendServerURL);
         String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
         if (cookie != null) {
             Options option = stub._getServiceClient().getOptions();

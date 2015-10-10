@@ -80,16 +80,16 @@
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
         </operation>
         <operation name="checkCurrentUserHasDeleteTopicPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="checkUserHasDeleteTopicPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="checkCurrentUserHasDetailsTopicPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="checkUserHasDetailsTopicPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete,/permission/admin/manage/subscriptions/topic</parameter>
         </operation>
         <operation name="checkCurrentUserHasPublishTopicPermission">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
