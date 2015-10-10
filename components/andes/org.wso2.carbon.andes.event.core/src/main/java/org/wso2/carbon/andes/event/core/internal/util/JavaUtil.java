@@ -164,10 +164,10 @@ public class JavaUtil {
         // child topics as well. but we consider the topic here as the topic name just before any
         // special charactor.
         // eg. if topic name is myTopic/*/* then topic name is myTopic
-        if (topicName.indexOf("*") > -1) {
-            topicName = topicName.substring(0, topicName.indexOf("*"));
-        } else if (topicName.indexOf("#") > -1) {
-            topicName = topicName.substring(0, topicName.indexOf("#"));
+        if (topicName.contains("*")) {
+            topicName = topicName.substring(0, (topicName.indexOf("*") - 1));
+        } else if (topicName.contains("#")) {
+            topicName = topicName.substring(0, (topicName.indexOf("#") - 1));
         }
 
         resourcePath += topicName;
