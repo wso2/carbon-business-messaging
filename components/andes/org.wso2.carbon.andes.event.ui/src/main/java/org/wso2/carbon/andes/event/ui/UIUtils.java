@@ -28,6 +28,11 @@ import java.util.ArrayList;
 public class UIUtils {
 
     /**
+     * Parent resource path where topic exist in registry
+     */
+    private static final String TOPICS = "/_system/governance/event/topics";
+
+    /**
      * Gets subscription mode description.
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
@@ -69,5 +74,34 @@ public class UIUtils {
         }
 
         return resultList;
+    }
+
+    /**
+     * Get unique id for a topic
+     *
+     * @param topicName Name of the topic
+     * @return Topic id
+     */
+    public static String getTopicID(String topicName) {
+
+        String topicID = TOPICS;
+
+        topicName = topicName.replaceAll("\\.", "/");
+
+        if (!topicName.startsWith("/")) {
+            topicID += "/";
+        }
+
+        // this topic name can have # and * marks if the user wants to subscribes to the
+        // child topics as well. but we consider the topic here as the topic name just before any
+        // special character.
+        // eg. if topic name is myTopic/*/* then topic name is myTopic
+        if (topicName.contains("*")) {
+            topicName = topicName.substring(0, topicName.indexOf("*"));
+        } else if (topicName.contains("#")) {
+            topicName = topicName.substring(0, topicName.indexOf("#"));
+        }
+
+        return topicID + topicName;
     }
 }
