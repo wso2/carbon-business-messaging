@@ -39,6 +39,11 @@
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.andes.wso2</groupId>
+            <artifactId>andes</artifactId>
+            <version>${andes.dependency.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

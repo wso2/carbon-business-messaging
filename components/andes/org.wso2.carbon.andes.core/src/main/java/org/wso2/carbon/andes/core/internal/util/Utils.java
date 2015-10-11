@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.configuration.modules.JKSStore;
+import org.wso2.andes.kernel.AndesConstants;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.internal.ds.QueueManagerServiceValueHolder;
 import org.wso2.carbon.andes.core.types.Queue;
@@ -115,7 +116,7 @@ public class Utils {
         if (tenantDomain != null && (!queueName.contains(tenantDomain)) &&
             (!tenantDomain.equals(org.wso2.carbon.base.MultitenantConstants.
                                           SUPER_TENANT_DOMAIN_NAME))) {
-            queueName = tenantDomain + "/" + queueName;
+            queueName = tenantDomain + AndesConstants.TENANT_SEPARATOR + queueName;
         }
         return queueName;
     }
@@ -191,9 +192,9 @@ public class Utils {
             }
         }
         //for super tenant load all queues not specific to a domain. That means queues created by external
-        //JMS clients are visible, and those names should not have "/" in their queue names
+        //JMS clients are visible, and those names should not have the tenant separator "/" in their queue names
         else {
-            if (!queue.getQueueName().contains("/")) {
+            if (!queue.getQueueName().contains(AndesConstants.TENANT_SEPARATOR)) {
                 return true;
             }
         }
@@ -219,7 +220,7 @@ public class Utils {
                 //for queues filter by queue name queueName=<tenantDomain>/queueName
                 //for temp topics filter by topic name topicName=<tenantDomain>/topicName
                 //for durable topic subs filter by topic name topicName=<tenantDomain>/topicName
-                if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + "/")) {
+                if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + AndesConstants.TENANT_SEPARATOR)) {
                     tenantFilteredSubscriptions.add(subscription);
                 }
             }
@@ -227,7 +228,7 @@ public class Utils {
         } else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
-                if (!subscription.getSubscribedQueueOrTopicName().contains("/")) {
+                if (!subscription.getSubscribedQueueOrTopicName().contains(AndesConstants.TENANT_SEPARATOR)) {
                     tenantFilteredSubscriptions.add(subscription);
                 }
             }
@@ -530,16 +531,16 @@ public class Utils {
         boolean isOwnDomain = false;
         if (tenantDomain != null) {
             if ((routingKey.length() >= tenantDomain.length() + 1) && routingKey.substring(0,
-                    tenantDomain.length() + 1).equals(tenantDomain + "/")) {
+                    tenantDomain.length() + 1).equals(tenantDomain + AndesConstants.TENANT_SEPARATOR)) {
                 isOwnDomain = true;
             } else if (tenantDomain.equalsIgnoreCase("carbon.super")) {
-                if (!routingKey.contains("/")) {
+                if (!routingKey.contains(AndesConstants.TENANT_SEPARATOR)) {
                     isOwnDomain = true;
                 }
             }
         } else {
             // tenantDomain is null,this implies this is a normal user.
-            if (!routingKey.contains("/")) {
+            if (!routingKey.contains(AndesConstants.TENANT_SEPARATOR)) {
                 isOwnDomain = true;
             }
         }
