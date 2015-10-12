@@ -182,8 +182,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             if (QueueManagementBeans.queueExists(queueName)) {
                 QueueManagementBeans.getInstance().deleteQueue(queueName);
                 userRegistry.delete(resourcePath);
+            } else {
+                log.warn("Queue: " + queueName + " does not exist. Cannot delete queue.");
             }
-
             removeRoleCreatedForLoggedInUser(queueName);
         } catch (RegistryException e) {
             throw new QueueManagerException("Failed to delete queue : " + queueName, e);
