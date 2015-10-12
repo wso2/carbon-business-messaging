@@ -1,7 +1,6 @@
 package org.wso2.carbon.andes.listeners;
 
 import org.apache.log4j.Logger;
-import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
@@ -25,10 +24,7 @@ public class MessageBrokerTenantManagementListener implements TenantMgtListener 
         String tenantOwner = tenantInfoBean.getAdmin();
 
         try {
-            // Create DLC if not clustered or else Create DLC if this is the coordinator
-            if (!AndesContext.getInstance().isClusteringEnabled() || AndesContext.getInstance().getClusterAgent().isCoordinator()) {
-                DLCQueueUtils.createDLCQueue(tenantName, tenantOwner);
-            }
+            DLCQueueUtils.createDLCQueue(tenantName, tenantOwner);
         } catch (AndesException e) {
             logger.error("Error creating DLC Queue for tenant", e);
         }
