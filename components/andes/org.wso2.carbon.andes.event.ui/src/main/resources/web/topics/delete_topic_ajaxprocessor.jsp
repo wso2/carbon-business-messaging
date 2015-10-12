@@ -46,7 +46,8 @@
         //check subscriptions exist for given topic
         Subscription[] jmsSubscriptionsForTopic = eventAdminStub.getJMSSubscriptionsForTopic(topic);
         if ((jmsSubscriptionsForTopic != null && jmsSubscriptionsForTopic.length > 0)) {
-            message = "Error: Subscriptions exists for this topic, Please remove all subscriptions before deleting the topic";
+            isSubscriptionExist = true;
+            message = "Error: Subscriptions exist for this topic, Please remove all subscriptions before deleting this topic.";
         //check subscriptions exist for sub topic of given topic
         } else if (resources != null) {
             String[] subTopics = resources.getChildren();
@@ -56,7 +57,7 @@
                     Subscription[] jmsSubscriptionsForSubTopic = eventAdminStub.getJMSSubscriptionsForTopic(subTopic);
                     if (jmsSubscriptionsForSubTopic != null && jmsSubscriptionsForSubTopic.length > 0) {
                         isSubscriptionExist = true;
-                        message = "Error: Subscriptions exists for sub topic of this topic, Please remove all subscriptions before deleting the topic";
+                        message = "Error: Subscriptions exist for sub topics of this topic, Please remove all subscriptions before deleting this topic.";
                         break;
                     }
                 }
@@ -73,7 +74,6 @@
         message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
     } catch (ResourceAdminServiceExceptionException e) {
         message = "Error: " + e.getFaultMessage().getResourceAdminServiceException().getMessage();
-        e.printStackTrace();
 %> <%=message%>
 <%
     }
