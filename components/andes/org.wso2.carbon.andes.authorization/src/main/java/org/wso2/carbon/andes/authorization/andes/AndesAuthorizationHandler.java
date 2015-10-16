@@ -255,7 +255,8 @@ public class AndesAuthorizationHandler {
                         //get resource path of topic
                         String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(topicName));
                         //check user has subscriber permission to given topic
-                        if (isAuthorizeToParentInHierarchy(username, userRealm, topicId)) {
+                        if (isAuthorizeToParentInHierarchy(username, userRealm, topicId,
+                                TreeNode.Permission.SUBSCRIBE)) {
                             accessResult = Result.ALLOWED;
                         }
                     }
@@ -428,7 +429,8 @@ public class AndesAuthorizationHandler {
                         } else {
 
                             //check that user authorize to parent of topic hierarchy
-                            boolean isUserAuthorized = isAuthorizeToParentInHierarchy(username, userRealm, topicId);
+                            boolean isUserAuthorized = isAuthorizeToParentInHierarchy(username, userRealm, topicId,
+                                    TreeNode.Permission.SUBSCRIBE);
 
                             if (isUserAuthorized) {
                                 //This is triggered when a new subscriber is arrived when the topic
@@ -524,9 +526,8 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.DENIED;
                         } else if (isAdmin(username, userRealm)) {
                             accessResult = Result.ALLOWED;
-                        } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                                username, permissionID,
-                                TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                        } else if (isAuthorizeToParentInHierarchy(username, userRealm, permissionID,
+                                TreeNode.Permission.PUBLISH)) {
                             accessResult = Result.ALLOWED;
                         }
                         break;
@@ -548,6 +549,8 @@ public class AndesAuthorizationHandler {
             }
         } catch (UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling publish queue.", e);
+        } catch (RegistryClientException e) {
+            throw new AndesAuthorizationHandlerException("Error checking permission hierarchy", e);
         }
 
         return accessResult;
@@ -1059,10 +1062,12 @@ public class AndesAuthorizationHandler {
      * @param username username of logged user
      * @param userRealm User's Realm
      * @param topicId topic id
+     * @param permission The permission type to check for
+     *
      * @return is user authorize
      * @throws UserStoreException
      */
-    private static boolean isAuthorizeToParentInHierarchy(String username, UserRealm userRealm, String topicId)
+    private static boolean isAuthorizeToParentInHierarchy(String username, UserRealm userRealm, String topicId, TreeNode.Permission permission)
             throws UserStoreException, RegistryClientException {
 
         //check given resource path exist before check permission in parent hierarchy
@@ -1088,8 +1093,7 @@ public class AndesAuthorizationHandler {
             Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
             if (matcher.find()) {
                 if (userRealm.getAuthorizationManager().isUserAuthorized(username,
-                        resourcePathBuilder.toString(),
-                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                        resourcePathBuilder.toString(), permission.toString().toLowerCase())) {
                     userAuthorized = true;
                     break;
                 }
