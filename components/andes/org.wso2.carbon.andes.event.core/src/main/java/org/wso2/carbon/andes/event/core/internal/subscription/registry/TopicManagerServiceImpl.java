@@ -210,7 +210,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     }
 
     /**
-     * Admin user who create the hierarchy topic get permission to all level by default
+     * Admin user and user who had add topic permission create the hierarchy topic get permission to all level by default
      *
      * @param userRealm User's Realm
      * @param topicId topic id
@@ -235,8 +235,15 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             //we want to give permission to any resource after event/topics/ in build resource path
             Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
             if (matcher.find()) {
-                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
-                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                // gives subscribe permissions to the internal role in the user store
+                userRealm.getAuthorizationManager().authorizeRole(
+                        role, resourcePathBuilder.toString(), EventBrokerConstants.EB_PERMISSION_SUBSCRIBE);
+                // gives publish permissions to the internal role in the user store
+                userRealm.getAuthorizationManager().authorizeRole(
+                        role, resourcePathBuilder.toString(), EventBrokerConstants.EB_PERMISSION_PUBLISH);
+                // gives change permissions to the internal role in the user store
+                userRealm.getAuthorizationManager().authorizeRole(
+                        role, resourcePathBuilder.toString(), EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION);
             }
             count++;
             if (count < tokenCount) {
@@ -316,6 +323,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
                     if (userRealm.getAuthorizationManager().isRoleAuthorized(
                             userRole, topicResourcePath, EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION)) {
                         isUserHasChangePermission = true;
+                        break;
                     }
                 }
             }
@@ -722,15 +730,8 @@ public class TopicManagerServiceImpl implements TopicManagerService {
 
             // adds the internal role to user store
             userStoreManager.addRole(roleName, user, null);
-            // gives subscribe permissions to the internal role in the user store
-            userRealm.getAuthorizationManager().authorizeRole(
-                    roleName, destinationId, EventBrokerConstants.EB_PERMISSION_SUBSCRIBE);
-            // gives publish permissions to the internal role in the user store
-            userRealm.getAuthorizationManager().authorizeRole(
-                    roleName, destinationId, EventBrokerConstants.EB_PERMISSION_PUBLISH);
-            // gives change permissions to the internal role in the user store
-            userRealm.getAuthorizationManager().authorizeRole(
-                    roleName, destinationId, EventBrokerConstants.EB_PERMISSION_CHANGE_PERMISSION);
+            // giving permissions to the topic and it's all hierarchy
+            grantPermissionToHierarchyLevel(userRealm, destinationId, roleName);
 
         } else {
             log.warn("Unable to provide permissions to the user, " +

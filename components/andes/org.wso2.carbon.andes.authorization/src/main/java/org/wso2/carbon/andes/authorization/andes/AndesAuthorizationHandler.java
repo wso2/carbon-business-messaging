@@ -412,8 +412,6 @@ public class AndesAuthorizationHandler {
 
                             accessResult = Result.ALLOWED;
                         } else if (!userStoreManager.isExistingRole(roleName) &&
-                                userRealm.getAuthorizationManager().getAllowedRolesForResource(topicId,
-                                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase()).length == 0 &&
                                 userRealm.getAuthorizationManager().isUserAuthorized(username,
                                         PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
 
@@ -965,15 +963,8 @@ public class AndesAuthorizationHandler {
         if (userShouldBeAdded) {
             userStoreManager.updateUserListOfRole(roleName, new String[0], user);
         }
-        //Giving permissions to the topic
-        userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
-                                                          TreeNode.Permission.SUBSCRIBE.toString()
-                                                                  .toLowerCase());
-        userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
-                                                          TreeNode.Permission.PUBLISH.toString()
-                                                                  .toLowerCase());
-        userRealm.getAuthorizationManager().authorizeRole(roleName, topicId,
-                                                          PERMISSION_CHANGE_PERMISSION);
+        //giving permissions to the topic
+        grantPermissionToHierarchyLevel(userRealm, topicId, roleName);
 
         if (isTopicSubscriberQueue(queueName)) {
             //if user has add topic permission then map tmp queue with topic name because in
@@ -1017,7 +1008,7 @@ public class AndesAuthorizationHandler {
     }
 
     /**
-     * Admin user who create the hierarchy topic get permission to all level by default
+     * Admin user and user who had add topic permission create the hierarchy topic get permission to all level by default
      *
      * @param userRealm User's Realm
      * @param topicId topic id
@@ -1044,6 +1035,10 @@ public class AndesAuthorizationHandler {
             if (matcher.find()) {
                 userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
                         TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                        TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                        PERMISSION_CHANGE_PERMISSION);
             }
             count++;
             if (count < tokenCount) {
