@@ -29,6 +29,7 @@ import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.user.api.AuthorizationManager;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
@@ -173,7 +174,8 @@ public class AndesAuthorizationHandler {
                 } else if (isDurableTopicSubscriberQueue(
                         properties.get(ObjectProperties.Property.NAME),
                         properties.get(ObjectProperties.Property.OWNER))
-                           && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                           && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
                 } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
@@ -226,7 +228,8 @@ public class AndesAuthorizationHandler {
                     if (isDurableTopicSubscriberQueue(
                             properties.get(ObjectProperties.Property.NAME),
                             properties.get(ObjectProperties.Property.OWNER))
-                            && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                            && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                            Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                         if (userRealm.getAuthorizationManager().isUserAuthorized(username, queueID,
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                             accessResult = Result.ALLOWED;
@@ -354,7 +357,8 @@ public class AndesAuthorizationHandler {
                         } else if (isDurableTopicSubscriberQueue(
                                 properties.get(ObjectProperties.Property.QUEUE_NAME),
                                 properties.get(ObjectProperties.Property.OWNER)) &&
-                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                                Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                             accessResult = Result.ALLOWED;
                         } else if (isTopicSubscriberQueue(queueName) && !Boolean.valueOf(
                                 properties.get(ObjectProperties.Property.DURABLE))) {
@@ -620,7 +624,8 @@ public class AndesAuthorizationHandler {
                     accessResult = Result.ALLOWED;
                 } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
                                                 properties.get(ObjectProperties.Property.OWNER)) &&
-                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (isTopicSubscriberQueue(queueName) &&
@@ -660,7 +665,8 @@ public class AndesAuthorizationHandler {
                     accessResult = Result.ALLOWED;
                 } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
                         properties.get(ObjectProperties.Property.OWNER)) &&
-                        Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (isTopicSubscriberQueue(queueName) &&
@@ -709,7 +715,8 @@ public class AndesAuthorizationHandler {
             if (isDurableTopicSubscriberQueue(
                     properties.get(ObjectProperties.Property.NAME),
                     properties.get(ObjectProperties.Property.OWNER))
-                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                    Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                 isCreateRole = false;
             } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
                     !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
@@ -838,7 +845,8 @@ public class AndesAuthorizationHandler {
                 } else if (isDurableTopicSubscriberQueue(
                         routingKey,
                         properties.get(ObjectProperties.Property.OWNER))
-                        && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
+                        && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
                     isOwnDomain = true;
                 }
             }
@@ -999,11 +1007,14 @@ public class AndesAuthorizationHandler {
         String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
                                                              queueName.replace(".","-").replace("/", "-"));
 
+        AuthorizationManager authorizationManager = CarbonContext.getThreadLocalCarbonContext()
+                .getUserRealm().getAuthorizationManager();
         UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
                 .getUserRealm().getUserStoreManager();
 
         if (userStoreManager.isExistingRole(roleName)) {
             userStoreManager.deleteRole(roleName);
+            authorizationManager.clearResourceAuthorizations(CommonsUtil.getQueueID(queueName));
         }
     }
 
