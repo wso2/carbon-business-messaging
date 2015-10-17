@@ -34,6 +34,7 @@ import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.user.api.AuthorizationManager;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
@@ -747,7 +748,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
      * @param destinationName name of the queue or topic
      * @throws EventBrokerException
      */
-    private static void removeRoleCreateForLoggedInUser(String destinationName)
+    private void removeRoleCreateForLoggedInUser(String destinationName)
             throws EventBrokerException {
         //For registry we use a modified queue name
         String roleName;
@@ -765,9 +766,11 @@ public class TopicManagerServiceImpl implements TopicManagerService {
 
         try {
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
+            AuthorizationManager authorizationManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager();
 
             if (userStoreManager.isExistingRole(roleName)) {
                 userStoreManager.deleteRole(roleName);
+                authorizationManager.clearResourceAuthorizations(JavaUtil.getResourcePath(destinationName, getTopicStoragePath()));
             }
         } catch (UserStoreException e) {
             throw new EventBrokerException("Error while deleting " + newDestinationName, e);
