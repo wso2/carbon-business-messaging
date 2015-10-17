@@ -80,9 +80,11 @@ public class CommonsUtil {
         // special character.
         // eg. if topic name is myTopic/*/* then topic name is myTopic
         if (topicName.contains("*")) {
-            topicName = topicName.substring(0, (topicName.indexOf("*") - 1));
+            topicName = topicName.indexOf("*") > 0 ?
+                    topicName.substring(0, (topicName.indexOf("*") - 1)) : topicName.replace("*/", "");
         } else if (topicName.contains("#")) {
-            topicName = topicName.substring(0, (topicName.indexOf("#") - 1));
+            topicName = topicName.indexOf("#") > 0 ?
+                    topicName.substring(0, (topicName.indexOf("#") - 1)) : topicName.replace("#/", "");
         }
 
         return topicID + topicName;
