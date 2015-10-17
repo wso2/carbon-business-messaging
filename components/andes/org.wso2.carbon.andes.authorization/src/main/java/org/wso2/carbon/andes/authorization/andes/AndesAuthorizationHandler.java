@@ -416,6 +416,8 @@ public class AndesAuthorizationHandler {
 
                             accessResult = Result.ALLOWED;
                         } else if (!userStoreManager.isExistingRole(roleName) &&
+                                userRealm.getAuthorizationManager().getAllowedRolesForResource(topicId,
+                                TreeNode.Permission.SUBSCRIBE.toString().toLowerCase()).length == 0 &&
                                 userRealm.getAuthorizationManager().isUserAuthorized(username,
                                         PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
 
