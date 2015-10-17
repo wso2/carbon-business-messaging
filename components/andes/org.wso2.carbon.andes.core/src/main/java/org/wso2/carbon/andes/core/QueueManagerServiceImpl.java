@@ -65,9 +65,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
 import java.lang.management.ManagementFactory;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Works as the manager class for queue related tasks done from UI. (create queue, delete queue,
@@ -356,61 +354,35 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public String[] getBackendRoles() throws QueueManagerException {
-        UserRealm userRealm;
+        UserRealm userRealm = CarbonContext.getThreadLocalCarbonContext().getUserRealm();
+        String[] cleanedRoles = new String[0];
         try {
-            userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
-                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                     MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
-                            .getTenantId());
-            //Get the admin role
-            String adminRole = QueueManagerServiceValueHolder.getInstance().getRealmService().getBootstrapRealm()
-                    .getRealmConfiguration().getAdminRoleName();
-            UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-            //Get all the roles of the logged in user
-            String[] roleNames = userStoreManager.getRoleListOfUser(CarbonContext.getThreadLocalCarbonContext()
-                    .getUsername());
-            //Check current user has admin role
-            String[] rolesExceptAdminRole = null;
-            boolean adminRoleExistInAllRoles = false;
-            if (Utils.isAdmin(CarbonContext.getThreadLocalCarbonContext().getUsername())) {
-                String[] allRoles = userRealm.getUserStoreManager().getRoleNames();
-                for (String aRole : allRoles) {
-                    if (adminRole.equals(aRole)) {
-                        adminRoleExistInAllRoles = true;
+            String adminRole =
+                    QueueManagerServiceValueHolder.getInstance().getRealmService().
+                            getBootstrapRealmConfiguration().getAdminRoleName();
+            String[] allRoles = userRealm.getUserStoreManager().getRoleNames();
+            // check if there is only admin role exists.
+            if (allRoles != null && allRoles.length > 1) {
+                // check if more roles available than admin role and anonymous role
+                List<String> allRolesArrayList = new ArrayList<>();
+                Collections.addAll(allRolesArrayList, allRoles);
+
+                Iterator<String> it = allRolesArrayList.iterator();
+                while (it.hasNext()) {
+                    String nextRole = it.next();
+                    if (nextRole.equals(adminRole) || nextRole.equals(CarbonConstants.REGISTRY_ANONNYMOUS_ROLE_NAME)) {
+                        it.remove();
                     }
                 }
-                if (allRoles.length > 1) {
-                    if (adminRoleExistInAllRoles) {
-                        rolesExceptAdminRole = new String[allRoles.length - 1];
-                    } else {
-                        rolesExceptAdminRole = new String[allRoles.length];
-                    }
-                    int index = 0;
-                    for (String role : allRoles) {
-                        if (!(role.equals(adminRole) || CarbonConstants.REGISTRY_ANONNYMOUS_ROLE_NAME.equals(role))) {
-                            rolesExceptAdminRole[index] = role;
-                            index++;
-                        }
-                    }
-                }
-            } else {
-                if (roleNames != null && roleNames.length > 0) {
-                    rolesExceptAdminRole = new String[roleNames.length];
-                    int index = 0;
-                    for (String role : roleNames) {
-                        rolesExceptAdminRole[index] = role;
-                        index++;
-                    }
-                }
+
+                cleanedRoles = allRolesArrayList.toArray(new String[allRolesArrayList.size()]);
             }
-            if (rolesExceptAdminRole != null && rolesExceptAdminRole.length > 0) {
-                return rolesExceptAdminRole;
-            } else {
-                return new String[0];
-            }
+
         } catch (UserStoreException e) {
-            throw new QueueManagerException("Unable to get roles from user store.", e);
+            throw new QueueManagerException("Unable to get roles from user store", e);
         }
+
+        return cleanedRoles;
     }
 
     /**

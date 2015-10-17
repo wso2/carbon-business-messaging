@@ -550,7 +550,7 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             }
 
         } catch (UserStoreException e) {
-            throw new EventBrokerException("Unable to get Roles from user store", e);
+            throw new EventBrokerException("Unable to get roles from user store", e);
         }
 
         return cleanedRoles;
