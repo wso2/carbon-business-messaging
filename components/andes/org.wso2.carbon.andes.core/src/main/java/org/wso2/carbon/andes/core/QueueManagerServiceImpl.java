@@ -198,12 +198,16 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         try {
             UserRegistry userRegistry = Utils.getUserRegistry();
 
-            String resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" +
-                    subscriptionId.split(":")[1];
-            String resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName,
-                    subscriptionId.split(":")[1]);
-            userRegistry.delete(resourcePathForTopic);
-            userRegistry.delete(resourcePathForQueue);
+            String resourcePathForQueue = null;
+            String resourcePathForTopic = null;
+            if (subscriptionId.contains(":")) {
+                resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" +
+                        subscriptionId.split(":")[1];
+                resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName,
+                        subscriptionId.split(":")[1]);
+                userRegistry.delete(resourcePathForTopic);
+                userRegistry.delete(resourcePathForQueue);
+            }
 
         } catch (RegistryException e) {
             String message = e.getMessage();

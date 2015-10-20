@@ -45,6 +45,8 @@ public class QueueManagementBeans {
 
     public static QueueManagementBeans self;
     public static final String DIRECT_EXCHANGE = "amq.direct";
+    public static final String DEFAULT_EXCHANGE = "<<default>>";
+
 
     /**
      * Gets the active queue managing instance.
@@ -85,7 +87,7 @@ public class QueueManagementBeans {
 
             ObjectName bindingMBeanObjectName =
                     new ObjectName("org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
-                            DIRECT_EXCHANGE + "\",ExchangeType=direct");
+                            DEFAULT_EXCHANGE + "\",ExchangeType=direct");
             String bindingOperationName = "createNewBinding";
 
             Object[] bindingParams = new Object[]{queueName, queueName};
