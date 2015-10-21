@@ -198,9 +198,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         try {
             UserRegistry userRegistry = Utils.getUserRegistry();
 
-            String resourcePathForQueue = null;
-            String resourcePathForTopic = null;
             if (subscriptionId.contains(":")) {
+                String resourcePathForQueue = null;
+                String resourcePathForTopic = null;
                 resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" +
                         subscriptionId.split(":")[1];
                 resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName,
