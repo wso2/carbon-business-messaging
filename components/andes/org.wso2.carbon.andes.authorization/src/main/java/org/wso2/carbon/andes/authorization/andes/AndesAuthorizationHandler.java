@@ -613,7 +613,9 @@ public class AndesAuthorizationHandler {
         try {
             if (null != userRealm) {
                 String queueName = getRawQueueName(properties.get(ObjectProperties.Property.NAME));
-                if (isAdmin(username, userRealm)) {
+                if (!isOwnDomain(queueName, userRealm, properties)) {
+                    accessResult = Result.DENIED;
+                } else if (isAdmin(username, userRealm)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
