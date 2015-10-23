@@ -416,20 +416,31 @@ public class AndesAuthorizationHandler {
 
                             accessResult = Result.ALLOWED;
                         } else if (!userStoreManager.isExistingRole(roleName) &&
-                                userRealm.getAuthorizationManager().getAllowedRolesForResource(topicId,
-                                TreeNode.Permission.SUBSCRIBE.toString().toLowerCase()).length == 0 &&
+                                !userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                        topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase()) &&
                                 userRealm.getAuthorizationManager().isUserAuthorized(username,
                                         PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
+                            //If topic created by admin then we don't create internal role. Therefore we have to check
+                            //given topic permission assigned to admin. If admin has permission, then we not allow to
+                            //other user to authorize.
+                            boolean isAdminAuthorized = false;
+                            if (userRealm.getAuthorizationManager().isUserAuthorized(
+                                    userRealm.getRealmConfiguration().getAdminUserName(),
+                                    topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                                isAdminAuthorized = true;
+                            }
 
-                            //This is triggered when a topic is created.So the user who creates the
+                            //This is triggered when a topic is created. So the user who creates the
                             // topic will get publish/subscribe permissions
+                            if (!isAdminAuthorized) {
+                                // Store subscription
+                                RegistryClient.createSubscription(newRoutingKey, newQName, username);
 
-                            // Store subscription
-                            RegistryClient.createSubscription(newRoutingKey, newQName, username);
+                                authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
+                                        queueName, userRealm);
+                                accessResult = Result.ALLOWED;
+                            }
 
-                            authorizeTopicPermissionsToLoggedInUser(username, newRoutingKey, topicId,
-                                    queueName, userRealm);
-                            accessResult = Result.ALLOWED;
                         } else {
 
                             //check that user authorize to parent of topic hierarchy
