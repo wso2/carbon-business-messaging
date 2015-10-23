@@ -16,10 +16,10 @@
 
 package org.wso2.carbon.andes.event.core.internal.subscription.registry;
 
-import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
+import org.wso2.andes.server.NameValidationUtils;
 import org.wso2.carbon.andes.event.core.TopicManagerService;
 import org.wso2.carbon.andes.event.core.TopicNode;
 import org.wso2.carbon.andes.event.core.TopicRolePermission;
@@ -38,9 +38,7 @@ import org.wso2.carbon.user.api.AuthorizationManager;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
-import org.wso2.carbon.user.core.authorization.TreeNode;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
-import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.util.*;
@@ -152,15 +150,17 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     }
 
     /**
+     * Adding topic, when creating topics from the user interface
+     *
      * {@inheritDoc}
      */
     @Override
     public void addTopic(String topicName) throws EventBrokerException {
-        if (!validateTopicName(topicName)) {
-            throw new EventBrokerException("Topic name " + topicName + " is not a valid topic name. " +
-                                           "Only alphanumeric characters, hyphens (-), stars(*)," +
-                                           " hash(#) ,dot(.),question mark(?)" +
-                                           " and underscores (_) are allowed.");
+        //Prevent creating topics, if topic name is not valid
+        if (!NameValidationUtils.isValidUITopicName(topicName)) {
+            throw new EventBrokerException("Topic name " + topicName + " is not a valid topic name. Only alphanumeric"
+                    + " characters, stars(*), hash(#) and dots(.) are allowed. Dot can only use in the middle of the"
+                    + " name, as a delimiter and hash can only use at the end of the name. ");
         }
 
         String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
@@ -517,16 +517,6 @@ public class TopicManagerServiceImpl implements TopicManagerService {
 
         topicName = topicName + EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME;
         return topicName;
-    }
-
-    /**
-     * Validates a topic name. Checks for invalid characters
-     *
-     * @param topicName topic name
-     * @return true if topic name is valid, false otherwise.
-     */
-    private boolean validateTopicName(String topicName) {
-        return Pattern.matches("[[a-zA-Z]+[^(\\x00-\\x80)]+[0-9_\\-/#*:.?&\\s()]+]+", topicName);
     }
 
     /**

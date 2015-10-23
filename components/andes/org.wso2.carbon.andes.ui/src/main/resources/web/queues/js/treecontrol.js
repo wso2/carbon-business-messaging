@@ -1,3 +1,6 @@
+/**
+ * Adding queues, when creating queues from the user interface
+ */
 function addQueue(createdFrom) {
     var topic = document.getElementById("queue");
 
@@ -6,7 +9,7 @@ function addQueue(createdFrom) {
     if (topic.value == "") {
         error = "Queue name cannot be empty.\n";
     } else if (!isValidQueueName(topic.value)) {
-        error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"',\n";
+        error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"'/, and space \n";
     } else if (isContainTmpPrefix(topic.value)) {
         error = "Queue name cannot start with tmp_ prefix.\n";
     }
@@ -17,8 +20,11 @@ function addQueue(createdFrom) {
     addQueueAndAssignPermissions(topic.value, createdFrom);
 }
 
+/**
+ * Validating queue names, when creating queues from user interface
+ */
 function isValidQueueName(queueName){
-    return !/[~!@#;%^*()+={}|\<>"',]/g.test(queueName);
+    return !/[~!@#;%^*()+={}|\<>"'/,\s]/g.test(queueName);
 }
 
 function isContainTmpPrefix(queueName) {

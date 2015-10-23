@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.commons.registry;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.AndesConstants;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
@@ -49,6 +50,7 @@ public class RegistryClient {
     private static final String CREATED_FROM_AMQP = "amqp";
     private static final String USER_COUNT = "userCount";
     private static final Log log = LogFactory.getLog(RegistryClient.class);
+
     /**
      * Create an entry for a queue in the Registry
      *
@@ -58,8 +60,12 @@ public class RegistryClient {
      */
     public static void createQueue(String queueName, String owner)
             throws RegistryClientException {
-        try {
 
+        if (log.isDebugEnabled()) {
+            log.debug("Saving queue name \"" + queueName + "\" in Registry");
+        }
+
+        try {
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
             UserRegistry registry = registryService.getGovernanceSystemRegistry(
                     PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
@@ -197,9 +203,13 @@ public class RegistryClient {
     public static void createSubscription(
             String topic, String subscriptionName, String owner)
             throws RegistryClientException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Saving topic name: \"" + topic
+                    + "\" in registry, and subscription name for this topic is: " + subscriptionName);
+        }
+
         try {
-
-
             RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
             UserRegistry registry = registryService.getGovernanceSystemRegistry(
                     CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
@@ -234,11 +244,12 @@ public class RegistryClient {
      * @return tenant based topic name
      */
     public static String getTenantBasedTopicName(String topicName) {
+
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String tenantBasedTopicName = topicName;
         if (tenantDomain != null && (!tenantDomain.equals(
                 org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
-            String formattedTenantDomain = tenantDomain + "/";
+            String formattedTenantDomain = tenantDomain + AndesConstants.TENANT_SEPARATOR;
             if (topicName.contains(formattedTenantDomain)) {
                 tenantBasedTopicName = topicName.substring(formattedTenantDomain.length());
             }
@@ -344,4 +355,5 @@ public class RegistryClient {
             throw new RegistryClientException(e);
         }
     }
+
 }
