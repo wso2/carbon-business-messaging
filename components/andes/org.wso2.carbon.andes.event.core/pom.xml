@@ -18,11 +18,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.andes.wso2</groupId>
-            <artifactId>andes</artifactId>
-            <version>${andes.dependency.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.securevault</groupId>
             <artifactId>org.wso2.securevault</artifactId>
         </dependency>

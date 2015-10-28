@@ -19,7 +19,6 @@ package org.wso2.carbon.andes.event.core.internal.subscription.registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
-import org.wso2.andes.server.NameValidationUtils;
 import org.wso2.carbon.andes.event.core.TopicManagerService;
 import org.wso2.carbon.andes.event.core.TopicNode;
 import org.wso2.carbon.andes.event.core.TopicRolePermission;
@@ -156,12 +155,6 @@ public class TopicManagerServiceImpl implements TopicManagerService {
      */
     @Override
     public void addTopic(String topicName) throws EventBrokerException {
-        //Prevent creating topics, if topic name is not valid
-        if (!NameValidationUtils.isValidUITopicName(topicName)) {
-            throw new EventBrokerException("Topic name " + topicName + " is not a valid topic name. Only alphanumeric"
-                    + " characters, stars(*), hash(#) and dots(.) are allowed. Dot can only use in the middle of the"
-                    + " name, as a delimiter and hash can only use at the end of the name. ");
-        }
 
         String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();
         UserRealm userRealm = CarbonContext.getThreadLocalCarbonContext().getUserRealm();

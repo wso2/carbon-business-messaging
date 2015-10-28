@@ -190,6 +190,10 @@ function addTopic() {
     topic.value = topic.value.replace(/^\s+|\s+$/g, "");
     if (topic.value == "") {
         error = "Topic name cannot be empty.\n";
+    } else if (!isValidTopicName(topic.value)) {
+        error = "Topic name " + topic.value + " is not a valid topic name. Only alphanumeric"
+            + " characters, stars(*), hash(#) and dots(.) are allowed. (.) can only use in the middle of the"
+            + " name, as a delimiter and (#) can only use at the end of the name.";
     }
 
     if (error != "") {
@@ -214,12 +218,28 @@ function addTopicFromManage() {
 
     if (topic.value == "") {
         error = "Topic name cannot be empty.\n";
+    } else if (!isValidTopicName(topic.value)) {
+        error = "Topic name " + topic.value + " is not a valid topic name. Only alphanumeric"
+            + " characters, stars(*), hash(#) and dots(.) are allowed. (.) can only use in the middle of the"
+            + " name, as a delimiter and (#) can only use at the end of the name.";
     }
+
     if (error != "") {
         CARBON.showErrorDialog(error);
         return;
     }
     addTopicToBackEnd(completeTopic)
+}
+
+/**
+ * Validating topic names, when creating topics from user interface
+ */
+function isValidTopicName(topicName) {
+    /**
+     * Pattern to validate the topic name. Topic name can starts with star(*) or any alphanumeric character(a-z A-Z 0-9),
+     * 0 or more times, delimited by dots. Topic name can ends with star, alphanumeric character or with a hash (#).
+     */
+    return /^(((\*|[A-Za-z0-9]+)\.)*(\*|[A-Za-z0-9]+|#))$/.test(topicName);
 }
 
 // Shows add subtopic
