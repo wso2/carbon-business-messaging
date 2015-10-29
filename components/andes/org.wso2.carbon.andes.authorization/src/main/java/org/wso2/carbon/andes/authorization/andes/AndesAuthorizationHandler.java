@@ -336,8 +336,7 @@ public class AndesAuthorizationHandler {
                 String queueName =
                         getRawQueueName(properties.get(ObjectProperties.Property.QUEUE_NAME));
                 String routingKey =
-                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
-                                properties.get(ObjectProperties.Property.OWNER));
+                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
                 String queueID = CommonsUtil.getQueueID(queueName);
                 String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
@@ -513,8 +512,7 @@ public class AndesAuthorizationHandler {
                 String exchangeName =
                         getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
                 String routingKey =
-                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
-                                properties.get(ObjectProperties.Property.OWNER));
+                        getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
                 String queueID = CommonsUtil.getQueueID(routingKey);
                 String permissionID = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
@@ -586,8 +584,7 @@ public class AndesAuthorizationHandler {
         String queueName =
                 getRawQueueName(properties.get(ObjectProperties.Property.QUEUE_NAME));
         String routingKey =
-                getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY),
-                        properties.get(ObjectProperties.Property.OWNER));
+                getRawRoutingKey(properties.get(ObjectProperties.Property.ROUTING_KEY));
 
         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
@@ -814,8 +811,8 @@ public class AndesAuthorizationHandler {
      * @param routingKey Internal routing key
      * @return Raw routing key
      */
-    private static String getRawRoutingKey(String routingKey, String virtualHost) {
-        String virtualHostFormatted = virtualHost + ":";
+    private static String getRawRoutingKey(String routingKey) {
+        String virtualHostFormatted = "carbon" + ":";
         int startIndex = !routingKey.contains(virtualHostFormatted) ? 0 : routingKey.indexOf(virtualHostFormatted);
         return routingKey.substring(startIndex, routingKey.length());
     }
