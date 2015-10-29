@@ -112,7 +112,6 @@
                     <th><fmt:message key="message.contenttype"/></th>
                     <th><fmt:message key="message.messageId"/></th>
                     <th><fmt:message key="message.redelivered"/></th>
-                    <th><fmt:message key="message.deliverymode"/></th>
                     <th><fmt:message key="message.timestamp"/></th>
                     <th><fmt:message key="message.properties"/></th>
                     <th><fmt:message key="message.summary"/></th>
@@ -141,8 +140,6 @@
                     <td><%= queueMessage.getJMSMessageId()%>
                     </td>
                     <td><%= queueMessage.getJMSReDelivered()%>
-                    </td>
-                    <td><%= queueMessage.getJMSDeliveredMode()%>
                     </td>
                     <td><%= queueMessage.getJMSTimeStamp()%>
                     </td>
