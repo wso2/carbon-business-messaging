@@ -377,7 +377,6 @@ public class QueueManagementBeans {
                     message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
                     message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
                     message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
-                    message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation.JMS_DELIVERY_MODE));
                     message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
                     message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
                     message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
