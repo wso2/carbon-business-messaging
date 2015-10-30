@@ -7,6 +7,7 @@
 
     String queue = request.getParameter("nameOfQueue");
     String topicName = request.getParameter("nameOfTopic");
+    String message = "";
     try {
         stub.deleteQueue(queue);
         if (null != topicName ) {
@@ -15,5 +16,6 @@
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
+        message = "Error: " + e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage();
     }
-%>
+%><%=message%>

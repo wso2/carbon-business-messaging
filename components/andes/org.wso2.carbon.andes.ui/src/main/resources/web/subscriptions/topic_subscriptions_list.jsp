@@ -41,21 +41,22 @@
             $.ajax({
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
-                dataType:"html",
-                success: function() {
-                    CARBON.showInfoDialog("Successfully unsubscribed.", function(){
-                        location.href = "../subscriptions/topic_subscriptions_list.jsp";
-                    });
-                    aTag.css('font-weight', 'normal');
-
+                type:"POST",
+                success: function(o) {
+                    if (o.indexOf("Error") > -1) {
+                        CARBON.showErrorDialog("" + o, function() {
+                            location.href = "../subscriptions/topic_subscriptions_list.jsp"
+                        });
+                    } else {
+                        CARBON.showInfoDialog("Successfully unsubscribed.", function() {
+                            location.href = "../subscriptions/topic_subscriptions_list.jsp"
+                        });
+                    }
                 },
-
-                failure: function(transport) {
-                    CARBON.showErrorDialog(trim(transport.responseText),function(){
-                        location.href = "../subscriptions/topic_subscriptions_list.jsp";
-                        return;
-                    });
-                    aTag.css('font-weight', 'normal');
+                failure: function(o) {
+                    if (o.responseText !== undefined) {
+                        alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                    }
                 }
             });
         });
