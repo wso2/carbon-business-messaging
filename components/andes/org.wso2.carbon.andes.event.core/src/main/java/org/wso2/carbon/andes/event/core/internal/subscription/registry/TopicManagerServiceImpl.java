@@ -157,10 +157,10 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     @Override
     public void addTopic(String topicName) throws EventBrokerException {
         //Prevent creating topics, if topic name is not valid
-        if (!NameValidationUtils.isValidUITopicName(topicName)) {
+        if (!(NameValidationUtils.isValidUITopicName(topicName))) {
             throw new EventBrokerException("Topic name " + topicName + " is not a valid topic name. Only alphanumeric"
-                    + " characters, stars(*), hash(#) and dots(.) are allowed. Dot can only use in the middle of the"
-                    + " name, as a delimiter and hash can only use at the end of the name. ");
+                    + " characters, stars(*), hash(#) and dots(.) are allowed. (.) can only use in the middle of the"
+                    + " name, as a delimiter and (#) can only use at the end of the name. ");
         }
 
         String loggedInUser = CarbonContext.getThreadLocalCarbonContext().getUsername();

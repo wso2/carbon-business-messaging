@@ -203,18 +203,22 @@ function addTopic() {
 // Adds topic from topic detail/manage page
 function addTopicFromManage() {
     var existingTopic = document.getElementById("existingTopic");
+    // Replace all slashes with a dot
+    var topicPathWithoutSlash = existingTopic.value.replace(/\//g, ".");
     var topic = document.getElementById("topic");
     var completeTopic = "";
-    if (existingTopic.value == "/") {
-        completeTopic = existingTopic.value + topic.value;
-    } else {
-        completeTopic = existingTopic.value + "/" + topic.value;
-    }
-    var error = "";
 
-    if (topic.value == "") {
+    if (existingTopic.value == "/") {
+        completeTopic = topic.value;
+    } else {
+        completeTopic = topicPathWithoutSlash + "." + topic.value;
+    }
+
+    var error = "";
+    if ("" == topic.value) {
         error = "Topic name cannot be empty.\n";
     }
+
     if (error != "") {
         CARBON.showErrorDialog(error);
         return;
