@@ -2,22 +2,22 @@
  * Adding queues, when creating queues from the user interface
  */
 function addQueue(createdFrom) {
-    var topic = document.getElementById("queue");
+    var queue = document.getElementById("queue");
 
     var error = "";
 
-    if (topic.value == "") {
+    if ("" == queue.value) {
         error = "Queue name cannot be empty.\n";
-    } else if (!isValidQueueName(topic.value)) {
+    } else if (!isValidQueueName(queue.value)) {
         error = "Queue name cannot contain any of following symbols ~!@#;%^*()+={}|\<>\"'/, and space \n";
-    } else if (isContainTmpPrefix(topic.value)) {
+    } else if (isContainTmpPrefix(queue.value)) {
         error = "Queue name cannot start with tmp_ prefix.\n";
     }
     if (error != "") {
         CARBON.showErrorDialog(error);
         return;
     }
-    addQueueAndAssignPermissions(topic.value, createdFrom);
+    addQueueAndAssignPermissions(queue.value, createdFrom);
 }
 
 /**
