@@ -179,7 +179,7 @@ function addTopicToBackEnd(topic) {
         }
 
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_topic_to_backend_ajaxprocessor.jsp", callback, "topic=" + topic + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_topic_to_backend_ajaxprocessor.jsp", callback, "topic=" + encodeURIComponent(topic) + "&type=input");
 }
 
 // Adding a topic. Invoked by jsp.
