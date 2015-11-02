@@ -53,7 +53,7 @@ function addQueueAndAssignPermissions(queue, createdFrom) {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_and_assign_role_permissions_ajaxprocessor.jsp", callback, "queue=" + queue + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "add_queue_and_assign_role_permissions_ajaxprocessor.jsp", callback, "queue=" + encodeURIComponent(queue) + "&type=input");
 }
 
 function updatePermissions() {
