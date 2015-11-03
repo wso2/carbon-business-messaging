@@ -378,14 +378,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <vHostSyncTaskInterval>3600</vHostSyncTaskInterval>
         </failover>
 
-
-        <messageExpiration>
-            <!--Broker checks for expired messages once for checkInterval. Configured in milliseconds.-->
-            <checkInterval>10000</checkInterval>
-            <!--Maximum number of messages to be read from Message Store to check for expiration-->
-            <messageBatchSize>1000</messageBatchSize>
-        </messageExpiration>
-
     </performanceTuning>
 
     <!-- This section is about how you want to view messaging statistics from the admin console and
