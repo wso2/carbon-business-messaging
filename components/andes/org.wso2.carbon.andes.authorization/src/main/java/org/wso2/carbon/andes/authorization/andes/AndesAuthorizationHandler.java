@@ -263,6 +263,13 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                     }
+                } else if (isDurableTopicSubscriberQueue(
+                        // If this queue is created internally for the use of Durable Topics then authorize
+                        properties.get(ObjectProperties.Property.NAME),
+                        properties.get(ObjectProperties.Property.OWNER)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
+                    accessResult = Result.ALLOWED;
                 }
                 // if non of the above deny permission
                 return accessResult;
