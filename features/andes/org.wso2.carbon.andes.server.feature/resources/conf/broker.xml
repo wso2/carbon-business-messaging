@@ -180,7 +180,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             -->
             <valueReferenceType>strong</valueReferenceType>
 
-            <!--Prints cache statistics in 2 minites intervals 
+            <!--Prints cache statistics in 2 minute intervals 
                                                    in carbon log ( and console)-->					
             <printStats>false</printStats>
         </cache>
