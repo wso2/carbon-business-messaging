@@ -373,9 +373,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         </inboundEvents>
 
         <failover>
-            <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will
-            sync the Virtual host details across the cluster -->
-            <vHostSyncTaskInterval>3600</vHostSyncTaskInterval>
+
         </failover>
 
     </performanceTuning>
@@ -443,6 +441,10 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         number of storage queues to speed up warm startup.
         -->
         <concurrentStorageQueueReads>5</concurrentStorageQueueReads>
+
+        <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will
+            sync the Virtual host details across the cluster -->
+        <vHostSyncTaskInterval>900</vHostSyncTaskInterval>
     </recovery>
 
 </broker>
