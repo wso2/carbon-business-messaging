@@ -25,56 +25,42 @@
 	</head>
 	<body style="font-family: Times New Roman,Times,serif; font-size: 12pt;">
     <h1>WSO2 Message Broker Cluster Management</h1>
-    <p>When WSO2 Message Broker is running in clustered mode queues and topic subscriptions are distributed. Although
-       This is transparent to the user, he may need to know what are the nodes in the cluster and how queue ownership
-       has been dynamically decided. Cluster management feature is there to address that aspect of usability. </p>
+
+    <p>When WSO2 Message Broker is running in clustered mode queues and topic subscriptions are
+        distributed. Although This is transparent to the user, he may need to know what are the
+        nodes in the cluster and the node details. Cluster management feature is there to address
+        that aspect of usability.
+    </p>
     <p>Following capabilities are provided under Cluster Management:</p>
 
     <ul>
-        <li>View Zookeeper coordination detail</li>
-        <li>View Cassandra connection detail</li>
-        <li>View how queue ownership has been decided</li>
-        <li>View individual queue information node-wise</li>
+        <li>View current node details</li>
+        <li>View running mode of the broker</li>
+        <li>View cluster node details</li>
+        <li>View message store status</li>
     </ul>
-    <h2>View Zookeeper coordination detail</h2>
-        <p>WSO2 MB should be pointed to a running Apache Zookeeper server during cluster configuration. User can see
-           that configuration here.</p>
-        <p><img alt="" src="../images/zookeeper-connection.png"/></p>
-        <p align="middle">Figure 1: Apache Zookeeper Connection</p>
+    <h2>View current node details</h2>
+
+    <p>This section shows the node details of the current node. Node details include the IP address
+        of the running node and the port used for cluster communication. </p>
 
 
-    <h2>View Cassandra coordination detail</h2>
-        <p>WSO2 MB uses Apache Cassandra as the Message Storage. Thus during cluster configuration MB instance should be
-           pointed to a running Apache Cassandra server. That connection detail is shown here.</p>
-        <p><img alt="" src="../images/cassandra-connection.png"/></p>
-        <p align="middle">Figure 2: Apache Cassandra Connection</p>
+    <h2>View running mode of the broker</h2>
 
+    <p>This section shows which mode the current MB node is running. Running mode can be either
+        standalone or cluster mode.</p>
 
-    <h2>View how queue ownership has been decided</h2>
-        <p>When clustered, each queue has a owner (handling the actual processing of the queue), which is dynamically decided
-           considering the load distributed among the cluster nodes. If the user is interested to know what nodes process
-           which queues, that information is listed to a table as below.</p>
-        <p><img alt="" src="../images/nodewiseQueueWorkers.png"/></p>
-        <p align="middle">Figure 3: Nodes and Queue Ownership</p>
-        <p>This table lists all the nodes that is visible to the server accessed by the management console. After setting up
-           the cluster, using this table users can verify that each server can see one another in the cluster. </p>
-        <p>After each node, it shows how many queues are owned by that server node. This is analogous to the workload owned by each
-           node in the cluster for queues defined. When the number is clicked user, is navigated for individual queue information. </p>
+    <h2>View cluster node details</h2>
 
+    <p>Cluster node information is displayed in a table which contains each member of the cluster in
+        a separated raw. The details of each node contain the node id, the IP address, the port used
+        for cluster communication and whether each node acts as the cluster coordinator.
+    </p>
 
-    <h2>View individual queue information node-wise</h2>
-        <p>This shows the names of the queues owned by the node clicked above. Also number of messages yet to be delivered
-           is also shown.</p>
-        <p><img alt="" src="../images/nodeQueues.png"/></p>
-        <p align="middle">Figure 4: Nodes Specific Queues</p>
-
-    <h2>What is node ID?</h2>
-        <p>Node ID is assigned to each node joined in the cluster, giving a unique way to identify each node. This is useful for
-           troubleshooting. Each node is considered as a peer, and there's no master-slave concept in WSO2 Message Broker. In
-           following window it shows the node id been assigned to the node plus whether node is configured to be clustered
-           or running in standalone mode. </p>
-        <p><img alt="" src="../images/nodeIDBox.png"/></p>
-        <p align="middle">Figure 5: Node ID and Running Mode</p>
+    <h2>View message store status</h2>
+        <p>This section shows whether the store is operational or not.</p>
+        <p><img alt="" src="../images/cluster-details.png"/></p>
+        <p align="middle">Figure 1: Node Details and Store Status</p>
 
 
 
