@@ -3,6 +3,9 @@
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
+<%@ page import="java.io.UnsupportedEncodingException" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
     <carbon:jsi18n
@@ -19,6 +22,12 @@
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         String nameOfQueue = request.getParameter("nameOfQueue");
+        String encodedNameOfQueue = null;
+        try {
+            encodedNameOfQueue = URLEncoder.encode(nameOfQueue, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            CarbonUIMessage.sendCarbonUIMessage("Error while encoding queue name", CarbonUIMessage.ERROR, request, e);
+        }
     %>
 
     <script>
@@ -45,7 +54,7 @@
                 %>
                 <script type="text/javascript">CARBON.showErrorDialog('Number of messages cannot be empty', function
                         () {
-                    location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
+                    location.href = 'queue_message_sender.jsp?nameOfQueue=<%=encodedNameOfQueue%>';
                 });</script>
                 <%
             }
@@ -57,7 +66,7 @@
                         %>
                             <script type="text/javascript">CARBON.showErrorDialog('Please enter a valid number of messages to send', function
                                     () {
-                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
+                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=encodedNameOfQueue%>';
                             });</script>
                         <%
                     }
@@ -66,7 +75,7 @@
                         %>
                             <script type="text/javascript">CARBON.showErrorDialog('Number of messages input is not a number', function
                                     () {
-                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>';
+                                location.href = 'queue_message_sender.jsp?nameOfQueue=<%=encodedNameOfQueue%>';
                             });</script>
                         <%
                 }
@@ -119,7 +128,7 @@
         <h2><fmt:message key="send.message"/></h2>
         <div id="workArea">
 
-            <form id="send_message_form" name="send_message_form" action="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>" method="post">
+            <form id="send_message_form" name="send_message_form" action="queue_message_sender.jsp?nameOfQueue=<%=encodedNameOfQueue%>" method="post">
 
                 <table class="styledLeft" style="width:100%">
                 <thead>

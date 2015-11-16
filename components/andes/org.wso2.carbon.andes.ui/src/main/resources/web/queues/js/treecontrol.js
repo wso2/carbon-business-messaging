@@ -111,7 +111,7 @@ function showManageQueueWindow(queueName) {
             }
         }
     };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "load_queue_details_from_bEnd_ajaxprocessor.jsp", callback, "queueName=" + queueName + "&type=input");
+    var request = YAHOO.util.Connect.asyncRequest('POST', "load_queue_details_from_bEnd_ajaxprocessor.jsp", callback, "queueName=" + encodeURIComponent(queueName) + "&type=input");
 }
 
  function doDelete(queueName) {
