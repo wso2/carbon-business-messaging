@@ -202,6 +202,7 @@
                                         <include>conf/event-broker.xml</include>
                                         <include>conf/qpid-config.xml</include>
                                         <include>conf/qpid-virtualhosts.xml</include>
+                                        <include>dbscripts/postgresql-mb.sql</include>
                                         <include>dbscripts/mssql-mb.sql</include>
                                         <include>dbscripts/mysql-mb.sql</include>
                                         <include>dbscripts/oracle-mb.sql</include>
