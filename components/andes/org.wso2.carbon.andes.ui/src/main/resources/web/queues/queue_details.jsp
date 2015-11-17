@@ -9,6 +9,8 @@
 <%@ page import="javax.naming.NamingException" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceBrokerManagerAdminException" %>
 <%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
+<%@ page import="java.io.UnsupportedEncodingException" %>
+<%@ page import="java.net.URLEncoder" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:jsi18n
@@ -154,6 +156,12 @@
                     if (filteredQueueList != null) {
                         for (Queue queue : filteredQueueList) {
                             String nameOfQueue = queue.getQueueName();
+                            String encodedNameOfQueue = null;
+                            try {
+                                encodedNameOfQueue = URLEncoder.encode(nameOfQueue, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                CarbonUIMessage.sendCarbonUIMessage("Error while encoding queue name", CarbonUIMessage.ERROR, request, e);
+                            }
                             if(!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)){
                 %>
                 <tr>
@@ -186,7 +194,7 @@
                     <%--Browse--%>
                         <% try {
                             if(stub.checkCurrentUserHasBrowseQueuePermission()){ %>
-                        <td><a href="queue_messages_list.jsp?nameOfQueue=<%=nameOfQueue%>">Browse</a></td>
+                        <td><a href="queue_messages_list.jsp?nameOfQueue=<%=encodedNameOfQueue%>">Browse</a></td>
                         <% } else { %>
                         <td><a href="#" class="disabled-ahref">Browse</a></td>
                         <% }
@@ -198,8 +206,8 @@
                     <%--Publish--%>
                         <% try {
                             if (stub.checkCurrentUserHasPublishPermission(nameOfQueue)) { %>
-                        <td><img src="images/move.gif" alt=""/>&nbsp;<a
-                                href="queue_message_sender.jsp?nameOfQueue=<%=nameOfQueue%>">Publish Messages</a></td>
+                        <td><img src="images/move.gif" alt=""/>&nbsp;
+                            <a href="queue_message_sender.jsp?nameOfQueue=<%=encodedNameOfQueue%>">Publish Messages</a></td>
                         <% } else { %>
                         <td><img src="images/move.gif" alt=""/>&nbsp;
                             <a title="You cannot publish messages to this queue as you have no publish permissions."
@@ -216,7 +224,7 @@
                         <% try {
                             if (stub.checkCurrentUserHasPurgeQueuePermission()) { %>
                         <td><img src="images/minus.gif" alt=""/>&nbsp;<a
-                                href="queue_details.jsp?purge=true&nameOfQueue=<%=nameOfQueue%>">Purge Messages</a></td>
+                                href="queue_details.jsp?purge=true&nameOfQueue=<%=encodedNameOfQueue%>">Purge Messages</a></td>
                         <% } else { %>
                         <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="#" class="disabled-ahref">Purge
                             Messages</a></td>
