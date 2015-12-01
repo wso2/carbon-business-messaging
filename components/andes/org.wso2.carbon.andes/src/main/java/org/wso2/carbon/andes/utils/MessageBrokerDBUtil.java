@@ -18,17 +18,16 @@
 
 package org.wso2.carbon.andes.utils;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.utils.CarbonUtils;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * <h1>Initialize MB RDBMS store database</h1>
@@ -41,36 +40,15 @@ import java.util.HashMap;
  */
 public final class MessageBrokerDBUtil {
 
-    public static final int MESSAGE_STORE_DATA_SOURCE = 0;
-    public static final int CONTEXT_STORE_DATA_SOURCE = 1;
-
-    /**
-     * Number of database stores for message broker. Message store and Context store.
-     */
-    public static final int NUMBER_OF_DATA_STORES = 2;
-
     /**
      * log variable for logging.
      */
-    private static final Log log =
-            LogFactory.getLog(MessageBrokerDBUtil.class);
-
-    /**
-     * file name which holds data source configuration.
-     */
-    private static final String MASTER_DATA_SOURCE_FILE_NAME =
-            "master-datasources.xml";
-
-    private static final String DB_DRIVER = "driverClassName";
-    private static final String DB_URL = "url";
-    private static final String DB_PASSWORD = "password";
-    private static final String DB_USERNAME = "username";
+    private static final Log log = LogFactory.getLog(MessageBrokerDBUtil.class);
 
     /**
      * sql query to be execute to verify database tables.
      */
-    private static final String DB_CHECK_SQL =
-            "SELECT * FROM MB_QUEUE_COUNTER";
+    private static final String DB_CHECK_SQL = "SELECT * FROM MB_QUEUE_COUNTER";
 
     /**
      * keep data source configurations.
@@ -83,11 +61,6 @@ public final class MessageBrokerDBUtil {
     private static volatile DataSource contextStoreDataSource = null;
 
     /**
-     * keep state if database configurations loaded.
-     */
-    private boolean isMBStoreDatabaseConfigurationLoaded;
-
-    /**
      * keep state if message store configurations set.
      */
     private boolean isMessageStoreDataSourceSet;
@@ -95,42 +68,84 @@ public final class MessageBrokerDBUtil {
     /**
      * keep state if context store configurations set.
      */
-    private boolean isContextStoreDatasourceSet;
+    private boolean isContextStoreDataSourceSet;
 
 
     /**
-     * Creating schema for RDBMS message store with configurations given in
-     * master-datasources.xml
+     * Creating schema for RDBMS message store using jndi exposed data sources
+     * by Carbon (these data sources are formed reading /repository/conf/masterdatasource.xml
+     * file)
      *
      * @throws org.wso2.carbon.andes.service.exception.ConfigurationException
-     * throws exception if error occurs while loading DB configuration
+     * throws exception if error occurs while creating DB schema
      */
     public void initialize() throws ConfigurationException {
 
         String dSetupValue = System.getProperty("setup");
 
         if (dSetupValue != null) {
-            String filePath = CarbonUtils.getCarbonHome() + File.separator + "repository" +
-                              File.separator + "conf" + File.separator + "datasources" +
-                              File.separator + MASTER_DATA_SOURCE_FILE_NAME;
 
-            log.info("Creating schema for RDBMS message store.");
+            //load necessary configurations
+            final String brokerConfigFilePath  = CarbonUtils.getCarbonHome()
+                    + File.separator + "repository"
+                    + File.separator + "conf"
+                    + File.separator + "broker.xml";
 
-            DataSourceConfiguration configuration = new DataSourceConfiguration();
-            if (!isMBStoreDatabaseConfigurationLoaded) {
-                configuration.loadDbConfiguration(filePath);
-                isMBStoreDatabaseConfigurationLoaded = true;
-            }
+            MBDatabaseConfig mbDatabaseConfig = new MBDatabaseConfig(brokerConfigFilePath);
 
-            setMBStoreRdbmsConfiguration(configuration);
+            setMessageStoreDataSource(mbDatabaseConfig);
+
             if(isMessageStoreDataSourceSet) {
                 setupMBStoreRdbmsDatabase(messageStoreDataSource);
             }
             // message store and context store schemas can source to same database. In that case
             // context store data source won't set.
-            if(isContextStoreDatasourceSet) {
+
+            setContextStoreDataSource(mbDatabaseConfig);
+
+            if(isContextStoreDataSourceSet) {
                 setupMBStoreRdbmsDatabase(contextStoreDataSource);
             }
+        }
+    }
+
+    /**
+     * Lookup JNDI data source for message store and set
+     * @param dbConfig configuration holding DB configurations
+     */
+    private void setMessageStoreDataSource(MBDatabaseConfig dbConfig) {
+        try {
+
+            Context initContext = new InitialContext();
+            messageStoreDataSource = (DataSource) initContext.lookup(dbConfig.getMessageStoreJndiName());
+            isMessageStoreDataSourceSet = true;
+
+        } catch (NamingException e) {
+
+            log.error("Cannot lookup data source named " + dbConfig.getMessageStoreJndiName()
+                    + ". Cannot setup message store", e);
+        }
+    }
+
+    /**
+     * Lookup JNDI data source for context store and set
+     * @param dbConfig configuration holding DB configurations
+     */
+    private void setContextStoreDataSource(MBDatabaseConfig dbConfig) {
+        try {
+            //if message store and context store both exposed by same jndi name
+            if(dbConfig.isContextStoreAvaliable()) {
+                contextStoreDataSource = InitialContext.doLookup(dbConfig.getContextStoreJndiName());
+                isContextStoreDataSourceSet = true;
+            } else {
+                isContextStoreDataSourceSet = false;
+            }
+
+        } catch (NamingException e) {
+
+            log.info("Cannot lookup data source named " + dbConfig.getContextStoreJndiName()
+                    + ". It is optional to use this");
+
         }
     }
 
@@ -145,20 +160,19 @@ public final class MessageBrokerDBUtil {
 
         LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
 
-
         try {
 
             if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
                 databaseCreator.createRegistryDatabase();
             } else {
                 log.info("Message Broker database store already exists." +
-                         " Not creating a new database.");
+                        " Not creating a new database.");
             }
 
         } catch (ConfigurationException e) {
             log.error("Unexpected error occurred while creating database: ", e);
             throw new ConfigurationException("Unexpected error occurred while " +
-                                             " creating database. ", e);
+                    " creating database. ", e);
         }
 
         verifyRdbmsDatabase(databaseCreator);
@@ -178,95 +192,9 @@ public final class MessageBrokerDBUtil {
             log.info("Successfully sourced relevant sql files to database.");
         } else {
             log.error("Unable to read sourced database tables. Database not " +
-                      " successfully created.");
+                    " successfully created.");
             throw new RuntimeException("Unable to read sourced database tables. Database not " +
-                                       " successfully created.");
+                    " successfully created.");
         }
-
     }
-
-
-    /**
-     * Set database configuration parameters to BasicDataSource object.
-     *
-     * @param configuration data source configurations
-     * @throws org.wso2.carbon.andes.service.exception.ConfigurationException
-     */
-    private void setMBStoreRdbmsConfiguration(DataSourceConfiguration configuration)
-            throws ConfigurationException {
-
-        String driver;
-        String dbUrl;
-        String username;
-        String password;
-
-        ArrayList<HashMap<Object, String>> dbConfigurationList = configuration.getConfigurationMap();
-
-        int dbConfigurationNumber = MESSAGE_STORE_DATA_SOURCE;
-
-        for (Object dbConfiguration : dbConfigurationList) {
-
-            HashMap<String, String> dbConfigurationMap = (HashMap<String, String>) dbConfiguration;
-
-            try {
-                driver = dbConfigurationMap.get(DB_DRIVER);
-                dbUrl = dbConfigurationMap.get(DB_URL);
-                username = dbConfigurationMap.get(DB_USERNAME);
-                password = dbConfigurationMap.get(DB_PASSWORD);
-            } catch (Exception e) {
-                log.error("Unexpected error occurred while reading data source configuration map. "+
-                          " Database configurations not set properly. ", e);
-                throw new ConfigurationException("Unexpected error occurred while reading data" +
-                                                 " source configuration map.Database configurations"+
-                                                 " not set properly. ", e);
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Initializing data source configurations for MB RDBMS store");
-                log.debug("Data Source Configurations :");
-                log.debug(DB_DRIVER + " : " + driver);
-                log.debug(DB_URL + " : " + dbUrl);
-
-            }
-
-            if (StringUtils.isBlank(dbUrl)) {
-                log.warn("Required database url unspecified. So Message Broker RDBMS Store " +
-                         "will not work as expected.");
-            }
-            if (StringUtils.isBlank(driver)) {
-                log.warn("Required database driver unspecified. So Message Broker RDBMS Store " +
-                         "will not work as expected.");
-            }
-            if (StringUtils.isBlank(username)) {
-                log.warn("Required database username unspecified. So Message Broker RDBMS Store " +
-                         "will not work as expected.");
-            }
-            if (StringUtils.isBlank(password)) {
-                log.warn("Required database password unspecified. So Message Broker RDBMS Store " +
-                         "will not work as expected.");
-            }
-
-            BasicDataSource basicDataSource = new BasicDataSource();
-            basicDataSource.setDriverClassName(driver);
-            basicDataSource.setUrl(dbUrl);
-            basicDataSource.setUsername(username);
-            basicDataSource.setPassword(password);
-
-            if(dbConfigurationNumber == MESSAGE_STORE_DATA_SOURCE) {
-                messageStoreDataSource = basicDataSource;
-                isMessageStoreDataSourceSet = true;
-            }
-
-            if(dbConfigurationNumber == CONTEXT_STORE_DATA_SOURCE) {
-                contextStoreDataSource = basicDataSource;
-                isContextStoreDatasourceSet = true;
-            }
-
-            dbConfigurationNumber++;
-
-        }
-
-    }
-
-
 }
