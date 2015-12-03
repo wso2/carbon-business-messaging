@@ -48,7 +48,7 @@ public class SubscriptionManagementBeans {
      */
     public ArrayList<Subscription> getTopicSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
         
-        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
+        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -74,20 +74,11 @@ public class SubscriptionManagementBeans {
             return subscriptionDetailsList;
 
         //could catch all these exceptions in one block if we use Java 7
-        } catch (MalformedObjectNameException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (ReflectionException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (MBeanException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
         }
-    }
+	}
 
 
     /***
@@ -99,7 +90,7 @@ public class SubscriptionManagementBeans {
      */
     public ArrayList<Subscription> getQueueSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
         
-        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
+        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName = new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
@@ -124,26 +115,17 @@ public class SubscriptionManagementBeans {
             return subscriptionDetailsList;
 
         //could catch all these exceptions in one block if we use Java 7
-        } catch (MalformedObjectNameException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (ReflectionException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (MBeanException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (InstanceNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
         }
-    }
+	}
 
     @Deprecated
     //Replaced by seperate mbean services for topics and queues
     public ArrayList<Subscription> getAllSubscriptions() throws SubscriptionManagerException {
 
-        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<Subscription>();
+        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName = new ObjectName("org.wso2.andes:type=QueueManagementInformation," +
@@ -163,21 +145,38 @@ public class SubscriptionManagementBeans {
             return subscriptionDetailsList;
 
         //could catch all these exceptions in one block if we use Java 7
-        } catch (MalformedObjectNameException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (ReflectionException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (MBeanException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (InstanceNotFoundException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
-                    "subscription list", e);
-        } catch (AttributeNotFoundException e) {
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException
+				| AttributeNotFoundException e) {
             throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
         }
-    }
+	}
+
+	/**
+	 * This method invokes the SubscriptionManagementInformationMBean initialized by andes component to close the
+	 * subscription forcibly.
+	 *
+	 * @param subscriptionID ID of the subscription to close
+	 * @param destination queue/topic name of subscribed destination
+	 */
+	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException {
+		System.out.println("Method closeSubscription is called... id = " + subscriptionID + " destination = " + destination);
+		MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+		try {
+			ObjectName objectName = new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
+					"name=SubscriptionManagementInformation");
+
+			Object[] parameters = new Object[]{subscriptionID, destination};
+			String[] signature = new String[]{String.class.getName(), String.class.getName()};
+
+			mBeanServer.invoke(objectName,
+					SubscriptionManagementConstants.SUBSCRIPTION_CLOSE_MBEAN_ATTRIBUTE,
+					parameters, signature);
+
+			//could catch all these exceptions in one block if we use Java 7
+		} catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+			throw new SubscriptionManagerException("Cannot access mBean operations to get " +
+					"subscription list", e);
+		}
+	}
 }

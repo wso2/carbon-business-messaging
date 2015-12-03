@@ -66,6 +66,10 @@
             <ResourceId>/permission/admin/manage/subscriptions</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
+            <DisplayName>SubscriptionManage</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/manage</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
             <DisplayName>Queue</DisplayName>
             <ResourceId>/permission/admin/manage/subscriptions/queue</ResourceId>
         </ManagementPermission>
