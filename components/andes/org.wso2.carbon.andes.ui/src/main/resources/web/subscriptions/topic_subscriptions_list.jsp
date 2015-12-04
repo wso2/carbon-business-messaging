@@ -354,7 +354,7 @@ No subscriptions are created.
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
                subscription-id="<%=sub.getSubscriptionIdentifier()%>"
-               subscription-destination="<%=sub.getDestination()%>"
+               subscription-destination="<%=sub.getSubscriberQueueName()%>"
                onclick="closeSubscription(this)">Close
             </a>
         </td>
