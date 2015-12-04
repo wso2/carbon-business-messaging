@@ -1,4 +1,3 @@
-<%@ page import="org.apache.axis2.AxisFault" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="carbon" uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
@@ -268,14 +267,14 @@ No subscriptions are created.
         </td>
         <% } else { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Close
             </a>
         </td>
         <% }
         } catch (Exception e) { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Close
             </a>
         </td>
@@ -361,14 +360,14 @@ No subscriptions are created.
         </td>
         <% } else { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Close
             </a>
         </td>
         <% }
         } catch (Exception e) { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Close
             </a>
         </td>
@@ -465,14 +464,14 @@ No subscriptions are created.
         </td>
         <% } else { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Unsubscribe
             </a>
         </td>
         <% }
         } catch (AndesEventAdminServiceEventAdminException e) { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Unsubscribe
             </a>
         </td>
