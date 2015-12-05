@@ -160,7 +160,6 @@ public class SubscriptionManagementBeans {
 	 * @param destination queue/topic name of subscribed destination
 	 */
 	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException {
-		System.out.println("Method closeSubscription is called... id = " + subscriptionID + " destination = " + destination);
 		MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 		try {
 			ObjectName objectName = new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
