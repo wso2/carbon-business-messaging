@@ -255,7 +255,7 @@ No subscriptions are created.
             <%--Subscription close--%>
         <% try {
             //close is only allowed for subscriptions on this node
-            if(andesAdminStub.checkCurrentUserHasSubscriptionClosePermission() &&
+            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
                     sub.getSubscriberNodeAddress().equals(myNodeID)){ %>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
@@ -348,7 +348,7 @@ No subscriptions are created.
             <%--Subscription close--%>
         <% try {
             //close is only allowed for subscriptions on this node
-            if(andesAdminStub.checkCurrentUserHasSubscriptionClosePermission() &&
+            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
                     sub.getSubscriberNodeAddress().equals(myNodeID)){ %>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"

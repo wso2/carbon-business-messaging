@@ -93,10 +93,16 @@ public class AndesAdminService extends AbstractAdmin {
     private static final String PERMISSION_ADMIN_MANAGE_DLC_REROUTE_MESSAGE = "/permission/admin/manage/dlc/reroute";
 
 	/**
-	 * Permission path for forcibly close subscriptions
+	 * Permission path for forcibly close subscriptions for queues
 	 */
-	private static final String PERMISSION_ADMIN_MANAGE_SUBSCRIPTION_CLOSE =
-			"/permission/admin/manage/subscriptions/manage";
+	private static final String PERMISSION_ADMIN_MANAGE_QUEUE_SUBSCRIPTION_CLOSE =
+			"/permission/admin/manage/subscriptions/queue-close";
+
+	/**
+	 * Permission path for forcibly close subscriptions for topics
+	 */
+	private static final String PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE =
+			"/permission/admin/manage/subscriptions/topic-close";
 
     /**
      * Retrieve an {@link org.wso2.carbon.andes.admin.internal.Queue} with the number of messages remaining in the
@@ -1199,20 +1205,46 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
 	/**
-	 * Evaluate current logged in user has close subscription permission. This service mainly used to restrict UI
+	 * Evaluate current logged in user has close subscription permission for queue subscriptions . This service mainly
+	 * used to restrict UI
 	 * control for un-authorize users
 	 *
 	 * @return true/false based on permission
 	 * @throws BrokerManagerAdminException
 	 */
-	public boolean checkCurrentUserHasSubscriptionClosePermission() throws BrokerManagerAdminException {
+	public boolean checkCurrentUserHasQueueSubscriptionClosePermission() throws BrokerManagerAdminException {
 		boolean hasPermission = false;
 		String username = getCurrentUser();
 		try {
 			if (Utils.isAdmin(username)) {
 				hasPermission = true;
 			} else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
-					.isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
+					.isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_QUEUE_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
+				hasPermission = true;
+			}
+		} catch (UserStoreException | QueueManagerException e) {
+			String errorMessage = e.getMessage();
+			log.error(errorMessage, e);
+			throw new BrokerManagerAdminException(errorMessage, e);
+		}
+		return hasPermission;
+	}
+
+	/**
+	 * Evaluate current logged in user has close subscription permission for topic subscriptions. This service mainly
+	 * used to restrict UI
+	 * control for un-authorize users
+	 * @return true/false based on permission
+	 * @throws BrokerManagerAdminException
+	 */
+	public boolean checkCurrentUserHasTopicSubscriptionClosePermission() throws BrokerManagerAdminException {
+		boolean hasPermission = false;
+		String username = getCurrentUser();
+		try {
+			if (Utils.isAdmin(username)) {
+				hasPermission = true;
+			} else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+					.isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
 				hasPermission = true;
 			}
 		} catch (UserStoreException | QueueManagerException e) {

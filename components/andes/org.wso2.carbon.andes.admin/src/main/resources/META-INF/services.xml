@@ -72,7 +72,7 @@
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/purge</parameter>
         </operation>
         <operation name="closeSubscription">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/manage</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-close,/permission/admin/manage/subscriptions/topic-close</parameter>
         </operation>
         <operation name="sendMessage">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
@@ -152,26 +152,29 @@
         <operation name="checkUserHasRerouteMessagesInDLCPermission">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
-        <operation name="checkCurrentUserHasSubscriptionClosePermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/manage</parameter>
+        <operation name="checkCurrentUserHasQueueSubscriptionClosePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-close</parameter>
+        </operation>
+        <operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-close</parameter>
         </operation>
         <operation name="getAllSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue,/permission/admin/manage/subscriptions/topic</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getAllDurableQueueSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
         </operation>
         <operation name="getAllDurableTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getAllLocalTempQueueSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
         </operation>
         <operation name="getAllLocalTempTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getMessageCountForSubscriber">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue,/permission/admin/manage/subscriptions/topic</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
     </service>
 </serviceGroup>

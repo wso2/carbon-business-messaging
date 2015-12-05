@@ -176,7 +176,7 @@
                     <%--Subscription close--%>
                     <% try {
                         //close is only allowed for subscriptions on this node
-                        if(stub.checkCurrentUserHasSubscriptionClosePermission() &&
+                        if(stub.checkCurrentUserHasQueueSubscriptionClosePermission() &&
                                 sub.getSubscriberNodeAddress().equals(myNodeID)){ %>
                     <td>
                         <a style="background-image: url(images/unsubscribe.png);"

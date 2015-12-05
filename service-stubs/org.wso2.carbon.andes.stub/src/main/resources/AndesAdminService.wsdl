@@ -610,12 +610,24 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="checkCurrentUserHasSubscriptionClosePermission">
+            <xs:element name="checkCurrentUserHasQueueSubscriptionClosePermission">
                 <xs:complexType>
                     <xs:sequence/>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="checkCurrentUserHasSubscriptionClosePermissionResponse">
+            <xs:element name="checkCurrentUserHasQueueSubscriptionClosePermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasTopicSubscriptionClosePermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasTopicSubscriptionClosePermissionResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:boolean"/>
@@ -658,6 +670,12 @@
     </wsdl:message>
     <wsdl:message name="getMessageInDLCForQueueResponse">
         <wsdl:part name="parameters" element="ns:getMessageInDLCForQueueResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasTopicSubscriptionClosePermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasTopicSubscriptionClosePermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasTopicSubscriptionClosePermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasTopicSubscriptionClosePermissionResponse"/>
     </wsdl:message>
     <wsdl:message name="getAllDurableQueueSubscriptionsRequest">
         <wsdl:part name="parameters" element="ns:getAllDurableQueueSubscriptions"/>
@@ -757,6 +775,12 @@
     <wsdl:message name="getQueueRolePermissionResponse">
         <wsdl:part name="parameters" element="ns:getQueueRolePermissionResponse"/>
     </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasQueueSubscriptionClosePermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasQueueSubscriptionClosePermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasQueueSubscriptionClosePermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasQueueSubscriptionClosePermissionResponse"/>
+    </wsdl:message>
     <wsdl:message name="getMessageCountRequest">
         <wsdl:part name="parameters" element="ns:getMessageCount"/>
     </wsdl:message>
@@ -768,12 +792,6 @@
     </wsdl:message>
     <wsdl:message name="getUserRolesResponse">
         <wsdl:part name="parameters" element="ns:getUserRolesResponse"/>
-    </wsdl:message>
-    <wsdl:message name="checkCurrentUserHasSubscriptionClosePermissionRequest">
-        <wsdl:part name="parameters" element="ns:checkCurrentUserHasSubscriptionClosePermission"/>
-    </wsdl:message>
-    <wsdl:message name="checkCurrentUserHasSubscriptionClosePermissionResponse">
-        <wsdl:part name="parameters" element="ns:checkCurrentUserHasSubscriptionClosePermissionResponse"/>
     </wsdl:message>
     <wsdl:message name="checkCurrentUserHasAddQueuePermissionRequest">
         <wsdl:part name="parameters" element="ns:checkCurrentUserHasAddQueuePermission"/>
@@ -910,6 +928,11 @@
             <wsdl:output message="tns:getMessageInDLCForQueueResponse" wsaw:Action="urn:getMessageInDLCForQueueResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageInDLCForQueueAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <wsdl:input message="tns:checkCurrentUserHasTopicSubscriptionClosePermissionRequest" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasTopicSubscriptionClosePermissionResponse" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermissionResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermissionAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
         <wsdl:operation name="getAllDurableQueueSubscriptions">
             <wsdl:input message="tns:getAllDurableQueueSubscriptionsRequest" wsaw:Action="urn:getAllDurableQueueSubscriptions"/>
             <wsdl:output message="tns:getAllDurableQueueSubscriptionsResponse" wsaw:Action="urn:getAllDurableQueueSubscriptionsResponse"/>
@@ -1000,6 +1023,11 @@
             <wsdl:output message="tns:getQueueRolePermissionResponse" wsaw:Action="urn:getQueueRolePermissionResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getQueueRolePermissionAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasQueueSubscriptionClosePermission">
+            <wsdl:input message="tns:checkCurrentUserHasQueueSubscriptionClosePermissionRequest" wsaw:Action="urn:checkCurrentUserHasQueueSubscriptionClosePermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasQueueSubscriptionClosePermissionResponse" wsaw:Action="urn:checkCurrentUserHasQueueSubscriptionClosePermissionResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasQueueSubscriptionClosePermissionAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
         <wsdl:operation name="getMessageCount">
             <wsdl:input message="tns:getMessageCountRequest" wsaw:Action="urn:getMessageCount"/>
             <wsdl:output message="tns:getMessageCountResponse" wsaw:Action="urn:getMessageCountResponse"/>
@@ -1009,11 +1037,6 @@
             <wsdl:input message="tns:getUserRolesRequest" wsaw:Action="urn:getUserRoles"/>
             <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getUserRolesAndesAdminServiceBrokerManagerAdminException"/>
-        </wsdl:operation>
-        <wsdl:operation name="checkCurrentUserHasSubscriptionClosePermission">
-            <wsdl:input message="tns:checkCurrentUserHasSubscriptionClosePermissionRequest" wsaw:Action="urn:checkCurrentUserHasSubscriptionClosePermission"/>
-            <wsdl:output message="tns:checkCurrentUserHasSubscriptionClosePermissionResponse" wsaw:Action="urn:checkCurrentUserHasSubscriptionClosePermissionResponse"/>
-            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasSubscriptionClosePermissionAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="checkCurrentUserHasAddQueuePermission">
             <wsdl:input message="tns:checkCurrentUserHasAddQueuePermissionRequest" wsaw:Action="urn:checkCurrentUserHasAddQueuePermission"/>
@@ -1170,6 +1193,18 @@
         </wsdl:operation>
         <wsdl:operation name="getAllLocalTempQueueSubscriptions">
             <soap:operation soapAction="urn:getAllLocalTempQueueSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasTopicSubscriptionClosePermission" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1396,8 +1431,8 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getUserRoles">
-            <soap:operation soapAction="urn:getUserRoles" style="document"/>
+        <wsdl:operation name="checkCurrentUserHasQueueSubscriptionClosePermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasQueueSubscriptionClosePermission" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1420,8 +1455,8 @@
                 <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="checkCurrentUserHasSubscriptionClosePermission">
-            <soap:operation soapAction="urn:checkCurrentUserHasSubscriptionClosePermission" style="document"/>
+        <wsdl:operation name="getUserRoles">
+            <soap:operation soapAction="urn:getUserRoles" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1723,6 +1758,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasTopicSubscriptionClosePermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="checkCurrentUserHasDeleteQueuePermission">
             <soap12:operation soapAction="urn:checkCurrentUserHasDeleteQueuePermission" style="document"/>
             <wsdl:input>
@@ -1939,8 +1986,8 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getUserRoles">
-            <soap12:operation soapAction="urn:getUserRoles" style="document"/>
+        <wsdl:operation name="checkCurrentUserHasQueueSubscriptionClosePermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasQueueSubscriptionClosePermission" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1963,8 +2010,8 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="checkCurrentUserHasSubscriptionClosePermission">
-            <soap12:operation soapAction="urn:checkCurrentUserHasSubscriptionClosePermission" style="document"/>
+        <wsdl:operation name="getUserRoles">
+            <soap12:operation soapAction="urn:getUserRoles" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -2248,6 +2295,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <http:operation location="checkCurrentUserHasTopicSubscriptionClosePermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="checkCurrentUserHasDeleteQueuePermission">
             <http:operation location="checkCurrentUserHasDeleteQueuePermission"/>
             <wsdl:input>
@@ -2410,8 +2466,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getUserRoles">
-            <http:operation location="getUserRoles"/>
+        <wsdl:operation name="checkCurrentUserHasQueueSubscriptionClosePermission">
+            <http:operation location="checkCurrentUserHasQueueSubscriptionClosePermission"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -2428,8 +2484,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="checkCurrentUserHasSubscriptionClosePermission">
-            <http:operation location="checkCurrentUserHasSubscriptionClosePermission"/>
+        <wsdl:operation name="getUserRoles">
+            <http:operation location="getUserRoles"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
