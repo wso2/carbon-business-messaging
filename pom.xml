@@ -399,9 +399,9 @@
                 <version>2.6.0.wso2v1</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.lmax</groupId>
+                <groupId>org.wso2.orbit.com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
-                <version>3.3.0.wso2v1</version>
+                <version>3.3.2.wso2v2</version>
             </dependency>
             <dependency>
                 <groupId>commons-digester.wso2</groupId>
