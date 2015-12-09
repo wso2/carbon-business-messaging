@@ -66,12 +66,20 @@
             <ResourceId>/permission/admin/manage/subscriptions</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Queue</DisplayName>
-            <ResourceId>/permission/admin/manage/subscriptions/queue</ResourceId>
+            <DisplayName>ViewQueueSubscriptions</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/queue-browse</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Topic</DisplayName>
-            <ResourceId>/permission/admin/manage/subscriptions/topic</ResourceId>
+            <DisplayName>ViewTopicSubscriptions</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/topic-browse</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>CloseQueueSubscriptions</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/queue-close</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>CloseTopicSubscriptions</DisplayName>
+            <ResourceId>/permission/admin/manage/subscriptions/topic-close</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>

@@ -1,4 +1,3 @@
-<%@ page import="org.apache.axis2.AxisFault" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="carbon" uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
@@ -9,12 +8,12 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
+<%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
 
 <script>
     function refreshMessageCount(obj, durable){
         var aTag = jQuery(obj);
         var subscriptionID = aTag.attr('data-id');
-
         aTag.css('font-weight', 'bolder');
 
         jQuery.ajax({
@@ -62,6 +61,40 @@
         });
 
     }
+
+    function closeSubscription(obj) {
+        var aTag = jQuery(obj);
+        var subscriptionID = aTag.attr('subscription-id');
+        var subscriptionDestination = aTag.attr('subscription-destination');
+        aTag.css('font-weight', 'bolder');
+
+        CARBON.showConfirmationDialog("Are you sure you want to close this subscription?", function(){
+            $.ajax({
+                url:'subscriptions_close_ajaxprocessor.jsp?subscriptionID=' + subscriptionID + "&destination="
+                + subscriptionDestination,
+                async:true,
+                type:"POST",
+                success: function(o) {
+                    if (o.indexOf("Error") > -1) {
+                        CARBON.showErrorDialog("" + o, function() {
+                            location.href = "../subscriptions/topic_subscriptions_list.jsp"
+                        });
+                    } else {
+                        CARBON.showInfoDialog("Successfully closed subscription " + subscriptionID, function() {
+                            location.href = "../subscriptions/topic_subscriptions_list.jsp"
+                        });
+                    }
+                },
+                failure: function(o) {
+                    if (o.responseText !== undefined) {
+                        alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                    }
+                }
+            });
+        });
+
+    }
+
 </script>
 
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
@@ -77,6 +110,7 @@
 <%
     AndesAdminServiceStub andesAdminStub = UIUtils.getAndesAdminServiceStub(config, session, request);
     AndesEventAdminServiceStub andesEventAdminStub = UIUtils.getAndesEventAdminServiceStub(config, session, request);
+    AndesManagerServiceStub managerServiceStub = UIUtils.getAndesManagerServiceStub(config, session);
     Subscription[] filteredNormalTopicSubscriptionList = null;
     Subscription[] filteredActiveDurableTopicSubscriptionList = null;
     Subscription[] filteredInActiveDurableTopicSubscriptionList = null;
@@ -92,7 +126,9 @@
     int numberOfActiveDurableSubscriptionPages = 1;
     int numberOfInactiveDurableSubscriptionPages = 1;
     String concatenatedParams = "region=region1&item=Topic_subscriptions";
+    String myNodeID;
     try {
+        myNodeID = managerServiceStub.getMyNodeID();
         normalTopicSubscriptionList = andesAdminStub.getAllLocalTempTopicSubscriptions();
         durableTopicSubscriptionList = andesAdminStub.getAllDurableTopicSubscriptions();
 
@@ -199,6 +235,7 @@ No subscriptions are created.
         <th><fmt:message key="subscription.topicName"/></th>
         <th><fmt:message key="subscription.active"/></th>
         <th><fmt:message key="subscription.nodeAddress"/></th>
+        <th><fmt:message key="subscription.operations"/></th>
     </tr>
     </thead>
     <tbody>
@@ -215,6 +252,33 @@ No subscriptions are created.
         </td>
         <td><%=sub.getSubscriberNodeAddress()%>
         </td>
+            <%--Subscription close--%>
+        <% try {
+            //close is only allowed for subscriptions on this node
+            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
+                    sub.getSubscriberNodeAddress().equals(myNodeID)){ %>
+        <td>
+            <a style="background-image: url(images/unsubscribe.png);"
+               class="icon-link"
+               subscription-id="<%=sub.getSubscriptionIdentifier()%>"
+               subscription-destination="<%=sub.getDestination()%>"
+               onclick="closeSubscription(this)">Close
+            </a>
+        </td>
+        <% } else { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe_grey.png);"
+               class="icon-link disabled-ahref">Close
+            </a>
+        </td>
+        <% }
+        } catch (Exception e) { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe_grey.png);"
+               class="icon-link disabled-ahref">Close
+            </a>
+        </td>
+        <% } %>
     </tr>
 
     <%
@@ -252,6 +316,7 @@ No subscriptions are created.
         <th><fmt:message key="subscription.active"/></th>
         <th><fmt:message key="subscription.nodeAddress"/></th>
         <th colspan="3"><fmt:message key="subscription.numOfMessages"/></th>
+        <th><fmt:message key="subscription.operations"/></th>
     </tr>
     </thead>
     <tbody>
@@ -276,9 +341,37 @@ No subscriptions are created.
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
                data-id="<%=sub.getSubscriptionIdentifier()%>"
+               subscription-destination="<%=sub.getDestination()%>"
                onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
+            <%--Subscription close--%>
+        <% try {
+            //close is only allowed for subscriptions on this node
+            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
+                    sub.getSubscriberNodeAddress().equals(myNodeID)){ %>
+        <td>
+            <a style="background-image: url(images/unsubscribe.png);"
+               class="icon-link"
+               subscription-id="<%=sub.getSubscriptionIdentifier()%>"
+               subscription-destination="<%=sub.getSubscriberQueueName()%>"
+               onclick="closeSubscription(this)">Close
+            </a>
+        </td>
+        <% } else { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe_grey.png);"
+               class="icon-link disabled-ahref">Close
+            </a>
+        </td>
+        <% }
+        } catch (Exception e) { %>
+        <td>
+            <a style="background-image: url(images/unsubscribe_grey.png);"
+               class="icon-link disabled-ahref">Close
+            </a>
+        </td>
+        <% } %>
     </tr>
     <%
             }
@@ -371,14 +464,14 @@ No subscriptions are created.
         </td>
         <% } else { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Unsubscribe
             </a>
         </td>
         <% }
         } catch (AndesEventAdminServiceEventAdminException e) { %>
         <td>
-            <a style="background-image: url(images/unsubscribe.png);"
+            <a style="background-image: url(images/unsubscribe_grey.png);"
                class="icon-link disabled-ahref">Unsubscribe
             </a>
         </td>

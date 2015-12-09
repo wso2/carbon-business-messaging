@@ -106,7 +106,7 @@
             <order>50</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/subscriptions/queue</require-permission>
+            <require-permission>/permission/admin/manage/subscriptions/queue-browse</require-permission>
         </menu>
         <menu>
             <id>topic_subscriptions</id>
@@ -118,7 +118,7 @@
             <order>51</order>
             <style-class>manage</style-class>
             <icon>../queues/images/list.gif</icon>
-            <require-permission>/permission/admin/manage/subscriptions/topic</require-permission>
+            <require-permission>/permission/admin/manage/subscriptions/topic-browse</require-permission>
         </menu>
 	</menus>
 </component>

@@ -33,4 +33,14 @@ public interface SubscriptionManagerService {
     public List<Subscription> getAllDurableTopicSubscriptions() throws SubscriptionManagerException;
 
     public List<Subscription> getAllLocalTempTopicSubscriptions() throws SubscriptionManagerException;
+
+	/**
+	 * Close subscription by subscriptionID. This method will break the connection
+	 *
+	 * between server and particular subscription
+	 * @param subscriptionID ID of the subscription to close
+	 * @param destination queue/topic name of subscribed destination
+	 * @throws SubscriptionManagerException
+	 */
+	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException;
 }

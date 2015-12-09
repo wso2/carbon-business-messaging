@@ -24,4 +24,5 @@ public class SubscriptionManagementConstants {
 
     public static final String QUEUE_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getAllQueueSubscriptions";
     public static final String TOPIC_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getAllTopicSubscriptions";
+	public static final String SUBSCRIPTION_CLOSE_MBEAN_ATTRIBUTE = "removeSubscription";
 }

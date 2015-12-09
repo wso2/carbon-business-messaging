@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
@@ -29,6 +30,7 @@ import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
+import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
 import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
@@ -60,6 +62,7 @@ public class UIUtils {
     private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
     private static final String ANDES_ADMIN_SERVICE_NAME = "AndesAdminService";
     private static final String ANDES_ADMIN_EVENT_SERVICE_NAME = "AndesEventAdminService";
+	private static final String ANDES_MANAGER_SERVICE_NAME = "AndesManagerService";
 
     /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
@@ -101,6 +104,29 @@ public class UIUtils {
 
         return stub;
     }
+
+	/**
+	 * Get Andes Manager Service stub. This stub has methods to receive cluster related information
+	 * @param config the servlet configuration
+	 * @param session the http session
+	 * @return instance of AndesManagerServiceStub
+	 * @throws Exception
+	 */
+	public static AndesManagerServiceStub getAndesManagerServiceStub(ServletConfig config,
+																	 HttpSession session) throws AxisFault{
+		String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+		String serviceURL = backendServerURL + ANDES_MANAGER_SERVICE_NAME;
+		ConfigurationContext configContext =
+				(ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+		AndesManagerServiceStub stub = new AndesManagerServiceStub(configContext, serviceURL);
+		String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+		if (cookie != null) {
+			Options option = stub._getServiceClient().getOptions();
+			option.setManageSession(true);
+			option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+		}
+		return stub;
+	}
 
     /**
      * Get the AndesEventAdminService stub
