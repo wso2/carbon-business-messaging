@@ -20,8 +20,7 @@
     <script>
         function refreshMessageCount(obj){
             var aTag = jQuery(obj);
-            var subscriptionId = aTag.attr('data-id');
-            var queueName = subscriptionId.split("@")[1];
+            var queueName = aTag.attr('data-id');
 
             aTag.css('font-weight', 'bolder');
 
@@ -169,7 +168,7 @@
                     <td>
                         <a style="background-image: url(images/refresh.gif);"
                            class="icon-link"
-                           data-id="<%=sub.getSubscriptionIdentifier()%>"
+                           data-id="<%=sub.getSubscriberQueueName()%>"
                            onclick="refreshMessageCount(this)">Refresh
                         </a>
                     </td>
