@@ -22,10 +22,18 @@
             type:"POST",
             success:function(data){
                 data = data.trim();
+                if(data == -1) {
+                   data == 'error';
+                }
                 //$('#msg-'+subscriptionID).html(data);
                 $(document.getElementById('msg-'+subscriptionID)).html(data);
                 aTag.css('font-weight', 'normal');
                 // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
+            },
+            failure: function(o) {
+                if (o.responseText !== undefined) {
+                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                }
             }
         });
     }
