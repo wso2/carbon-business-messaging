@@ -75,7 +75,7 @@ public class SubscriptionManagementBeans {
 
         //could catch all these exceptions in one block if we use Java 7
         } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
+            throw new SubscriptionManagerException("Error while invoking mBean operations to get " +
                     "subscription list", e);
         }
 	}

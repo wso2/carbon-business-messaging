@@ -5,12 +5,15 @@
 
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
-    long numberOfMessages = -1;
+    String numberOfMessages = "-1";
     try{
         String subscriptionID = request.getParameter("subscriptionID");
         String durable = request.getParameter("durable");
-        numberOfMessages = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable));
+        int messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable));
+        numberOfMessages = Integer.toString(messageCount);
+
     } catch (Exception e) {
+        numberOfMessages = "Error";
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
     }

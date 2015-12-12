@@ -207,9 +207,9 @@ public class AndesAdminService extends AbstractAdmin {
             messageCount = queueManagerService.getMessageCount(destinationName, msgPattern);
             return messageCount;
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            log.error("Error while retrieving message count by queue manager service", e);
+            throw new BrokerManagerAdminException("Error while retrieving message count "
+                    + "by queue manager service", e);
         }
     }
 
@@ -870,7 +870,8 @@ public class AndesAdminService extends AbstractAdmin {
             }
         } catch (SubscriptionManagerException e) {
             String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
+            log.error("Admin service exception while getting message for subscriber "
+                    + subscriptionID, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
 

@@ -162,7 +162,7 @@ public class QueueManagementBeans {
             return messageCount;
 
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
-            throw new QueueManagerException("Cannot access mBean operations for message count:" + queueName, e);
+            throw new QueueManagerException("Error while invoking mBean operations for message count:" + queueName, e);
         }
     }
 

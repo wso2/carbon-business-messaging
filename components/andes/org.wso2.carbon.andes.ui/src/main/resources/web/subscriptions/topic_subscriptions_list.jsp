@@ -22,9 +22,6 @@
             type:"POST",
             success:function(data){
                 data = data.trim();
-                if(data == -1) {
-                   data == 'error';
-                }
                 //$('#msg-'+subscriptionID).html(data);
                 $(document.getElementById('msg-'+subscriptionID)).html(data);
                 aTag.css('font-weight', 'normal');
