@@ -26,6 +26,11 @@
                 $(document.getElementById('msg-'+subscriptionID)).html(data);
                 aTag.css('font-weight', 'normal');
                 // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
+            },
+            failure: function(o) {
+                if (o.responseText !== undefined) {
+                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                }
             }
         });
     }
