@@ -217,22 +217,22 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <performanceTuning>
 
         <slots>
-            <!--maximum time interval where slot can be retain in memory before updating to the
-            cluster, in milliseconds -->
-            <slotRetainTimeInMemory>1000</slotRetainTimeInMemory>
+            <!--
+                If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
+                This will add an latency to messages. Therefore broker will mark the slot as 
+                ready to deliver before even the slot is entirely filled after specified time.
+                NOTE: specified in milliseconds.
+            -->
+            <messageAccumulationTimeout>2000</messageAccumulationTimeout>
 
-            <!--rough estimate for size of a slot-->
+            <!--Rough estimate for size of a slot-->
             <windowSize>1000</windowSize>
 
-            <!-- Published message information is sent to slot coordinator by the node when it
-            either reaches the slot window size or the window creation timeout. This configures
-            the timeout in milliseconds for slot window creation task.
-
-            In a slow message publishing scenario, this is the delay for each message for delivery.
-            For instance if we publish one message per minute then each message will have to wait
-            till this timeout before the messages are submitted to the slot coordinator. Note that
-            Messages are delivered only after the slot coordinator is informed -->
-            <windowCreationTimeout>3000</windowCreationTimeout>
+            <!-- Time interval which broker check for slots that can be marked as 'ready to deliver' 
+                 (- slots which have a aged more than 'messageAccumulationTimeout')
+                 NOTE: specified in milliseconds.
+            -->
+            <timerPeriod>1000</timerPeriod>
 
             <!--Number of SlotDeliveryWorker threads that should be started-->
             <workerThreadCount>5</workerThreadCount>
