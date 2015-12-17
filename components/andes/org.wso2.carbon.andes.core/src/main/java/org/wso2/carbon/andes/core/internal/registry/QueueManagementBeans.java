@@ -87,7 +87,7 @@ public class QueueManagementBeans {
 
             ObjectName bindingMBeanObjectName =
                     new ObjectName("org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
-                            DEFAULT_EXCHANGE + "\",ExchangeType=direct");
+                            DIRECT_EXCHANGE + "\",ExchangeType=direct");
             String bindingOperationName = "createNewBinding";
 
             Object[] bindingParams = new Object[]{queueName, queueName};
