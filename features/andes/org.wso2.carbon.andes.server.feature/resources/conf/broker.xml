@@ -85,12 +85,14 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                 </trustStore>
             </sslConnection>
 
-            <!--Ring buffer size of MQTT inbound event disruptor. Default is set to 32768 (1024 * 32)
+            <!--All receiving events/messages will be in this ring buffer. Ring buffer size
+            of MQTT inbound event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance
             and vise versa -->
             <inboundBufferSize>32768</inboundBufferSize>
 
-            <!--Ring buffer size of MQTT delivery event disruptor. Default is set to 32768 (1024 * 32)
+            <!-- Messages delivered to clients will be placed in this ring buffer. 
+            Ring buffer size of MQTT delivery event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance
             and vise versa -->
             <deliveryBufferSize>32768</deliveryBufferSize>
