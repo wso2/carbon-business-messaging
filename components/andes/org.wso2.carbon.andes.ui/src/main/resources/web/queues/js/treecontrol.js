@@ -130,9 +130,11 @@ function showManageQueueWindow(queueName) {
 	 }
 	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.delete"], function(){
 		 $.ajax({
-	 				url:'../queues/dlc_message_delete_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
+	 				url:'../queues/dlc_message_delete_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue,
 	 				async:true,
 	 				dataType:"html",
+	 				data : { msgList : checkedValues },
+	 				type: "POST",
 	 				success: function() {
        	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.delete"], function(){
        	                		location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
@@ -159,9 +161,11 @@ function showManageQueueWindow(queueName) {
 	 }
 	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.restore"], function(){
 		 $.ajax({
-	 				url:'../queues/dlc_message_restore_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&msgList=' + checkedValues,
+	 				url:'../queues/dlc_message_restore_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue,
 	 				async:true,
 	 				dataType:"html",
+	 				data : { msgList : checkedValues },
+	 				type: "POST",
 	 				success: function() {
        	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.restore"], function(){
        	                		location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
@@ -186,7 +190,7 @@ function doReRouteMessages(nameOfQueue) {
         CARBON.showInfoDialog(msg);
         return;
     }
-    else if (nameOfQueue.contains(":")){
+    else if (nameOfQueue.indexOf(":") > -1){
         CARBON.showInfoDialog("Cannot re-route from a durable subscription");
         return;
     }
@@ -213,9 +217,11 @@ function doReRouteMessages(nameOfQueue) {
 
                     CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.reRoute"], function () {
                         $.ajax({
-                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&newQueueName=' + selectedQueue + '&msgList=' + checkedValues,
+                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&newQueueName=' + selectedQueue,
                             async: true,
                             dataType: "html",
+                            data : { msgList : checkedValues },
+                            type: "POST",
                             success: function () {
                                 CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"], function () {
                                     location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
