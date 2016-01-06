@@ -59,7 +59,7 @@
         function filterByQueue() {
             var filterQueueText = $("#queueName").val();
             if (filterQueueText == "") {
-                $("#filterQueueName").val("DeadLetterChannel");
+                $("#filterQueueName").val('<%=request.getParameter("nameOfQueue")%>');
             } else {
                 $("#filterQueueName").val(filterQueueText);
             }
@@ -69,15 +69,12 @@
         $(document).ready(function () {
             removeFirstAndLastPaginations();
 
-//            $("#queueName").autocomplete({
-//                source: getAllQueues()
-//            });
         })
     </script>
 
     <%
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
-        String nameOfQueue = request.getParameter("nameOfQueue");
+        String nameOfQueue = stub.getDLCQueue().getQueueName();
         String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
         String pageNumberAsStr = request.getParameter("pageNumber");
         int msgCountPerPage = AndesConfigurationManager.readValue(
@@ -97,9 +94,6 @@
         long nextMessageIdToRead = 0L;
 
         Message[] filteredMsgArray = null;
-        if (null == nameOfQueue) {
-            nameOfQueue = AndesConstants.DEAD_LETTER_QUEUE_SUFFIX;
-        }
         if (null != pageNumberAsStr) {
             pageNumber = Integer.parseInt(pageNumberAsStr);
         }
@@ -111,7 +105,7 @@
                 totalMsgsInQueue = stub.getNumberOfMessagesInDLCForQueue(nameOfQueue);
             }
             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
-            
+
             if (pageNumberToMessageIdMap.size() > 0) {
                 if (0 == pageNumber){
                     nextMessageIdToRead = 0;
