@@ -199,7 +199,7 @@
                                     <directory>resources</directory>
                                     <includes>
                                         <include>conf/broker.xml</include>
-                                        <include>conf/event-broker.xml</include>
+                                        <include>conf/messaging-event-broker.xml</include>
                                         <include>conf/qpid-config.xml</include>
                                         <include>conf/qpid-virtualhosts.xml</include>
                                         <include>dbscripts/postgresql-mb.sql</include>
