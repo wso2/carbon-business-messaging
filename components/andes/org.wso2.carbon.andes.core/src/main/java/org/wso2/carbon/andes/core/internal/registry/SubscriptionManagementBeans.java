@@ -23,7 +23,13 @@ import org.wso2.carbon.andes.core.internal.util.SubscriptionManagementConstants;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Subscription;
 
-import javax.management.*;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
@@ -40,13 +46,19 @@ public class SubscriptionManagementBeans {
     }
 
     /***
-     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component to gather information on topic subscriptions.
+     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
+     * to gather information on subscriptions.
+     *
      * @param isDurable filter subscriptions for durable topics
      * @param isActive  filter only active subscriptions
+     * @param protocolType The protocol type of the subscriptions
+     * @param destinationType The destination type of the subscriptions
      * @return ArrayList\<Subscription\>
      * @throws SubscriptionManagerException
      */
-    public ArrayList<Subscription> getTopicSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
+    public ArrayList<Subscription> getSubscriptions(String isDurable, String isActive,
+                                                    String protocolType, String destinationType)
+            throws SubscriptionManagerException {
         
         ArrayList<Subscription> subscriptionDetailsList = new ArrayList<>();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -55,11 +67,12 @@ public class SubscriptionManagementBeans {
                     new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
                             "name=SubscriptionManagementInformation");
 
-            Object[] parameters = new Object[]{isDurable, isActive};
-            String[] signature = new String[]{String.class.getName(), String.class.getName()};
+            Object[] parameters = new Object[]{isDurable, isActive, protocolType, destinationType};
+            String[] signature = new String[]{String.class.getName(), String.class.getName(),
+                    String.class.getName(), String.class.getName()};
 
             Object result = mBeanServer.invoke(objectName,
-                    SubscriptionManagementConstants.TOPIC_SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
+                    SubscriptionManagementConstants.SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
                     parameters, signature);
 
             if (result != null) {
@@ -73,50 +86,8 @@ public class SubscriptionManagementBeans {
             }
             return subscriptionDetailsList;
 
-        //could catch all these exceptions in one block if we use Java 7
         } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
             throw new SubscriptionManagerException("Error while invoking mBean operations to get " +
-                    "subscription list", e);
-        }
-	}
-
-
-    /***
-     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component to gather information on queue subscriptions.
-     * @param isDurable filter subscriptions for durable queues
-     * @param isActive filter only active subscriptions
-     * @return ArrayList\<Subscription\>
-     * @throws SubscriptionManagerException
-     */
-    public ArrayList<Subscription> getQueueSubscriptions(String isDurable,String isActive) throws SubscriptionManagerException {
-        
-        ArrayList<Subscription> subscriptionDetailsList = new ArrayList<>();
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName = new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
-                    "name=SubscriptionManagementInformation");
-
-            Object[] parameters = new Object[]{isDurable, isActive};
-            String[] signature = new String[]{String.class.getName(), String.class.getName()};
-
-            Object result = mBeanServer.invoke(objectName,
-                    SubscriptionManagementConstants.QUEUE_SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
-                    parameters, signature);
-
-            if (result != null) {
-                String[] subscriptionInformationList = (String[]) result;
-
-                for (String subscriptionInfo : subscriptionInformationList) {
-                    Subscription sub = Utils.parseStringToASubscription(subscriptionInfo);
-                    subscriptionDetailsList.add(sub);
-                }
-
-            }
-            return subscriptionDetailsList;
-
-        //could catch all these exceptions in one block if we use Java 7
-        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
-            throw new SubscriptionManagerException("Cannot access mBean operations to get " +
                     "subscription list", e);
         }
 	}
@@ -159,14 +130,16 @@ public class SubscriptionManagementBeans {
 	 * @param subscriptionID ID of the subscription to close
 	 * @param destination queue/topic name of subscribed destination
 	 */
-	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException {
+	public void closeSubscription(String subscriptionID, String destination, String protocolType,
+                                  String destinationType) throws SubscriptionManagerException {
 		MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 		try {
 			ObjectName objectName = new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
 					"name=SubscriptionManagementInformation");
 
-			Object[] parameters = new Object[]{subscriptionID, destination};
-			String[] signature = new String[]{String.class.getName(), String.class.getName()};
+			Object[] parameters = new Object[]{subscriptionID, destination, protocolType, destinationType};
+			String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(),
+                    String.class.getName()};
 
 			mBeanServer.invoke(objectName,
 					SubscriptionManagementConstants.SUBSCRIPTION_CLOSE_MBEAN_ATTRIBUTE,

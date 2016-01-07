@@ -26,13 +26,19 @@ public interface SubscriptionManagerService {
 
     public List<Subscription> getAllSubscriptions() throws SubscriptionManagerException;
 
-    public List<Subscription> getAllDurableQueueSubscriptions() throws SubscriptionManagerException;
-
-    public List<Subscription> getAllLocalTempQueueSubscriptions() throws SubscriptionManagerException;
-
-    public List<Subscription> getAllDurableTopicSubscriptions() throws SubscriptionManagerException;
-
-    public List<Subscription> getAllLocalTempTopicSubscriptions() throws SubscriptionManagerException;
+    /**
+     * Retrieve all matching subscriptions from andes for the given criteria.
+     *
+     * @param isDurable Retrieve durable subscriptions (can be true/false)
+     * @param isActive Retrieve active subscriptions (can be true/false/*, * meaning any)
+     * @param protocolType The protocol type of the subscriptions to retrieve
+     * @param destinationType The destination type of the subscriptions to retrieve
+     *
+     * @return The list of subscriptions matching the given criteria
+     * @throws SubscriptionManagerException
+     */
+    public List<Subscription> getSubscriptions(String isDurable, String isActive, String protocolType,
+                                               String destinationType) throws SubscriptionManagerException;
 
 	/**
 	 * Close subscription by subscriptionID. This method will break the connection
@@ -40,7 +46,10 @@ public interface SubscriptionManagerService {
 	 * between server and particular subscription
 	 * @param subscriptionID ID of the subscription to close
 	 * @param destination queue/topic name of subscribed destination
+     * @param protocolType The protocol type of the subscriptions to close
+     * @param destinationType The destination type of the subscriptions to close
 	 * @throws SubscriptionManagerException
 	 */
-	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException;
+	public void closeSubscription(String subscriptionID, String destination, String protocolType,
+                                  String destinationType) throws SubscriptionManagerException;
 }

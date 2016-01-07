@@ -36,46 +36,15 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     }
 
     /**
-     * show queues belonging to current domain of user
-     * also set queue name used by user
+     * {@inheritDoc}
      */
-    public List<Subscription> getAllDurableQueueSubscriptions() throws SubscriptionManagerException {
+    public List<Subscription> getSubscriptions(String isDurable, String isActive, String protocolType,
+                                               String destinationType) throws SubscriptionManagerException {
 
-        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getQueueSubscriptions
-                ("true", "*"));
-    }
+        List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getSubscriptions
+                (isDurable, isActive, protocolType, destinationType);
 
-    /**
-     * show non-durable queues belonging to current domain of user
-     * also set queue name used by user
-     */
-    public List<Subscription> getAllLocalTempQueueSubscriptions() throws SubscriptionManagerException {
-
-        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getQueueSubscriptions
-                ("false", "*"));
-    }
-
-    /**
-     * show durable topics belonging to current domain of user
-     * also set topic name used by user
-     */
-    public List<Subscription> getAllDurableTopicSubscriptions() throws SubscriptionManagerException {
-
-        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getTopicSubscriptions
-                ("true", "*"));
-    }
-
-    /**
-     * show durable topics belonging to current domain of user
-     * also set topic name used by user
-     *
-     * @return
-     * @throws SubscriptionManagerException
-     */
-    public List<Subscription> getAllLocalTempTopicSubscriptions() throws SubscriptionManagerException {
-
-        return Utils.filterDomainSpecificSubscribers(SubscriptionManagementBeans.getInstance().getTopicSubscriptions
-                ("false", "*"));
+        return Utils.filterDomainSpecificSubscribers(subscriptions);
     }
 
 	/**
@@ -84,9 +53,13 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
 	 * between server and particular subscription
 	 * @param subscriptionID ID of the subscription to close
 	 * @param destination queue/topic name of subscribed destination
+     * @param protocolType The protocol type of the subscriptions to close
+     * @param destinationType The destination type of the subscriptions to close
 	 * @throws SubscriptionManagerException
 	 */
-	public void closeSubscription(String subscriptionID, String destination) throws SubscriptionManagerException {
-		SubscriptionManagementBeans.getInstance().closeSubscription(subscriptionID, destination);
+	public void closeSubscription(String subscriptionID, String destination, String protocolType,
+                                  String destinationType) throws SubscriptionManagerException {
+		SubscriptionManagementBeans.getInstance().closeSubscription(subscriptionID, destination, protocolType,
+                destinationType);
 	}
 }

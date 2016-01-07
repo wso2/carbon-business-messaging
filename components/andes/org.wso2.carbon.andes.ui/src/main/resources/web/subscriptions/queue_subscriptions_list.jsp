@@ -5,6 +5,8 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <%@ page import="org.wso2.carbon.andes.stub.admin.types.Subscription" %>
 <%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
+<%@ page import="org.wso2.andes.kernel.DestinationType" %>
+<%@ page import="org.wso2.andes.kernel.ProtocolType" %>
 
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:breadcrumb
@@ -42,12 +44,15 @@
             var aTag = jQuery(obj);
             var subscriptionID = aTag.attr('subscription-id');
             var subscriptionDestination = aTag.attr('subscription-destination');
+            var protocolType = aTag.attr('protocolType');
+            var destinationType = aTag.attr('destinationType');
             aTag.css('font-weight', 'bolder');
 
             CARBON.showConfirmationDialog("Are you sure you want to close this subscription?", function(){
                 $.ajax({
                     url:'subscriptions_close_ajaxprocessor.jsp?subscriptionID=' + subscriptionID + "&destination="
-                    + subscriptionDestination,
+                    + subscriptionDestination + "&protocolType=" + protocolType + "&destinationType="
+                    + destinationType,
                     async:true,
                     type:"POST",
                     success: function(o) {
@@ -84,7 +89,7 @@
         String concatenatedParams = "region=region1&item=Queue_subscriptions";
         try {
             myNodeID = managerServiceStub.getMyNodeID();
-            subscriptionList = stub.getAllDurableQueueSubscriptions();
+            subscriptionList = stub.getSubscriptions("true", "*", ProtocolType.AMQP.name(), DestinationType.QUEUE.name());
             long totalQueueSubscriptionCount;
             String pageNumberAsStr = request.getParameter("pageNumber");
             if (pageNumberAsStr != null) {
@@ -182,6 +187,8 @@
                            class="icon-link"
                            subscription-id="<%=sub.getSubscriptionIdentifier()%>"
                            subscription-destination="<%=sub.getSubscriberQueueName()%>"
+                           protocolType="<%=sub.getProtocolType()%>"
+                           destinationType="<%=sub.getDestinationType()%>"
                            onclick="closeSubscription(this)">Close
                         </a>
                     </td>

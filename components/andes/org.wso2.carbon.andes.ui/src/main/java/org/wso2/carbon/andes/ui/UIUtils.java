@@ -224,28 +224,25 @@ public class UIUtils {
         int subscriptionDetailsIndex = 0;
         for (Subscription subscriptionDetail : resultList) {
             if (startingIndex == index || startingIndex < index) {
-                subscriptionDetailsArray[subscriptionDetailsIndex] = new Subscription();
 
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
-                                                                                                     .getSubscriptionIdentifier());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscribedQueueOrTopicName(subscriptionDetail
-                                                                                                         .getSubscribedQueueOrTopicName());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueBoundExchange(subscriptionDetail
-                                                                                                           .getSubscriberQueueBoundExchange());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberQueueName(subscriptionDetail
-                                                                                                  .getSubscriberQueueName());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriptionIdentifier(subscriptionDetail
-                                                                                                     .getSubscriptionIdentifier());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setDurable(subscriptionDetail
-                                                                                      .getDurable());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setActive(subscriptionDetail
-                                                                                     .getActive());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setNumberOfMessagesRemainingForSubscriber
-                        (subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setSubscriberNodeAddress(subscriptionDetail
-                                                                                                    .getSubscriberNodeAddress());
-                subscriptionDetailsArray[subscriptionDetailsIndex].setDestination
-                        (subscriptionDetail.getDestination());
+                Subscription subscription = new Subscription();
+
+                subscription.setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
+                subscription.setSubscribedQueueOrTopicName(subscriptionDetail.getSubscribedQueueOrTopicName());
+                subscription.setSubscriberQueueBoundExchange(subscriptionDetail.getSubscriberQueueBoundExchange());
+                subscription.setSubscriberQueueName(subscriptionDetail.getSubscriberQueueName());
+                subscription.setSubscriptionIdentifier(subscriptionDetail.getSubscriptionIdentifier());
+                subscription.setDurable(subscriptionDetail.getDurable());
+                subscription.setActive(subscriptionDetail.getActive());
+                subscription.setNumberOfMessagesRemainingForSubscriber(
+                        subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
+                subscription.setSubscriberNodeAddress(subscriptionDetail.getSubscriberNodeAddress());
+                subscription.setDestination(subscriptionDetail.getDestination());
+                subscription.setProtocolType(subscriptionDetail.getProtocolType());
+                subscription.setDestinationType(subscriptionDetail.getDestinationType());
+
+
+                subscriptionDetailsArray[subscriptionDetailsIndex] = subscription;
 
                 subscriptionDetailsIndex++;
                 if (subscriptionDetailsIndex == maxSubscriptionCount) {
