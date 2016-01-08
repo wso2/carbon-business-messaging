@@ -7,9 +7,11 @@
 
     String subscriptionID = request.getParameter("subscriptionID");
     String subscriptionDestination = request.getParameter("destination");
+    String protocolType = request.getParameter("protocolType");
+    String destinationType = request.getParameter("destinationType");
     String message = "";
     try {
-        stub.closeSubscription(subscriptionID, subscriptionDestination);
+        stub.closeSubscription(subscriptionID, subscriptionDestination, protocolType, destinationType);
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);

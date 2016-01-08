@@ -9,6 +9,8 @@
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
+<%@ page import="org.wso2.andes.kernel.DestinationType" %>
+<%@ page import="org.wso2.andes.kernel.ProtocolType" %>
 
 <script>
     function refreshMessageCount(obj, durable){
@@ -16,8 +18,18 @@
         var subscriptionID = aTag.attr('data-id');
         aTag.css('font-weight', 'bolder');
 
+        var destinationType;
+
+        if (durable == 'true') {
+            destinationType = <%=DestinationType.TOPIC.name()%>;
+        } else {
+            destinationType = <%=DestinationType.DURABLE_TOPIC.name()%>;
+        }
+
         jQuery.ajax({
-            url:"retrive_message_count_for_subscriber_ajaxprocessor.jsp?subscriptionID="+subscriptionID+"&durable="+durable,
+            url:"retrive_message_count_for_subscriber_ajaxprocessor.jsp?subscriptionID=" + subscriptionID
+            + "&durable=" + durable + "&protocolType=" + <%=ProtocolType.AMQP.name()%>
+            + "&destinationType=" + destinationType,
             data:{},
             type:"POST",
             success:function(data){
@@ -71,12 +83,15 @@
         var aTag = jQuery(obj);
         var subscriptionID = aTag.attr('subscription-id');
         var subscriptionDestination = aTag.attr('subscription-destination');
+        var protocolType = aTag.attr('protocolType');
+        var destinationType = aTag.attr('destinationType');
         aTag.css('font-weight', 'bolder');
 
         CARBON.showConfirmationDialog("Are you sure you want to close this subscription?", function(){
             $.ajax({
                 url:'subscriptions_close_ajaxprocessor.jsp?subscriptionID=' + subscriptionID + "&destination="
-                + subscriptionDestination,
+                + subscriptionDestination + "&protocolType=" + protocolType + "&destinationType="
+                                                             + destinationType,
                 async:true,
                 type:"POST",
                 success: function(o) {
@@ -134,8 +149,10 @@
     String myNodeID;
     try {
         myNodeID = managerServiceStub.getMyNodeID();
-        normalTopicSubscriptionList = andesAdminStub.getAllLocalTempTopicSubscriptions();
-        durableTopicSubscriptionList = andesAdminStub.getAllDurableTopicSubscriptions();
+        normalTopicSubscriptionList = andesAdminStub.getSubscriptions("false", "*", ProtocolType.AMQP.name(),
+                                        DestinationType.TOPIC.name());
+        durableTopicSubscriptionList = andesAdminStub.getSubscriptions("true", "*", ProtocolType.AMQP.name(),
+                                        DestinationType.DURABLE_TOPIC.name());
 
         if (durableTopicSubscriptionList != null && durableTopicSubscriptionList.length != 0) {
             List<Subscription> activeSubs = new ArrayList<Subscription>();
@@ -251,7 +268,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getDestination()%>
+        <td><%=sub.getSubscribedQueueOrTopicName()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -266,7 +283,9 @@ No subscriptions are created.
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
                subscription-id="<%=sub.getSubscriptionIdentifier()%>"
-               subscription-destination="<%=sub.getDestination()%>"
+               subscription-destination="<%=sub.getSubscribedQueueOrTopicName()%>"
+               protocolType="<%=sub.getProtocolType()%>"
+               destinationType="<%=sub.getDestinationType()%>"
                onclick="closeSubscription(this)">Close
             </a>
         </td>
@@ -332,7 +351,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getDestination()%>
+        <td><%=sub.getSubscribedQueueOrTopicName()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -346,7 +365,7 @@ No subscriptions are created.
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
                data-id="<%=sub.getSubscriptionIdentifier()%>"
-               subscription-destination="<%=sub.getDestination()%>"
+               subscription-destination="<%=sub.getSubscribedQueueOrTopicName()%>"
                onclick="refreshMessageCount(this, 'true')">Refresh
             </a>
         </td>
@@ -360,6 +379,8 @@ No subscriptions are created.
                class="icon-link"
                subscription-id="<%=sub.getSubscriptionIdentifier()%>"
                subscription-destination="<%=sub.getSubscriberQueueName()%>"
+               protocolType="<%=sub.getProtocolType()%>"
+               destinationType="<%=sub.getDestinationType()%>"
                onclick="closeSubscription(this)">Close
             </a>
         </td>
@@ -426,7 +447,7 @@ No subscriptions are created.
     <tr>
         <td><%=sub.getSubscriptionIdentifier()%>
         </td>
-        <td><%=sub.getDestination()%>
+        <td><%=sub.getSubscribedQueueOrTopicName()%>
         </td>
         <td><%=sub.getActive()%>
         </td>
@@ -463,7 +484,7 @@ No subscriptions are created.
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
                data-id="<%=sub.getSubscriberQueueName()%>"
-               data-id-topic="<%=sub.getDestination()%>"
+               data-id-topic="<%=sub.getSubscribedQueueOrTopicName()%>"
                onclick="unSubscribe(this)">Unsubscribe
             </a>
         </td>

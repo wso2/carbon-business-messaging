@@ -29,6 +29,8 @@ public class Subscription {
     private boolean isActive;
     private int numberOfMessagesRemainingForSubscriber;
     private String subscriberNodeAddress;
+    private String protocolType;
+    private String destinationType;
 
     public String getSubscriptionIdentifier() {
         return subscriptionIdentifier;
@@ -100,5 +102,21 @@ public class Subscription {
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public String getProtocolType() {
+        return protocolType;
+    }
+
+    public void setProtocolType(String protocolType) {
+        this.protocolType = protocolType;
+    }
+
+    public String getDestinationType() {
+        return destinationType;
+    }
+
+    public void setDestinationType(String destinationType) {
+        this.destinationType = destinationType;
     }
 }

@@ -161,17 +161,8 @@
         <operation name="getAllSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
-        <operation name="getAllDurableQueueSubscriptions">
+        <operation name="getSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
-        </operation>
-        <operation name="getAllDurableTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-browse</parameter>
-        </operation>
-        <operation name="getAllLocalTempQueueSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
-        </operation>
-        <operation name="getAllLocalTempTopicSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getMessageCountForSubscriber">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>

@@ -258,6 +258,8 @@ public class Utils {
         subscription.setNumberOfMessagesRemainingForSubscriber(Integer.parseInt(subInfo[6]));
         subscription.setSubscriberNodeAddress(subInfo[7]);
         subscription.setDestination(subInfo[8]);
+        subscription.setProtocolType(subInfo[9]);
+        subscription.setDestinationType(subInfo[10]);
 
 
         return subscription;

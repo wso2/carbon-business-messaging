@@ -19,6 +19,8 @@ package org.wso2.carbon.andes.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.andes.kernel.DestinationType;
+import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.carbon.andes.admin.internal.Exception.BrokerManagerAdminException;
 import org.wso2.carbon.andes.admin.internal.Message;
 import org.wso2.carbon.andes.admin.internal.Queue;
@@ -335,13 +337,16 @@ public class AndesAdminService extends AbstractAdmin {
 	 * Close subscription defined by subscription ID forcibly
 	 * @param subscriptionID ID of the subscription
 	 * @param destination queue / topic name of the subscribed destination
+     * @param protocolType The protocol type of the subscriptions to close
+     * @param destinationType The destination type of the subscriptions to close
 	 * @throws BrokerManagerAdminException
 	 */
-	public void closeSubscription(String subscriptionID, String destination) throws BrokerManagerAdminException {
+	public void closeSubscription(String subscriptionID, String destination, String protocolType,
+                                  String destinationType) throws BrokerManagerAdminException {
 		try {
 			SubscriptionManagerService subscriptionManagerService =
 					AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-			subscriptionManagerService.closeSubscription(subscriptionID, destination);
+			subscriptionManagerService.closeSubscription(subscriptionID, destination, protocolType, destinationType);
 		} catch (SubscriptionManagerException e) {
 			String errorMessage = e.getMessage();
 			log.error(errorMessage, e);
@@ -378,6 +383,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
                         sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
+                subscriptionDTO.setProtocolType(sub.getProtocolType());
+                subscriptionDTO.setDestinationType(sub.getDestinationType());
 
                 allSubscriptions.add(subscriptionDTO);
             }
@@ -393,22 +400,26 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
-     * Gets all durable queue subscriptions.
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
-     * to an array.
+     * Retrieve subscriptions matching the given criteria.
      *
-     * @return An array of {@link Subscription}.
+     * @param isDurable Are the subscriptions to be retrieved durable (true/false)
+     * @param isActive Are the subscriptions to be retrieved active (true/false/*, * meaning any)
+     * @param protocolType The protocol type of the subscriptions to be retrieved
+     * @param destinationType The destination type of the subscriptions to be retrieved
+     *
+     * @return The list of subscriptions matching the given criteria
      * @throws BrokerManagerAdminException
      */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Subscription[] getAllDurableQueueSubscriptions() throws BrokerManagerAdminException {
+    public Subscription[] getSubscriptions(String isDurable, String isActive, String protocolType,
+                                           String destinationType) throws BrokerManagerAdminException {
+
         List<Subscription> allSubscriptions = new ArrayList<Subscription>();
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getAllDurableQueueSubscriptions();
+                    .getSubscriptions(isDurable, isActive, protocolType, destinationType);
             subscriptionsDTO = new Subscription[subscriptions.size()];
             for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
                 Subscription subscriptionDTO = new Subscription();
@@ -420,137 +431,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setActive(sub.isActive());
                 subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub.getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
-
-                allSubscriptions.add(subscriptionDTO);
-            }
-            CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
-            Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
-            allSubscriptions.toArray(subscriptionsDTO);
-        } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return subscriptionsDTO;
-    }
-
-    /**
-     * Gets all local temporary queue subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
-     * to an array.
-     *
-     * @return An array of {@link Subscription}.
-     * @throws BrokerManagerAdminException
-     */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Subscription[] getAllLocalTempQueueSubscriptions() throws BrokerManagerAdminException {
-        List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO;
-        try {
-            SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getAllLocalTempQueueSubscriptions();
-            subscriptionsDTO = new Subscription[subscriptions.size()];
-            for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
-                Subscription subscriptionDTO = new Subscription();
-                subscriptionDTO.setSubscriptionIdentifier(sub.getSubscriptionIdentifier());
-                subscriptionDTO.setSubscribedQueueOrTopicName(sub.getSubscribedQueueOrTopicName());
-                subscriptionDTO.setSubscriberQueueBoundExchange(sub.getSubscriberQueueBoundExchange());
-                subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
-                subscriptionDTO.setDurable(sub.isDurable());
-                subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                        sub.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
-
-                allSubscriptions.add(subscriptionDTO);
-            }
-            CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
-            Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
-            allSubscriptions.toArray(subscriptionsDTO);
-        } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return subscriptionsDTO;
-    }
-
-    /**
-     * Gets all durable topic subscriptions
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
-     * to an array.
-     *
-     * @return An array of {@link Subscription}.
-     * @throws BrokerManagerAdminException
-     */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Subscription[] getAllDurableTopicSubscriptions() throws BrokerManagerAdminException {
-        List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO;
-        try {
-            SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getAllDurableTopicSubscriptions();
-            subscriptionsDTO = new Subscription[subscriptions.size()];
-            for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
-                Subscription subscriptionDTO = new Subscription();
-                subscriptionDTO.setSubscriptionIdentifier(sub.getSubscriptionIdentifier());
-                subscriptionDTO.setSubscribedQueueOrTopicName(sub.getSubscribedQueueOrTopicName());
-                subscriptionDTO.setSubscriberQueueBoundExchange(sub.getSubscriberQueueBoundExchange());
-                subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
-                subscriptionDTO.setDurable(sub.isDurable());
-                subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                        sub.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
-                subscriptionDTO.setDestination(sub.getDestination());
-
-                allSubscriptions.add(subscriptionDTO);
-            }
-            CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
-            Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
-            allSubscriptions.toArray(subscriptionsDTO);
-        } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return subscriptionsDTO;
-    }
-
-    /**
-     * Gets all local temporary topic subscriptions.
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
-     * to an array.
-     *
-     * @return An array of {@link Subscription}.
-     * @throws BrokerManagerAdminException
-     */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Subscription[] getAllLocalTempTopicSubscriptions() throws BrokerManagerAdminException {
-        List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO;
-        try {
-            SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getAllLocalTempTopicSubscriptions();
-            subscriptionsDTO = new Subscription[subscriptions.size()];
-            for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
-                Subscription subscriptionDTO = new Subscription();
-                subscriptionDTO.setSubscriptionIdentifier(sub.getSubscriptionIdentifier());
-                subscriptionDTO.setSubscribedQueueOrTopicName(sub.getSubscribedQueueOrTopicName());
-                subscriptionDTO.setSubscriberQueueBoundExchange(sub.getSubscriberQueueBoundExchange());
-                subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
-                subscriptionDTO.setDurable(sub.isDurable());
-                subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                        sub.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
-                subscriptionDTO.setDestination(sub.getDestination());
+                subscriptionDTO.setProtocolType(sub.getProtocolType());
+                subscriptionDTO.setDestinationType(sub.getDestinationType());
 
                 allSubscriptions.add(subscriptionDTO);
             }
@@ -845,21 +727,26 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Gets the number of messages remaining for a subscriber.
      *
-     * @param subscriptionID The subscription ID.
-     * @param durable        Whether the subscription is durable or not.
+     * @param subscriptionID   The subscription ID.
+     * @param durable          Whether the subscription is durable or not.
+     * @param protocolType     The protocol type which the subscription belongs to
+     * @param destinationType  The destination type which the subscription belongs to
+     *
      * @return The number of remaining messages.
      * @throws BrokerManagerAdminException
      */
-    public int getMessageCountForSubscriber(String subscriptionID, boolean durable) throws BrokerManagerAdminException {
+    public int getMessageCountForSubscriber(String subscriptionID, boolean durable, String protocolType,
+                                            String destinationType) throws BrokerManagerAdminException {
         int remainingMessages = 0;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions;
             if (durable) {
-                subscriptions = subscriptionManagerService.getAllDurableTopicSubscriptions();
+                subscriptions = subscriptionManagerService.getSubscriptions("true", "*", protocolType, destinationType);
             } else {
-                subscriptions = subscriptionManagerService.getAllLocalTempTopicSubscriptions();
+                subscriptions = subscriptionManagerService.getSubscriptions("false", "*", protocolType,
+                        destinationType);
             }
 
             for (org.wso2.carbon.andes.core.types.Subscription subscription : subscriptions) {
