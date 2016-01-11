@@ -11,6 +11,8 @@
 <%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
 <%@ page import="org.wso2.andes.kernel.DestinationType" %>
 <%@ page import="org.wso2.andes.kernel.ProtocolType" %>
+<%@ page import="org.wso2.andes.configuration.AndesConfigurationManager" %>
+<%@ page import="org.wso2.andes.configuration.enums.AndesConfiguration" %>
 
 <script>
     function refreshMessageCount(obj, durable){
@@ -164,6 +166,26 @@
                     inActiveSubs.add(sub);
                 }
             }
+
+            Boolean allowSharedSubscribers = AndesConfigurationManager.readValue(
+                AndesConfiguration.ALLOW_SHARED_SHARED_SUBSCRIBERS);
+
+
+            if (allowSharedSubscribers) {
+                List<Subscription> inActiveSubsToDisplay = new ArrayList<Subscription>();
+                List<String> alreadySelectedQueueNames = new ArrayList<String>();
+                for (Subscription inActiveSub : inActiveSubs) {
+                    if (alreadySelectedQueueNames.contains(inActiveSub.getSubscriberQueueName())) {
+                        continue;
+                    } else {
+                        inActiveSubsToDisplay.add(inActiveSub);
+                        alreadySelectedQueueNames.add(inActiveSub.getSubscriberQueueName());
+                    }
+                }
+
+                inActiveSubs = inActiveSubsToDisplay;
+            }
+
             activeDurableTopicSubscriptionList = new Subscription[activeSubs.size()];
             activeSubs.toArray(activeDurableTopicSubscriptionList);
             inActiveDurableTopicSubscriptionList = new Subscription[inActiveSubs.size()];
