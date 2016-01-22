@@ -180,7 +180,7 @@
             <tr>
                 <td class="formRaw leftCol-big"><fmt:message key="queue"/><span
                         class="required">*</span></td>
-                <td><input type="text" id="queue" value=<%=queueName%>></td>
+                <td><input type="text" id="queue" value="<%=queueName%>" maxlength="238" /></td>
             </tr>
             </tbody>
         </table>
