@@ -112,6 +112,9 @@ public class OAuthConfigurationManager {
 				case TOTAL_CONNECTION_KEY:
 					setMaximumTotalHttpConnection(propertyValue);
 					break;
+
+				default:
+					break;
 			}
 		}
 	}

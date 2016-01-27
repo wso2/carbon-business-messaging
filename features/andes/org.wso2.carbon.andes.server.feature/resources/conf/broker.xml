@@ -139,7 +139,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                        Possible values:
                         NOT_REQUIRED: This is the default value. MQTT clients will skip the authorization check
                         REQUIRED: Clients will authorized before publishing. this will execute the class given in authorzier
-                        Note: authentication should be REQUIRED for authization to be REQUIRED.
+                        Note: authentication should be REQUIRED for authorization to be REQUIRED.
                    -->
                     <authorization>NOT_REQUIRED</authorization>
 

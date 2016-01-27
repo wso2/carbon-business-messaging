@@ -33,20 +33,35 @@ import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * Authenticates token with OAuthValidationService. Intended usage is
+ * via providing fully qualified class name
+ * in broker.xml
+ */
 public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 	private static final Logger log = Logger.getLogger(OAuth2BasedMQTTAuthenticator.class);
 	private static final String TOKEN_TYPE = "bearer";
 	private static final String SCOPE_IDENTIFIER = "scope";
+	private static final String TOKEN_EXPIRY_TIME_IDENTIFIER = "expiry_time";
 	private static String cookie;
 	private GenericObjectPool stubs;
 
 	/**
-	 * initialize the  OAUTH2ValidationStubFactory  to communicate with the OAuth2TokenValidationService
+	 * initialize the OAUTH2ValidationStubFactory  to communicate with the OAuth2TokenValidationService
 	 */
 	public OAuth2BasedMQTTAuthenticator(){
 		stubs = new GenericObjectPool(new OAuthTokenValidaterStubFactory());
 	}
+
+
+	/**
+	 * {@inheritDoc} Authenticates the user against carbon user store.
+	 */
+	@Override
+	public AuthenticationInfo checkValid(String token, String unusedParameter) {
+		return validateToken(token);
+	}
+
 
 	/**
 	 * This method gets a string accessToken and validates it
@@ -54,72 +69,71 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 	 * @param token which need to be validated.
 	 * @return AuthenticationInfo with the validated results.
 	 */
-	@Override
-	public AuthenticationInfo checkValid(String token, String unusedParameter) {
-		return validateToken(token);
-	}
-
 	private AuthenticationInfo validateToken(String token) {
 		AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 		OAuth2TokenValidationServiceStub tokenValidationServiceStub = null;
 		try {
-			tokenValidationServiceStub = (OAuth2TokenValidationServiceStub) this.stubs.borrowObject();
-			if (cookie != null) {
-				tokenValidationServiceStub._getServiceClient().getOptions().setProperty(
-						HTTPConstants.COOKIE_STRING, cookie);
-			}
+			Object stub = this.stubs.borrowObject();
+			if (stub != null) {
+				tokenValidationServiceStub = (OAuth2TokenValidationServiceStub) stub;
+				if (cookie != null) {
+					tokenValidationServiceStub._getServiceClient().getOptions().setProperty(
+							HTTPConstants.COOKIE_STRING, cookie);
+				}
 
-			OAuth2TokenValidationRequestDTO validationRequest = new OAuth2TokenValidationRequestDTO();
+				OAuth2TokenValidationRequestDTO validationRequest =
+						new OAuth2TokenValidationRequestDTO();
 
-			OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
-					new OAuth2TokenValidationRequestDTO_OAuth2AccessToken();
-			accessToken.setTokenType(TOKEN_TYPE);
-			accessToken.setIdentifier(token);
-			validationRequest.setAccessToken(accessToken);
+				OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
+						new OAuth2TokenValidationRequestDTO_OAuth2AccessToken();
+				accessToken.setTokenType(TOKEN_TYPE);
+				accessToken.setIdentifier(token);
+				validationRequest.setAccessToken(accessToken);
 
-			boolean authenticated;
-			OAuth2TokenValidationResponseDTO tokenValidationResponse;
+				boolean authenticated = false;
+				OAuth2TokenValidationResponseDTO tokenValidationResponse;
 
-			try {
 				tokenValidationResponse = tokenValidationServiceStub.validate(validationRequest);
-				if(tokenValidationResponse == null){
+				if (tokenValidationResponse == null) {
 					authenticationInfo.setAuthenticated(false);
 					return authenticationInfo;
 				}
 				authenticated = tokenValidationResponse.getValid();
-				if(authenticated) {
+				if (authenticated) {
 					String authorizedUser = tokenValidationResponse.getAuthorizedUser();
 					String username = MultitenantUtils.getTenantAwareUsername(authorizedUser);
 					String tenantDomain = MultitenantUtils.getTenantDomain(authorizedUser);
 					authenticationInfo.setUsername(username);
 					authenticationInfo.setTenantDomain(tenantDomain);
+					authenticationInfo.setProperty(TOKEN_EXPIRY_TIME_IDENTIFIER, tokenValidationResponse.getExpiryTime());
 				} else {
-					if(log.isDebugEnabled()) {
-						log.debug("token validation failed for token:" + token);
+					if (log.isDebugEnabled()) {
+						log.debug("Token validation failed for token: " + token);
 					}
 				}
-			} catch (RemoteException e) {
-				log.error("Error on connecting with the validation endpoint", e);
+
+				ServiceContext serviceContext = tokenValidationServiceStub._getServiceClient()
+						.getLastOperationContext().getServiceContext();
+				cookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
+
+				// scope based authorization for client connection.
+				List<String> requiredScopes = OAuthConfigurationManager.getInstance().getScopes();
+				if (authenticated && requiredScopes != null) {
+					String validateResponseScope[] = tokenValidationResponse.getScope();
+					List<String> responseScopes = Arrays.asList(validateResponseScope);
+					authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
+					authenticated = isAuthroized(requiredScopes, responseScopes);
+				}
+				authenticationInfo.setAuthenticated(authenticated);
+			} else {
+				log.warn("Stub initialization failed.");
 				authenticationInfo.setAuthenticated(false);
-				return authenticationInfo;
 			}
-
-			ServiceContext serviceContext =
-					tokenValidationServiceStub._getServiceClient().getLastOperationContext()
-							.getServiceContext();
-			cookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
-
-
-			List<String> requiredScopes =  OAuthConfigurationManager.getInstance().getScopes();
-			if (authenticated && requiredScopes != null) {
-				String validateResponseScope[] = tokenValidationResponse.getScope();
-				List<String> responseScopes = Arrays.asList(validateResponseScope);
-				authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
-				authenticated = isAuthroized(requiredScopes, responseScopes);
-			}
-			authenticationInfo.setAuthenticated(authenticated);
+		} catch (RemoteException e) {
+			log.error("Error on connecting with the validation endpoint.", e);
+			authenticationInfo.setAuthenticated(false);
 		} catch (Exception e) {
-			log.error("Error occurred in borrowing an validation stub from the pool", e);
+			log.error("Error occurred in borrowing an validation stub from the pool.", e);
 			authenticationInfo.setAuthenticated(false);
 		} finally {
 			try {
@@ -128,7 +142,7 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 				}
 			} catch (Exception e) {
 				log.warn("Error occurred while returning the object back to the oauth token validation service " +
-								 "stub pool", e);
+								 "stub pool.", e);
 			}
 		}
 		return authenticationInfo;

@@ -82,9 +82,10 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
     }
 
     /**
-     * this takes topic as paramter and converts to the permission String
-     * if there is +/#(priority order) in topic then the client requires permission before those character
-     * eg: smarthome/+ requires permission for /permission/mqtt/topic/smarthome
+     * this takes topic as parameter and converts to a permission String
+     * if there is +/#(priority order) in topic then the client requires the permission to be set
+     * before those characters
+     * eg: smarthome/+ requires permission for /permission/mqtt/topic/smarthome (/permission/mqtt/topic is the prefic)
      * @param topic that needs to be converted to permission String
      * @return the permission string
      */
@@ -100,7 +101,6 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
             if (permission.charAt(permission.length()-1)=='/') {
                 permission = permission.substring(0, permission.length()-1);
             }
-            System.out.println(permission);
         }
         return  permission;
     }

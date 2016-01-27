@@ -29,6 +29,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.ssl.KeyMaterial;
 import org.apache.log4j.Logger;
@@ -54,11 +55,21 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 		this.httpClient = createHttpClient();
 	}
 
+	/**
+	 * This creates a object to the pool.
+	 * @return an OAuthValidationStub object
+	 * @throws Exception
+	 */
 	@Override
 	public Object makeObject() throws Exception {
 		return this.generateStub();
 	}
 
+	/**
+	 * This is used to clean up the Oauth validation stub and releases to the object pool.
+	 * @param o
+	 * @throws Exception
+	 */
 	@Override
 	public void passivateObject(Object o) throws Exception {
 		if (o instanceof OAuth2TokenValidationServiceStub) {
@@ -71,33 +82,42 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 		OAuth2TokenValidationServiceStub stub = null;
 		URL hostURL = config.getHostUrl();
 		try {
-			stub = new OAuth2TokenValidationServiceStub(hostURL.toString());
-			ServiceClient client = stub._getServiceClient();
-			client.getServiceContext().getConfigurationContext().setProperty(
-					HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
+			if(hostURL != null) {
+				stub = new OAuth2TokenValidationServiceStub(hostURL.toString());
+				if (stub != null) {
+					ServiceClient client = stub._getServiceClient();
+					client.getServiceContext().getConfigurationContext().setProperty(
+							HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
 
-			HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
-			auth.setPreemptiveAuthentication(true);
-			String username = config.getUsername();
-			String password = config.getPassword();
-			auth.setPassword(username);
-			auth.setUsername(password);
+					HttpTransportProperties.Authenticator auth =
+							new HttpTransportProperties.Authenticator();
+					auth.setPreemptiveAuthentication(true);
+					String username = config.getUsername();
+					String password = config.getPassword();
+					auth.setPassword(username);
+					auth.setUsername(password);
 
-			Options options = client.getOptions();
-			options.setProperty(HTTPConstants.AUTHENTICATE, auth);
-			options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, Constants.VALUE_TRUE);
-			client.setOptions(options);
-			if (hostURL.getProtocol().equals("https")) {
-				try {
-					EasySSLProtocolSocketFactory sslProtocolSocketFactory =
-							createProtocolSocketFactory();
-					Protocol authhttps = new Protocol(hostURL.getProtocol(), sslProtocolSocketFactory,
-													  hostURL.getPort());
-					Protocol.registerProtocol(hostURL.getProtocol(), authhttps);
-					options.setProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER, authhttps);
-				} catch (Exception e) {
-					log.error("An error in initializing SSL Context", e);
+					Options options = client.getOptions();
+					options.setProperty(HTTPConstants.AUTHENTICATE, auth);
+					options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, Constants.VALUE_TRUE);
+					client.setOptions(options);
+					if (hostURL.getProtocol().equals("https")) {
+						// set up ssl factory since axis2 https transport is used.
+						EasySSLProtocolSocketFactory sslProtocolSocketFactory =
+								createProtocolSocketFactory();
+						Protocol authhttps = new Protocol(hostURL.getProtocol(),
+														  (ProtocolSocketFactory) sslProtocolSocketFactory,
+														  hostURL.getPort());
+						Protocol.registerProtocol(hostURL.getProtocol(), authhttps);
+						options.setProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER, authhttps);
+					}
+				} else {
+					String errorMsg = "OAuth Validation instanization failed.";
+					throw new OAuthTokenValidationException(errorMsg);
 				}
+			} else {
+				String errorMsg = "host url is invalid";
+				throw new OAuthTokenValidationException(errorMsg);
 			}
 		} catch (AxisFault axisFault) {
 			throw new OAuthTokenValidationException(
@@ -111,31 +131,29 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 	 * @return an EasySSLProtocolSocketFactory for SSL communication. This is required because of using
 	 * CommonHTTPTransport(axis2 transport) in axis2
 	 */
-	private EasySSLProtocolSocketFactory createProtocolSocketFactory()
-			throws GeneralSecurityException, IOException {
-		EasySSLProtocolSocketFactory easySSLPSFactory = new EasySSLProtocolSocketFactory();
-
-		KeyMaterial km = null;
-		JKSStore jksKeyStore = OAuthConfigurationManager.getInstance().getJksKeyStore();
-		String keyStoreLocation = jksKeyStore.getStoreLocation();
-		char[] password = jksKeyStore.getPassword().toCharArray();
-		File f = new File(keyStoreLocation);
-		if (f.exists()) {
-			try {
-				km = new KeyMaterial(keyStoreLocation, password);
-				log.trace("Keystore location is: " + keyStoreLocation + "");
-			} catch (GeneralSecurityException gse) {
-				log.error("Exception occured while loading keystore from the following location: " +
-								  keyStoreLocation, gse);
-				throw gse;
+	private EasySSLProtocolSocketFactory createProtocolSocketFactory() throws OAuthTokenValidationException{
+		try {
+			EasySSLProtocolSocketFactory easySSLPSFactory = new EasySSLProtocolSocketFactory();
+			JKSStore jksKeyStore = OAuthConfigurationManager.getInstance().getJksKeyStore();
+			String keyStoreLocation = jksKeyStore.getStoreLocation();
+			char[] password = jksKeyStore.getPassword().toCharArray();
+			File keyStoreFile = new File(keyStoreLocation);
+			if (keyStoreFile.exists()) {
+				KeyMaterial km = new KeyMaterial(keyStoreLocation, password);
+				easySSLPSFactory.setKeyMaterial(km);
+				return easySSLPSFactory;
+			} else {
+				String errorMsg = "Unable to load Keystore from the following location: " + keyStoreLocation;
+				throw new OAuthTokenValidationException(errorMsg);
 			}
-		} else {
-			log.error("Unable to load Keystore from the following location: " + keyStoreLocation);
-			throw new GeneralSecurityException(
-					"Unable to load Keystore from the following location: " + keyStoreLocation);
+		} catch (IOException e) {
+			String errorMsg = "Failed to initiate EasySSLProtocolSocketFactory.";
+			throw new OAuthTokenValidationException(errorMsg);
+		} catch (GeneralSecurityException e) {
+			String errorMsg = "Failed to set the key material in easy ssl factory.";
+			throw new OAuthTokenValidationException(errorMsg);
 		}
-		easySSLPSFactory.setKeyMaterial(km);
-		return easySSLPSFactory;
+
 	}
 
 	/**
