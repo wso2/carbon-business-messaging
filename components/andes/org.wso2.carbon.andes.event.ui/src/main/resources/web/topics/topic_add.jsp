@@ -202,7 +202,7 @@
             <tr>
                 <td class="leftCol-big"><fmt:message key="topic"/><span
                         class="required">*</span></td>
-                <td><input type="text" id="topic" value=<%=topicName%>></td>
+                <td><input type="text" id="topic" value="<%=topicName%>" maxlength="242" /></td>
             </tr>
             </tbody>
         </table>
