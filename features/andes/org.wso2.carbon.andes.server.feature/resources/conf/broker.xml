@@ -257,6 +257,11 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             on the data store will increase. -->
             <parallelContentReaders>5</parallelContentReaders>
 
+            <!-- Number of parallel decompression handlers used to decompress messages before send to subscribers.
+            Increasing this value will speed-up the message decompressing mechanism. But the system load
+            will increase. -->
+            <parallelDecompressionHandlers>5</parallelDecompressionHandlers>
+
             <!-- Number of parallel delivery handlers used to send messages to subscribers.
             Increasing this value will speed-up the message sending mechanism. But the system load
             will increase. -->
@@ -341,6 +346,17 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             store large content chunks converted to smaller content chunks within the DB with this
             parameter. -->
             <maxContentChunkSize>65500</maxContentChunkSize>
+
+            <!-- This is the configuration to allow compression of message contents, before store messages
+            into the database.-->
+            <allowCompression>true</allowCompression>
+
+            <!-- This is the configuration to change the value of the content compression threshold (in bytes).
+            Message contents less than this value will not compress, even compression is enabled. The recommended
+            message size of the smallest message before compression is 13bytes. Compress messages smaller than
+            13bytes will expand the message size by 0.4% -->
+            <contentCompressionThreshold>1000</contentCompressionThreshold>
+
         </contentHandling>
 
         <inboundEvents>
