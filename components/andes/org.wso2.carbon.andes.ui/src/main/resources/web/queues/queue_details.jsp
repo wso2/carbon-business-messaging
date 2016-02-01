@@ -11,6 +11,7 @@
 <%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <%@ page import="java.io.UnsupportedEncodingException" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:jsi18n
@@ -38,7 +39,7 @@
     %>
     <script type="text/javascript">
 
-        CARBON.showInfoDialog('Queue <%=queueName %> successfully deleted.', function() {
+        CARBON.showInfoDialog('Queue <%=Encode.forHtml(queueName)%> successfully deleted.', function() {
             location.href = 'queue_details.jsp';
         });
     </script>
@@ -97,7 +98,7 @@
                 stub.purgeMessagesOfQueue(queuename);
     %>
 
-    <script type="text/javascript">CARBON.showInfoDialog('Queue <%=queuename %> successfully purged.', function
+    <script type="text/javascript">CARBON.showInfoDialog('Queue <%=Encode.forHtml(queueName)%> successfully purged.', function
             () {
         location.href = 'queue_details.jsp';
     });</script>

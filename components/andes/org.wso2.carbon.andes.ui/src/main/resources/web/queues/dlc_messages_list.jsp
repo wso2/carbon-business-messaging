@@ -17,6 +17,7 @@
 <%@ page import="org.wso2.andes.kernel.AndesConstants" %>
 <%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <jsp:include page="resources-i18n-ajaxprocessor.jsp"/>
@@ -59,7 +60,7 @@
         function filterByQueue() {
             var filterQueueText = $("#queueName").val();
             if (filterQueueText == "") {
-                $("#filterQueueName").val('<%=request.getParameter("nameOfQueue")%>');
+                $("#filterQueueName").val('<%=Encode.forJavaScript(request.getParameter("nameOfQueue"))%>');
             } else {
                 $("#filterQueueName").val(filterQueueText);
             }
