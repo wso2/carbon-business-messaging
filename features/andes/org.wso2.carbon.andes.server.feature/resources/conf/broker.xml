@@ -344,7 +344,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
             <!-- This is the configuration to allow compression of message contents, before store messages
             into the database.-->
-            <allowCompression>true</allowCompression>
+            <allowCompression>false</allowCompression>
 
             <!-- This is the configuration to change the value of the content compression threshold (in bytes).
             Message contents less than this value will not compress, even compression is enabled. The recommended
