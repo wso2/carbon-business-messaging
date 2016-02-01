@@ -202,11 +202,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <!--Publisher transaction related configurations.-->
     <transaction>
 
-        <!--Number of connections reserved at a given time for transactional DB tasks.
-        Transaction will hold on to a DB connection until a transaction is committed,
-        rolled back or closed.-->
-        <dbConnectionPoolSize>10</dbConnectionPoolSize>
-
         <!--Maximum batch size (Messages) for a transaction. Exceeding this limit will result
         in a failure in the subsequent commit request. Default is set to 10MB. Limit is
         calculated considering the payload of messages-->
