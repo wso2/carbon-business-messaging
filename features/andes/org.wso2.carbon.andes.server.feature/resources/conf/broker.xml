@@ -385,10 +385,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <transactionMessageWriters>1</transactionMessageWriters>
         </inboundEvents>
 
-        <failover>
-
-        </failover>
-
     </performanceTuning>
 
     <!-- This section is about how you want to view messaging statistics from the admin console and
