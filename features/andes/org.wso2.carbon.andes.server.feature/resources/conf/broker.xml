@@ -120,9 +120,35 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                        Note: default implementation authenticates against carbon user store
                        based on supplied username/password
                    --> 
-                   <authenticator>org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator</authenticator>
-            </security>
+                   <authenticator class="org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator"/>
+                    <!--authenticator class="org.wso2.carbon.andes.authentication.andes.OAuth2BasedMQTTAuthenticator">
+                        <property name="hostURL">https://localhost:9443/services/OAuth2TokenValidationService</property>
+                        <property name="username">admin</property>
+                        <property name="password">admin</property-->
 
+                        <!--<authenticate the user only if below scopes are related to the token.
+                        This value can be empty if we wanted skip the authorization for connection
+                         Multiple scopes can mentioned by having a space delimiter>-->
+                        <!--<property name="scopes"></property>-->
+                        <!--property name="maxConnectionsPerHost">10</property>
+                        <property name="maxTotalConnections">150</property>
+                    </authenticator-->
+
+                    <!--
+                       Instructs the MQTT server whether clients should be authorized before either publishing or subscribing
+                       Possible values:
+                        NOT_REQUIRED: This is the default value. MQTT clients will skip the authorization check
+                        REQUIRED: Clients will authorized before publishing. this will execute the class given in authorzier
+                        Note: authentication should be REQUIRED for authorization to be REQUIRED.
+                   -->
+                    <authorization>NOT_REQUIRED</authorization>
+
+                    <!--Class name of the authorizer to use. class should
+                        inherit from org.dna.mqtt.moquette.server.IAutherizer
+                        Note: default implementation authorizes against carbon permission with the topic.
+                    -->
+                    <authorizer class="org.wso2.carbon.andes.authorization.andes.CarbonPermissionBasedMQTTAuthorizer"/>
+            </security>
         </mqtt>
 
     </transports>
