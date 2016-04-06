@@ -60,7 +60,7 @@ public class AuthenticationServiceComponent {
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
 
     protected void activate(ComponentContext ctx) throws AndesException{
-        //reinitializing Andes Configuration manager, since we cannot guarantee the startup order
+        //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
         AndesConfigurationManager.initialize(getPortOffset());
         OAuthConfigurationManager.getInstance().initConfig();
 

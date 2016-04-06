@@ -79,7 +79,7 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 	}
 
 	private OAuth2TokenValidationServiceStub generateStub() throws OAuthTokenValidationException {
-		OAuth2TokenValidationServiceStub stub = null;
+		OAuth2TokenValidationServiceStub stub;
 		URL hostURL = config.getHostUrl();
 		try {
 			if(hostURL != null) {

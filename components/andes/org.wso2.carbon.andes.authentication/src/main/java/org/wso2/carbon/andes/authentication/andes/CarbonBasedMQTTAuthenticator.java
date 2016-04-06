@@ -67,8 +67,7 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
                 }
 
                 UserRealm userRealm = AuthenticationServiceDataHolder.getInstance().getRealmService()
-                                                                                        .getTenantUserRealm(
-                                                                                                tenantId);
+                                                                                        .getTenantUserRealm(tenantId);
                 UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                 username = MultitenantUtils.getTenantAwareUsername(carbonCompliantUsername);
                 isAuthenticated = userStoreManager.authenticate(username, password);

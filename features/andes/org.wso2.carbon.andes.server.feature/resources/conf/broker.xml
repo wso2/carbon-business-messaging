@@ -124,13 +124,8 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                     <!--authenticator class="org.wso2.carbon.andes.authentication.andes.OAuth2BasedMQTTAuthenticator">
                         <property name="hostURL">https://localhost:9443/services/OAuth2TokenValidationService</property>
                         <property name="username">admin</property>
-                        <property name="password">admin</property-->
-
-                        <!--<authenticate the user only if below scopes are related to the token.
-                        This value can be empty if we wanted skip the authorization for connection
-                         Multiple scopes can mentioned by having a space delimiter>-->
-                        <!--<property name="scopes"></property>-->
-                        <!--property name="maxConnectionsPerHost">10</property>
+                        <property name="password">admin</property>
+                        <property name="maxConnectionsPerHost">10</property>
                         <property name="maxTotalConnections">150</property>
                     </authenticator-->
 
@@ -147,7 +142,10 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                         inherit from org.dna.mqtt.moquette.server.IAutherizer
                         Note: default implementation authorizes against carbon permission with the topic.
                     -->
-                    <authorizer class="org.wso2.carbon.andes.authorization.andes.CarbonPermissionBasedMQTTAuthorizer"/>
+                    <!--connectionPermission is required for a user to connect to broker-->
+                    <authorizer class="org.wso2.carbon.andes.authorization.andes.CarbonPermissionBasedMQTTAuthorizer">
+                        <property name="connectionPermission">/permission/admin/mqtt/connect</property>
+                    </authorizer>
             </security>
         </mqtt>
 

@@ -26,7 +26,6 @@ import org.wso2.andes.kernel.AndesException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +49,6 @@ public class OAuthConfigurationManager {
 	private String password;
 	private JKSStore jksKeyStore;
 	private JKSStore jksTrustStore;
-	private List<String> scopes;
 	private int maximumTotalHttpConnection;
 	private int maximumHttpConnectionPerHost;
 	private static final String USERNAME_KEY = "username";
@@ -58,7 +56,6 @@ public class OAuthConfigurationManager {
 	private static final String HOST_URL_KEY = "hostURL";
 	private static final String MAX_CONNECTION_KEY = "maxConnectionsPerHost";
 	private static final String TOTAL_CONNECTION_KEY = "maxTotalConnections";
-	private static final String SCOPES_KEY = "scopes";
 	private static final int DEFAULT_CONNECTION_PER_HOST = 2;
 	private static final int DEFAULT_TOTAL_CONNECTION = 100;
 
@@ -83,37 +80,26 @@ public class OAuthConfigurationManager {
 				AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_TRUSTSTORE);
 
 		List<String> mqttTranportProperties = AndesConfigurationManager.readValueList
-				(AndesConfiguration.LIST_TRANSPORT_MQTT_PROPERTIES);
+				(AndesConfiguration.LIST_TRANSPORT_MQTT_AUTHENTICATION_PROPERTIES);
 
 		for (String property : mqttTranportProperties) {
 			String propertyValue = AndesConfigurationManager.readValueOfChildByKey(
-					AndesConfiguration.TRANSPORT_MQTT_PROPERTIES, property);
+					AndesConfiguration.TRANSPORT_MQTT_AUTHENTICATION_PROPERTIES, property);
 			switch (property) {
 				case HOST_URL_KEY:
 					setHostUrl(propertyValue);
 					break;
-
 				case USERNAME_KEY:
 					setUsername(propertyValue);
 					break;
-
 				case PASSWORD_KEY:
 					setPassword(propertyValue);
 					break;
-
-				case SCOPES_KEY:
-					setScopes(propertyValue);
-					break;
-
 				case MAX_CONNECTION_KEY:
 					setMaximumHttpConnectionPerHost(propertyValue);
 					break;
-
 				case TOTAL_CONNECTION_KEY:
 					setMaximumTotalHttpConnection(propertyValue);
-					break;
-
-				default:
 					break;
 			}
 		}
@@ -145,13 +131,6 @@ public class OAuthConfigurationManager {
 	 */
 	public JKSStore getJksKeyStore() {
 		return jksKeyStore;
-	}
-
-	/**
-	 * @return scopes that is used for mqtt connection authorization
-	 */
-	public List<String> getScopes() {
-		return scopes;
 	}
 
 	/**
@@ -195,12 +174,6 @@ public class OAuthConfigurationManager {
 			String errorMsg = "invalid password " + password;
 			log.error(errorMsg);
 			throw new AndesException(errorMsg);
-		}
-	}
-
-	private void setScopes(String scopeString) {
-		if (!scopeString.isEmpty()) {
-			scopes = Arrays.asList(scopeString.split("\\s+"));
 		}
 	}
 

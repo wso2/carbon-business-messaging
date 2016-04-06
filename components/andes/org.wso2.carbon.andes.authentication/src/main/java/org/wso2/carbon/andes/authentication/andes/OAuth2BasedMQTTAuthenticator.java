@@ -80,19 +80,14 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 					tokenValidationServiceStub._getServiceClient().getOptions().setProperty(
 							HTTPConstants.COOKIE_STRING, cookie);
 				}
-
-				OAuth2TokenValidationRequestDTO validationRequest =
-						new OAuth2TokenValidationRequestDTO();
-
+				OAuth2TokenValidationRequestDTO validationRequest = new OAuth2TokenValidationRequestDTO();
 				OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
 						new OAuth2TokenValidationRequestDTO_OAuth2AccessToken();
 				accessToken.setTokenType(TOKEN_TYPE);
 				accessToken.setIdentifier(token);
 				validationRequest.setAccessToken(accessToken);
-
-				boolean authenticated = false;
+				boolean authenticated;
 				OAuth2TokenValidationResponseDTO tokenValidationResponse;
-
 				tokenValidationResponse = tokenValidationServiceStub.validate(validationRequest);
 				if (tokenValidationResponse == null) {
 					authenticationInfo.setAuthenticated(false);
@@ -106,24 +101,19 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 					authenticationInfo.setUsername(username);
 					authenticationInfo.setTenantDomain(tenantDomain);
 					authenticationInfo.setProperty(TOKEN_EXPIRY_TIME_IDENTIFIER, tokenValidationResponse.getExpiryTime());
+					String validateResponseScope[] = tokenValidationResponse.getScope();
+					if (validateResponseScope != null && validateResponseScope.length > 0) {
+						List<String> responseScopes = Arrays.asList(validateResponseScope);
+						authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
+					}
 				} else {
 					if (log.isDebugEnabled()) {
 						log.debug("Token validation failed for token: " + token);
 					}
 				}
-
 				ServiceContext serviceContext = tokenValidationServiceStub._getServiceClient()
 						.getLastOperationContext().getServiceContext();
 				cookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
-
-				// scope based authorization for client connection.
-				List<String> requiredScopes = OAuthConfigurationManager.getInstance().getScopes();
-				if (authenticated && requiredScopes != null) {
-					String validateResponseScope[] = tokenValidationResponse.getScope();
-					List<String> responseScopes = Arrays.asList(validateResponseScope);
-					authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
-					authenticated = isAuthroized(requiredScopes, responseScopes);
-				}
 				authenticationInfo.setAuthenticated(authenticated);
 			} else {
 				log.warn("Stub initialization failed.");
@@ -148,20 +138,4 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 		return authenticationInfo;
 	}
 
-	/**
-	 *
-	 * @param requiredScopes configured in broker.xml
-	 * @param responseScopes response from token validation endpoint
-	 * @return If scopes are configured in broker.xml, then it will compare the
-	scopes with the token validation response and if the required scopes are in response scope
-	then then connection will be authorized
-	 */
-	private boolean isAuthroized(List<String> requiredScopes, List<String> responseScopes){
-		for (String requiredScope : requiredScopes) {
-			if (!responseScopes.contains(requiredScope)) {
-				return false;
-			}
-		}
-		return true;
-	}
 }
