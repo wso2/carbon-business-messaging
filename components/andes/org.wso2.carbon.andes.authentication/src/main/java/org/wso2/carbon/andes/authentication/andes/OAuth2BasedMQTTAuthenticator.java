@@ -70,7 +70,6 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 	 * @return AuthenticationInfo with the validated results.
 	 */
 	private AuthenticationInfo validateToken(String token) {
-		AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 		OAuth2TokenValidationServiceStub tokenValidationServiceStub = null;
 		try {
 			Object stub = this.stubs.borrowObject();
@@ -80,51 +79,15 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 					tokenValidationServiceStub._getServiceClient().getOptions().setProperty(
 							HTTPConstants.COOKIE_STRING, cookie);
 				}
-				OAuth2TokenValidationRequestDTO validationRequest = new OAuth2TokenValidationRequestDTO();
-				OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
-						new OAuth2TokenValidationRequestDTO_OAuth2AccessToken();
-				accessToken.setTokenType(TOKEN_TYPE);
-				accessToken.setIdentifier(token);
-				validationRequest.setAccessToken(accessToken);
-				boolean authenticated;
-				OAuth2TokenValidationResponseDTO tokenValidationResponse;
-				tokenValidationResponse = tokenValidationServiceStub.validate(validationRequest);
-				if (tokenValidationResponse == null) {
-					authenticationInfo.setAuthenticated(false);
-					return authenticationInfo;
-				}
-				authenticated = tokenValidationResponse.getValid();
-				if (authenticated) {
-					String authorizedUser = tokenValidationResponse.getAuthorizedUser();
-					String username = MultitenantUtils.getTenantAwareUsername(authorizedUser);
-					String tenantDomain = MultitenantUtils.getTenantDomain(authorizedUser);
-					authenticationInfo.setUsername(username);
-					authenticationInfo.setTenantDomain(tenantDomain);
-					authenticationInfo.setProperty(TOKEN_EXPIRY_TIME_IDENTIFIER, tokenValidationResponse.getExpiryTime());
-					String validateResponseScope[] = tokenValidationResponse.getScope();
-					if (validateResponseScope != null && validateResponseScope.length > 0) {
-						List<String> responseScopes = Arrays.asList(validateResponseScope);
-						authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
-					}
-				} else {
-					if (log.isDebugEnabled()) {
-						log.debug("Token validation failed for token: " + token);
-					}
-				}
-				ServiceContext serviceContext = tokenValidationServiceStub._getServiceClient()
-						.getLastOperationContext().getServiceContext();
-				cookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
-				authenticationInfo.setAuthenticated(authenticated);
+				return getAuthenticationInfo(token, tokenValidationServiceStub);
 			} else {
 				log.warn("Stub initialization failed.");
-				authenticationInfo.setAuthenticated(false);
 			}
 		} catch (RemoteException e) {
 			log.error("Error on connecting with the validation endpoint.", e);
-			authenticationInfo.setAuthenticated(false);
 		} catch (Exception e) {
 			log.error("Error occurred in borrowing an validation stub from the pool.", e);
-			authenticationInfo.setAuthenticated(false);
+
 		} finally {
 			try {
 				if (tokenValidationServiceStub != null) {
@@ -135,6 +98,50 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 								 "stub pool.", e);
 			}
 		}
+		AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+		authenticationInfo.setAuthenticated(false);
+		return authenticationInfo;
+	}
+
+	private AuthenticationInfo getAuthenticationInfo(String token,
+													 OAuth2TokenValidationServiceStub tokenValidationServiceStub)
+			throws RemoteException {
+		AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+		OAuth2TokenValidationRequestDTO validationRequest = new OAuth2TokenValidationRequestDTO();
+		OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
+				new OAuth2TokenValidationRequestDTO_OAuth2AccessToken();
+		accessToken.setTokenType(TOKEN_TYPE);
+		accessToken.setIdentifier(token);
+		validationRequest.setAccessToken(accessToken);
+		boolean authenticated;
+		OAuth2TokenValidationResponseDTO tokenValidationResponse;
+		tokenValidationResponse = tokenValidationServiceStub.validate(validationRequest);
+		if (tokenValidationResponse == null) {
+			authenticationInfo.setAuthenticated(false);
+			return authenticationInfo;
+		}
+		authenticated = tokenValidationResponse.getValid();
+		if (authenticated) {
+			String authorizedUser = tokenValidationResponse.getAuthorizedUser();
+			String username = MultitenantUtils.getTenantAwareUsername(authorizedUser);
+			String tenantDomain = MultitenantUtils.getTenantDomain(authorizedUser);
+			authenticationInfo.setUsername(username);
+			authenticationInfo.setTenantDomain(tenantDomain);
+			authenticationInfo.setProperty(TOKEN_EXPIRY_TIME_IDENTIFIER, tokenValidationResponse.getExpiryTime());
+			String validateResponseScope[] = tokenValidationResponse.getScope();
+			if (validateResponseScope != null && validateResponseScope.length > 0) {
+				List<String> responseScopes = Arrays.asList(validateResponseScope);
+				authenticationInfo.setProperty(SCOPE_IDENTIFIER, responseScopes);
+			}
+		} else {
+			if (log.isDebugEnabled()) {
+				log.debug("Token validation failed for token: " + token);
+			}
+		}
+		ServiceContext serviceContext = tokenValidationServiceStub._getServiceClient()
+				.getLastOperationContext().getServiceContext();
+		cookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
+		authenticationInfo.setAuthenticated(authenticated);
 		return authenticationInfo;
 	}
 

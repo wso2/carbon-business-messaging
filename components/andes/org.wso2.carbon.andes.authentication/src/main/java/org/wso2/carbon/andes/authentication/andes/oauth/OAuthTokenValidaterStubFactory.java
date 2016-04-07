@@ -148,10 +148,10 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 			}
 		} catch (IOException e) {
 			String errorMsg = "Failed to initiate EasySSLProtocolSocketFactory.";
-			throw new OAuthTokenValidationException(errorMsg);
+			throw new OAuthTokenValidationException(errorMsg, e);
 		} catch (GeneralSecurityException e) {
 			String errorMsg = "Failed to set the key material in easy ssl factory.";
-			throw new OAuthTokenValidationException(errorMsg);
+			throw new OAuthTokenValidationException(errorMsg, e);
 		}
 
 	}

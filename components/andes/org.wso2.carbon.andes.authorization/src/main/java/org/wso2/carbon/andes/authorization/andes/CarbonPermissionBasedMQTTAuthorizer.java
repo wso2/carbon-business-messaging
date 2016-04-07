@@ -32,93 +32,93 @@ import org.wso2.carbon.user.core.authorization.TreeNode;
 /**
  * Authorize the connecting users against Carbon Permission Model. Intended usage is
  * via providing fully qualified class name in broker.xml
- *
+ * <p/>
  * This is just a simple authorization model. For dynamic topics use an implementation based on IAuthorizer
  */
 public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 
-    private static final Logger logger = Logger.getLogger(CarbonPermissionBasedMQTTAuthorizer.class);
+	private static final Logger logger = Logger.getLogger(CarbonPermissionBasedMQTTAuthorizer.class);
 
-    //topic will be based on carbon permission based model eg: if the topic is smarthome/bulb then the
-    //permission string will be /permission/mqtt/topic/smarthome/bulb
-    private static final String PERMISSION_PREFIX = "/permission/admin/mqtt/topic/";
-    private static final String CONNECTION_PERMISSION_CONFIG = "connectionPermission";
+	//topic will be based on carbon permission based model eg: if the topic is smarthome/bulb then the
+	//permission string will be /permission/mqtt/topic/smarthome/bulb
+	private static final String PERMISSION_PREFIX = "/permission/admin/mqtt/topic/";
+	private static final String CONNECTION_PERMISSION_CONFIG = "connectionPermission";
 
-    /**
-     *
-     * @param authorizationSubject is the object passed from authentication
-     * @param topic the topic that client is ought to be authorized
-     * @param permissionLevel whenther its publishing or subscribing
-     * @return boolean : true - if authenticated else return false.
-     */
-    @Override
-    public boolean isAuthorizedForTopic(MQTTAuthorizationSubject authorizationSubject, String topic,
-                                MQTTAuthoriztionPermissionLevel permissionLevel) {
-        String permission = getPermissionStringFromTopic(topic);
-        String permissionAction = TreeNode.Permission.SUBSCRIBE.toString().toLowerCase();
-        if (permissionLevel == MQTTAuthoriztionPermissionLevel.PUBLISH) {
-            permissionAction = TreeNode.Permission.PUBLISH.toString().toLowerCase();
-        }
-        return isUserAuthorized(authorizationSubject, permission, permissionAction);
-    }
+	/**
+	 * @param authorizationSubject is the object passed from authentication
+	 * @param topic                the topic that client is ought to be authorized
+	 * @param permissionLevel      whenther its publishing or subscribing
+	 * @return boolean : true - if authenticated else return false.
+	 */
+	@Override
+	public boolean isAuthorizedForTopic(MQTTAuthorizationSubject authorizationSubject, String topic,
+										MQTTAuthoriztionPermissionLevel permissionLevel) {
+		String permission = getPermissionStringFromTopic(topic);
+		String permissionAction = TreeNode.Permission.SUBSCRIBE.toString().toLowerCase();
+		if (permissionLevel == MQTTAuthoriztionPermissionLevel.PUBLISH) {
+			permissionAction = TreeNode.Permission.PUBLISH.toString().toLowerCase();
+		}
+		return isUserAuthorized(authorizationSubject, permission, permissionAction);
+	}
 
-    /**
-     * @param authorizationSubject is the object passed from authentication.
-     * @return boolean : true - if authenticated else return false.
-     */
-    @Override
-    public boolean isAuthorizedToConnect(MQTTAuthorizationSubject authorizationSubject) {
-        String permission = AuthorizationConfigurationManager.getInstance().getProperty(CONNECTION_PERMISSION_CONFIG);
-        if (permission!= null && !permission.isEmpty()) {
-            String permissionAction = TreeNode.Permission.AUTHORIZE.toString().toLowerCase();
-            return isUserAuthorized(authorizationSubject, permission, permissionAction);
-        }
-        return true;
-    }
+	/**
+	 * @param authorizationSubject is the object passed from authentication.
+	 * @return boolean : true - if authenticated else return false.
+	 */
+	@Override
+	public boolean isAuthorizedToConnect(MQTTAuthorizationSubject authorizationSubject) {
+		String permission = AuthorizationConfigurationManager.getInstance().getProperty(CONNECTION_PERMISSION_CONFIG);
+		if (permission != null && !permission.isEmpty()) {
+			String permissionAction = TreeNode.Permission.AUTHORIZE.toString().toLowerCase();
+			return isUserAuthorized(authorizationSubject, permission, permissionAction);
+		}
+		return true;
+	}
 
-    private boolean isUserAuthorized(MQTTAuthorizationSubject authorizationSubject, String permission, String action) {
-        String username = authorizationSubject.getUsername();
-        try {
-            PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(
-                    authorizationSubject.getTenantDomain(), true);
-            int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-            UserRealm userRealm = AuthorizationServiceDataHolder.getInstance().getRealmService()
-                    .getTenantUserRealm(tenantId);
-            if (userRealm != null && userRealm.getAuthorizationManager() != null) {
-                return userRealm.getAuthorizationManager().isUserAuthorized(username, permission, action);
-            }
-            return false;
-        } catch (UserStoreException e) {
-            String errorMsg = String.format("Unable to authorize the user : %s", username);
-            logger.error(errorMsg, e);
-            return false;
-        } finally {
-            PrivilegedCarbonContext.endTenantFlow();
-        }
-    }
+	private boolean isUserAuthorized(MQTTAuthorizationSubject authorizationSubject, String permission, String action) {
+		String username = authorizationSubject.getUsername();
+		try {
+			PrivilegedCarbonContext.startTenantFlow();
+			PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(
+					authorizationSubject.getTenantDomain(), true);
+			int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+			UserRealm userRealm = AuthorizationServiceDataHolder.getInstance().getRealmService()
+					.getTenantUserRealm(tenantId);
+			if (userRealm != null && userRealm.getAuthorizationManager() != null) {
+				return userRealm.getAuthorizationManager().isUserAuthorized(username, permission, action);
+			}
+			return false;
+		} catch (UserStoreException e) {
+			String errorMsg = String.format("Unable to authorize the user : %s", username);
+			logger.error(errorMsg, e);
+			return false;
+		} finally {
+			PrivilegedCarbonContext.endTenantFlow();
+		}
+	}
 
-    /**
-     * this takes topic as parameter and converts to a permission String
-     * if there is +/#(priority order) in topic then the client requires the permission to be set
-     * before those characters
-     * eg: smarthome/+ requires permission for /permission/mqtt/topic/smarthome (/permission/mqtt/topic is the prefic)
-     * @param topic that needs to be converted to permission String
-     * @return the permission string
-     */
-    private String getPermissionStringFromTopic(String topic){
-        String permission = topic;
-        if(topic!=null && !topic.isEmpty()) {
-            if (permission.charAt(0)=='/') {
-                permission = permission.substring(1, permission.length());
-            }
-            permission = permission.split("\\+")[0];
-            permission = permission.split("#")[0];
-            permission = PERMISSION_PREFIX + permission;
-            if (permission.charAt(permission.length()-1)=='/') {
-                permission = permission.substring(0, permission.length()-1);
-            }
-        }
-        return  permission;
-    }
+	/**
+	 * this takes topic as parameter and converts to a permission String
+	 * if there is +/#(priority order) in topic then the client requires the permission to be set
+	 * before those characters
+	 * eg: smarthome/+ requires permission for /permission/mqtt/topic/smarthome (/permission/mqtt/topic is the prefic)
+	 *
+	 * @param topic that needs to be converted to permission String
+	 * @return the permission string
+	 */
+	private String getPermissionStringFromTopic(String topic) {
+		String permission = topic;
+		if (topic != null && !topic.isEmpty()) {
+			if (permission.charAt(0) == '/') {
+				permission = permission.substring(1, permission.length());
+			}
+			permission = permission.split("\\+")[0];
+			permission = permission.split("#")[0];
+			permission = PERMISSION_PREFIX + permission;
+			if (permission.charAt(permission.length() - 1) == '/') {
+				permission = permission.substring(0, permission.length() - 1);
+			}
+		}
+		return permission;
+	}
 }
