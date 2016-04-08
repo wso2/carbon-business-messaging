@@ -76,7 +76,11 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 	}
 
 	/**
-	 * Check whether user is authorized with the given permission and action.
+	 * Check whether the client is authorized with the given permission and action.
+	 * @param authorizationSubject this contains the client information
+	 * @param permission Carbon permission that requires for the use
+	 * @param action Carbon permission action that requires for the given permission.
+	 * @return boolean - true if user is authorized else return false.
 	 */
 	private boolean isUserAuthorized(MQTTAuthorizationSubject authorizationSubject, String permission, String action) {
 		String username = authorizationSubject.getUsername();

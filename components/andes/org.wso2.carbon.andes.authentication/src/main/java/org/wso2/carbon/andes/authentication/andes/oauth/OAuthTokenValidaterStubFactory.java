@@ -111,8 +111,7 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 						EasySSLProtocolSocketFactory sslProtocolSocketFactory =
 								createProtocolSocketFactory();
 						Protocol authhttps = new Protocol(hostURL.getProtocol(),
-														  (ProtocolSocketFactory) sslProtocolSocketFactory,
-														  hostURL.getPort());
+									(ProtocolSocketFactory) sslProtocolSocketFactory, hostURL.getPort());
 						Protocol.registerProtocol(hostURL.getProtocol(), authhttps);
 						options.setProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER, authhttps);
 					}
