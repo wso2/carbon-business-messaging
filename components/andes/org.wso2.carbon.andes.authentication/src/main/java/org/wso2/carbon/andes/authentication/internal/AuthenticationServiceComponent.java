@@ -110,7 +110,11 @@ public class AuthenticationServiceComponent {
         String portOffset = System.getProperty("portOffset",
                                                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
         try {
-            return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
+            if ((portOffset != null)) {
+                return Integer.parseInt(portOffset.trim());
+            } else {
+                return CARBON_DEFAULT_PORT_OFFSET;
+            }
         } catch (NumberFormatException e) {
             return CARBON_DEFAULT_PORT_OFFSET;
         }

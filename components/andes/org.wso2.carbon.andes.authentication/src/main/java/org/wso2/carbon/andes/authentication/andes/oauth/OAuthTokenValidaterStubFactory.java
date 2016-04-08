@@ -56,9 +56,9 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 	}
 
 	/**
-	 * This creates a object to the pool.
+	 * This creates a OAuth2TokenValidationServiceStub object to the pool.
 	 * @return an OAuthValidationStub object
-	 * @throws Exception
+	 * @throws Exception thrown when creating the object.
 	 */
 	@Override
 	public Object makeObject() throws Exception {
@@ -66,9 +66,9 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 	}
 
 	/**
-	 * This is used to clean up the Oauth validation stub and releases to the object pool.
-	 * @param o
-	 * @throws Exception
+	 * This is used to clean up the OAuth validation stub and releases to the object pool.
+	 * @param o object that needs to be released.
+	 * @throws Exception throws when failed to release to the pool
 	 */
 	@Override
 	public void passivateObject(Object o) throws Exception {
@@ -78,6 +78,11 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 		}
 	}
 
+	/**
+	 * This is used to create a stub which will be triggered through object pool factory, which will create an instance of it.
+	 * @return OAuth2TokenValidationServiceStub stub that is used to call an external service.
+	 * @throws OAuthTokenValidationException will be thrown when initialization failed.
+	 */
 	private OAuth2TokenValidationServiceStub generateStub() throws OAuthTokenValidationException {
 		OAuth2TokenValidationServiceStub stub;
 		URL hostURL = config.getHostUrl();
@@ -128,10 +133,11 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 	}
 
 	/**
-	 * @return an EasySSLProtocolSocketFactory for SSL communication. This is required because of using
-	 * CommonHTTPTransport(axis2 transport) in axis2
+	 * This is required to create a trusted connection with the external entity.
+	 * Have to manually configure it since we use CommonHTTPTransport(axis2 transport) in axis2.
+	 * @return an EasySSLProtocolSocketFactory for SSL communication.
 	 */
-	private EasySSLProtocolSocketFactory createProtocolSocketFactory() throws OAuthTokenValidationException{
+	private EasySSLProtocolSocketFactory createProtocolSocketFactory() throws OAuthTokenValidationException {
 		try {
 			EasySSLProtocolSocketFactory easySSLPSFactory = new EasySSLProtocolSocketFactory();
 			JKSStore jksKeyStore = OAuthConfigurationManager.getInstance().getJksKeyStore();
@@ -153,10 +159,11 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 			String errorMsg = "Failed to set the key material in easy ssl factory.";
 			throw new OAuthTokenValidationException(errorMsg, e);
 		}
-
 	}
 
 	/**
+	 * This created httpclient pool that can be used to connect to external entity. This connection can be configured
+	 * via broker.xml by setting up the required http connection parameters.
 	 * @return an instance of HttpClient that is configured with MultiThreadedHttpConnectionManager
 	 */
 	private HttpClient createHttpClient() {

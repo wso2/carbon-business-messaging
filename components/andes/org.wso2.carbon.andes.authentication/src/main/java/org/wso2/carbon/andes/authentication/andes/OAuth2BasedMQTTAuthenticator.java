@@ -47,7 +47,7 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 	private GenericObjectPool stubs;
 
 	/**
-	 * initialize the OAUTH2ValidationStubFactory  to communicate with the OAuth2TokenValidationService
+	 * Initialize the OAUTH2ValidationStubFactory  to communicate with the OAuth2TokenValidationService
 	 */
 	public OAuth2BasedMQTTAuthenticator(){
 		stubs = new GenericObjectPool(new OAuthTokenValidaterStubFactory());
@@ -103,6 +103,15 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 		return authenticationInfo;
 	}
 
+	/**
+	 * This creates an AuthenticationInfo object that is used for authorization. This method will validate the token and
+	 * sets the required parameters to the object.
+	 *
+	 * @param token                      that needs to be validated.
+	 * @param tokenValidationServiceStub stub that is used to call the external service.
+	 * @return AuthenticationInfo This contains the information related to authenticated client.
+	 * @throws RemoteException that triggers when failing to call the external service..
+	 */
 	private AuthenticationInfo getAuthenticationInfo(String token,
 													 OAuth2TokenValidationServiceStub tokenValidationServiceStub)
 			throws RemoteException {

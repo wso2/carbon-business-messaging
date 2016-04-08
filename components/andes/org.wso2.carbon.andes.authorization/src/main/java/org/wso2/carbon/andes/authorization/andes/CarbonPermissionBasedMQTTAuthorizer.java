@@ -44,11 +44,11 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 	private static final String PERMISSION_PREFIX = "/permission/admin/mqtt/topic/";
 	private static final String CONNECTION_PERMISSION_CONFIG = "connectionPermission";
 
+
 	/**
-	 * @param authorizationSubject is the object passed from authentication
-	 * @param topic                the topic that client is ought to be authorized
-	 * @param permissionLevel      whenther its publishing or subscribing
-	 * @return boolean : true - if authenticated else return false.
+	 * {@inheritDoc} Authorized the user against carbon permission model.
+	 * eg: if topic is "test" then to publish user requires a permission "/permission/admin/mqtt/topic/test" with
+	 * publish action and similar to subscribe user requires same permission with subscribe action.
 	 */
 	@Override
 	public boolean isAuthorizedForTopic(MQTTAuthorizationSubject authorizationSubject, String topic,
@@ -62,8 +62,8 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 	}
 
 	/**
-	 * @param authorizationSubject is the object passed from authentication.
-	 * @return boolean : true - if authenticated else return false.
+	 * {@inheritDoc} Authorized the user against carbon permission model.
+	 * Client requires a permission that is mentioned on broker.xml under connectionPermission parameter.
 	 */
 	@Override
 	public boolean isAuthorizedToConnect(MQTTAuthorizationSubject authorizationSubject) {
@@ -75,6 +75,9 @@ public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 		return true;
 	}
 
+	/**
+	 * Check whether user is authorized with the given permission and action.
+	 */
 	private boolean isUserAuthorized(MQTTAuthorizationSubject authorizationSubject, String permission, String action) {
 		String username = authorizationSubject.getUsername();
 		try {

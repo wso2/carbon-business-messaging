@@ -17,6 +17,9 @@
  */
 package org.wso2.carbon.andes.authentication.andes.oauth.exception;
 
+/**
+ * This Exception will be thrown, when there any interference with token validation flow.
+ */
 public class OAuthTokenValidationException extends Exception {
 	private String errMessage;
 
