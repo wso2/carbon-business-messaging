@@ -401,6 +401,9 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         * NOTE : Increasing this value could cause delays when loading the message content page.-->
         <maximumMessageDisplayLength>100000</maximumMessageDisplayLength>
 
+        <!--Enable users to reroute all messages from a specific destination(queue or durable topic) to a specific
+        queue.-->
+        <allowReRouteAllInDLC>false</allowReRouteAllInDLC>
     </managementConsole>
 
     <!-- Memory and resource exhaustion is something we should prevent and recover from.
