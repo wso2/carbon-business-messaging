@@ -492,11 +492,8 @@ public class AndesAdminService extends AbstractAdmin {
                 messageDTO.setMessageContent(message.getMessageContent());
                 messageDTO.setJMSMessageId(message.getJMSMessageId());
                 messageDTO.setJMSReDelivered(message.getJMSReDelivered());
-                if (message.getJMSDeliveredMode() == 1) {
-                    messageDTO.setJMSDeliveredMode("NON PERSISTENT");
-                } else if (message.getJMSDeliveredMode() == 2) {
-                    messageDTO.setJMSDeliveredMode("PERSISTENT");
-                }
+                // Delivery mode is received is not set when received from backend as its always persisted mode.
+                messageDTO.setJMSDeliveredMode("null");
                 messageDTO.setJMSTimeStamp(message.getJMSTimeStamp());
                 messageDTO.setDlcMsgDestination(message.getDlcMsgDestination());
                 messageDTO.setAndesMsgMetadataId(message.getAndesMsgMetadataId());
