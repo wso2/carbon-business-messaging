@@ -113,8 +113,7 @@ public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
 	 * @throws RemoteException that triggers when failing to call the external service..
 	 */
 	private AuthenticationInfo getAuthenticationInfo(String token,
-													 OAuth2TokenValidationServiceStub tokenValidationServiceStub)
-			throws RemoteException {
+		OAuth2TokenValidationServiceStub tokenValidationServiceStub) throws RemoteException {
 		AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 		OAuth2TokenValidationRequestDTO validationRequest = new OAuth2TokenValidationRequestDTO();
 		OAuth2TokenValidationRequestDTO_OAuth2AccessToken accessToken =
