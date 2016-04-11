@@ -611,9 +611,9 @@
         <carbon.multitenancy.version>4.4.4</carbon.multitenancy.version>
         <carbon.registry.version>4.5.0</carbon.registry.version>
         <carbon.messaging.version>3.5.0-SNAPSHOT</carbon.messaging.version>
-        <andes.dependency.version>3.5.0-SNAPSHOT</andes.dependency.version>
-        <andes.export.version>3.1.1</andes.export.version>
-        <andes.import.version>3.1.1</andes.import.version>
+        <andes.dependency.version>3.1.2</andes.dependency.version>
+        <andes.export.version>3.1.2</andes.export.version>
+        <andes.import.version>3.1.2</andes.import.version>
         <carbon.kernel.version>4.4.3</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
