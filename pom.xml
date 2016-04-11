@@ -584,6 +584,21 @@
                 <artifactId>org.wso2.carbon.registry.resource.stub</artifactId>
                 <version>${carbon.registry.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity</groupId>
+                <artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>
+                <version>${carbon.identity.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.wso2</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents.httpclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient.wso2</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${orbit.version.commons.httpclient}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -605,6 +620,9 @@
         </carbon.platform.package.import.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
         <xmlsec.version>1.4.2-patched</xmlsec.version>
+        <!-- Carbon Identity -->
+        <carbon.identity.version>5.0.3</carbon.identity.version>
+        <carbon.identity.version.range>[5.0.3,6.0.0]</carbon.identity.version.range>
         <!-- Apache  -->
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
         <exp.pkg.version.neethi>2.0.4.wso2v4</exp.pkg.version.neethi>
@@ -699,6 +717,7 @@
         <carbon.metrics.version>1.2.0</carbon.metrics.version>
         <gson.version>2.3.1</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
+        <httpcomponents.httpclient.version>4.2.3.wso2v1</httpcomponents.httpclient.version>
     </properties>
 
 </project>

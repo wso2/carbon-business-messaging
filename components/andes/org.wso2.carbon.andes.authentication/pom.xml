@@ -43,6 +43,14 @@
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity</groupId>
+            <artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.wso2</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -68,6 +76,15 @@
                         </Export-Package>
                         <Import-Package>
                             org.wso2.andes.*,
+                            org.wso2.carbon.identity.oauth2.stub;version="${carbon.identity.version.range}",
+                            org.wso2.carbon.identity.oauth2.stub.dto;version="${carbon.identity.version.range}",
+                            org.apache.commons.httpclient,
+                            org.apache.commons.httpclient.params,
+                            org.apache.commons.pool,
+                            org.apache.commons.pool.impl,
+                            org.apache.http.conn,
+                            org.apache.http.impl.conn,
+                            org.wso2.andes.configuration,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

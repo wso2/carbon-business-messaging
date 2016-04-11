@@ -20,8 +20,13 @@ package org.wso2.carbon.andes.authentication.internal;
 
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.kernel.AndesException;
+import org.wso2.carbon.andes.authentication.andes.oauth.config.OAuthConfigurationManager;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationServiceImpl;
+import org.wso2.carbon.base.ServerConfiguration;
+import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -42,12 +47,23 @@ import java.util.UUID;
  *                              policy="dynamic"
  *                              bind="setRealmService"
  *                              unbind="unsetRealmService"
+ * @scr.reference name="server.configuration" interface="org.wso2.carbon.base.api.ServerConfigurationService"
+ *                  cardinality="1..1"
+ *                  policy="dynamic"
+ *                  bind="setServerConfiguration"
+ *                  unbind="unsetServerConfiguration"
  */
 public class AuthenticationServiceComponent {
 
     private ServiceRegistration authenticationService = null;
+    private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+    private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
 
-    protected void activate(ComponentContext ctx) {
+    protected void activate(ComponentContext ctx) throws AndesException{
+        //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
+        AndesConfigurationManager.initialize(getPortOffset());
+        OAuthConfigurationManager.getInstance().initConfig();
+
         // Generate access key
         String accessKey = UUID.randomUUID().toString();
         AuthenticationServiceDataHolder.getInstance().setAccessKey(accessKey);
@@ -79,5 +95,28 @@ public class AuthenticationServiceComponent {
 
     protected void unsetRealmService(RealmService realmService) {
         AuthenticationServiceDataHolder.getInstance().setRealmService(null);
+    }
+
+    //wait till serverConfigurationService is started to pick the carbon offset
+    protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
+
+    }
+
+    protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
+    }
+
+    private int getPortOffset() {
+        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
+        String portOffset = System.getProperty("portOffset",
+                                               carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
+        try {
+            if ((portOffset != null)) {
+                return Integer.parseInt(portOffset.trim());
+            } else {
+                return CARBON_DEFAULT_PORT_OFFSET;
+            }
+        } catch (NumberFormatException e) {
+            return CARBON_DEFAULT_PORT_OFFSET;
+        }
     }
 }
