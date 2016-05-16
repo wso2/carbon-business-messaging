@@ -36,6 +36,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
         <thriftServerPort>7611</thriftServerPort>
+        <thriftSOTimeout>0</thriftSOTimeout>
         <!--Thrift server reconnect timeout. Value specified in SECONDS-->
         <thriftServerReconnectTimeout>5</thriftServerReconnectTimeout>
         <!-- Hazelcast reliable topics are used to share all notifications across the MB cluster (e.g. subscription
@@ -401,6 +402,9 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         * NOTE : Increasing this value could cause delays when loading the message content page.-->
         <maximumMessageDisplayLength>100000</maximumMessageDisplayLength>
 
+        <!--Enable users to reroute all messages from a specific destination(queue or durable topic) to a specific
+        queue.-->
+        <allowReRouteAllInDLC>false</allowReRouteAllInDLC>
     </managementConsole>
 
     <!-- Memory and resource exhaustion is something we should prevent and recover from.
@@ -454,6 +458,23 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Virtual host sync interval seconds in for the Virtual host syncing Task which will
             sync the Virtual host details across the cluster -->
         <vHostSyncTaskInterval>900</vHostSyncTaskInterval>
+        
+        <!--
+         Enables network partition detection ( and surrounding functionality, such
+         as disconnecting subscriptions, enabling error based flow control if the
+         minimal node count becomes less than configured value.
+        -->
+        <networkPartitionsDetection enabled = "false">
+              
+               <!--
+                The minimum node count the cluster should maintain for this node to
+                operate. if cluster size becomes less that configured value
+                This node will not accept any incoming traffic ( and disconnect
+                subscriptions) etc.
+               -->
+              <minimumClusterSize>1</minimumClusterSize>
+        </networkPartitionsDetection>
+
     </recovery>
 
 </broker>
