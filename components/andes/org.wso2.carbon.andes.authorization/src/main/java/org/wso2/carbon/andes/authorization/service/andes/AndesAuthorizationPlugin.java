@@ -124,7 +124,7 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
             String username = principal.getName();
 
             if (username.contains(DOMAIN_NAME_SEPARATOR)) {
-                String tenantDomain = username.substring(username.indexOf(DOMAIN_NAME_SEPARATOR) + 1);
+                String tenantDomain = username.substring(username.lastIndexOf(DOMAIN_NAME_SEPARATOR) + 1);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
             } else {
@@ -136,9 +136,9 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
             // Get User Realm
             UserRealm userRealm = getUserRealm(username);
 
-            int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
+            int domainNameSeparatorIndex = username.lastIndexOf(DOMAIN_NAME_SEPARATOR);
             if (-1 != domainNameSeparatorIndex) {
-                username = username.substring(0, domainNameSeparatorIndex);
+                username = username.substring(0, domainNameSeparatorIndex).replaceAll(DOMAIN_NAME_SEPARATOR,"@");
             }
             switch (operation) {
                 case CREATE:
@@ -194,7 +194,7 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
                 // Get tenant ID
                 int tenantID = !username.contains(DOMAIN_NAME_SEPARATOR) ?
                         MultitenantConstants.SUPER_TENANT_ID :
-                        realmService.getTenantManager().getTenantId(username.substring(username.indexOf(DOMAIN_NAME_SEPARATOR) + 1));
+                        realmService.getTenantManager().getTenantId(username.substring(username.lastIndexOf(DOMAIN_NAME_SEPARATOR) + 1));
 
                 // Get Realm
                 userRealm = realmService.getTenantUserRealm(tenantID);
