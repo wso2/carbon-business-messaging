@@ -1,0 +1,20 @@
+appName : WSO2 MB
+elementsPerPage: 10
+lifecycle:
+    - state: adopted
+      show: false
+    - state: new
+      show: true
+defaultTheme : org.wso2.uuf.theme.default
+menu :
+  main :
+    - { icon: "fw-home", link: "/", text: "Home" }
+    - Queues :
+      - { icon: "fw fw-add", link: "queues/add", text: "Create New Queue" }
+      - { icon: "fw fw-list", link: "queues", text: "List All Queues" }
+    - Topics :
+      - { icon: "fw fw-add", link: "topics/add", text: "Create New Topic" }
+      - { icon: "fw fw-list", link: "topics", text: "List All Topics" }
+    - Subscriptions :
+      - { icon: "fw fw-list", link: "subscriptions/queues", text: "View Queue Subscriptions" }
+      - { icon: "fw-list", link: "susbcriptions/topics", text: "View Topic Subscriptions" }

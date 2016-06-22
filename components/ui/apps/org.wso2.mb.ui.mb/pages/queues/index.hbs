@@ -1,0 +1,23 @@
+{{layout "org.wso2.mb.ui.base.main"}}
+
+{{#fillZone "content"}}
+    {{headJs "/js/list-queues.js"}}
+    {{fragment "org.wso2.mb.ui.common.alert"}}
+    {{fragment "org.wso2.mb.ui.common.modal"}}
+    <h1>List of Queues</h1>
+    <hr/>
+    <table class="table table-responsive table-striped" id="queue-list-table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Number of Messages</th>
+            <th>Number of Subscribers</th>
+            <th>Owner</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{{/fillZone}}

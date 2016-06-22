@@ -1,0 +1,20 @@
+{{layout "org.wso2.mb.ui.base.main"}}
+
+{{#fillZone "content"}}
+    <h1>Node Details</h1>
+    <br class="spacer">
+    <div class="page-header">
+        <p class="lead">Cluster Details</p>
+    </div>
+    {{fragment "cluster-details"}}
+    <br class="spacer">
+    <div class="page-header">
+        <p class="lead">Store Details</p>
+    </div>
+    {{fragment "store-details"}}
+    <br class="spacer">
+    <div class="page-header">
+        <p class="lead">Broker Details</p>
+    </div>
+    {{fragment "broker-details"}}
+{{/fillZone}}
