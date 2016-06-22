@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.andes.tests.core;
+package org.wso2.carbon.andes.rest.tests;
 
 /**
- * Base class for unit testing.
+ * Common constants use through out the test for rest service.
  */
-public class UnitBaseTest {
+public class Constants {
+    public static final String HOSTNAME = "localhost";
+    public static final int PORT = 7777;
+    public static final String ROOT_PATH = "/mb/api";
+    public static final String BASE_URL = "http://" + HOSTNAME + ":" + PORT + ROOT_PATH;
 
 }

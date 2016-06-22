@@ -96,12 +96,12 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
         return allClusterSubscriptions.stream()
                 .filter(s -> s.getProtocolType() == protocolType)
                 .filter(s -> s.isDurable() == ((destinationType == DestinationType.QUEUE)
-                        || (destinationType == DestinationType.DURABLE_TOPIC)))
+                                               || (destinationType == DestinationType.DURABLE_TOPIC)))
                 .filter(s -> s.hasExternalSubscriptions() == active)
                 .filter(s -> null != subscriptionName && !ALL_WILDCARD.equals(subscriptionName)
-                        && s.getSubscriptionID().contains(subscriptionName))
+                             && s.getSubscriptionID().contains(subscriptionName))
                 .filter(s -> null != destinationName && !ALL_WILDCARD.equals(destinationName)
-                        && s.getSubscribedDestination().equals(destinationName))
+                             && s.getSubscribedDestination().equals(destinationName))
                 .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList());
@@ -112,19 +112,24 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
      */
     @Override
     public void removeSubscriptions(String destinationName) throws AndesException {
-        Set<AndesSubscription> activeLocalSubscribersForNode = AndesContext.getInstance()
-                .getSubscriptionEngine().getActiveLocalSubscribersForNode();
+        AndesQueue destination = this.getDestination(destinationName);
+        if (null != destination) {
+            Set<AndesSubscription> activeLocalSubscribersForNode = AndesContext.getInstance()
+                    .getSubscriptionEngine().getActiveLocalSubscribersForNode();
 
-        List<LocalSubscription> subscriptions = activeLocalSubscribersForNode
-                .stream()
-                .filter(s -> s.getProtocolType() == protocolType)
-                .filter(s -> s.getDestinationType() == destinationType)
-                .filter(s -> null != destinationName && !ALL_WILDCARD.equals(destinationName)
-                        && s.getSubscribedDestination().contains(destinationName))
-                .map(s -> (LocalSubscription) s)
-                .collect(Collectors.toList());
-        for (LocalSubscription subscription : subscriptions) {
-            subscription.forcefullyDisconnect();
+            List<LocalSubscription> subscriptions = activeLocalSubscribersForNode
+                    .stream()
+                    .filter(s -> s.getProtocolType() == protocolType)
+                    .filter(s -> s.getDestinationType() == destinationType)
+                    .filter(s -> null != destinationName && !ALL_WILDCARD.equals(destinationName)
+                                 && s.getSubscribedDestination().contains(destinationName))
+                    .map(s -> (LocalSubscription) s)
+                    .collect(Collectors.toList());
+            for (LocalSubscription subscription : subscriptions) {
+                subscription.forcefullyDisconnect();
+            }
+        } else {
+            throw new AndesException("Destination '" + destinationName + "' does not exists to removed subscriptions.");
         }
     }
 
@@ -133,16 +138,20 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
      */
     @Override
     public void removeSubscription(String destinationName, String subscriptionId) throws AndesException {
-        Set<LocalSubscription> allSubscribersForDestination
-                = AndesContext.getInstance()
-                .getSubscriptionEngine().getActiveLocalSubscribers(destinationName, protocolType, destinationType);
-
-        LocalSubscription localSubscription = allSubscribersForDestination
+        AndesQueue destination = this.getDestination(destinationName);
+        if (null != destination) {
+            Set<LocalSubscription> allSubscribersForDestination = AndesContext.getInstance()
+                    .getSubscriptionEngine().getActiveLocalSubscribers(destinationName, protocolType, destinationType);
+            LocalSubscription localSubscription = allSubscribersForDestination
                 .stream()
                 .filter(s -> s.getSubscriptionID().equals(subscriptionId))
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Matching subscription could not be found to disconnect."));
-        localSubscription.forcefullyDisconnect();
+            localSubscription.forcefullyDisconnect();
+        } else {
+            throw new AndesException("Destination '" + destinationName + "' does not exists to removed subscription '"
+                                     + subscriptionId + "'.");
+        }
     }
 
     /**
@@ -151,7 +160,13 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
     @Override
     public List<AndesMessage> browseDestinationWithMessageID(String destinationName, boolean content,
                                                              long nextMessageID, int limit) throws AndesException {
-        return MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName, nextMessageID, limit, content);
+        AndesQueue destination = this.getDestination(destinationName);
+        if (null != destination) {
+            return MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName, nextMessageID, limit,
+                    content);
+        } else {
+            throw new AndesException("Destination '" + destinationName + "' does not exists to browse messages.");
+        }
     }
 
     /**
@@ -160,7 +175,12 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
     @Override
     public List<AndesMessage> browseDestinationWithOffset(String destinationName, boolean content, int offset, int
             limit) throws AndesException {
-        return MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName, offset, limit, content);
+        AndesQueue destination = this.getDestination(destinationName);
+        if (null != destination) {
+            return MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName, offset, limit, content);
+        } else {
+            throw new AndesException("Destination '" + destinationName + "' does not exists to browse messages.");
+        }
     }
 
     /**
@@ -168,10 +188,17 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
      */
     @Override
     public AndesMessage getMessage(String destinationName, long andesMessageID, boolean content) throws AndesException {
-        return MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName, andesMessageID, 1, content)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new NullPointerException(
-                        "Message with message ID : '" + andesMessageID + "' could not be found."));
+        AndesQueue destination = this.getDestination(destinationName);
+        if (null != destination) {
+            AndesMessage andesMessage = MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName,
+                    andesMessageID, 1, content).stream().findFirst().orElse(null);
+            if (null != andesMessage && andesMessage.getMetadata().getMessageID() != andesMessageID) {
+                andesMessage = null;
+            }
+
+            return andesMessage;
+        } else {
+            throw new AndesException("Destination '" + destinationName + "' does not exists to get message.");
+        }
     }
 }

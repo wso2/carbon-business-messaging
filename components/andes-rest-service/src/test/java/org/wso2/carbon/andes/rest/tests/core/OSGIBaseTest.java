@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.andes.tests.core;
+package org.wso2.carbon.andes.rest.tests.core;
 
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;

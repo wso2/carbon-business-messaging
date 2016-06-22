@@ -20,20 +20,26 @@ package org.wso2.carbon.andes.service.types;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class represent a error object.
  */
 @ApiModel(value = "Error", description = "Represents an error response.")
 public class ErrorResponse {
-    @ApiModelProperty(value = "Title of the error", required = true)
+    @ApiModelProperty(value = "Title of the error.", required = true)
     private String title;
-    @ApiModelProperty(value = "Error code", required = true)
+    @ApiModelProperty(value = "Error code.", required = true)
     private int code;
-    @ApiModelProperty(value = "Error description", required = true)
+    @ApiModelProperty(value = "Error message.", required = true)
     private String message;
-
-    public ErrorResponse(Exception e) {
-    }
+    @ApiModelProperty(value = "Short description about the error.")
+    private String description;
+    @ApiModelProperty(value = "More information to proceed.")
+    private String moreInfo;
+    @ApiModelProperty(value = "List of other errors that occurred.")
+    private List<ErrorResponse> errors = new ArrayList<>();
 
     public String getTitle() {
         return title;
@@ -57,5 +63,29 @@ public class ErrorResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getMoreInfo() {
+        return moreInfo;
+    }
+
+    public void setMoreInfo(String moreInfo) {
+        this.moreInfo = moreInfo;
+    }
+
+    public List<ErrorResponse> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<ErrorResponse> errors) {
+        this.errors = errors;
     }
 }

@@ -120,7 +120,7 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
     public Set<DestinationRolePermission> getDestinationPermissions(String protocol, String destinationType,
                                                                     String destinationName)
                                                                     throws DestinationManagerException {
-        throw new DestinationManagerException("Not implemented.");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -131,7 +131,7 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
                                                                  String destinationName,
                                                                  DestinationRolePermission destinationRolePermission)
                                                                                     throws DestinationManagerException {
-        throw new DestinationManagerException("Not implemented.");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -140,7 +140,7 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
     @Override
     public DestinationRolePermission updateDestinationPermission(String protocol, String destinationType, String
             destinationName, DestinationRolePermission destinationRolePermission) throws DestinationManagerException {
-        throw new DestinationManagerException("Not implemented.");
+        throw new UnsupportedOperationException();
     }
 
     /**
