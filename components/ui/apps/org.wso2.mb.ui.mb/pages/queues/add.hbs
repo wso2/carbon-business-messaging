@@ -1,0 +1,23 @@
+{{layout "org.wso2.mb.ui.base.main"}}
+
+{{#fillZone "content"}}
+    {{headJs "/js/add-queue.js"}}
+    {{fragment "org.wso2.mb.ui.common.alert"}}
+    {{fragment "org.wso2.mb.ui.common.modal"}}
+    <h1>Add New Queue</h1>
+    <hr/>
+    <form class="form-horizontal" id="new-queue-form">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="input-name" class="control-label">Queue Name <span class="">*</span></label>
+                <input type="text" class="form-control" id="queue-name" placeholder="Queue Name" autocomplete="off"
+                       required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-default btn-primary">Create Queue</button>
+            </div>
+        </div>
+    </form>
+{{/fillZone}}
