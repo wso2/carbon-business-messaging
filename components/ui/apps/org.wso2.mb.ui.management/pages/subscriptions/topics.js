@@ -29,7 +29,6 @@ var onRequest = function (context) {
         }
     }
 
-    print("MAP : " + messageCountPerStorageQueue);
     // Returning content
     return {"protocols" : protocolStrings,
             "activeDurableSubscriptions" : activeDurableSubscriptions,
