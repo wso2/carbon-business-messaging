@@ -17,5 +17,5 @@ menu :
       List All Topics : { icon: "fw fw-list", link: "topics" }
     Subscriptions :
       View Queue Subscriptions : { icon: "fw fw-list", link: "subscriptions/queues" }
-      View Topic Subscriptions : { icon: "fw-list", link: "susbcriptions/topics" }
+      View Topic Subscriptions : { icon: "fw-list", link: "subscriptions/topics" }
     Node Details : { icon: "fw fw-list", link: "node-details" }

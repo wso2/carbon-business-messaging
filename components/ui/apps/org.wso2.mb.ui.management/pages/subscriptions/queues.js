@@ -20,7 +20,6 @@ var onRequest = function (context) {
         // Getting pending message counts for queues
         for each(var subscription in subscriptions) {
             messageCountPerSubscription.push(andesResourceManager.getMessageCountForStorageQueue(subscription.storageQueueName));
-            print(subscription.storageQueueName + " : " + messageCountPerSubscription);
         }
     }
 

@@ -19,13 +19,25 @@
     <ul class="tiles">
         {{#each protocols}}
             <li class="square">
-                <a class="btn square-element" href="{{@app.context}}/subscriptions/queues?protocol={{.}}&active={{@queryParams.active}}">
-                <span class="icon fw-stack">
+                {{#if @queryParams.active}}
+                    <a class="btn square-element"
+                       href="{{@app.context}}/subscriptions/queues?protocol={{.}}&active={{@queryParams.active}}">
+                    <span class="icon fw-stack">
                     <i class="fw fw-ring fw-stack-2x"></i>
                     <i class="fw fw-list fw-stack-1x"></i>
                 </span>
-                {{.}}
-                </a>
+                        {{.}}
+                    </a>
+                {{else}}
+                    <a class="btn square-element"
+                       href="{{@app.context}}/subscriptions/queues?protocol={{.}}&active=*">
+                    <span class="icon fw-stack">
+                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-list fw-stack-1x"></i>
+                </span>
+                        {{.}}
+                    </a>
+                {{/if}}
             </li>
         {{/each}}
     </ul>
@@ -42,17 +54,17 @@
         </tr>
         </thead>
         <tbody>
-            {{#each subscriptions}}
-                <tr>
-                    <td>{{@index_1}}</td>
-                    <td>{{targetQueue}}</td>
-                    <td>{{lookup ../messageCountPerSubscription @index}}</td>
-                    <td></td>
-                    <td>{{subscribedNode}}</td>
-                    <td>{{subscribeTime}}</td>
-                    <td></td>
-                </tr>
-            {{/each}}
+        {{#each subscriptions}}
+            <tr>
+                <td>{{@index_1}}</td>
+                <td>{{targetQueue}}</td>
+                <td>{{lookup ../messageCountPerSubscription @index}}</td>
+                <td></td>
+                <td>{{subscribedNode}}</td>
+                <td>{{subscribeTime}}</td>
+                <td></td>
+            </tr>
+        {{/each}}
         </tbody>
     </table>
 {{/fillZone}}

@@ -5,7 +5,7 @@ var onRequest = function () {
     var nodeAddresses = [];
     var counter = 0;
     for each(var nodeAddressAsString in nodeAddressesAsStrings) {
-        var nodeDetails = nodeAddressAsString.split(",");=
+        var nodeDetails = nodeAddressAsString.split(",");
         if (nodeDetails[1] == coordinatorNodeAddress.split(",")[0] && nodeDetails[2] == coordinatorNodeAddress.split(",")[1]) {
             nodeDetails.push("Yes");
         } else {
