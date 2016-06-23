@@ -547,10 +547,10 @@
         <carbon.mb.version>3.5.0-SNAPSHOT</carbon.mb.version>
         <carbon.messaging.version>1.0.4-SNAPSHOT</carbon.messaging.version>
         <carbon.transport.http.netty.version>2.1.1-SNAPSHOT</carbon.transport.http.netty.version>
-        <msf4j.import.version.range>[1.0.0, 2.0.0)</msf4j.import.version.range>
-        <msf4j.version>1.1.0-SNAPSHOT</msf4j.version>
-        <uuf.version>1.0.0-SNAPSHOT</uuf.version>
         <carbon.metrics.version>2.0.0-SNAPSHOT</carbon.metrics.version>
+        <msf4j.import.version.range>[2.0.0, 3.0.0)</msf4j.import.version.range>
+        <msf4j.version>2.0.0-SNAPSHOT</msf4j.version>
+        <uuf.version>1.0.0-SNAPSHOT</uuf.version>
 
         <!--Transport Related Configrations -->
         <geronimo-jms_1.1_spec.version>1.1.0.wso2v1</geronimo-jms_1.1_spec.version>

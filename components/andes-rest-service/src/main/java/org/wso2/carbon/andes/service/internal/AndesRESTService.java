@@ -46,7 +46,10 @@ import org.wso2.carbon.andes.core.ProtocolType;
 import org.wso2.carbon.andes.core.util.DLCQueueUtils;
 import org.wso2.carbon.andes.service.exceptions.BrokerManagerException;
 import org.wso2.carbon.andes.service.exceptions.DestinationManagerException;
+import org.wso2.carbon.andes.service.exceptions.DestinationNotFoundException;
+import org.wso2.carbon.andes.service.exceptions.InternalServerException;
 import org.wso2.carbon.andes.service.exceptions.MessageManagerException;
+import org.wso2.carbon.andes.service.exceptions.MessageNotFoundException;
 import org.wso2.carbon.andes.service.exceptions.SubscriptionManagerException;
 import org.wso2.carbon.andes.service.managers.BrokerManagerService;
 import org.wso2.carbon.andes.service.managers.DLCManagerService;
@@ -73,6 +76,7 @@ import org.wso2.carbon.andes.service.types.StoreInformation;
 import org.wso2.carbon.andes.service.types.Subscription;
 import org.wso2.msf4j.Microservice;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -199,8 +203,16 @@ public class AndesRESTService implements Microservice {
             response = String.class,
             responseContainer = "List")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "List of protocols.")})
-    public Response getProtocols() {
-        return Response.status(Response.Status.OK).entity(brokerManagerService.getSupportedProtocols()).build();
+    public Response getProtocols() throws InternalServerException {
+        try {
+            List<String> supportedProtocols = brokerManagerService.getSupportedProtocols();
+            if (null == supportedProtocols) {
+                supportedProtocols = new ArrayList<>();
+            }
+            return Response.status(Response.Status.OK).entity(supportedProtocols).build();
+        } catch (BrokerManagerException e) {
+            throw new InternalServerException(e);
+        }
     }
 
     /**
@@ -1075,10 +1087,6 @@ public class AndesRESTService implements Microservice {
 
     /**
      * Browse message of a destination using message ID.
-     * <p>
-     * To browse messages without message ID, use {@link MessageManagerService#getMessagesOfDestinationByOffset(String,
-     * String, String, boolean, int, int)}.
-     * <p>
      * curl command example :
      * <pre>
      *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue/messages?content=true
@@ -1097,6 +1105,8 @@ public class AndesRESTService implements Microservice {
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a collection of {@link Message}s
      *     as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Invalid protocol or destination type. Destination
+     *     does not exists.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
      *     messages from the server.</li>
      * </ul>
@@ -1113,10 +1123,10 @@ public class AndesRESTService implements Microservice {
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful list of messages.", response = Message.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Invalid protocol or destination type or destination not found.",
+                         response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getMessagesOfDestinationByMessageID(
+    public Response getMessagesOfDestination(
             @ApiParam(value = "Protocol for the message.")
             @PathParam("protocol") String protocol,
             @ApiParam(value = "Destination type for the message.")
@@ -1129,79 +1139,21 @@ public class AndesRESTService implements Microservice {
             @DefaultValue("0") @QueryParam("next-message-id") long nextMessageID,
             @ApiParam(value = "The number of messages to return for pagination.",
                       allowableValues = "range[1, infinity]")
-            @DefaultValue("100") @QueryParam("limit") int limit) {
+            @DefaultValue("100") @QueryParam("limit") int limit)
+            throws DestinationNotFoundException, InternalServerException {
         try {
-            List<Message> messages = messageManagerService.getMessagesOfDestinationByMessageID(protocol,
-                    destinationType, destinationName, content, nextMessageID, limit);
-            return Response.status(Response.Status.OK).entity(messages).build();
-        } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
-        }
-    }
-
-    /**
-     * Browse message of a destination. Please note this is time costly.
-     * <p>
-     * To browse messages with message ID, use {@link MessageManagerService#getMessagesOfDestinationByMessageID
-     * (String, String, String, boolean, long, int)}.
-     * <p>
-     * curl command example :
-     * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue/messages?content=true
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/mq1/messages?offset=5000
-     *  curl \
-     *      http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages?limit=100
-     * </pre>
-     *
-     * @param protocol        The protocol type matching for the message.
-     * @param destinationType The destination type matching for the message.
-     * @param destinationName The name of the destination
-     * @param content         Whether to return message content or not.
-     * @param offset          Starting index of the messages to return.
-     * @param limit           The number of messages to return.
-     * @return Return a collection of {@link Message}s. <p>
-     * <ul>
-     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a collection of {@link Message}s
-     *     as a JSON response.</li>
-     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
-     *     messages from the server.</li>
-     * </ul>
-     */
-    @GET
-    @Path("/{protocol}/destination-type/{destination-type}/name/{destination-name}/messages")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Gets message by offset.",
-            notes = "Gets message that belongs to a specific protocol,destination type and destination name. " +
-                    "Supports pagination.",
-            tags = "Messages",
-            response = Message.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful list of messages.", response = Message.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
-            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getMessagesOfDestinationByOffset(
-            @ApiParam(value = "Protocol for the message.")
-            @PathParam("protocol") String protocol,
-            @ApiParam(value = "Destination type for the message.")
-            @PathParam("destination-type") String destinationType,
-            @ApiParam(value = "The name of the destination of the message.")
-            @PathParam("destination-name") String destinationName,
-            @ApiParam(value = "Whether to return message content or not.", allowableValues = "[true, false]")
-            @DefaultValue("false") @QueryParam("content") boolean content,
-            @ApiParam(value = "Starting index of the messages to return.")
-            @DefaultValue("0") @QueryParam("offset") int offset,
-            @ApiParam(value = "The number of messages to return for pagination.",
-                      allowableValues = "range[1, infinity]")
-            @DefaultValue("100") @QueryParam("limit") int limit) {
-        try {
-            List<Message> messages = messageManagerService.getMessagesOfDestinationByOffset(protocol,
-                    destinationType, destinationName, content, offset, limit);
-            return Response.status(Response.Status.OK).entity(messages).build();
-        } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                List<Message> messages = messageManagerService.getMessagesOfDestinationByMessageID(protocol,
+                        destinationType, destinationName, content, nextMessageID, limit);
+                return Response.status(Response.Status.OK).entity(messages).build();
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to " +
+                                                       "browse messages.");
+            }
+        } catch (DestinationManagerException | MessageManagerException e) {
+            throw new InternalServerException(e);
         }
     }
 
@@ -1223,7 +1175,8 @@ public class AndesRESTService implements Microservice {
      * @return A JSON representation of {@link Message}. <p>
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Message} as a JSON response.</li>
-     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such message does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Invalid protocol, destination type or destination
+     *     name, Message not found.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
      *     message from the broker.</li>
      * </ul>
@@ -1239,9 +1192,9 @@ public class AndesRESTService implements Microservice {
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful received message.", response = Message.class),
-            @ApiResponse(code = 400, message = "Invalid protocol,destination type or destination name.",
+            @ApiResponse(code = 404,
+                         message = "Invalid protocol, destination type or destination name, Message not found.",
                          response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Message not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response getMessage(
             @ApiParam(value = "Protocol for the message.")
@@ -1253,13 +1206,25 @@ public class AndesRESTService implements Microservice {
             @ApiParam(value = "The andes message ID.")
             @PathParam("message-id") long andesMessageID,
             @ApiParam(value = "Whether to return message content or not.", allowableValues = "[true, false]")
-            @DefaultValue("false") @QueryParam("content") boolean content) {
+            @DefaultValue("false") @QueryParam("content") boolean content)
+            throws DestinationNotFoundException, InternalServerException, MessageNotFoundException {
         try {
-            Message message = messageManagerService.getMessage(protocol, destinationType, destinationName,
-                    andesMessageID, content);
-            return Response.status(Response.Status.OK).entity(message).build();
-        } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                Message message = messageManagerService.getMessage(protocol, destinationType, destinationName,
+                        andesMessageID, content);
+                if (null != message) {
+                    return Response.status(Response.Status.OK).entity(message).build();
+                } else {
+                    throw new MessageNotFoundException("Message with '" + Long.toString(andesMessageID) + "'");
+                }
+            } else {
+                throw new DestinationNotFoundException("Destination with '" + destinationName + "' could not be found" +
+                                                       " to find message '" + Long.toString(andesMessageID) + "'.");
+            }
+        } catch (DestinationManagerException | MessageManagerException exception) {
+            throw new InternalServerException(exception);
         }
     }
 
@@ -1290,8 +1255,8 @@ public class AndesRESTService implements Microservice {
             tags = "Messages")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Messages purged successfully.", response = Message.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
+            @ApiResponse(code = 404,
+                         message = "Invalid protocol, destination type or destination name, Message not found."),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response deleteMessages(
             @ApiParam(value = "Protocol for the message.")
@@ -1299,12 +1264,21 @@ public class AndesRESTService implements Microservice {
             @ApiParam(value = "Destination type for the message.")
             @PathParam("destination-type") String destinationType,
             @ApiParam(value = "The name of the destination of the message.")
-            @PathParam("destination-name") String destinationName) {
+            @PathParam("destination-name") String destinationName)
+            throws DestinationNotFoundException, InternalServerException {
         try {
-            messageManagerService.deleteMessages(protocol, destinationType, destinationName);
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                messageManagerService.deleteMessages(protocol, destinationType, destinationName);
+                return Response.status(Response.Status.NO_CONTENT).build();
+
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to " +
+                                                       "delete/purge messages.");
+            }
+        } catch (DestinationManagerException | MessageManagerException exception) {
+            throw new InternalServerException(exception);
         }
     }
 
@@ -1319,6 +1293,7 @@ public class AndesRESTService implements Microservice {
      * @return Return a {@link ClusterInformation}. <p>
      * <ul>
      *      <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link ClusterInformation} as a response.</li>
+     *      <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such destination does not exists.</li>
      *      <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
      *      clustering details from the server.</li>
      * </ul>
@@ -1333,13 +1308,18 @@ public class AndesRESTService implements Microservice {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received cluster information.",
                          response = ClusterInformation.class),
+            @ApiResponse(code = 404, message = "Clustering information not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getClusterInformation() {
+    public Response getClusterInformation() throws InternalServerException {
         try {
             ClusterInformation clusterInformation = brokerManagerService.getClusterInformation();
-            return Response.status(Response.Status.OK).entity(clusterInformation).build();
+            if (null != clusterInformation) {
+                return Response.status(Response.Status.OK).entity(clusterInformation).build();
+            } else {
+                throw new BrokerManagerException("Unable to find cluster information.");
+            }
         } catch (BrokerManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1354,6 +1334,7 @@ public class AndesRESTService implements Microservice {
      * @return Return a {@link StoreInformation}. <p>
      * <ul>
      *      <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link StoreInformation} as a response.</li>
+     *      <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such destination does not exists.</li>
      *      <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
      *      message store details from the server.</li>
      * </ul>
@@ -1368,13 +1349,18 @@ public class AndesRESTService implements Microservice {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received store information.",
                          response = StoreInformation.class),
+            @ApiResponse(code = 404, message = "Store information not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getStoreInformation() {
+    public Response getStoreInformation() throws InternalServerException {
         try {
             StoreInformation storeInformation = brokerManagerService.getStoreInformation();
-            return Response.status(Response.Status.OK).entity(storeInformation).build();
+            if (null != storeInformation) {
+                return Response.status(Response.Status.OK).entity(storeInformation).build();
+            } else {
+                throw new BrokerManagerException("Unable to find store information.");
+            }
         } catch (BrokerManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1389,6 +1375,7 @@ public class AndesRESTService implements Microservice {
      * @return Return a {@link BrokerInformation}. <p>
      * <ul>
      *      <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link BrokerInformation} as a response.</li>
+     *      <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such destination does not exists.</li>
      *      <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
      *      broker details from the server.</li>
      * </ul>
@@ -1403,18 +1390,19 @@ public class AndesRESTService implements Microservice {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received broker information.",
                          response = BrokerInformation.class),
+            @ApiResponse(code = 404, message = "Broker properties not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getBrokerInformation() {
+    public Response getBrokerInformation() throws InternalServerException {
         try {
             BrokerInformation brokerInformation = brokerManagerService.getBrokerInformation();
-            return Response.status(Response.Status.OK).entity(brokerInformation).build();
+            if (null != brokerInformation) {
+                return Response.status(Response.Status.OK).entity(brokerInformation).build();
+            } else {
+                throw new BrokerManagerException("Unable to find broker information.");
+            }
         } catch (BrokerManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
-    }
-
-    public void setDestinationManagerService(DestinationManagerService destinationManagerService) {
-        this.destinationManagerService = destinationManagerService;
     }
 
     /**
@@ -1482,5 +1470,18 @@ public class AndesRESTService implements Microservice {
         messageManagerService = new MessageManagerServiceBeanImpl();
         brokerManagerService = new BrokerManagerServiceBeanImpl();
         dlcManagerService = new DLCManagerServiceBeanImpl();
+    }
+
+
+    public void setDestinationManagerService(DestinationManagerService destinationManagerService) {
+        this.destinationManagerService = destinationManagerService;
+    }
+
+    public void setBrokerManagerService(BrokerManagerService brokerManagerService) {
+        this.brokerManagerService = brokerManagerService;
+    }
+
+    public void setMessageManagerService(MessageManagerService messageManagerService) {
+        this.messageManagerService = messageManagerService;
     }
 }
