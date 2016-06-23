@@ -60,7 +60,7 @@ public class BasicSubscription implements AndesSubscription {
     // This will be AMQP specific - OPTIONAL
     protected Short isTargetQueueBoundExchangeAutoDeletable;
     //whether the subscription is online or offline - MANDOTORY
-    protected boolean hasExternalSubscriptions;
+    protected boolean externalSubscriptions;
 
     // The protocol type the basic subscription belongs to
     private ProtocolType protocolType;
@@ -101,8 +101,8 @@ public class BasicSubscription implements AndesSubscription {
             } else if (tokens[0].equals("isTargetQueueBoundExchangeAutoDeletable")) {
                 this.isTargetQueueBoundExchangeAutoDeletable =
                         tokens[1].equals("null") ? null : Short.parseShort(tokens[1]);
-            } else if (tokens[0].equals("hasExternalSubscriptions")) {
-                this.hasExternalSubscriptions = Boolean.parseBoolean(tokens[1]);
+            } else if (tokens[0].equals("externalSubscriptions")) {
+                this.externalSubscriptions = Boolean.parseBoolean(tokens[1]);
             } else if (tokens[0].equals("protocolType")) {
                 this.protocolType = new ProtocolType(tokens[1]);
             } else if (tokens[0].equals("storageQueueName")) {
@@ -131,13 +131,13 @@ public class BasicSubscription implements AndesSubscription {
      * @param targetQueueBoundExchange                name of one of exchanges to which queue of the subscriber is bound
      * @param targetQueueBoundExchangeType            type of one of exchanges to which queue of the subscriber is bound
      * @param isTargetQueueBoundExchangeAutoDeletable type of one of exchanges to which queue of the subscriber is bound
-     * @param hasExternalSubscriptions                is this subscription entry is active, having a live TCP connection
+     * @param externalSubscriptions                is this subscription entry is active, having a live TCP connection
      * @param destinationType                         The destination type of this subscription
      */
     public BasicSubscription(String subscriptionID, String destination, boolean isExclusive, boolean isDurable,
                              String subscribedNode, long subscribeTime, String targetQueue, String targetQueueOwner,
                              String targetQueueBoundExchange, String targetQueueBoundExchangeType,
-                             Short isTargetQueueBoundExchangeAutoDeletable, boolean hasExternalSubscriptions,
+                             Short isTargetQueueBoundExchangeAutoDeletable, boolean externalSubscriptions,
                              DestinationType destinationType) {
 
         super();
@@ -157,7 +157,7 @@ public class BasicSubscription implements AndesSubscription {
         this.targetQueueBoundExchange = targetQueueBoundExchange;
         this.targetQueueBoundExchangeType = targetQueueBoundExchangeType;
         this.isTargetQueueBoundExchangeAutoDeletable = isTargetQueueBoundExchangeAutoDeletable;
-        this.hasExternalSubscriptions = hasExternalSubscriptions;
+        this.externalSubscriptions = externalSubscriptions;
         this.destinationType = destinationType;
     }
 
@@ -293,7 +293,7 @@ public class BasicSubscription implements AndesSubscription {
      */
     @Override
     public boolean hasExternalSubscriptions() {
-        return hasExternalSubscriptions;
+        return externalSubscriptions;
     }
 
     /**
@@ -301,7 +301,7 @@ public class BasicSubscription implements AndesSubscription {
      */
     @Override
     public void setHasExternalSubscriptions(boolean hasExternalSubscription) {
-        this.hasExternalSubscriptions = hasExternalSubscription;
+        this.externalSubscriptions = hasExternalSubscription;
     }
 
     /**
@@ -310,16 +310,16 @@ public class BasicSubscription implements AndesSubscription {
     @Override
     public String toString() {
         return "[" + destination +
-                "]ID=" + subscriptionID +
-                "@" + subscribedNode +
-                "/T=" + subscribeTime +
-                "/D=" + isDurable +
-                "/X=" + isExclusive +
-                "/O=" + targetQueueOwner
-                + "/E=" + targetQueueBoundExchange +
-                "/ET=" + targetQueueBoundExchangeType +
-                "/EUD=" + isTargetQueueBoundExchangeAutoDeletable +
-                "/S=" + hasExternalSubscriptions;
+               "]ID=" + subscriptionID +
+               "@" + subscribedNode +
+               "/T=" + subscribeTime +
+               "/D=" + isDurable +
+               "/X=" + isExclusive +
+               "/O=" + targetQueueOwner
+               + "/E=" + targetQueueBoundExchange +
+               "/ET=" + targetQueueBoundExchangeType +
+               "/EUD=" + isTargetQueueBoundExchangeAutoDeletable +
+               "/S=" + externalSubscriptions;
     }
 
     /**
@@ -344,7 +344,7 @@ public class BasicSubscription implements AndesSubscription {
                                 isTargetQueueBoundExchangeAutoDeletable)
                 .append(",subscribedNode=").append(subscribedNode)
                 .append(",subscribedTime=").append(subscribeTime)
-                .append(",hasExternalSubscriptions=").append(hasExternalSubscriptions)
+                .append(",externalSubscriptions=").append(externalSubscriptions)
                 .append(",storageQueueName=").append(storageQueueName)
                 .append(",destinationType=").append(destinationType)
                 .append(",protocolType=").append(protocolType);

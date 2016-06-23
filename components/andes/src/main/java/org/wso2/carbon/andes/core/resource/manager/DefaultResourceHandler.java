@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.andes.core.resource.manager;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.wso2.carbon.andes.core.AndesException;
 import org.wso2.carbon.andes.core.AndesMessage;
 import org.wso2.carbon.andes.core.AndesQueue;
@@ -88,20 +89,17 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
      * {@inheritDoc}
      */
     @Override
-    public List<AndesSubscription> getSubscriptions(String subscriptionName, String destinationName, boolean active,
+    public List<AndesSubscription> getSubscriptions(String subscriptionName, String destinationName, String active,
                                                     int offset, int limit) throws AndesException {
         Set<AndesSubscription> allClusterSubscriptions = AndesContext.getInstance()
                 .getSubscriptionEngine().getAllClusterSubscriptionsForDestinationType(protocolType, destinationType);
 
         return allClusterSubscriptions.stream()
-                .filter(s -> s.getProtocolType() == protocolType)
-                .filter(s -> s.isDurable() == ((destinationType == DestinationType.QUEUE)
-                                               || (destinationType == DestinationType.DURABLE_TOPIC)))
-                .filter(s -> s.hasExternalSubscriptions() == active)
-                .filter(s -> null != subscriptionName && !ALL_WILDCARD.equals(subscriptionName)
-                             && s.getSubscriptionID().contains(subscriptionName))
-                .filter(s -> null != destinationName && !ALL_WILDCARD.equals(destinationName)
-                             && s.getSubscribedDestination().equals(destinationName))
+                .filter(s -> "*".equals(active) || s.hasExternalSubscriptions() == BooleanUtils.toBooleanObject(active))
+                .filter(s -> null != subscriptionName && (ALL_WILDCARD.equals(subscriptionName)
+                                                          || s.getSubscriptionID().contains(subscriptionName)))
+                .filter(s -> null != destinationName && (ALL_WILDCARD.equals(destinationName)
+                                                         || s.getSubscribedDestination().equals(destinationName)))
                 .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList());

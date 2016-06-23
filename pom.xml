@@ -52,12 +52,12 @@
         <!--Components-->
         <module>components/andes</module>
         <module>components/andes-rest-service</module>
-        <!--<module>components/ui</module>-->
+        <module>components/ui</module>
 
         <!--Features-->
         <module>features/org.wso2.carbon.andes.feature</module>
         <module>features/org.wso2.carbon.andes.rest.service.feature</module>
-        <!--<module>features/org.wso2.carbon.mb.ui.feature</module>-->
+        <module>features/org.wso2.carbon.mb.ui.feature</module>
 
     </modules>
 
@@ -340,17 +340,17 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.mb</groupId>
-                <artifactId>ui</artifactId>
-                <version>${carbon.mb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.mb</groupId>
                 <artifactId>amqp</artifactId>
                 <version>${carbon.mb.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.mb</groupId>
                 <artifactId>mqtt</artifactId>
+                <version>${carbon.mb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.mb</groupId>
+                <artifactId>org.wso2.mb.ui.management</artifactId>
                 <version>${carbon.mb.version}</version>
             </dependency>
             <dependency>

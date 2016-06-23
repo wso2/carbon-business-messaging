@@ -23,6 +23,7 @@ import com.google.common.collect.Table;
 import com.gs.collections.api.iterator.MutableLongIterator;
 import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import com.gs.collections.impl.map.mutable.primitive.LongObjectHashMap;
+import org.apache.commons.lang.BooleanUtils;
 import org.wso2.carbon.andes.core.Andes;
 import org.wso2.carbon.andes.core.AndesChannel;
 import org.wso2.carbon.andes.core.AndesConstants;
@@ -39,11 +40,14 @@ import org.wso2.carbon.andes.core.MessagingEngine;
 import org.wso2.carbon.andes.core.ProtocolType;
 import org.wso2.carbon.andes.core.internal.cluster.ClusterResourceHolder;
 import org.wso2.carbon.andes.core.internal.inbound.FlowControlListener;
+import org.wso2.carbon.andes.core.subscription.BasicSubscription;
+import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The resource manager class will hold all protocol handler that is registered. This manager will expose the resource
@@ -53,30 +57,30 @@ public class AndesResourceManager {
     /**
      * A 2 key map to store resource handlers. Keys are {@link ProtocolType} and {@link DestinationType}.
      */
-    Table<ProtocolType, DestinationType, ResourceHandler> resourceManagerTable = HashBasedTable.create();
+    private Table<ProtocolType, DestinationType, ResourceHandler> resourceManagerTable = HashBasedTable.create();
 
     /**
      * A message decoder to decode messages belonging to a {@link ProtocolType}. Decodes messages for end user
      * applications.
      */
-    Map<ProtocolType, MessageDecoder> messageDecoderMap = new HashMap<>();
+    private Map<ProtocolType, MessageDecoder> messageDecoderMap = new HashMap<>();
 
     /**
      * AndesChannel for this dead letter channel restore which implements flow control.
      */
-    AndesChannel andesChannel;
+    private AndesChannel andesChannel;
 
     /**
      * Publisher Acknowledgements are disabled for this MBean hence using DisablePubAckImpl to drop any pub ack request
      * by Andes.
      */
-    DisablePubAckImpl disablePubAck;
+    private DisablePubAckImpl disablePubAck;
 
     /**
      * The message restore flowcontrol blocking state. If true message restore will be interrupted from dead letter
      * channel.
      */
-    boolean restoreBlockedByFlowControl = false;
+    private boolean restoreBlockedByFlowControl = false;
 
     /**
      * Protocol type of the dead letter queue
@@ -186,13 +190,18 @@ public class AndesResourceManager {
      *                         that <strong>contains</strong> the value are included.
      * @param destinationName  The name of the destination name. If "*", all destinations are included. Else
      *                         destinations that <strong>equals</strong> the value are included.
-     * @param active           Filtering the subscriptions that are active or inactive.
+     * @param active           Filtering the subscriptions that are active or inactive. Supported values = "*", "true"
+     *                         and "false".
      * @param offset           The starting index to return.
      * @param limit            The number of subscriptions to return.
      * @return An list of {@link AndesSubscription}.
      */
     public List<AndesSubscription> getSubscriptions(ProtocolType protocol, DestinationType destinationType, String
-            subscriptionName, String destinationName, boolean active, int offset, int limit) throws AndesException {
+            subscriptionName, String destinationName, String active, int offset, int limit) throws AndesException {
+
+        if (!("*".equals(active) || null != BooleanUtils.toBooleanObject(active))) {
+            throw new AndesException("'Active' argument only allow values = \"*\", \"true\" and \"false\".");
+        }
         return resourceManagerTable.get(protocol, destinationType).getSubscriptions(subscriptionName,
                                                                                     destinationName, active, offset,
                                                                                     limit);
@@ -318,11 +327,8 @@ public class AndesResourceManager {
                     AndesMessageMetadata metadata = Andes.getInstance().getMessageMetaData(messageId);
                     String destination = metadata.getDestination();
 
-                    metadata.setStorageDestination(
-                            AndesUtils.getStorageQueueForDestination(destination,
-                                                                     ClusterResourceHolder.getInstance()
-                                                                                 .getClusterManager().getMyNodeID(),
-                                                                     DestinationType.QUEUE));
+                    metadata.setStorageDestination(AndesUtils.getStorageQueueForDestination(destination,
+                        ClusterResourceHolder.getInstance().getClusterManager().getMyNodeID(), DestinationType.QUEUE));
 
                     messagesToRemove.add(metadata);
 
@@ -506,4 +512,5 @@ public class AndesResourceManager {
     public MessageDecoder getMessageDecoder(ProtocolType protocolType) {
         return messageDecoderMap.get(protocolType);
     }
+
 }

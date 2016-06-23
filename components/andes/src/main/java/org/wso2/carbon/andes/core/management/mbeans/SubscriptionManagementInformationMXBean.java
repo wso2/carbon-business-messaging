@@ -43,7 +43,7 @@ public interface SubscriptionManagementInformationMXBean {
      * @throws MBeanException
      */
     CompositeData[] getSubscriptions(String protocolTypeAsString, String destinationTypeAsString, String
-            subscriptionName, String destinationName, boolean active, int offset, int limit) throws MBeanException;
+            subscriptionName, String destinationName, String active, int offset, int limit) throws MBeanException;
 
     /**
      * Close/unsubscribe subscriptions forcefully belonging to a specific protocol type, destination type.
