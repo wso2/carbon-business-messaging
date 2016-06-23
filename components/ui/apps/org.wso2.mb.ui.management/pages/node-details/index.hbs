@@ -6,15 +6,61 @@
     <div class="page-header">
         <p class="lead">Cluster Details</p>
     </div>
-    {{fragment "cluster-details"}}
+    <h4 id="node-id">Nodes ID : {{nodeID}}</h4>
+    {{#if isClusteringEnabled}}
+        <h4 id="cluster-mode">Running in Cluster Mode...</h4>
+    {{else}}
+        <h4 id="standalone-mode">Running in Standalone Mode...</h4>
+    {{/if}}
+    <table class="table table-responsive table-striped" id="cluster-details">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Hostname</th>
+            <th>Port</th>
+            <th>Coordinator</th>
+        </tr>
+        </thead>
+        {{#each nodeAddresses}}
+            <tr>
+                <td>{{this.[0]}}</td>
+                <td>{{this.[1]}}</td>
+                <td>{{this.[2]}}</td>
+                <td>{{this.[3]}}</td>
+            </tr>
+        {{/each}}
+        <tbody>
+        </tbody>
+    </table>
     <br class="spacer">
     <div class="page-header">
         <p class="lead">Store Details</p>
     </div>
-    {{fragment "store-details"}}
+    <h4 id="store-health">Store Health :
+        {{#if storeHealth}}
+                          Healthy
+        {{else}}
+                          Unhealthy
+        {{/if}}
+    </h4>
     <br class="spacer">
     <div class="page-header">
         <p class="lead">Broker Details</p>
     </div>
-    {{fragment "broker-details"}}
+    <table class="table table-responsive table-striped" id="broker-details">
+        <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        {{#each brokerDetails}}
+            <tr>
+                <td>{{@key}}</td>
+                <td>{{this}}</td>
+            </tr>
+        {{/each}}
+        <tbody>
+        </tbody>
+    </table>
 {{/fillZone}}

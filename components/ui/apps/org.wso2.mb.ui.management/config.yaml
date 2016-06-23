@@ -18,3 +18,4 @@ menu :
     Subscriptions :
       View Queue Subscriptions : { icon: "fw fw-list", link: "subscriptions/queues" }
       View Topic Subscriptions : { icon: "fw-list", link: "susbcriptions/topics" }
+    Node Details : { icon: "fw fw-list", link: "node-details" }

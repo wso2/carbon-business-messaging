@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.core;
 
 import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import com.gs.collections.impl.map.mutable.primitive.LongObjectHashMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.core.internal.AndesContext;
@@ -49,6 +50,7 @@ import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Meter;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -886,6 +888,12 @@ public class Andes {
      */
     public boolean getStoreHealth() {
         return ClusterResourceHolder.getInstance().getClusterManager().getStoreHealth();
+    }
+
+    public Map<String, String> getBrokerDetails() {
+        Map<String, String> details = new HashMap<>();
+        details.put("Supported Protocols", StringUtils.join(getSupportedProtocols(), ','));
+        return details;
     }
 }
 
