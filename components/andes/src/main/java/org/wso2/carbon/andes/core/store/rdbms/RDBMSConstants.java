@@ -297,7 +297,7 @@ public class RDBMSConstants {
     protected static final String PS_DELETE_METADATA_IN_DLC =
             "DELETE  FROM " + METADATA_TABLE
                     + " WHERE " + MESSAGE_ID + "=?"
-                    + " AND " + DLC_QUEUE_ID + "!=-1";
+                    + " AND " + DLC_QUEUE_ID + "!= -1";
 
     protected static final String PS_DELETE_METADATA =
             "DELETE  FROM " + METADATA_TABLE
