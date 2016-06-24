@@ -527,6 +527,7 @@
         <slf4j.import.version.range>[1.7.1, 2.0.0)</slf4j.import.version.range>
         <slf4j.version>1.7.5</slf4j.version>
         <io.swagger.annotations.version>1.5.8</io.swagger.annotations.version>
+        <io.swagger.annotations.version.range>[1.5.0, 1.6.0)</io.swagger.annotations.version.range>
         <io.swagger.jaxrs.version>1.5.8</io.swagger.jaxrs.version>
         <commons-lang.version>2.1</commons-lang.version>
         <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>

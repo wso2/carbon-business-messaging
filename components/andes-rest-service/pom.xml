@@ -206,9 +206,9 @@
             org.wso2.msf4j.*;version="${msf4j.import.version.range}",
             org.slf4j.*;version="${slf4j.import.version.range}",
             io.netty.*;version="${netty.version.range}",
+            io.swagger.annotations.*;version="${io.swagger.annotations.version.range}",
             javax.management.*,
             javax.ws.rs.*,
-            io.swagger.annotations.*
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice";serviceCount="1",
