@@ -63,7 +63,7 @@ public class SubscriptionManagementInformationImpl implements SubscriptionManage
      */
     @Override
     public CompositeData[] getSubscriptions(String protocolTypeAsString, String destinationTypeAsString, String
-            subscriptionName, String destinationName, boolean active, int offset, int limit) throws MBeanException {
+            subscriptionName, String destinationName, String active, int offset, int limit) throws MBeanException {
         List<CompositeData> compositeDataList = new ArrayList<>();
 
         try {

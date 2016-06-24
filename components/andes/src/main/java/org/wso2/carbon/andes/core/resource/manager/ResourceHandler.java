@@ -79,12 +79,13 @@ public interface ResourceHandler {
      *                         that <strong>contains</strong> the value are included.
      * @param destinationName  The name of the destination name. If "*", all destinations are included. Else
      *                         destinations that <strong>equals</strong> the value are included.
-     * @param active           Filtering the subscriptions that are active or inactive.
+     * @param active           Filtering the subscriptions that are active or inactive. Supported values = "*", "true"
+     *                         and "false".
      * @param offset           The starting index to return.
      * @param limit            The number of subscriptions to return.
      * @return A list subscriptions.
      */
-    List<AndesSubscription> getSubscriptions(String subscriptionName, String destinationName, boolean active,
+    List<AndesSubscription> getSubscriptions(String subscriptionName, String destinationName, String active,
                                              int offset, int limit) throws AndesException;
 
     /**

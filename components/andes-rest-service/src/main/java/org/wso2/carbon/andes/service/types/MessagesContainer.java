@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.andes.rest.tests;
+package org.wso2.carbon.andes.service.types;
 
 /**
- * Common constants use through out the test for rest service.
+ * A container class for messages. This will also have other properties based on offsets and limits.
  */
-public class Constants {
-    public static final String HOSTNAME = "localhost";
-    public static final int PORT = 7777;
-    public static final String VERSION = "v1.0.0";
-    public static final String ROOT_PATH = "/mb/" + VERSION;
-    public static final String BASE_URL = "http://" + HOSTNAME + ":" + PORT + ROOT_PATH;
-
+public class MessagesContainer {
 }

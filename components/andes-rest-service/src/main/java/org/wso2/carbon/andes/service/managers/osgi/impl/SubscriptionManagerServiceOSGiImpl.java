@@ -50,19 +50,8 @@ public class SubscriptionManagerServiceOSGiImpl implements SubscriptionManagerSe
         try {
             ProtocolType protocolType = new ProtocolType(protocol);
             DestinationType destinationType = DestinationType.valueOf(subscriptionType);
-            List<AndesSubscription> andesSubscriptions = new ArrayList<>();
-            if ("*".equals(active)) {
-                andesSubscriptions.addAll(andesResourceManager.getSubscriptions(protocolType,
-                        destinationType, subscriptionName, destinationName, true, offset, limit));
-                andesSubscriptions.addAll(andesResourceManager.getSubscriptions(protocolType,
-                        destinationType, subscriptionName, destinationName, false, offset, limit));
-            } else if (null != BooleanUtils.toBooleanObject(active)) {
-                andesSubscriptions = andesResourceManager.getSubscriptions(protocolType,
-                        destinationType, subscriptionName, destinationName, true, offset, limit);
-            } else {
-                throw new SubscriptionManagerException("Invalid active value provided. Use * , true or false");
-            }
-
+            List<AndesSubscription> andesSubscriptions = andesResourceManager.getSubscriptions(protocolType,
+                    destinationType, subscriptionName, destinationName, active, offset, limit);
             for (AndesSubscription andesSubscription : andesSubscriptions) {
                 subscriptions.add(getSubscriptionFromAndesSubscription(andesSubscription));
             }

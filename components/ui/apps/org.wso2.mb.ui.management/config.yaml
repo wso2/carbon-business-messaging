@@ -1,0 +1,21 @@
+appName : WSO2 Message Broker
+elementsPerPage: 10
+lifecycle:
+    - state: adopted
+      show: false
+    - state: new
+      show: true
+theme : org.wso2.uuf.theme.default
+menu :
+  main :
+    Home : { icon: "fw-home", link: "" }
+    Queues :
+      Create New Queue : { icon: "fw fw-add", link: "queues/add" }
+      List All Queues : { icon: "fw fw-list", link: "queues" }
+    Topics :
+      Create New Topic : { icon: "fw fw-add", link: "topics/add" }
+      List All Topics : { icon: "fw fw-list", link: "topics" }
+    Subscriptions :
+      View Queue Subscriptions : { icon: "fw fw-list", link: "subscriptions/queues" }
+      View Topic Subscriptions : { icon: "fw-list", link: "subscriptions/topics" }
+    Node Details : { icon: "fw fw-list", link: "node-details" }

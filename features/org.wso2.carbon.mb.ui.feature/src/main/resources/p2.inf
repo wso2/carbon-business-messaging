@@ -1,0 +1,7 @@
+instructions.configure = \
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../deployment/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../deployment/uufapps/);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.mb.ui_${feature.version}/uufapps/org.wso2.mb.ui.management,target:${installFolder}/../../../deployment/uufapps/org.wso2.mb.ui.management,overwrite:true);\
+
+instructions.unconfigure = \
+org.eclipse.equinox.p2.touchpoint.natives.remove(path:${installFolder}/../../../deployment/uufapps/org.wso2.carbon.mb.ui);\

@@ -124,10 +124,9 @@ import javax.ws.rs.core.Response;
                 @Tag(name = "Subscriptions", description = "Operations on handling subscription related resources."),
                 @Tag(name = "Broker Details", description = "Operations on getting broker details."),
                 @Tag(name = "Dead Letter Channel", description = "Operations related to dead letter channel.")},
-        schemes = SwaggerDefinition.Scheme.HTTPS)
-@Api(value = "mb/api", description = "Endpoint to WSO2 message broker REST service.",
-     produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
-@Path("/mb/api")
+        schemes = SwaggerDefinition.Scheme.HTTP)
+@Api(value = "mb/v1.0.0", description = "Endpoint to WSO2 message broker REST service.")
+@Path("/mb/v1.0.0")
 public class AndesRESTService implements Microservice {
     private static final Logger log = LoggerFactory.getLogger(AndesRESTService.class);
     /**
@@ -184,7 +183,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/protocol-types
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/protocol-types
      * </pre>
      *
      * @return Return a collection of supported protocol. <p>
@@ -220,7 +219,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/destination-types
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/destination-types
      * </pre>
      *
      * @return Return a collection of supported destinations. <p>
@@ -250,10 +249,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/topic
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue?name=MyQueue&offset=5&limit=3
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue?name=MyQueue&offset=5&limit=3
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -311,10 +310,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/topic
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/mqtt-default/destination-type/topic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -355,10 +354,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/topic/name/MyTopic
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/MyDurable
-     *  curl -v http://127.0.0.1:9090/mb/api/mqtt-default/destination-type/topic/name/MyMQTTTopic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic/name/MyTopic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/MyDurable
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -409,10 +408,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/topic
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/mqtt-default/destination-type/topic
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -464,10 +463,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/topic/name/MyTopic
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/MyDurable
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/mqtt-default/destination-type/topic/name/MyMQTTTopic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic/name/MyTopic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/MyDurable
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -513,10 +512,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/permissions/destination-type/queue/name/MyQueue
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/permissions/destination-type/topic/name/MyTopic
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/permissions/destination-type/durable_topic/name/MyDurable
-     *  curl -v http://127.0.0.1:9090/mb/api/mqtt-default/permissions/destination-type/topic/name/MyMQTTTopic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/permissions/destination-type/queue/name/MyQueue
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/permissions/destination-type/topic/name/MyTopic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/permissions/destination-type/durable_topic/name/MyDurable
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/permissions/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
@@ -567,7 +566,7 @@ public class AndesRESTService implements Microservice {
      *  curl -v -X POST \
      *          -H "Content-Type:application/json" \
      *          -d '{"role" : "abc", "consume" : true, "publish" : false}' \
-     *          http://127.0.0.1:9090/mb/api/amqp-0-91/permissions/destination-type/queue/name/MyQueue
+     *          http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/permissions/destination-type/queue/name/MyQueue
      *
      * </pre>
      *
@@ -626,7 +625,7 @@ public class AndesRESTService implements Microservice {
      *  curl -v -X PUT \
      *          -H "Content-Type:application/json" \
      *          -d '{"role" : "abc", "consume" : true, "publish" : false}' \
-     *          http://127.0.0.1:9090/mb/api/amqp-0-91/permissions/destination-type/queue/name/MyQueue
+     *          http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/permissions/destination-type/queue/name/MyQueue
      *
      * </pre>
      *
@@ -682,7 +681,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/dlc
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/dlc
      * </pre>
      *
      * @return A JSON representation of {@link Destination}. <p>
@@ -726,9 +725,9 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages?content=true
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages?next-message-id=1234&limit=10
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?content=true
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?next-message-id=1234&limit=10
      * </pre>
      *
      * @param dlcQueueName    The DLC queue name.
@@ -780,9 +779,9 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages?content=true
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages
-     *  curl -v -X GET http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages?offset=2000&limit=10
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?content=true
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages
+     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?offset=2000&limit=10
      * </pre>
      *
      * @param dlcQueueName    The DLC queue name.
@@ -834,8 +833,8 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages/restore
-     *  curl -v -X POST http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages/restore?new-queue-name=MyQueue
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages/restore
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages/restore?new-queue-name=MyQueue
      * </pre>
      *
      * @param dlcQueueName       The DLC queue name.
@@ -880,7 +879,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/dlc/DeadLetterChannel/messages
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages
      * </pre>
      *
      * @param dlcQueueName    The DLC queue name.
@@ -919,10 +918,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/queue?destination=MyQueue&offset=2&limit=5
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/topic
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/durable_topic?active=true
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/durable_topic?active=false&name=subID01
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/queue?destination=MyQueue&offset=2&limit=5
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/topic
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/durable_topic?active=true
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/durable_topic?active=false&name=subID01
      * </pre>
      *
      * @param protocol         The protocol type matching for the subscription.
@@ -990,8 +989,8 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/queue
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/durable_topic?unsubscribe-only=true
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/queue
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/durable_topic?unsubscribe-only=true
      * </pre>
      *
      * @param protocol         The protocol type matching for the subscription.
@@ -1039,10 +1038,10 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/queue/subscription-id/sub1
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/queue/subscription-id/sub1
      *  curl -v -X DELETE \
-     *      http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/queue/subscription-id/sub2?unsubscribe-only=true
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/subscription-type/durable_topic/subscription-id/sub1
+     *      http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/queue/subscription-id/sub2?unsubscribe-only=true
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/subscription-type/durable_topic/subscription-id/sub1
      * </pre>
      *
      * @param protocol         The protocol type matching for the subscription.
@@ -1089,10 +1088,10 @@ public class AndesRESTService implements Microservice {
      * Browse message of a destination using message ID.
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue/messages?content=true
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/mq1/messages?next-message-id=12345678
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue/messages?content=true
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/mq1/messages?next-message-id=12345678
      *  curl \
-     *      http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages?limit=100
+     *      http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages?limit=100
      * </pre>
      *
      * @param protocol        The protocol type matching for the message.
@@ -1162,9 +1161,9 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue/messages/12345678
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue/messages/12345678
      *  curl \
-     *      http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages/9876543
+     *      http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages/9876543
      * </pre>
      *
      * @param protocol        The protocol type matching for the message.
@@ -1233,8 +1232,8 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/queue/name/MyQueue/messages
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/api/amqp-0-91/destination-type/durable_topic/name/carbon:Sub/messages
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue/messages
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/carbon:Sub/messages
      * </pre>
      *
      * @param protocol        The protocol type matching for the message.
@@ -1287,7 +1286,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/information/cluster
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/information/cluster
      * </pre>
      *
      * @return Return a {@link ClusterInformation}. <p>
@@ -1328,7 +1327,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/information/store
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/information/store
      * </pre>
      *
      * @return Return a {@link StoreInformation}. <p>
@@ -1369,7 +1368,7 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/api/information/broker
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/information/broker
      * </pre>
      *
      * @return Return a {@link BrokerInformation}. <p>

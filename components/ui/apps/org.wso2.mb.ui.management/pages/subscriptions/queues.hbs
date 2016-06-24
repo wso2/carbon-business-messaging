@@ -1,0 +1,70 @@
+{{layout "org.wso2.uuf.base.main"}}
+
+{{#fillZone "content"}}
+    {{headJs "js/subscriptions-queue.js"}}
+    <h1>Queue Subscriptions</h1>
+    <hr/>
+    <form class="form-horizontal" id="subscription-active-filter-form">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Active</label>
+                <select id="active-subscription-filter" class="form-control">
+                    <option value="*">All</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <ul class="tiles">
+        {{#each protocols}}
+            <li class="square">
+                {{#if @queryParams.active}}
+                    <a class="btn square-element"
+                       href="{{@app.context}}/subscriptions/queues?protocol={{.}}&active={{@queryParams.active}}">
+                    <span class="icon fw-stack">
+                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-list fw-stack-1x"></i>
+                </span>
+                        {{.}}
+                    </a>
+                {{else}}
+                    <a class="btn square-element"
+                       href="{{@app.context}}/subscriptions/queues?protocol={{.}}&active=*">
+                    <span class="icon fw-stack">
+                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-list fw-stack-1x"></i>
+                </span>
+                        {{.}}
+                    </a>
+                {{/if}}
+            </li>
+        {{/each}}
+    </ul>
+    <table class="table table-responsive table-striped" id="queue-list-table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Queue Name</th>
+            <th>Number of Messages</th>
+            <th>Active</th>
+            <th>Owner Node ID</th>
+            <th>Updated Time</th>
+            <th>Operations</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each subscriptions}}
+            <tr>
+                <td>{{@index_1}}</td>
+                <td>{{targetQueue}}</td>
+                <td>{{lookup ../messageCountPerSubscription @index}}</td>
+                <td></td>
+                <td>{{subscribedNode}}</td>
+                <td>{{subscribeTime}}</td>
+                <td></td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/fillZone}}

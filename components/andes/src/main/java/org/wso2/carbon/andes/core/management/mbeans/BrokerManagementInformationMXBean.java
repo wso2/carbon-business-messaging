@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.core.management.mbeans;
 import org.wso2.carbon.andes.core.ProtocolType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -69,4 +70,11 @@ public interface BrokerManagementInformationMXBean {
      * @return true if healthy, else false.
      */
     boolean getStoreHealth();
+
+    /**
+     * Gets details about the broker.
+     *
+     * @return A map with property key and property value.
+     */
+    Map<String, String> getBrokerDetails();
 }
