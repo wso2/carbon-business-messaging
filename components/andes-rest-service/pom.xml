@@ -208,6 +208,7 @@
             io.netty.*;version="${netty.version.range}",
             javax.management.*,
             javax.ws.rs.*,
+            io.swagger.annotations.*
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice";serviceCount="1",
