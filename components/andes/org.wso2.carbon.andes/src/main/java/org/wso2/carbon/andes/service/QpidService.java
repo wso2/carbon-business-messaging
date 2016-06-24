@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.service;
 
 import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
+import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
@@ -177,5 +178,12 @@ public interface QpidService {
      * @return
      */
     public boolean getIfSSLOnly() throws Exception;
+
+    /**
+     * Method declaration to register broker lifecycle listener
+     * @param brokerLifecycleListener
+     */
+    public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener);
+
 
 }

@@ -28,6 +28,8 @@ import org.wso2.carbon.andes.commons.QueueDetails;
 import org.wso2.carbon.andes.commons.SubscriptionDetails;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
+import org.wso2.carbon.andes.internal.QpidServiceDataHolder;
+import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 
@@ -398,5 +400,15 @@ public class QpidServiceImpl implements QpidService {
     @Override
     public boolean getIfSSLOnly() throws ConfigurationException {
         return ApplicationRegistry.getInstance().getConfiguration().getSSLOnly();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener) {
+        QpidServiceDataHolder.getInstance().getBrokerLifecycleListeners()
+                .add(brokerLifecycleListener);
+
     }
 }

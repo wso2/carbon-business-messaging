@@ -36,6 +36,7 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -171,7 +172,17 @@ public class QpidServiceComponent {
 
                 public void startingShutdown() {
                     try {
+                        //executing pre-shutdown work for registered listeners before shutting down the andes server
+                        for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
+                                .getBrokerLifecycleListeners()){
+                            listener.onShuttingdown();
+                        }
                         AndesKernelBoot.shutDownAndesKernel();
+                        //executing post-shutdown work for registered listeners after shutting down the andes server
+                        for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
+                                        .getBrokerLifecycleListeners()){
+                            listener.onShutdown();
+                        }
                     } catch (AndesException e) {
                         log.error("Error while shutting down Andes kernel. ", e);
                     } finally {
