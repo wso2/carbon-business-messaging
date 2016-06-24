@@ -70,7 +70,7 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
     public List<AndesQueue> getDestinations(String keyword, int offset, int limit) throws AndesException {
         return AndesContext.getInstance().getAmqpConstructStore().getQueues(keyword)
                 .stream()
-                .filter(d -> d.getProtocolType() == protocolType)
+                .filter(d -> d.getProtocolType().equals(protocolType))
                 .filter(d -> d.getDestinationType() == destinationType)
                 .skip(offset)
                 .limit(limit)

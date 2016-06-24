@@ -3,10 +3,10 @@
 var table;
 
 $(document).ready(function() {
-    getQueuesToTable();
-    table.on('length.dt', function (e, settings, len) {
-        getQueuesToTable();
-    } );
+//    getQueuesToTable();
+//    table.on('length.dt', function (e, settings, len) {
+//        getQueuesToTable();
+//    } );
 });
 
 /**
