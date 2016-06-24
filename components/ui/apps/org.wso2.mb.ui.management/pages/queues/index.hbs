@@ -6,6 +6,19 @@
     {{fragment "org.wso2.mb.ui.common.modal"}}
     <h1>List of Queues</h1>
     <hr/>
+    <ul class="tiles">
+        {{#each protocols}}
+            <li class="square">
+                <a class="btn square-element" href="{{@app.context}}/queues?protocol={{.}}">
+                <span class="icon fw-stack">
+                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-list fw-stack-1x"></i>
+                </span>
+                    {{.}}
+                </a>
+            </li>
+        {{/each}}
+    </ul>
     <table class="table table-responsive table-striped" id="queue-list-table">
         <thead>
         <tr>
@@ -18,6 +31,16 @@
         </tr>
         </thead>
         <tbody>
+        {{#each destinations}}
+            <tr>
+                <td>{{@index_1}}</td>
+                <td>{{queueName}}</td>
+                <td>{{lookup ../messageCountPerStorageQueue queueName}}</td>
+                <td>{{subscriptionCount}}</td>
+                <td>{{queueOwner}}</td>
+                <td></td>
+            </tr>
+        {{/each}}
         </tbody>
     </table>
 {{/fillZone}}

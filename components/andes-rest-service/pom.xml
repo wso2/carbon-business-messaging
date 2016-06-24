@@ -212,7 +212,7 @@
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice";serviceCount="1",
-            osgi.servier; objectClass="javax.ws.rs.ext.ExceptionMapper";serviceCount="3"
+            osgi.service; objectClass="javax.ws.rs.ext.ExceptionMapper";serviceCount="3"
         </carbon.component>
     </properties>
 </project>
