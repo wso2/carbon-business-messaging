@@ -23,6 +23,7 @@ import org.wso2.carbon.andes.core.ProtocolType;
 import org.wso2.carbon.andes.core.management.mbeans.BrokerManagementInformationMXBean;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -89,5 +90,13 @@ public class BrokerManagementInformationImpl implements BrokerManagementInformat
     @Override
     public boolean getStoreHealth() {
         return andesInstance.getStoreHealth();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> getBrokerDetails() {
+        return andesInstance.getBrokerDetails();
     }
 }

@@ -890,6 +890,11 @@ public class Andes {
         return ClusterResourceHolder.getInstance().getClusterManager().getStoreHealth();
     }
 
+    /**
+     * Gets broker related information.
+     *
+     * @return A map with property key and property value.
+     */
     public Map<String, String> getBrokerDetails() {
         Map<String, String> details = new HashMap<>();
         details.put("Supported Protocols", StringUtils.join(getSupportedProtocols(), ','));

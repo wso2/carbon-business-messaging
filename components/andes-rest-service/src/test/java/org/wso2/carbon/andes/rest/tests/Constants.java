@@ -22,7 +22,8 @@ package org.wso2.carbon.andes.rest.tests;
 public class Constants {
     public static final String HOSTNAME = "localhost";
     public static final int PORT = 7777;
-    public static final String ROOT_PATH = "/mb/api";
+    public static final String VERSION = "v1.0.0";
+    public static final String ROOT_PATH = "/mb/" + VERSION;
     public static final String BASE_URL = "http://" + HOSTNAME + ":" + PORT + ROOT_PATH;
 
 }
