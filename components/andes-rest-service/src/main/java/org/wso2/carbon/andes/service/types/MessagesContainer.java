@@ -16,8 +16,56 @@
 
 package org.wso2.carbon.andes.service.types;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A container class for messages. This will also have other properties based on offsets and limits.
  */
+@ApiModel(value = "Message Container", description = "A container class for messages.")
 public class MessagesContainer {
+    @ApiModelProperty(value = "Total number of messages.", required = true)
+    private long totalMessages = 0;
+    @ApiModelProperty(value = "Url for the next set of messages.")
+    private String next = StringUtils.EMPTY;
+    @ApiModelProperty(value = "Url for the previous set of messages.")
+    private String previous = StringUtils.EMPTY;
+    @ApiModelProperty(value = "The list of messages.", required = true)
+    private List<Message> messages = new ArrayList<>();
+
+    public long getTotalMessages() {
+        return totalMessages;
+    }
+
+    public void setTotalMessages(long totalMessages) {
+        this.totalMessages = totalMessages;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
+    }
+
+    public String getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(String previous) {
+        this.previous = previous;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 }

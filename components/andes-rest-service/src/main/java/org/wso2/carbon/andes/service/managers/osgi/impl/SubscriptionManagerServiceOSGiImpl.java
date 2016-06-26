@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.andes.service.managers.osgi.impl;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.wso2.carbon.andes.core.AndesException;
 import org.wso2.carbon.andes.core.AndesSubscription;
 import org.wso2.carbon.andes.core.DestinationType;

@@ -18,6 +18,7 @@ package org.wso2.carbon.andes.service.types;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.andes.core.AndesException;
 import org.wso2.carbon.andes.core.DestinationType;
 import org.wso2.carbon.andes.core.ProtocolType;
@@ -34,19 +35,19 @@ public class Destination {
     @ApiModelProperty(value = "Name of the destination.", required = true)
     private String destinationName = null;
     @ApiModelProperty(value = "The created date of the destination.")
-    private Date createdDate = null;
-    @ApiModelProperty(value = "The type of the destination.")
+    private long createdDate = System.currentTimeMillis();
+    @ApiModelProperty(value = "The type of the destination.", required = true)
     private DestinationType destinationType = null;
-    @ApiModelProperty(value = "The type of the protocol.")
+    @ApiModelProperty(value = "The type of the protocol.", required = true)
     private ProtocolType protocol = null;
     @ApiModelProperty(value = "The message count for the destination.")
     private long messageCount = 0;
     @ApiModelProperty(value = "Whether the destination is durable.")
     private boolean isDurable = false;
     @ApiModelProperty(value = "The owner's username.")
-    private String owner = null;
+    private String owner = StringUtils.EMPTY;
     @ApiModelProperty(value = "The subscription count for the destination.")
-    private int subscriptionCount;
+    private int subscriptionCount = 0;
 
     public long getId() {
         return id;
@@ -65,11 +66,15 @@ public class Destination {
     }
 
     public Date getCreatedDate() {
-        return (Date) createdDate.clone();
+        return new Date(createdDate);
     }
 
     public void setCreatedDate(Date createdDate) {
-        this.createdDate = (Date) createdDate.clone();
+        this.createdDate = createdDate.getTime();
+    }
+
+    public void setCreatedDate(long createdDate) {
+        this.createdDate = createdDate;
     }
 
     public DestinationType getDestinationType() {

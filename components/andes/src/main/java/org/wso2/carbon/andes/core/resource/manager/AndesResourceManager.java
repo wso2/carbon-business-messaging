@@ -24,6 +24,7 @@ import com.gs.collections.api.iterator.MutableLongIterator;
 import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import com.gs.collections.impl.map.mutable.primitive.LongObjectHashMap;
 import org.apache.commons.lang.BooleanUtils;
+import org.wso2.carbon.andes.core.AMQPConstructStore;
 import org.wso2.carbon.andes.core.Andes;
 import org.wso2.carbon.andes.core.AndesChannel;
 import org.wso2.carbon.andes.core.AndesConstants;
@@ -38,6 +39,7 @@ import org.wso2.carbon.andes.core.DestinationType;
 import org.wso2.carbon.andes.core.DisablePubAckImpl;
 import org.wso2.carbon.andes.core.MessagingEngine;
 import org.wso2.carbon.andes.core.ProtocolType;
+import org.wso2.carbon.andes.core.internal.AndesContext;
 import org.wso2.carbon.andes.core.internal.cluster.ClusterResourceHolder;
 import org.wso2.carbon.andes.core.internal.inbound.FlowControlListener;
 import org.wso2.carbon.andes.core.subscription.BasicSubscription;
@@ -460,6 +462,16 @@ public class AndesResourceManager {
      */
     public long getMessageCountForStorageQueue(String storageQueueName) throws AndesException {
         return MessagingEngine.getInstance().getMessageCountOfQueue(storageQueueName);
+    }
+
+    /**
+     * Gets all the destination names as a list of strings.
+     *
+     * @return A list of destination names.
+     * @throws AndesException
+     */
+    public List<String> getAllDestinationNames() throws AndesException {
+        return AndesContext.getInstance().getAmqpConstructStore().getQueueNames();
     }
 
     /**
