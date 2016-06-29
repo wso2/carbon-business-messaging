@@ -417,7 +417,7 @@ public class BrokerDetailsTestCase {
 
         HttpResponse response = httpClient.execute(getRequest);
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-        Assert.assertTrue(StringUtils.contains((String)jsonObject.get("message"),
+        Assert.assertTrue(StringUtils.contains((String) jsonObject.get("message"),
                                     "Unable to find cluster information."), "Invalid cluster error message received.");
         Assert.assertEquals(response.getStatusLine().getStatusCode(),
                                             Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "500 not received");
@@ -429,7 +429,7 @@ public class BrokerDetailsTestCase {
 
         response = httpClient.execute(getRequest);
         jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-        Assert.assertTrue(StringUtils.contains((String)jsonObject.get("message"),
+        Assert.assertTrue(StringUtils.contains((String) jsonObject.get("message"),
                                     "Unable to find store information."), "Invalid cluster error message received.");
         Assert.assertEquals(response.getStatusLine().getStatusCode(),
                                             Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "500 not received");
@@ -441,7 +441,7 @@ public class BrokerDetailsTestCase {
 
         response = httpClient.execute(getRequest);
         jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-        Assert.assertTrue(StringUtils.contains((String)jsonObject.get("message"),
+        Assert.assertTrue(StringUtils.contains((String) jsonObject.get("message"),
                                     "Unable to find broker information."), "Invalid cluster error message received.");
         Assert.assertEquals(response.getStatusLine().getStatusCode(),
                                             Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "500 not received");
@@ -461,8 +461,8 @@ public class BrokerDetailsTestCase {
         if (responseEntity != null) {
             jsonObject = new JSONObject(EntityUtils.toString(responseEntity));
         }
-        Assert.assertTrue(null != jsonObject.get("title"), "Title for the error is missing.");
-        Assert.assertTrue(null != jsonObject.get("code"), "Error code is missing.");
-        Assert.assertTrue(null != jsonObject.get("message"), "A message is required for the error.");
+        Assert.assertTrue(jsonObject.has("title"), "Title for the error is missing.");
+        Assert.assertTrue(jsonObject.has("code"), "Error code is missing.");
+        Assert.assertTrue(jsonObject.has("message"), "A message is required for the error.");
     }
 }

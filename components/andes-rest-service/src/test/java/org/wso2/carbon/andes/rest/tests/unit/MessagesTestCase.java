@@ -162,7 +162,7 @@ public class MessagesTestCase {
     }
     
     /**
-     * * Tests that a 200 is received when requested for messages with default query params.
+     * Tests that a 200 is received when requested for messages with default query params.
      *
      * @throws AndesException
      * @throws IOException
@@ -729,8 +729,8 @@ public class MessagesTestCase {
         if (responseEntity != null) {
             jsonObject = new JSONObject(EntityUtils.toString(responseEntity));
         }
-        Assert.assertTrue(null != jsonObject.get("title"), "Title for the error is missing.");
-        Assert.assertTrue(null != jsonObject.get("code"), "Error code is missing.");
-        Assert.assertTrue(null != jsonObject.get("message"), "A message is required for the error.");
+        Assert.assertTrue(jsonObject.has("title"), "Title for the error is missing.");
+        Assert.assertTrue(jsonObject.has("code"), "Error code is missing.");
+        Assert.assertTrue(jsonObject.has("message"), "A message is required for the error.");
     }
 }
