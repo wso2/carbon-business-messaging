@@ -539,8 +539,7 @@ public class DestinationsTestCase {
         destination.setDestinationName("Q1");
         destination.setDestinationType(DestinationType.QUEUE);
         destination.setProtocol(new ProtocolType("amqp", "0-9-1"));
-        ObjectMapper objectMapper = new ObjectMapper();
-        StringEntity postingString = new StringEntity(objectMapper.writeValueAsString(destination));
+        StringEntity destinationAsJsonString = new StringEntity(new ObjectMapper().writeValueAsString(destination));
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
         when(destinationManagerService.createDestination(Mockito.anyString(), Mockito.anyString(), Mockito.anyString
@@ -552,7 +551,7 @@ public class DestinationsTestCase {
         HttpPost postRequest = new HttpPost(Constants.BASE_URL + "/amqp-0-91/destination-type/queue");
         postRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         postRequest.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        postRequest.setEntity(postingString);
+        postRequest.setEntity(destinationAsJsonString);
         HttpResponse response = httpClient.execute(postRequest);
 
         validateExceptionHandling(response.getEntity());
@@ -580,8 +579,8 @@ public class DestinationsTestCase {
         requestDestination.setDestinationName("Q1");
         requestDestination.setDestinationType(DestinationType.QUEUE);
         requestDestination.setProtocol(new ProtocolType("amqp", "0-9-1"));
-        ObjectMapper objectMapper = new ObjectMapper();
-        StringEntity postingString = new StringEntity(objectMapper.writeValueAsString(requestDestination));
+        StringEntity destinationAsJsonString =
+                                            new StringEntity(new ObjectMapper().writeValueAsString(requestDestination));
 
         Destination responseDestination = new Destination();
         responseDestination.setId(29);
@@ -604,7 +603,7 @@ public class DestinationsTestCase {
         HttpPost postRequest = new HttpPost(Constants.BASE_URL + "/amqp-0-91/destination-type/queue/");
         postRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         postRequest.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        postRequest.setEntity(postingString);
+        postRequest.setEntity(destinationAsJsonString);
         HttpResponse response = httpClient.execute(postRequest);
 
         JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
@@ -687,7 +686,7 @@ public class DestinationsTestCase {
         HttpResponse response = httpClient.execute(deleteRequest);
 
         Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(),
-                "204 not received");
+                "404 not received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());

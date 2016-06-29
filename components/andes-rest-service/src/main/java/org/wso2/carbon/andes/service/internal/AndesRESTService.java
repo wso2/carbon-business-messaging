@@ -461,7 +461,8 @@ public class AndesRESTService implements Microservice {
      * curl command example :
      * <pre>
      *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue \
-     *  -d {"id":0,"destinationName":"Q1",
+     *  -d {"id":0,
+     *      "destinationName":"Q1",
      *      "createdDate":1467131203139,
      *      "destinationType": "QUEUE",
      *      "protocol":{
@@ -605,8 +606,8 @@ public class AndesRESTService implements Microservice {
             tags = {"Destinations", "Permissions"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Gets list of permissions.", response = DestinationRolePermission.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Protocol or destination type or destination is not found.",
+                         response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response getDestinationPermissions(
             @ApiParam(value = "Protocol for the destination.")
@@ -669,8 +670,8 @@ public class AndesRESTService implements Microservice {
             tags = {"Destinations", "Permissions"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "New permission created.", response = DestinationRolePermission.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Protocol or destination type or destination is not found.",
+                         response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response createDestinationPermission(
             @ApiParam(value = "Protocol for the destination.")
@@ -681,13 +682,21 @@ public class AndesRESTService implements Microservice {
             @PathParam("destination-name") String destinationName,
             // Payload
             @ApiParam(value = "New role permission payload.")
-            DestinationRolePermission newDestinationRolePermissions) {
+            DestinationRolePermission newDestinationRolePermissions)
+            throws DestinationNotFoundException, InternalServerException {
         try {
-            DestinationRolePermission newPermission = destinationManagerService.createDestinationPermission
-                (protocol, destinationType, destinationName, newDestinationRolePermissions);
-            return Response.status(Response.Status.OK).entity(newPermission).build();
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                DestinationRolePermission newPermission = destinationManagerService.createDestinationPermission
+                        (protocol, destinationType, destinationName, newDestinationRolePermissions);
+                return Response.status(Response.Status.OK).entity(newPermission).build();
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to get " +
+                                                       "permissions.");
+            }
         } catch (DestinationManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -728,8 +737,8 @@ public class AndesRESTService implements Microservice {
             tags = {"Destinations", "Permissions"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Permission updated.", response = DestinationRolePermission.class),
-            @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Protocol or destination type or destination is not found.",
+                         response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response updateDestinationPermission(
             @ApiParam(value = "Protocol for the destination.")
@@ -740,13 +749,21 @@ public class AndesRESTService implements Microservice {
             @PathParam("destination-name") String destinationName,
             // Payload
             @ApiParam(value = "New role permission payload.")
-            DestinationRolePermission updatedDestinationRolePermissions) {
+            DestinationRolePermission updatedDestinationRolePermissions)
+            throws InternalServerException, DestinationNotFoundException {
         try {
-            DestinationRolePermission updatedPermission = destinationManagerService.updateDestinationPermission
-                (protocol, destinationType, destinationName, updatedDestinationRolePermissions);
-            return Response.status(Response.Status.OK).entity(updatedPermission).build();
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                DestinationRolePermission updatedPermission = destinationManagerService.updateDestinationPermission
+                        (protocol, destinationType, destinationName, updatedDestinationRolePermissions);
+                return Response.status(Response.Status.OK).entity(updatedPermission).build();
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to get " +
+                                                       "permissions.");
+            }
         } catch (DestinationManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1345,7 +1362,6 @@ public class AndesRESTService implements Microservice {
             if (null != destination) {
                 messageManagerService.deleteMessages(protocol, destinationType, destinationName);
                 return Response.status(Response.Status.NO_CONTENT).build();
-
             } else {
                 throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to " +
                                                        "delete/purge messages.");
