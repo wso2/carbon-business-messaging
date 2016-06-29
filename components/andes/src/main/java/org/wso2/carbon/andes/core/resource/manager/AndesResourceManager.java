@@ -24,7 +24,6 @@ import com.gs.collections.api.iterator.MutableLongIterator;
 import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import com.gs.collections.impl.map.mutable.primitive.LongObjectHashMap;
 import org.apache.commons.lang.BooleanUtils;
-import org.wso2.carbon.andes.core.AMQPConstructStore;
 import org.wso2.carbon.andes.core.Andes;
 import org.wso2.carbon.andes.core.AndesChannel;
 import org.wso2.carbon.andes.core.AndesConstants;
@@ -42,8 +41,6 @@ import org.wso2.carbon.andes.core.ProtocolType;
 import org.wso2.carbon.andes.core.internal.AndesContext;
 import org.wso2.carbon.andes.core.internal.cluster.ClusterResourceHolder;
 import org.wso2.carbon.andes.core.internal.inbound.FlowControlListener;
-import org.wso2.carbon.andes.core.subscription.BasicSubscription;
-import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -465,13 +462,17 @@ public class AndesResourceManager {
     }
 
     /**
-     * Gets all the destination names as a list of strings.
+     * Search function for getting destination names.
      *
+     * @param protocol        The protocol type matching for the message.
+     * @param destinationType The destination type matching for the message.
+     * @param keyword         Search keyword for searching. Use "*" for all destination names, else it will use
+     *                        contains.
      * @return A list of destination names.
      * @throws AndesException
      */
-    public List<String> getAllDestinationNames() throws AndesException {
-        return AndesContext.getInstance().getAmqpConstructStore().getQueueNames();
+    public List<String> getDestinationNames(ProtocolType protocol, DestinationType destinationType, String keyword) throws AndesException {
+        return resourceManagerTable.get(protocol, destinationType).getDestinationNames(keyword);
     }
 
     /**

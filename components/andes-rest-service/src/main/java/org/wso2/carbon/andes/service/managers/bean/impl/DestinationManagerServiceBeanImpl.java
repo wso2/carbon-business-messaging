@@ -127,4 +127,10 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
                                                                                 throws DestinationManagerException {
         destinationManagementBeans.deleteDestination(protocol, destinationType, destinationName);
     }
+
+    @Override
+    public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
+                                                                                    throws DestinationManagerException {
+        return null;
+    }
 }

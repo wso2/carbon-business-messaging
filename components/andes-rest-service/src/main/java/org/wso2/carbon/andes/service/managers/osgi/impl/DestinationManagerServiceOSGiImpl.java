@@ -158,6 +158,21 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
         }
     }
 
+    @Override
+    public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
+                                                                                    throws DestinationManagerException {
+        List<String> destinationNames = new ArrayList<>();
+        try {
+            ProtocolType protocolType = new ProtocolType(protocol);
+            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType);
+            destinationNames = andesResourceManager.getDestinationNames(protocolType, destinationTypeEnum, destinationName);
+        } catch (AndesException e) {
+            throw new DestinationManagerException("Error occurred while getting destination names.", e);
+        }
+
+        return destinationNames;
+    }
+
     /**
      * Converts a {@link AndesQueue} to an {@link Destination}.
      *
@@ -170,13 +185,13 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
         Destination destination = new Destination();
         //        destination.setId(andesQueue.getID());
         destination.setDestinationName(andesQueue.queueName);
-        //        destination.setCreatedDate(andesQueue.getCreatedDate());
-        destination.setDestinationType(andesQueue.getDestinationType());
-        destination.setProtocol(andesQueue.getProtocolType());
-        destination.setMessageCount(andesResourceManager.getMessageCountForStorageQueue(andesQueue.queueName));
-        destination.setDurable(andesQueue.isDurable);
-        destination.setOwner(andesQueue.queueOwner);
-        destination.setSubscriptionCount(andesQueue.subscriptionCount);
+//                destination.setCreatedDate(andesQueue.getCreatedDate());
+//        destination.setDestinationType(andesQueue.getDestinationType());
+//        destination.setProtocol(andesQueue.getProtocolType());
+//        destination.setMessageCount(andesResourceManager.getMessageCountForStorageQueue(andesQueue.queueName));
+//        destination.setDurable(andesQueue.isDurable);
+//        destination.setOwner(andesQueue.queueOwner);
+//        destination.setSubscriptionCount(andesQueue.subscriptionCount);
         return destination;
     }
 }

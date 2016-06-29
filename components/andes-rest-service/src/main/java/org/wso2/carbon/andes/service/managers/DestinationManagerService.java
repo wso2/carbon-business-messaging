@@ -127,4 +127,6 @@ public interface DestinationManagerService {
      */
     void deleteDestination(String protocol, String destinationType, String destinationName)
                                                                                     throws DestinationManagerException;
+
+    List<String> getDestinationNames(String protocol, String destinationType, String destinationName) throws DestinationManagerException;
 }

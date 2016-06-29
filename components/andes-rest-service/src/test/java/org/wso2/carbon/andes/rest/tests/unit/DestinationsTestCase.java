@@ -110,6 +110,8 @@ public class DestinationsTestCase {
     public void getDestinationsThrowDestinationManagerErrorTestCase() throws AndesException, IOException,
             JSONException, DestinationManagerException {
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
+        when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(), Mockito
+                .anyString())).thenReturn(new ArrayList<>());
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenThrow(new DestinationManagerException("Internal Error"));
 
@@ -153,8 +155,8 @@ public class DestinationsTestCase {
         getRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         HttpResponse response = httpClient.execute(getRequest);
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestinations(Mockito.anyString(), Mockito.anyString(), eq
                 ("*"), eq(0), eq(20));
@@ -180,6 +182,8 @@ public class DestinationsTestCase {
         destinationQ2.setDestinationName("Q-2");
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
+        when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(), Mockito
+                .anyString())).thenReturn(Stream.of("Q-1", "Q-2").collect(Collectors.toList()));
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenReturn(Stream.of(destinationQ1, destinationQ2).collect
                 (Collectors.toList()));
@@ -199,8 +203,8 @@ public class DestinationsTestCase {
                 "Q-1 is missing from the destination list.");
         Assert.assertEquals(jsonObject.getJSONArray("destinations").getJSONObject(1).get("destinationName"), "Q-2",
                 "Q-2 is missing from the destination list.");
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestinations(Mockito.anyString(), Mockito.anyString(), eq
                 ("Q-"), eq(0), eq(20));
@@ -226,6 +230,8 @@ public class DestinationsTestCase {
         destinationQ2.setDestinationName("Q-2");
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
+        when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(), Mockito
+                .anyString())).thenReturn(Stream.of("Q-1", "Q-2").collect(Collectors.toList()));
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenReturn(Stream.of(destinationQ1, destinationQ2).collect
                 (Collectors.toList()));
@@ -245,8 +251,8 @@ public class DestinationsTestCase {
                 "Q-1 is missing from the destination list.");
         Assert.assertEquals(jsonObject.getJSONArray("destinations").getJSONObject(1).get("destinationName"), "Q-2",
                 "Q-2 is missing from the destination list.");
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestinations(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString(), eq(0), eq(6));
@@ -272,6 +278,8 @@ public class DestinationsTestCase {
         destinationQ2.setDestinationName("Q-2");
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
+        when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(), Mockito
+                .anyString())).thenReturn(Stream.of("Q-1", "Q-2").collect(Collectors.toList()));
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenReturn(Stream.of(destinationQ1, destinationQ2).collect
                 (Collectors.toList()));
@@ -291,8 +299,8 @@ public class DestinationsTestCase {
                 "Q-1 is missing from the destination list.");
         Assert.assertEquals(jsonObject.getJSONArray("destinations").getJSONObject(1).get("destinationName"), "Q-2",
                 "Q-2 is missing from the destination list.");
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestinations(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString(), eq(3), eq(20));
@@ -318,6 +326,8 @@ public class DestinationsTestCase {
         destinationQ2.setDestinationName("Q-2");
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
+        when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(), Mockito
+                .anyString())).thenReturn(Stream.of("Q-1", "Q-2").collect(Collectors.toList()));
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenReturn(Stream.of(destinationQ1, destinationQ2).collect
                 (Collectors.toList()));
@@ -338,8 +348,8 @@ public class DestinationsTestCase {
                 "Q-1 is missing from the destination list.");
         Assert.assertEquals(jsonObject.getJSONArray("destinations").getJSONObject(1).get("destinationName"), "Q-2",
                 "Q-2 is missing from the destination list.");
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestinations(Mockito.anyString(), Mockito.anyString(), eq
                 ("Q"), eq(3), eq(4));
@@ -459,8 +469,7 @@ public class DestinationsTestCase {
         HttpResponse response = httpClient.execute(getRequest);
 
         validateExceptionHandling(response.getEntity());
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(),
-                "404 not received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(), "404 not received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
@@ -508,16 +517,16 @@ public class DestinationsTestCase {
         Assert.assertTrue(jsonObject.has("createdDate"), "Created date did not exist for the destination.");
         Assert.assertEquals(jsonObject.get("destinationType"), "QUEUE", "Invalid destination type received.");
         Assert.assertEquals(jsonObject.getJSONObject("protocol").get("protocolName"), "amqp", "Invalid protocol name " +
-                                                                                              "received.");
-        Assert.assertEquals(jsonObject.getJSONObject("protocol").get("version"), "0-9-1", "Invalid protocol version " +
-                                                                                          "received.");
+                                                                                              "" + "received.");
+        Assert.assertEquals(jsonObject.getJSONObject("protocol").get("version"), "0-9-1", "Invalid protocol version "
+                                                                                          + "received.");
         Assert.assertEquals(jsonObject.get("messageCount"), 30, "Invalid destination message count received.");
         Assert.assertEquals(jsonObject.get("isDurable"), true, "Invalid destination durable value received.");
         Assert.assertEquals(jsonObject.get("owner"), "admin", "Invalid destination owner received.");
         Assert.assertEquals(jsonObject.get("subscriptionCount"), 5, "Invalid destination subscription count received.");
 
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
@@ -576,8 +585,8 @@ public class DestinationsTestCase {
             AndesException {
         NewDestination requestDestination = new NewDestination();
         requestDestination.setDestinationName("Q1");
-        StringEntity destinationAsJsonString =
-                                            new StringEntity(new ObjectMapper().writeValueAsString(requestDestination));
+        StringEntity destinationAsJsonString = new StringEntity(new ObjectMapper().writeValueAsString
+                (requestDestination));
 
         Destination responseDestination = new Destination();
         responseDestination.setId(29);
@@ -609,16 +618,16 @@ public class DestinationsTestCase {
         Assert.assertTrue(jsonObject.has("createdDate"), "Created date did not exist for the destination.");
         Assert.assertEquals(jsonObject.get("destinationType"), "QUEUE", "Invalid destination type received.");
         Assert.assertEquals(jsonObject.getJSONObject("protocol").get("protocolName"), "amqp", "Invalid protocol name " +
-                                                                                              "received.");
-        Assert.assertEquals(jsonObject.getJSONObject("protocol").get("version"), "0-9-1", "Invalid protocol version " +
-                                                                                          "received.");
+                                                                                              "" + "received.");
+        Assert.assertEquals(jsonObject.getJSONObject("protocol").get("version"), "0-9-1", "Invalid protocol version "
+                                                                                          + "received.");
         Assert.assertEquals(jsonObject.get("messageCount"), 30, "Invalid destination message count received.");
         Assert.assertEquals(jsonObject.get("isDurable"), true, "Invalid destination durable value received.");
         Assert.assertEquals(jsonObject.get("owner"), "admin", "Invalid destination owner received.");
         Assert.assertEquals(jsonObject.get("subscriptionCount"), 5, "Invalid destination subscription count received.");
 
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not " +
-                                                                                                          "received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(), "200 not "
+                                                                                                          + "received");
 
         verify(destinationManagerService, atLeastOnce()).createDestination(Mockito.anyString(), Mockito.anyString(),
                 eq("Q1"));
@@ -682,8 +691,7 @@ public class DestinationsTestCase {
 
         HttpResponse response = httpClient.execute(deleteRequest);
 
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(),
-                "404 not received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(), "404 not received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());

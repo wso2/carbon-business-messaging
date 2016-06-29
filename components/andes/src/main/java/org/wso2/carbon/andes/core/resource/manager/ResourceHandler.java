@@ -145,4 +145,12 @@ public interface ResourceHandler {
      * @param destinationName The name of the destination to purge messages.
      */
     void deleteMessages(String destinationName) throws AndesException;
+
+    /**
+     * Gets the destination names with a search keyword.
+     * @param keyword         Search keyword for searching. Use "*" for all destination names, else it will use
+     *                        contains.
+     * @return A list of destination names.
+     */
+    List<String> getDestinationNames(String keyword);
 }

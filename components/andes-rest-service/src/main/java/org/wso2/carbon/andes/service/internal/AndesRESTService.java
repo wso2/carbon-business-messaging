@@ -316,8 +316,8 @@ public class AndesRESTService implements Microservice {
 
             DestinationsContainer destinationsContainer = new DestinationsContainer();
             // Get total destination count
-            destinationsContainer.setTotalDestinations(destinationManagerService.getDestinations(protocol,
-                                                                    destinationType, destinationName, 0, 1000).size());
+            destinationsContainer.setTotalDestinations(destinationManagerService.getDestinationNames(protocol,
+                                                                            destinationType, destinationName).size());
             URIBuilder uriBuilder = new URIBuilder(request.getUri());
             // Next set calculation
             if (offset + limit < destinationsContainer.getTotalDestinations()) {
