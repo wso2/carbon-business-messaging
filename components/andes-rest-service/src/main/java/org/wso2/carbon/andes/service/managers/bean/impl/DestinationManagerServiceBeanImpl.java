@@ -106,7 +106,7 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
         destinationRolePermissions.add(destinationRolePermission);
         // Get permissions for the destination.
         // Update the permissions for the destination.
-        // Return the new list of permissions.
+        // Return the newD list of permissions.
         return new DestinationRolePermission("admin-role", true, true);
     }
 
@@ -116,7 +116,7 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
     @Override
     public DestinationRolePermission updateDestinationPermission(String protocol, String destinationType, String
             destinationName, DestinationRolePermission destinationRolePermission) throws DestinationManagerException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -126,5 +126,14 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
     public void deleteDestination(String protocol, String destinationType, String destinationName)
                                                                                 throws DestinationManagerException {
         destinationManagementBeans.deleteDestination(protocol, destinationType, destinationName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
+                                                                                    throws DestinationManagerException {
+        throw new UnsupportedOperationException();
     }
 }
