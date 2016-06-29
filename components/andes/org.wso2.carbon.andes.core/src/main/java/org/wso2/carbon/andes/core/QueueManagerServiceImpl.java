@@ -473,9 +473,10 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                                 MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
             String usernameWithoutTenant = userName;
-            int domainNameSeparatorIndex = userName.indexOf(DOMAIN_NAME_SEPARATOR);
+            int domainNameSeparatorIndex = userName.lastIndexOf(DOMAIN_NAME_SEPARATOR);
             if (-1 != domainNameSeparatorIndex) {
-                usernameWithoutTenant = userName.substring(0, domainNameSeparatorIndex);
+                usernameWithoutTenant = userName.substring(0, domainNameSeparatorIndex).replaceAll
+                        (DOMAIN_NAME_SEPARATOR,"@");
             }
             if (!Utils.isOwnDomain(tenantDomain, nameOfQueue)) {
                 throw new QueueManagerException("Permission denied.");

@@ -150,10 +150,10 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 }
 
                 // Get username from tenant username
-                int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
+                int domainNameSeparatorIndex = username.lastIndexOf(DOMAIN_NAME_SEPARATOR);
                 if (-1 != domainNameSeparatorIndex) {
                     domainName = username.substring(domainNameSeparatorIndex + 1);
-                    username = username.substring(0, domainNameSeparatorIndex);
+                    username = username.substring(0, domainNameSeparatorIndex).replaceAll(DOMAIN_NAME_SEPARATOR,"@");
                 }
 
                 // User not found in the UM
@@ -194,7 +194,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
             try {
                 // Get tenant ID
                 int tenantID = MultitenantConstants.SUPER_TENANT_ID;
-                int domainNameSeparatorIndex = username.indexOf(DOMAIN_NAME_SEPARATOR);
+                int domainNameSeparatorIndex = username.lastIndexOf(DOMAIN_NAME_SEPARATOR);
                 PrivilegedCarbonContext.destroyCurrentContext();
                 PrivilegedCarbonContext cc = PrivilegedCarbonContext.getThreadLocalCarbonContext();
                 cc.setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME);
