@@ -42,6 +42,7 @@ import org.wso2.carbon.andes.service.exceptions.mappers.InternalServerErrorMappe
 import org.wso2.carbon.andes.service.internal.AndesRESTService;
 import org.wso2.carbon.andes.service.managers.DestinationManagerService;
 import org.wso2.carbon.andes.service.types.Destination;
+import org.wso2.carbon.andes.service.types.NewDestination;
 import org.wso2.msf4j.MicroservicesRunner;
 
 import java.io.IOException;
@@ -535,10 +536,8 @@ public class DestinationsTestCase {
     @Test(groups = {"wso2.mb", "rest"})
     public void createDestinationThrowDestinationManagerErrorTestCase() throws DestinationManagerException,
             IOException, JSONException, AndesException {
-        Destination destination = new Destination();
+        NewDestination destination = new NewDestination();
         destination.setDestinationName("Q1");
-        destination.setDestinationType(DestinationType.QUEUE);
-        destination.setProtocol(new ProtocolType("amqp", "0-9-1"));
         StringEntity destinationAsJsonString = new StringEntity(new ObjectMapper().writeValueAsString(destination));
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
@@ -575,10 +574,8 @@ public class DestinationsTestCase {
     @Test(groups = {"wso2.mb", "rest"})
     public void validCreateDestinationTestCase() throws DestinationManagerException, IOException, JSONException,
             AndesException {
-        Destination requestDestination = new Destination();
+        NewDestination requestDestination = new NewDestination();
         requestDestination.setDestinationName("Q1");
-        requestDestination.setDestinationType(DestinationType.QUEUE);
-        requestDestination.setProtocol(new ProtocolType("amqp", "0-9-1"));
         StringEntity destinationAsJsonString =
                                             new StringEntity(new ObjectMapper().writeValueAsString(requestDestination));
 
@@ -594,8 +591,8 @@ public class DestinationsTestCase {
         responseDestination.setSubscriptionCount(5);
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
-        when(destinationManagerService.createDestination(Mockito.anyString(), Mockito.anyString(), Mockito.anyString
-                ())).thenReturn(responseDestination);
+        when(destinationManagerService.createDestination(Mockito.anyString(), Mockito.anyString(), eq("Q1")))
+                .thenReturn(responseDestination);
 
         andesRESTService.setDestinationManagerService(destinationManagerService);
 
@@ -624,7 +621,7 @@ public class DestinationsTestCase {
                                                                                                           "received");
 
         verify(destinationManagerService, atLeastOnce()).createDestination(Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString());
+                eq("Q1"));
 
         httpClient.getConnectionManager().shutdown();
     }

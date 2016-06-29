@@ -75,6 +75,7 @@ import org.wso2.carbon.andes.service.types.DestinationRolePermission;
 import org.wso2.carbon.andes.service.types.DestinationsContainer;
 import org.wso2.carbon.andes.service.types.ErrorResponse;
 import org.wso2.carbon.andes.service.types.Message;
+import org.wso2.carbon.andes.service.types.NewDestination;
 import org.wso2.carbon.andes.service.types.StoreInformation;
 import org.wso2.carbon.andes.service.types.Subscription;
 import org.wso2.msf4j.Microservice;
@@ -431,7 +432,7 @@ public class AndesRESTService implements Microservice {
             tags = "Destinations")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Destination returned.", response = Destination.class),
-            @ApiResponse(code = 404, message = "Invalid protocol or destination type or Destination not found.",
+            @ApiResponse(code = 404, message = "Invalid protocol or destination type or destination not found.",
                          response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response getDestination(
@@ -460,24 +461,13 @@ public class AndesRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue \
-     *  -d {"id":0,
-     *      "destinationName":"Q1",
-     *      "createdDate":1467131203139,
-     *      "destinationType": "QUEUE",
-     *      "protocol":{
-     *          "protocolName":"amqp",
-     *          "version":"0-9-1"},
-     *      "messageCount":0,
-     *      "owner":"",
-     *      "subscriptionCount":0,
-     *      "durable":false}
+     *  curl -v -X POST http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue -d {"destinationName": "Q1"}
      * </pre>
      *
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
      * @param destinationType The destination type of the destination as {@link DestinationType}.
      *                        "durable_topic" is considered as a topic.
-     * @param destination     The destination object. {@link Destination#destinationName} is required.
+     * @param destination     A {@link NewDestination} object.
      * @return A JSON representation of the newly created {@link Destination}. <p>
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
@@ -502,8 +492,8 @@ public class AndesRESTService implements Microservice {
             @PathParam("protocol") String protocol,
             @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
             @PathParam("destination-type") String destinationType,
-            @ApiParam(value = "Destination object.")
-            Destination destination,
+            @ApiParam(value = "New destination object.")
+            NewDestination destination,
             @Context Request request) throws InternalServerException {
         try {
             Destination newDestination = destinationManagerService.createDestination(protocol, destinationType,
@@ -511,7 +501,7 @@ public class AndesRESTService implements Microservice {
 
             return Response.status(Response.Status.OK)
                     .entity(newDestination)
-                    .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + destination.getDestinationName())
+                    .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + newDestination.getDestinationName())
                     .build();
         } catch (DestinationManagerException e) {
             throw new InternalServerException(e);
