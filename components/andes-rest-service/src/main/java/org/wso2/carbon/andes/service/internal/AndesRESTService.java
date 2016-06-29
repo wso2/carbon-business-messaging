@@ -467,7 +467,7 @@ public class AndesRESTService implements Microservice {
      * @param protocol        The protocol type of the destination as {@link ProtocolType}.
      * @param destinationType The destination type of the destination as {@link DestinationType}.
      *                        "durable_topic" is considered as a topic.
-     * @param destination     A {@link NewDestination} object.
+     * @param newDestination  A {@link NewDestination} object.
      * @return A JSON representation of the newly created {@link Destination}. <p>
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
@@ -493,15 +493,15 @@ public class AndesRESTService implements Microservice {
             @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
             @PathParam("destination-type") String destinationType,
             @ApiParam(value = "New destination object.")
-            NewDestination destination,
+            NewDestination newDestination,
             @Context Request request) throws InternalServerException {
         try {
-            Destination newDestination = destinationManagerService.createDestination(protocol, destinationType,
-                    destination.getDestinationName());
+            Destination destination = destinationManagerService.createDestination(protocol, destinationType,
+                    newDestination.getDestinationName());
 
             return Response.status(Response.Status.OK)
                     .entity(newDestination)
-                    .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + newDestination.getDestinationName())
+                    .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + destination.getDestinationName())
                     .build();
         } catch (DestinationManagerException e) {
             throw new InternalServerException(e);
@@ -785,7 +785,7 @@ public class AndesRESTService implements Microservice {
             @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getDLCQueue() {
+    public Response getDLCQueue() throws InternalServerException {
         try {
             //TODO : get queue name for tenant.
             String dlcQueueName = DLCQueueUtils.generateDLCQueueNameFromTenant("carbon.super");
@@ -797,7 +797,7 @@ public class AndesRESTService implements Microservice {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         } catch (DestinationManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -845,67 +845,13 @@ public class AndesRESTService implements Microservice {
             @DefaultValue("0") @QueryParam("next-message-id") long nextMessageID,
             @ApiParam(value = "The number of messages to return for pagination.",
                       allowableValues = "range[1, infinity]")
-            @DefaultValue("100") @QueryParam("limit") int limit) {
+            @DefaultValue("100") @QueryParam("limit") int limit) throws InternalServerException {
         try {
             List<Message> messages = messageManagerService.getMessagesOfDestinationByMessageID(dlcProtocol.toString(),
                     AndesConstants.DLC_DESTINATION_TYPE.toString(), dlcQueueName, content, nextMessageID, limit);
             return Response.status(Response.Status.OK).entity(messages).build();
         } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
-        }
-    }
-
-    /**
-     * Gets messages from a dead letter channel using offset.
-     * <p>
-     * curl command example :
-     * <pre>
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?content=true
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?offset=2000&limit=10
-     * </pre>
-     *
-     * @param dlcQueueName    The DLC queue name.
-     * @param content         Whether to return message content or not.
-     * @param offset          Starting index of the messages to return.
-     * @param limit           The number of messages to return.
-     * @return Return a collection of {@link Message}s. <p>
-     * <ul>
-     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a collection of {@link Message}s
-     *     as a JSON response.</li>
-     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
-     *     messages from the server.</li>
-     * </ul>
-     */
-    @GET
-    @Path("/dlc/{dlc-queue-name}/messages")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Gets DLC messages.",
-            notes = "Gets messages of a dead letter channel using offset.",
-            tags = {"Dead Letter Channel", "Messages"},
-            response = Message.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful list of messages.", response = Message.class),
-            @ApiResponse(code = 404, message = "DLC queue not found.", response = ErrorResponse.class),
-            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getDLCMessagesByOffset(
-            @ApiParam(value = "The DLC queue name.")
-            @PathParam("dlc-queue-name") String dlcQueueName,
-            @ApiParam(value = "Whether to return message content or not.", allowableValues = "[true, false]")
-            @DefaultValue("false") @QueryParam("content") boolean content,
-            @ApiParam(value = "Starting index of the messages to return.")
-            @DefaultValue("0") @QueryParam("offset") int offset,
-            @ApiParam(value = "The number of messages to return for pagination.",
-                      allowableValues = "range[1, infinity]")
-            @DefaultValue("100") @QueryParam("limit") int limit) {
-        try {
-            List<Message> messages = messageManagerService.getMessagesOfDestinationByOffset(dlcProtocol.toString(),
-                    AndesConstants.DLC_DESTINATION_TYPE.toString(), dlcQueueName, content, offset, limit);
-            return Response.status(Response.Status.OK).entity(messages).build();
-        } catch (MessageManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1055,13 +1001,13 @@ public class AndesRESTService implements Microservice {
             @DefaultValue("0") @QueryParam("offset") int offset,
             @ApiParam(value = "The number of destinations to return for pagination.",
                       allowableValues = "range[1, infinity]")
-            @DefaultValue("20") @QueryParam("limit") int limit) {
+            @DefaultValue("20") @QueryParam("limit") int limit) throws InternalServerException {
         try {
             List<Subscription> subscriptions = subscriptionManagerService.getSubscriptions
                     (protocol, subscriptionType, subscriptionName, destinationName, active, offset, limit);
             return Response.status(Response.Status.OK).entity(subscriptions).build();
         } catch (SubscriptionManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1105,12 +1051,13 @@ public class AndesRESTService implements Microservice {
             @ApiParam(value = "The name of the destination to close/unsubscribe. If \"*\", all destinations are " +
                               "included. Else destinations that CONTAINS the value are included.")
             @DefaultValue("*") @QueryParam("destination") String destinationName,
-            @DefaultValue("false") @QueryParam("unsubscribe-only") boolean unsubscribeOnly) {
+            @DefaultValue("false") @QueryParam("unsubscribe-only") boolean unsubscribeOnly)
+            throws InternalServerException {
         try {
             subscriptionManagerService.closeSubscriptions(protocol, subscriptionType, destinationName, unsubscribeOnly);
             return Response.status(Response.Status.OK).build();
         } catch (SubscriptionManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
@@ -1155,13 +1102,14 @@ public class AndesRESTService implements Microservice {
             @PathParam("subscription-type") String subscriptionType,
             @ApiParam(value = "The subscription ID.")
             @PathParam("subscription-id") String subscriptionID,
-            @DefaultValue("false") @QueryParam("unsubscribe-only") boolean unsubscribeOnly) {
+            @DefaultValue("false") @QueryParam("unsubscribe-only") boolean unsubscribeOnly)
+            throws InternalServerException {
         try {
             subscriptionManagerService.closeSubscription(protocol, subscriptionType, subscriptionID,
                     unsubscribeOnly);
             return Response.status(Response.Status.OK).build();
         } catch (SubscriptionManagerException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            throw new InternalServerException(e);
         }
     }
 
