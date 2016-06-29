@@ -30,8 +30,8 @@ public interface DestinationManagerService {
     /**
      * Gets the collection of destinations(queues/topics)
      *
-     * @param protocol        The protocol type matching for the destination type. Example : AMQP, amqp, MQTT, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @param keyword         Search keyword for destination name. "*" will return all destinations. Destinations that
      *                        <strong>contains</strong> the keyword will be returned.
      * @param offset          The offset value for the collection of destination.
@@ -45,8 +45,8 @@ public interface DestinationManagerService {
     /**
      * Deletes all the destinations.
      *
-     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @throws DestinationManagerException
      */
     void deleteDestinations(String protocol, String destinationType) throws DestinationManagerException;
@@ -54,8 +54,8 @@ public interface DestinationManagerService {
     /**
      * Gets a destination.
      *
-     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
      * @return A {@link Destination}.
      * @throws DestinationManagerException
@@ -66,8 +66,8 @@ public interface DestinationManagerService {
     /**
      * Creates a new destination.
      *
-     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
      * @return Newly created {@link Destination}.
      * @throws DestinationManagerException
@@ -78,8 +78,8 @@ public interface DestinationManagerService {
     /**
      * Gets permission assigned to specific destination.
      *
-     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
      * @return A set of {@link DestinationRolePermission}s. Null if invalid destination.
      * @throws DestinationManagerException
@@ -90,9 +90,8 @@ public interface DestinationManagerService {
     /**
      * Create permissions on a destination.
      *
-     * @param protocol                   The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType            The destination type matching for the destination. Example : queue, topic,
-     *                                   durable_topic.
+     * @param protocol                   The protocol type matching for the destination type.
+     * @param destinationType            The destination type matching for the destination.
      * @param destinationName            The name of the destination.
      * @param destinationRolePermission  New permission.
      * @return Newly created permission.
@@ -104,9 +103,8 @@ public interface DestinationManagerService {
     /**
      * Updates permissions on a destination.
      *
-     * @param protocol                   The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType            The destination type matching for the destination. Example : queue, topic,
-     *                                   durable_topic.
+     * @param protocol                   The protocol type matching for the destination type.
+     * @param destinationType            The destination type matching for the destination.
      * @param destinationName            The name of the destination.
      * @param destinationRolePermission  Updated permission.
      * @return Updated permission.
@@ -120,13 +118,22 @@ public interface DestinationManagerService {
     /**
      * Deletes a destination.
      *
-     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination to be deleted.
      * @throws DestinationManagerException
      */
     void deleteDestination(String protocol, String destinationType, String destinationName)
                                                                                     throws DestinationManagerException;
-
-    List<String> getDestinationNames(String protocol, String destinationType, String destinationName) throws DestinationManagerException;
+    
+    /**
+     * Gets names of destinations as strings.
+     *
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
+     * @param destinationName The name of the destination to be deleted.
+     * @throws DestinationManagerException
+     */
+    List<String> getDestinationNames(String protocol, String destinationType, String destinationName) 
+                                                                                    throws DestinationManagerException;
 }

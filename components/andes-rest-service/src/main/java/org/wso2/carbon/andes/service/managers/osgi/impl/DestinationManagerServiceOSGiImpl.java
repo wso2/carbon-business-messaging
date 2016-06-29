@@ -186,12 +186,12 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
         //        destination.setId(andesQueue.getID());
         destination.setDestinationName(andesQueue.queueName);
 //                destination.setCreatedDate(andesQueue.getCreatedDate());
-//        destination.setDestinationType(andesQueue.getDestinationType());
-//        destination.setProtocol(andesQueue.getProtocolType());
-//        destination.setMessageCount(andesResourceManager.getMessageCountForStorageQueue(andesQueue.queueName));
-//        destination.setDurable(andesQueue.isDurable);
-//        destination.setOwner(andesQueue.queueOwner);
-//        destination.setSubscriptionCount(andesQueue.subscriptionCount);
+        destination.setDestinationType(andesQueue.getDestinationType());
+        destination.setProtocol(andesQueue.getProtocolType());
+        destination.setMessageCount(andesResourceManager.getMessageCountForStorageQueue(andesQueue.queueName));
+        destination.setDurable(andesQueue.isDurable);
+        destination.setOwner(andesQueue.queueOwner);
+        destination.setSubscriptionCount(andesQueue.subscriptionCount);
         return destination;
     }
 }
