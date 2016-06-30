@@ -111,6 +111,8 @@ public class QpidServiceComponent {
 
     private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
+    protected static final String MODE_STANDALONE = "standalone";
+    protected static final String MODE_DEFAULT = "default";
     private static BundleContext bundleContext;
     private static Stack<ServiceRegistration> registrations = new Stack<ServiceRegistration>();
 
@@ -151,19 +153,35 @@ public class QpidServiceComponent {
 
             // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
-            if (!AndesContext.getInstance().isClusteringEnabled()) {
-                // If clustering is disabled, broker starts without waiting for hazelcastInstance
-                this.startAndesBroker();
-            } else {
-                if (registeredHazelcast) {
-                    // When clustering is enabled, starts broker only if the hazelcastInstance has also been registered.
-                    this.startAndesBroker();
 
+            // Read deployment mode
+            String mode = AndesConfigurationManager.readValue(AndesConfiguration.DEPLOYMENT_MODE);
+
+            // Start broker in standalone mode
+            if (mode.equalsIgnoreCase(MODE_STANDALONE)) {
+                // set clustering enabled to false because even though clustering enabled in axis2.xml, we are not
+                // going to consider it in standalone mode
+                AndesContext.getInstance().setClusteringEnabled(false);
+                this.startAndesBroker();
+            } else if (mode.equalsIgnoreCase(MODE_DEFAULT)) {
+                // Start broker in HA mode
+                if (!AndesContext.getInstance().isClusteringEnabled()) {
+                    // If clustering is disabled, broker starts without waiting for hazelcastInstance
+                    this.startAndesBroker();
                 } else {
-                    // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to true and
-                    // wait for hazelcastInstance to be registered.
-                    this.brokerShouldBeStarted = true;
+                    // Start broker in distributed mode
+                    if (registeredHazelcast) {
+                        // When clustering is enabled, starts broker only if the hazelcastInstance has also been
+                        // registered.
+                        this.startAndesBroker();
+                    } else {
+                        // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to
+                        // true and wait for hazelcastInstance to be registered.
+                        this.brokerShouldBeStarted = true;
+                    }
                 }
+            } else {
+                throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
             }
 
             registrations.push(bundleContext.registerService(
@@ -197,7 +215,7 @@ public class QpidServiceComponent {
 
         } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
-            throw new RuntimeException("Invalid configuration found in a configuration file", e);
+            this.shutdown();
         }
 
     }
