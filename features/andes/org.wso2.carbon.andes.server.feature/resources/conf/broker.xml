@@ -501,4 +501,17 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
     </recovery>
 
+    <!--This section used to set deployment related configuration in message broker instance.-->
+    <deployment>
+        <!--
+        The mode consists of different deployment pattern offered by message broker. Please carefully configure the
+        mode as described:
+
+        default - Broker set to this mode supports both distributed and HA. If you want to use distribute setup,
+                  set clustering to true in axis2.xml. Clustering set to false consider as HA.
+        standalone - Broker set to this mode considers to behave as a single node.
+        -->
+        <mode>default</mode>
+    </deployment>
+
 </broker>
