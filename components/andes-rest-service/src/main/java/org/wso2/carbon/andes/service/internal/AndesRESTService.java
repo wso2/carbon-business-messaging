@@ -1312,8 +1312,8 @@ public class AndesRESTService implements Microservice {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(
             value = "Gets cluster details.",
-            notes = "Gets cluster details which includes node details as well..",
-            tags = "Node Details")
+            notes = "Gets cluster details which includes node details as well.",
+            tags = "Broker Details")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received cluster information.",
                          response = ClusterInformation.class),
@@ -1354,7 +1354,7 @@ public class AndesRESTService implements Microservice {
     @ApiOperation(
             value = "Gets store details.",
             notes = "Gets message store details.",
-            tags = "Node Details")
+            tags = "Broker Details")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received store information.",
                          response = StoreInformation.class),
@@ -1395,7 +1395,7 @@ public class AndesRESTService implements Microservice {
     @ApiOperation(
             value = "Gets broker properties.",
             notes = "Gets current broker node details.",
-            tags = "Node Details")
+            tags = "Broker Details")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully received broker information.",
                          response = BrokerInformation.class),
