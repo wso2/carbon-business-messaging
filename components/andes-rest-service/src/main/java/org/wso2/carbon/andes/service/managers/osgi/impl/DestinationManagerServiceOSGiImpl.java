@@ -161,11 +161,12 @@ public class DestinationManagerServiceOSGiImpl implements DestinationManagerServ
     @Override
     public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
                                                                                     throws DestinationManagerException {
-        List<String> destinationNames = new ArrayList<>();
+        List<String> destinationNames;
         try {
             ProtocolType protocolType = new ProtocolType(protocol);
             DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType);
-            destinationNames = andesResourceManager.getDestinationNames(protocolType, destinationTypeEnum, destinationName);
+            destinationNames =
+                        andesResourceManager.getDestinationNames(protocolType, destinationTypeEnum, destinationName);
         } catch (AndesException e) {
             throw new DestinationManagerException("Error occurred while getting destination names.", e);
         }

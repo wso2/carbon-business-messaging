@@ -45,6 +45,7 @@ import org.wso2.carbon.andes.core.DestinationType;
 import org.wso2.carbon.andes.core.ProtocolType;
 import org.wso2.carbon.andes.core.util.DLCQueueUtils;
 import org.wso2.carbon.andes.service.exceptions.BrokerManagerException;
+import org.wso2.carbon.andes.service.exceptions.DLCQueueNotFoundException;
 import org.wso2.carbon.andes.service.exceptions.DestinationManagerException;
 import org.wso2.carbon.andes.service.exceptions.DestinationNotFoundException;
 import org.wso2.carbon.andes.service.exceptions.InternalServerException;
@@ -500,7 +501,7 @@ public class AndesRESTService implements Microservice {
                     newDestination.getDestinationName());
 
             return Response.status(Response.Status.OK)
-                    .entity(newDestination)
+                    .entity(destination)
                     .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + destination.getDestinationName())
                     .build();
         } catch (DestinationManagerException e) {
@@ -785,7 +786,7 @@ public class AndesRESTService implements Microservice {
             @ApiResponse(code = 400, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "Destination not found.", response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getDLCQueue() throws InternalServerException {
+    public Response getDLCQueue() throws InternalServerException, DLCQueueNotFoundException {
         try {
             //TODO : get queue name for tenant.
             String dlcQueueName = DLCQueueUtils.generateDLCQueueNameFromTenant("carbon.super");
@@ -794,63 +795,9 @@ public class AndesRESTService implements Microservice {
             if (null != dlcQueue) {
                 return Response.status(Response.Status.OK).entity(dlcQueue).build();
             } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
+                throw new DLCQueueNotFoundException("DLC does not exist for the user \"" + "carbon.super" + "\".");
             }
         } catch (DestinationManagerException e) {
-            throw new InternalServerException(e);
-        }
-    }
-
-    /**
-     * Gets messages from a dead letter channel using a message ID as the offset.
-     * <p>
-     * curl command example :
-     * <pre>
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?content=true
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages
-     *  curl -v -X GET http://127.0.0.1:9090/mb/v1.0.0/dlc/DeadLetterChannel/messages?next-message-id=1234&limit=10
-     * </pre>
-     *
-     * @param dlcQueueName    The DLC queue name.
-     * @param content         Whether to return message content or not.
-     * @param nextMessageID   The starting message ID to return from.
-     * @param limit           The number of messages to return.
-     * @return Return a collection of {@link Message}s. <p>
-     * <ul>
-     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a collection of {@link Message}s
-     *     as a JSON response.</li>
-     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
-     *     messages from the server.</li>
-     * </ul>
-     */
-    @GET
-    @Path("/dlc/{dlc-queue-name}/messages")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Gets DLC messages.",
-            notes = "Gets messages of a dead letter channel using message IDs.",
-            tags = {"Dead Letter Channel", "Messages"},
-            response = Message.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful list of messages.", response = Message.class),
-            @ApiResponse(code = 404, message = "DLC not found.", response = ErrorResponse.class),
-            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
-    public Response getDLCMessagesByMessageID(
-            @ApiParam(value = "The DLC queue name.")
-            @PathParam("dlc-queue-name") String dlcQueueName,
-            @ApiParam(value = "Whether to return message content or not.", allowableValues = "[true, false]")
-            @DefaultValue("false") @QueryParam("content") boolean content,
-            @ApiParam(value = "The starting message ID to return from.")
-            @DefaultValue("0") @QueryParam("next-message-id") long nextMessageID,
-            @ApiParam(value = "The number of messages to return for pagination.",
-                      allowableValues = "range[1, infinity]")
-            @DefaultValue("100") @QueryParam("limit") int limit) throws InternalServerException {
-        try {
-            List<Message> messages = messageManagerService.getMessagesOfDestinationByMessageID(dlcProtocol.toString(),
-                    AndesConstants.DLC_DESTINATION_TYPE.toString(), dlcQueueName, content, nextMessageID, limit);
-            return Response.status(Response.Status.OK).entity(messages).build();
-        } catch (MessageManagerException e) {
             throw new InternalServerException(e);
         }
     }
@@ -892,13 +839,34 @@ public class AndesRESTService implements Microservice {
             @ApiParam(value = "List of message IDs to restore.")
             List<Long> andesMessageIDs,
             @ApiParam(value = "The new queue name to redirect messages.")
-            @DefaultValue("") @QueryParam("new-queue-name") String newDestinationName) {
-        if (StringUtils.isEmpty(newDestinationName)) {
-            dlcManagerService.restoreMessagesFromDeadLetterQueue(andesMessageIDs, dlcQueueName);
-        } else {
-            dlcManagerService.restoreMessagesFromDeadLetterQueue(andesMessageIDs, newDestinationName, dlcQueueName);
+            @DefaultValue("") @QueryParam("new-queue-name") String newDestinationName)
+            throws InternalServerException, DestinationNotFoundException, DLCQueueNotFoundException {
+        try {
+            Destination destination = destinationManagerService.getDestination(dlcProtocol.toString(),
+                                                        AndesConstants.DLC_DESTINATION_TYPE.toString(), dlcQueueName);
+            if (null != destination) {
+                if (StringUtils.isEmpty(newDestinationName)) {
+                    dlcManagerService.restoreMessagesFromDeadLetterQueue(andesMessageIDs, dlcQueueName);
+                } else {
+                    // TODO : Reroute destination's protocol and destination type needs to be found.
+                    Destination rerouteDestination = destinationManagerService.getDestination("amqp-0-91", "queue",
+                                                                                                    newDestinationName);
+                    if (null != rerouteDestination) {
+                        dlcManagerService.restoreMessagesFromDeadLetterQueue(andesMessageIDs, newDestinationName,
+                                                                                                        dlcQueueName);
+                    } else {
+                        throw new DestinationNotFoundException("Destination '" + newDestinationName + "' not found to" +
+                                                               " reroute messages.");
+                    }
+                }
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                throw new DLCQueueNotFoundException("DLC Destination '" + dlcQueueName + "' not found to reroute or " +
+                                                    "restore.");
+            }
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
         }
-        return Response.status(Response.Status.OK).build();
     }
 
     /**
@@ -934,9 +902,20 @@ public class AndesRESTService implements Microservice {
             @PathParam("dlc-queue-name") String dlcQueueName,
             // Payload
             @ApiParam(value = "List of message IDs to delete.")
-            List<Long> andesMessageIDs) {
-        dlcManagerService.deleteMessagesFromDeadLetterQueue(andesMessageIDs, dlcQueueName);
-        return Response.status(Response.Status.OK).build();
+            List<Long> andesMessageIDs) throws InternalServerException, DLCQueueNotFoundException {
+        try {
+            Destination destination = destinationManagerService.getDestination(dlcProtocol.toString(),
+                    AndesConstants.DLC_DESTINATION_TYPE.toString(), dlcQueueName);
+            if (null != destination) {
+                dlcManagerService.deleteMessagesFromDeadLetterQueue(andesMessageIDs, dlcQueueName);
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                throw new DLCQueueNotFoundException("DLC Destination '" + dlcQueueName + "' not found to delete " +
+                                                    "messages.");
+            }
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
+        }
     }
 
     /**
@@ -1123,8 +1102,10 @@ public class AndesRESTService implements Microservice {
      *     http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/carbon:MySub/messages?limit=100
      * </pre>
      *
-     * @param protocol        The protocol type matching for the message.
-     * @param destinationType The destination type matching for the message.
+     * @param protocol        The protocol type matching for the message. To get messages of DLC, use protocol type as
+     *                        "{@link AndesConstants#DLC_PROTOCOL_NAME}-{@link AndesConstants#DLC_PROTOCOL_VERSION}".
+     * @param destinationType The destination type matching for the message. To get messages of DLC, use destination
+     *                        type as "{@link AndesConstants#DLC_DESTINATION_TYPE}".
      * @param destinationName The name of the destination.
      * @param content         Whether to return message content or not.
      * @param nextMessageID   The starting message ID to return from.
@@ -1155,11 +1136,12 @@ public class AndesRESTService implements Microservice {
                          response = ErrorResponse.class),
             @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
     public Response getMessagesOfDestination(
-            @ApiParam(value = "Protocol for the message.")
+            @ApiParam(value = "Protocol for the destination. To get messages of DLC, use protocol as 'DLC-default'.")
             @PathParam("protocol") String protocol,
-            @ApiParam(value = "Destination type for the message.")
+            @ApiParam(value = "Destination type for the destination. To get messages of DLC, use destination type as " +
+                              "'queue'.")
             @PathParam("destination-type") String destinationType,
-            @ApiParam(value = "The name of the destination of the message.")
+            @ApiParam(value = "The destination name of the messages. Use '/dlc' to get DLC queue name.")
             @PathParam("destination-name") String destinationName,
             @ApiParam(value = "Whether to return message content or not.", allowableValues = "[true, false]")
             @DefaultValue("false") @QueryParam("content") boolean content,
