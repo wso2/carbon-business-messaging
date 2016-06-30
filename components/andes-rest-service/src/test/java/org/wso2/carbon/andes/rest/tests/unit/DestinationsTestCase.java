@@ -469,7 +469,8 @@ public class DestinationsTestCase {
         HttpResponse response = httpClient.execute(getRequest);
 
         validateExceptionHandling(response.getEntity());
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(), "404 not received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(),
+                                                                                                    "404 not received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
@@ -585,8 +586,8 @@ public class DestinationsTestCase {
             AndesException {
         NewDestination requestDestination = new NewDestination();
         requestDestination.setDestinationName("Q1");
-        StringEntity destinationAsJsonString = new StringEntity(new ObjectMapper().writeValueAsString
-                (requestDestination));
+        StringEntity destinationAsJsonString =
+                        new StringEntity(new ObjectMapper().writeValueAsString(requestDestination));
 
         Destination responseDestination = new Destination();
         responseDestination.setId(29);
@@ -691,7 +692,8 @@ public class DestinationsTestCase {
 
         HttpResponse response = httpClient.execute(deleteRequest);
 
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(), "404 not received");
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.NOT_FOUND.getStatusCode(),
+                                                                                                    "404 not received");
 
         verify(destinationManagerService, atLeastOnce()).getDestination(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());

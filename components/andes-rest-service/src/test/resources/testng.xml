@@ -8,6 +8,7 @@
             <class name="org.wso2.carbon.andes.rest.tests.unit.DestinationsTestCase"/>
             <class name="org.wso2.carbon.andes.rest.tests.unit.PaginationTestCases"/>
             <class name="org.wso2.carbon.andes.rest.tests.unit.DestinationPermissionTestCase"/>
+            <class name="org.wso2.carbon.andes.rest.tests.unit.DLCTestCase"/>
         </classes>
     </test>
 </suite>

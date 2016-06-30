@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -103,7 +102,8 @@ public class PaginationTestCases {
 
         DestinationManagerService destinationManagerService = mock(DestinationManagerService.class);
         when(destinationManagerService.getDestinationNames(Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString())).thenReturn(destinations.stream().map(Destination::getDestinationName).collect(Collectors.toList()));
+                Mockito.anyString())).thenReturn(destinations.stream()
+                .map(Destination::getDestinationName).collect(Collectors.toList()));
         when(destinationManagerService.getDestinations(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyInt(), Mockito.anyInt())).thenReturn(destinations);
 
