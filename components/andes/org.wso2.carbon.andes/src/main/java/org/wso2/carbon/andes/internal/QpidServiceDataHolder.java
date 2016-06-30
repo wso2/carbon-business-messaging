@@ -18,9 +18,13 @@
 
 package org.wso2.carbon.andes.internal;
 
+import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
 import org.wso2.carbon.server.admin.common.IServerAdmin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a singleton class that holds data that is shared within this component.
@@ -32,6 +36,7 @@ public class QpidServiceDataHolder {
     private String accessKey = null;
     private ServerConfigurationService carbonConfiguration = null;
     private EventBundleNotificationService eventBundleNotificationService;
+    private List<BrokerLifecycleListener> brokerLifecycleListeners = new ArrayList<>();
 
     /**
      * This OSGi service is used in the situation where we need to shutdown from the carbon kernel.
@@ -106,5 +111,24 @@ public class QpidServiceDataHolder {
 
     public EventBundleNotificationService getEventBundleNotificationService(){
         return this.eventBundleNotificationService;
+    }
+
+    /**
+     * Get list of external andes server shutdown listeners
+     *
+     * @return List of broker shutdown listeners
+     */
+    public List<BrokerLifecycleListener> getBrokerLifecycleListeners() {
+        return brokerLifecycleListeners;
+    }
+
+    /**
+     * Set the list of external andes server shutdown listeners
+     *
+     * @param brokerLifecycleListeners
+     */
+    public void setBrokerLifecycleListeners(List<BrokerLifecycleListener> brokerLifecycleListeners)
+    {
+        this.brokerLifecycleListeners = brokerLifecycleListeners;
     }
 }
