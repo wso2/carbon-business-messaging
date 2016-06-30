@@ -38,7 +38,6 @@ import org.wso2.carbon.andes.core.DestinationType;
 import org.wso2.carbon.andes.core.DisablePubAckImpl;
 import org.wso2.carbon.andes.core.MessagingEngine;
 import org.wso2.carbon.andes.core.ProtocolType;
-import org.wso2.carbon.andes.core.internal.AndesContext;
 import org.wso2.carbon.andes.core.internal.cluster.ClusterResourceHolder;
 import org.wso2.carbon.andes.core.internal.inbound.FlowControlListener;
 
@@ -46,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The resource manager class will hold all protocol handler that is registered. This manager will expose the resource
@@ -471,7 +469,8 @@ public class AndesResourceManager {
      * @return A list of destination names.
      * @throws AndesException
      */
-    public List<String> getDestinationNames(ProtocolType protocol, DestinationType destinationType, String keyword) throws AndesException {
+    public List<String> getDestinationNames(ProtocolType protocol, DestinationType destinationType, String keyword)
+            throws AndesException {
         return resourceManagerTable.get(protocol, destinationType).getDestinationNames(keyword);
     }
 
