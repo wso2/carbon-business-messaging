@@ -612,7 +612,7 @@
         <carbon.registry.version>4.5.1</carbon.registry.version>
         <carbon.messaging.version>3.5.0-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.0.8</carbon.identity.version>
-        <andes.dependency.version>3.1.6</andes.dependency.version>
+        <andes.dependency.version>3.5.0-SNAPSHOT</andes.dependency.version>
         <andes.export.version>3.1.6</andes.export.version>
         <andes.import.version>3.1.6</andes.import.version>
         <carbon.kernel.version>4.4.5</carbon.kernel.version>
