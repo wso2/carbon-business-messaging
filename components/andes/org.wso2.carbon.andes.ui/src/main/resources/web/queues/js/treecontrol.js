@@ -251,7 +251,7 @@ function doReRouteAllMessages(nameOfQueue) {
             var checkedValues;
             jQuery.ajax({
                 url: "../queues/queue_messages_ids_ajaxprocessor.jsp?nameOfQueue=" + sourceDestination,
-                type: "POST",
+                type: "GET",
                 async: false,
                 success: function (data) {
                     checkedValues = data;
@@ -323,10 +323,12 @@ function doReRouteMessages(nameOfQueue) {
 
                     CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.reRoute"], function () {
                         $.ajax({
-                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue + '&newQueueName=' + selectedQueue,
+                            url: '../queues/dlc_message_reroute_ajaxprocessor.jsp',
                             async: true,
                             dataType: "html",
-                            data : { msgList : checkedValues },
+                            data : {    nameOfQueue : nameOfQueue,
+                                        newQueueName : selectedQueue,
+                                        msgList : checkedValues },
                             type: "POST",
                             success: function () {
                                 CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"], function () {

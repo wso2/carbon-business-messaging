@@ -95,7 +95,7 @@
                 + subscriptionDestination + "&protocolType=" + protocolType + "&destinationType="
                                                              + destinationType,
                 async:true,
-                type:"POST",
+                type:"GET",
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {
