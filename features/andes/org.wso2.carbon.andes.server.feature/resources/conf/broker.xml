@@ -44,6 +44,17 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
     </coordination>
 
+    <redeliveryDelay>
+        <!-- By default, when a message is rejected, MB will resend the message without 0ms delay. This delay value can
+        be configured by the following value. The configuration applied for all requeued messages.
+        Value is in milliseconds -->
+        <messageRedeliveryDelay>0</messageRedeliveryDelay>
+        <!-- This value will only be taken into account when "redeliveryDelay/messageRedeliveryDelay" value is greater
+        than 0ms. This time interval represents the interval between the tasks of redelivering requeued messages.
+        Value is in milliseconds. -->
+        <executionInterval>100</executionInterval>
+    </redeliveryDelay>
+
     <!-- You can enable/disable specific messaging transports in this section. By default all 
     transports are enabled. This section also allows you to customize the messaging flows used 
     within WSO2 MB. NOT performance related, but logic related. -->
