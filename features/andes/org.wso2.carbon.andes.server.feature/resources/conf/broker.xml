@@ -410,6 +410,34 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <transactionMessageWriters>1</transactionMessageWriters>
         </inboundEvents>
 
+        <!--Message expiration can be set to each messages which are published to Wso2 MB
+         After the expiration time the messages will not delivered to the consumers. Eventually
+         they got deleted inside the MB-->
+        <messageExpiration>
+            <!-- Messages in MB are expired based on their time to live value. There is a possibility of
+             messages get expired when they are in DLC. In this case whether they need to be detected as
+             expired messages and got deleted or not.-->
+            <expireMessagesInDLC>false</expireMessagesInDLC>
+
+            <!-- When messages delivered, in the delivery path messages were checked whether they are
+            already expired. If expired at that time add that message to a queue for a future batch
+            delete. This interval decides on the time gap between the batch deletes. Time interval
+            specified in seconds.-->
+            <preDeliveryExpiryDeletionInterval>600</preDeliveryExpiryDeletionInterval>
+
+            <!-- Periodically check the database for new expired messages which were not assigned to
+             any slot delivery worker so far and delete them. This interval decides on the time gap between
+             the periodic message deletion. Time interval specified in seconds.-->
+            <periodicMessageDeletionInterval>900</periodicMessageDeletionInterval>
+
+            <!-- When checking the database for expired messages, the messages which were handled by the slot
+            delivery worker should no be touched since that messed up the slot delivery worker functionality.
+            Those messages anyways get caught at the message delivery path. So there is a need to have a safe
+            buffer of slots which can be allocated to a slot delivery worker in the near future. The specified
+            number of slots form the last assigned should not be touched by the periodic deletion task.-->
+            <safetySlotCount>3</safetySlotCount>
+        </messageExpiration>
+
     </performanceTuning>
 
     <!-- This section is about how you want to view messaging statistics from the admin console and
