@@ -257,7 +257,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <timerPeriod>1000</timerPeriod>
 
             <!--Number of SlotDeliveryWorker threads that should be started-->
-            <workerThreadCount>5</workerThreadCount>
+            <workerThreadCount>1</workerThreadCount>
 
         </slots>
 
