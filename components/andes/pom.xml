@@ -113,6 +113,10 @@
             <groupId>net.jpountz.lz4</groupId>
             <artifactId>lz4</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.security.caas</groupId>
+            <artifactId>org.wso2.carbon.security.caas</artifactId>
+        </dependency>
 
         <!-- Testing dependencies -->
         <dependency>
