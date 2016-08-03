@@ -32,7 +32,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         If it is left as "default", the default node ID will be generated for it. (Using IP + UUID).
         The node ID of each member should ALWAYS be unique.-->
         <nodeID>default</nodeID>
-
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
         <thriftServerPort>7611</thriftServerPort>
@@ -55,6 +54,19 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <!-- Time interval used to poll database for membership related events in milliseconds. -->
             <eventPollingInterval>4000</eventPollingInterval>
         </rdbmsBasedCoordination>
+
+        <!-- Enabling this will make the cluster notifications such as Queue changes(additions and deletions),
+        Subscription changes, etc. sent within the cluster be synchronized using RDBMS. If set to false, Hazelcast
+        will be used for this purpose.-->
+        <RDBMSBasedClusterEventSynchronization enabled="false">
+
+            <!--Specifies the interval at which, the cluster events will be read from the database. Needs to be
+            declared in milliseconds. Setting this to a very low value could downgrade the performance where as
+            setting this to a large value could increase the time taken for a cluster event to be synchronized in
+            all the nodes in a cluster.-->
+            <eventSyncInterval>1000</eventSyncInterval>
+
+        </RDBMSBasedClusterEventSynchronization>
     </coordination>
 
     <!-- You can enable/disable specific messaging transports in this section. By default all 

@@ -190,4 +190,13 @@ CREATE TABLE MB_QUEUE_TO_LAST_ASSIGNED_ID (
                         PRIMARY KEY (QUEUE_NAME)
 );
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0]. [MB_CLUSTER_EVENT]' AND TYPE IN (N'U'))
+CREATE TABLE MB_CLUSTER_EVENT (
+                        EVENT_ID bigint IDENTITY(1,1) NOT NULL,
+                        ORIGINATED_NODE_ID varchar(512) NOT NULL,
+                        DESTINED_NODE_ID varchar(512) NOT NULL,
+                        EVENT_TYPE varchar(25) NOT NULL,
+                        EVENT_DETAILS varchar(1024) NOT NULL,
+                        PRIMARY KEY (EVENT_ID)
+);
 -- End of Andes Context Store Tables --
