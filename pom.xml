@@ -223,6 +223,11 @@
                 <artifactId>org.wso2.carbon.metrics.core</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.security.caas</groupId>
+                <artifactId>org.wso2.carbon.security.caas</artifactId>
+                <version>${carbon.security.version}</version>
+            </dependency>
             <!--End Carbon Dependencies-->
 
             <!--Dependent Features-->
@@ -553,6 +558,7 @@
         <carbon.messaging.version>1.0.4</carbon.messaging.version>
         <carbon.transport.http.netty.version>2.1.1-SNAPSHOT</carbon.transport.http.netty.version>
         <carbon.metrics.version>2.0.0</carbon.metrics.version>
+        <carbon.security.version>1.0.0-SNAPSHOT</carbon.security.version>
         <msf4j.import.version.range>[2.0.0, 3.0.0)</msf4j.import.version.range>
         <msf4j.version>2.0.0</msf4j.version>
         <uuf.version>1.0.0-SNAPSHOT</uuf.version>
