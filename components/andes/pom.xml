@@ -117,6 +117,14 @@
             <groupId>org.wso2.carbon.security.caas</groupId>
             <artifactId>org.wso2.carbon.security.caas</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.security.userstore</groupId>
+            <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
 
         <!-- Testing dependencies -->
         <dependency>
@@ -265,8 +273,13 @@
             com.hazelcast.*;version="${com.hazelcast.package.import.version.range}",
             org.apache.commons.lang;version="${org.apache.commons.lang.package.import.version.range}",
             org.wso2.carbon.datasource.core.*;version="${carbon.datasources.import.version.range}",
+            org.wso2.msf4j.*;version="${msf4j.import.version.range}",
+            org.wso2.carbon.security.caas.*;version="1.0.0",
+            org.wso2.msf4j.*;version="${msf4j.import.version.range}",
             org.wso2.carbon.metrics.core.*,
             org.slf4j.*;version="${slf4j.import.version.range}",
+            javax.xml.stream.*,
+            javax.security.*
         </import.package>
         <!--Refer to https://wso2.org/jira/browse/MB-1681-->
         <dynamic.import.package>*</dynamic.import.package>

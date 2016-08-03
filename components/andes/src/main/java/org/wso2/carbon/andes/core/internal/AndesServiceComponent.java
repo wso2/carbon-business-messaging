@@ -36,9 +36,11 @@ import org.wso2.carbon.andes.core.Andes;
 import org.wso2.carbon.andes.core.AndesKernelBoot;
 import org.wso2.carbon.andes.core.internal.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
+import org.wso2.carbon.andes.core.security.AndesAuthenticationManager;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.kernel.CarbonRuntime;
 import org.wso2.carbon.metrics.core.MetricService;
+import org.wso2.carbon.security.caas.user.core.service.RealmService;
 
 import java.nio.file.Paths;
 
@@ -90,8 +92,10 @@ public class AndesServiceComponent {
         // set message store and andes context store related configurations
         // TODO: C5 migration - Use data holder after moving core to product
         HazelcastAgent.getInstance().init(hazelcastInstance);
-        AndesContext.getInstance().setClusteringEnabled(true);
-        AndesContext.getInstance().constructStoreConfiguration();
+        AndesContext andesContext = AndesContext.getInstance();
+        andesContext.setClusteringEnabled(true);
+        andesContext.constructStoreConfiguration();
+        andesContext.setAndesAuthenticationManager(new AndesAuthenticationManager("CarbonSecurityConfig"));
         AndesContext.getInstance().setMetricService(AndesDataHolder.getInstance().getMetricService());
 
         startAndes();
@@ -159,7 +163,7 @@ public class AndesServiceComponent {
      * @param dataSourceService The data source service instance created
      */
     @Reference(
-            name = "carbon.datasource.service",
+            name = "org.wso2.carbon.datasource.DataSourceService",
             service = DataSourceService.class,
             cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
@@ -227,5 +231,22 @@ public class AndesServiceComponent {
      */
     protected void unsetMetricService(MetricService metricService) {
         AndesDataHolder.getInstance().setMetricService(null);
+    }
+
+    @Reference(
+            name = "org.wso2.carbon.security.CarbonRealmServiceImpl",
+            service = RealmService.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterCarbonRealm"
+    )
+    public void registerCarbonRealm(RealmService realmService) {
+        AndesDataHolder.getInstance().setRealmService(realmService);
+        AndesContext.getInstance().setRealmService(realmService);
+    }
+
+    public void unregisterCarbonRealm(RealmService carbonRealmService) {
+        AndesDataHolder.getInstance().setRealmService(null);
+        AndesContext.getInstance().setRealmService(null);
     }
 }
