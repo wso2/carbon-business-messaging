@@ -31,13 +31,6 @@
     <name>WSO2 Message Broker - UI - Common Component</name>
     <url>http://wso2.org</url>
 
-    <properties>
-        <import.package>
-            org.wso2.msf4j,
-            org.wso2.carbon.uuf
-        </import.package>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

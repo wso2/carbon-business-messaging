@@ -20,12 +20,14 @@ var onRequest = function (context) {
         destinations = andesResourceManager.getDestinations(protocolInstance, destinationTypeEnum.QUEUE, "*", 0, 1000);
         print("destinations : " + JSON.stringify(destinations));
         // Getting pending message counts for queues
+         var list = [];
         for each(var destination in destinations) {
             messageCountPerStorageQueue.put(destination.queueName, andesResourceManager.getMessageCountForStorageQueue(destination.queueName));
+            list.push({queueOwner: destination.queueOwner, queueName: destination.queueName, subscriptionCount: destination.subscriptionCount});
         }
     }
     return {"protocols" : protocolStrings,
-            "destinations" : destinations,
+            "destinations" : list,
             "messageCountPerStorageQueue" : messageCountPerStorageQueue,
            	"alert": {
            		"success": {},
