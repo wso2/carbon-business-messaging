@@ -228,6 +228,11 @@
                 <artifactId>org.wso2.carbon.security.caas</artifactId>
                 <version>${carbon.security.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.security.userstore</groupId>
+                <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
+                <version>${carbon.security.version}</version>
+            </dependency>
             <!--End Carbon Dependencies-->
 
             <!--Dependent Features-->

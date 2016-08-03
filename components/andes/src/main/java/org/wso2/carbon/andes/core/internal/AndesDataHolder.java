@@ -23,6 +23,7 @@ import com.hazelcast.osgi.HazelcastOSGiService;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.kernel.CarbonRuntime;
 import org.wso2.carbon.metrics.core.MetricService;
+import org.wso2.carbon.security.caas.user.core.service.RealmService;
 
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ public class AndesDataHolder {
     private HazelcastInstance carbonHazelcastAgent;
     private HazelcastOSGiService hazelcastOSGiService;
     private CarbonRuntime carbonRuntime;
+    private RealmService realmService;
     private MetricService metricService;
 
     /**
@@ -109,6 +111,14 @@ public class AndesDataHolder {
      */
     public void setHazelcastOSGiService(HazelcastOSGiService hazelcastOSGiService) {
         this.hazelcastOSGiService = hazelcastOSGiService;
+    }
+
+    public void setRealmService(RealmService realmService) {
+        this.realmService = realmService;
+    }
+
+    public RealmService getRealmService() {
+        return realmService;
     }
 
     /**
