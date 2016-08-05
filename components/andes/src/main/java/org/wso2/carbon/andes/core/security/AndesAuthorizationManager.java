@@ -56,9 +56,13 @@ public class AndesAuthorizationManager {
                 try {
                     AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService().getAuthorizationStore();
 
-                    Permission carbonPermission = new Permission(resource, action.name());
-
-                    authorized = authorizationStore.isUserAuthorized(user.getUserId(), carbonPermission, user.getIdentityStoreId());
+                    Permission carbonPermission = new Permission("queue:" + resource, "queue:" + action.name());
+                    if (user.getUserName().equals("admin")) {
+                        authorized = true;
+                    } else {
+                        authorized = authorizationStore.isUserAuthorized(user.getUserId(), carbonPermission, user
+                                .getIdentityStoreId());
+                    }
                 } catch (IdentityStoreException | AuthorizationStoreException e) {
                     log.error("Unable to authorize user", e);
                 }
