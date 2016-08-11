@@ -28,8 +28,8 @@ import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreExcep
 import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.security.caas.user.core.store.AuthorizationStore;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
+import javax.security.auth.Subject;
 
 /**
  * Handles authorization of Andes.
@@ -54,7 +54,8 @@ public class AndesAuthorizationManager {
                 User user = ((CarbonPrincipal) principal).getUser();
 
                 try {
-                    AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService().getAuthorizationStore();
+                    AuthorizationStore authorizationStore =
+                            AndesContext.getInstance().getRealmService().getAuthorizationStore();
 
                     Permission carbonPermission = new Permission("queue:" + resource, "queue:" + action.name());
                     if (user.getUserName().equals("admin")) {

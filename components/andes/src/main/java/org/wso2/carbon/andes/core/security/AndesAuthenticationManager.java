@@ -22,11 +22,11 @@ package org.wso2.carbon.andes.core.security;
 import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.security.caas.api.handler.UsernamePasswordCallbackHandler;
 
+import java.security.Principal;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import java.security.Principal;
 
 /**
  * Handles authentication of Andes.

@@ -34,7 +34,7 @@ public class AMQPSecurityUtils {
     /**
      * The separator which is used to separate username and password in encoded response.
      */
-    private static byte SEPARATOR = 0;
+    private static final byte SEPARATOR = 0;
 
     /**
      * Encode a given username and password of QPID to a byte array.
@@ -43,7 +43,7 @@ public class AMQPSecurityUtils {
      * @param password         The password
      * @return Encoded credentials byte array
      */
-    public static byte[] encodeCredentials(String authenticationID, String password) throws Exception{
+    public static byte[] encodeCredentials(String authenticationID, String password) throws Exception {
         try {
             byte[] passwordBytes = password.getBytes(RESPONSE_CHARSET);
             byte[] authIDBytes = authenticationID.getBytes(RESPONSE_CHARSET);
