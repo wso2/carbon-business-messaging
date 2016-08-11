@@ -57,10 +57,12 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                 <keyStore>
                      <location>repository/resources/security/wso2carbon.jks</location>
                      <password>wso2carbon</password>
+                     <certType>SunX509</certType>
                 </keyStore>
                 <trustStore>
                     <location>repository/resources/security/client-truststore.jks</location>
                     <password>wso2carbon</password>
+                    <certType>SunX509</certType>
                 </trustStore>
             </sslConnection>
 
@@ -79,10 +81,12 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                 <keyStore>
                     <location>repository/resources/security/wso2carbon.jks</location>
                     <password>wso2carbon</password>
+                    <certType>SunX509</certType>
                 </keyStore>
                 <trustStore>
                     <location>repository/resources/security/client-truststore.jks</location>
                     <password>wso2carbon</password>
+                    <certType>SunX509</certType>
                 </trustStore>
             </sslConnection>
 
