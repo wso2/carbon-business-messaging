@@ -318,14 +318,14 @@
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.uuf</groupId>
-                <artifactId>org.wso2.uuf.core.feature</artifactId>
+                <groupId>org.wso2.carbon.uuf</groupId>
+                <artifactId>org.wso2.carbon.uuf.core.feature</artifactId>
                 <version>${uuf.version}</version>
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.wso2.uuf</groupId>
-                <artifactId>org.wso2.uuf.handlebars.feature</artifactId>
+                <groupId>org.wso2.carbon.uuf</groupId>
+                <artifactId>org.wso2.carbon.uuf.renderablecreator.html</artifactId>
                 <version>${uuf.version}</version>
                 <type>zip</type>
             </dependency>
