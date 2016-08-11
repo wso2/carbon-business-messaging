@@ -23,12 +23,12 @@ import org.wso2.carbon.andes.core.internal.cluster.ClusterAgent;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
 import org.wso2.carbon.andes.core.internal.configuration.StoreConfiguration;
 import org.wso2.carbon.andes.core.internal.configuration.enums.AndesConfiguration;
+import org.wso2.carbon.andes.core.security.AndesAuthenticationManager;
+import org.wso2.carbon.andes.core.security.AndesAuthorizationManager;
 import org.wso2.carbon.andes.core.store.AndesContextStore;
 import org.wso2.carbon.andes.core.store.MessageStore;
 import org.wso2.carbon.andes.core.subscription.SubscriptionEngine;
 import org.wso2.carbon.metrics.core.MetricService;
-import org.wso2.carbon.andes.core.security.AndesAuthenticationManager;
-import org.wso2.carbon.andes.core.security.AndesAuthorizationManager;
 import org.wso2.carbon.security.caas.user.core.service.RealmService;
 
 import java.util.List;
