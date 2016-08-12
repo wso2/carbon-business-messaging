@@ -19,9 +19,13 @@
 package org.wso2.carbon.andes.core.internal.configuration.modules;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
 
 import java.io.File;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Common class used to maintain and parse JKS stores specified in broker.xml.
@@ -38,20 +42,23 @@ import java.io.File;
  * Refer usages of the class in AndesConfiguration for more information.
  */
 public class JKSStore {
-
+    
     /**
-     * Default values
+     * Common path fragment for all key/trust stores.
      */
-    private static final String defaultStorelocation = "resources" + File.separator + "security" + File.separator +
-            "wso2carbon.jks";
-    private static final String defaultStorePassword = "wso2carbon";
+    private static final String JKS_BASE_PATH = "repository" + File.separator + "resources" + File.separator +
+                                         "security" + File.separator;
+    /**
+     * Default store password
+     */
+    private static final String DEFAULT_STORE_PASSWORD = "wso2carbon";
 
     /**
      * Relative xpaths which are appended to the input root XPath at constructor.
      */
     private static final String relativeXPathForLocation = "/location";
     private static final String relativeXPathForPassword = "/password";
-
+    private static final String relativeXPathForStoreAlgorithm = "/certType";
     /**
      * Physical location of the JKS store, relative to PRODUCT_HOME
      */
@@ -62,6 +69,11 @@ public class JKSStore {
      */
     private String password;
 
+    /**
+     * Algorithm ( / certificate type) used for the store. (e.g. SunX509)
+     */
+    private String storeAlgorithm;
+    
     public String getStoreLocation() {
         return storeLocation;
     }
@@ -70,16 +82,38 @@ public class JKSStore {
         return password;
     }
 
+    public String getStoreAlgorithm() {
+        return storeAlgorithm;
+    }
+
+    public void setStoreAlgorithm(String storeAlgorithm) {
+        this.storeAlgorithm = storeAlgorithm;
+    }
+    
     public JKSStore(String rootXPath) throws ConfigurationException {
 
         String locationXPath = rootXPath + relativeXPathForLocation;
         String passwordXPath = rootXPath + relativeXPathForPassword;
-
+        String storeAlgorithmXPath = rootXPath + relativeXPathForStoreAlgorithm;
+        
+        String defaultStoreLocation = null;
+        String defaultStoreAlgorithm = null;
+        
+        if (StringUtils.containsIgnoreCase(rootXPath, "trustStore")) {
+            defaultStoreLocation = JKS_BASE_PATH + "wso2carbon.jks";
+            defaultStoreAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        } else {
+            defaultStoreAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
+            defaultStoreLocation = JKS_BASE_PATH + "client-truststore.jks";
+        }
+        
         // After deriving the full xpaths, the AndesConfigurationManager is used to extract the values for each
         // property.
-        storeLocation = AndesConfigurationManager.deriveValidConfigurationValue(
-                locationXPath, String.class, defaultStorelocation);
-        password = AndesConfigurationManager.deriveValidConfigurationValue(
-                passwordXPath, String.class, defaultStorePassword);
+        storeLocation = AndesConfigurationManager.deriveValidConfigurationValue(locationXPath, String.class,
+                defaultStoreLocation);
+        password = AndesConfigurationManager.deriveValidConfigurationValue(passwordXPath, String.class,
+                DEFAULT_STORE_PASSWORD);
+        storeAlgorithm = AndesConfigurationManager.deriveValidConfigurationValue(storeAlgorithmXPath, String.class,
+                                                                           defaultStoreAlgorithm);
     }
 }
