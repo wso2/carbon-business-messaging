@@ -22,6 +22,9 @@ package org.wso2.carbon.andes.core.security;
  * Enum for keeping all the authorization actions that can be performance against Andes for a queue/topic.
  */
 public enum AuthorizeAction {
+    CREATE,
+    BIND,
+    CONSUME,
     PUBLISH,
     SUBSCRIBE,
     BROWSE,
