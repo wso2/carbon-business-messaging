@@ -48,7 +48,8 @@ public class AndesAuthenticationManager {
     }
 
     /**
-     * Authenticate a user with a username and password. Throws {@link javax.security.auth.login.LoginException} if authentication fails.
+     * Authenticate a user with a username and password. Throws {@link javax.security.auth.login.LoginException} if
+     * authentication fails.
      *
      * @param username The username
      * @param password The password
@@ -65,7 +66,9 @@ public class AndesAuthenticationManager {
     }
 
     /**
-     * Authenticate a user from a CallbackHandler.  Throws {@link javax.security.auth.login.LoginException} if authentication fails.
+     * Authenticate a user from a CallbackHandler.  Throws {@link javax.security.auth.login.LoginException} if
+     * authentication fails.
+     *
      * @param callbackHandler The CallbackHandler initialized with login details
      * @return Authenticated subject
      * @throws javax.security.auth.login.LoginException

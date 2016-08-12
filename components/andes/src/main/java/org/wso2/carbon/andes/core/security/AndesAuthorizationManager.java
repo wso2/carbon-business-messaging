@@ -20,17 +20,16 @@ package org.wso2.carbon.andes.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.core.internal.AndesContext;
 import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.security.caas.user.core.bean.User;
 import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.security.caas.user.core.exception.StoreException;
-import org.wso2.carbon.security.caas.user.core.store.AuthorizationStore;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
 import java.util.Properties;
+import java.util.Set;
+import javax.security.auth.Subject;
 
 
 /**
@@ -43,21 +42,25 @@ public class AndesAuthorizationManager {
     /**
      * Check whether a given user is authorized.
      *
-     * @param subject The authenticated subject
+     * @param subject  The authenticated subject
      * @param resource The resource to check authorization for
-     * @param action The action require to authorize
+     * @param action   The action require to authorize
      * @return True if authorized
      */
     public boolean isAuthorized(Subject subject, String resource, AuthorizeAction action, Properties properties) {
         boolean authorized = false;
-
-        for (Principal principal : subject.getPrincipals()) {
+        Set<Principal> principals = null;
+        if (subject != null) { // No user associated with the thread
+            principals = subject.getPrincipals();
+        }
+        if (principals == null) {
+            return false;
+        }
+        for (Principal principal : principals) {
             if (principal instanceof CarbonPrincipal) {
                 User user = ((CarbonPrincipal) principal).getUser();
 
                 try {
-                    AuthorizationStore authorizationStore =
-                            AndesContext.getInstance().getRealmService().getAuthorizationStore();
 
                     if (user.getUserName().equals("admin")) {
                         authorized = true;
@@ -80,8 +83,6 @@ public class AndesAuthorizationManager {
 
         return authorized;
     }
-
-
 
 
 }

@@ -25,8 +25,14 @@ import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreExcep
 import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.security.caas.user.core.store.AuthorizationStore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+/**
+ * This class evaluates the user permissions that are allowed for a user when doing an action for a
+ * certain queue, topic or durable topic.
+ */
 public class AndesAuthorizationHandler {
 
     /**
@@ -43,6 +49,16 @@ public class AndesAuthorizationHandler {
      * Pre-declared name for amqp "Topic Exchange".
      */
     private static final String TOPIC_EXCHANGE = "amq.topic";
+
+    /**
+     * Underscore character for routing key change.
+     */
+    private static final String AT_REPLACE_CHAR = "_";
+
+    /**
+     * This map used to handle 'consume' authorization of non durable topic
+     */
+    private static Map<String, String> temporaryQueueToTopicMap = new HashMap<>();
 
 
     public static boolean handleCreateQueue(User user) throws IdentityStoreException, AuthorizationStoreException {
@@ -70,8 +86,8 @@ public class AndesAuthorizationHandler {
         // Bind properties
         String exchangeName =
                 AndesAuthorizationHandler.getRawExchangeName((String) properties.get("exch"));
-//        String queueName =
-//                AndesAuthorizationHandler.getRawQueueName((String) properties.get("queue"));
+        String queueName =
+                AndesAuthorizationHandler.getRawQueueName((String) properties.get("queue"));
         String routingKey =
                 AndesAuthorizationHandler.getRawRoutingKey((String) properties.get("routingKey"));
 
@@ -95,7 +111,7 @@ public class AndesAuthorizationHandler {
             Permission topicPermission = new Permission("mb:topic", "mb:add");
             boolean isAuthorizedToAddTopic = authorizationStore.isUserAuthorized(user.getUserId(), topicPermission, user
                     .getIdentityStoreId());
-            if(routingKey != null){
+            if (routingKey != null) {
                 Permission topicResourcePermission = new Permission("mb:topic/" + routingKey, "mb:" + AuthorizeAction
                         .SUBSCRIBE
                         .name());
@@ -105,23 +121,33 @@ public class AndesAuthorizationHandler {
                 if (isAuthorizedToAddTopic && isAuthorizedToSubscribeTopic) {
                     authorized = true;
                 }
+                String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
+                temporaryQueueToTopicMap.put(queueName, newRoutingKey);
             }
         }
 
-    return authorized;
-}
+        return authorized;
+    }
 
 
     public static boolean handleConsumeQueue(User user, String resource) throws
             IdentityStoreException, AuthorizationStoreException {
         AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService()
                 .getAuthorizationStore();
-        Permission resourcePermission = new Permission("mb:topic/" + resource, "mb:" +
-                                                                         AuthorizeAction
-                                                                                 .SUBSCRIBE
-                                                                                 .name());
-        return authorizationStore.isUserAuthorized(user.getUserId(), resourcePermission,
-                user.getIdentityStoreId());
+        boolean authorized;
+        if (temporaryQueueToTopicMap.get(resource) != null) {
+
+            Permission topicPermission = new Permission("mb:topic/" + temporaryQueueToTopicMap.get(resource), "mb:"
+                                                                                  + AuthorizeAction.SUBSCRIBE.name());
+            authorized = authorizationStore.isUserAuthorized(user.getUserId(), topicPermission,
+                    user.getIdentityStoreId());
+        } else {
+            Permission queuePermission = new Permission("mb:queue/" + resource, "mb:" +
+                                                                                AuthorizeAction.SUBSCRIBE.name());
+            authorized = authorizationStore.isUserAuthorized(user.getUserId(), queuePermission,
+                    user.getIdentityStoreId());
+        }
+        return authorized;
     }
 
     /**
