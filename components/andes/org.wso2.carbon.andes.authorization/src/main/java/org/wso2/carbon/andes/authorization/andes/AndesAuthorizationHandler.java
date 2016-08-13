@@ -389,8 +389,17 @@ public class AndesAuthorizationHandler {
                     case TOPIC_EXCHANGE:
 
                         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
-                        String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                newRoutingKey.replace(".","-").replace("/", "-"));
+                        String roleName;
+                        if (newRoutingKey.contains(".")) {
+                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                                    newRoutingKey.substring(0, newRoutingKey.indexOf(".")));
+                        } else if (newRoutingKey.contains("/")) {
+                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                                    newRoutingKey.substring(0, newRoutingKey.indexOf("/")));
+                        } else {
+                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                                    newRoutingKey);
+                        }
                         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                         // Authorize
@@ -450,8 +459,8 @@ public class AndesAuthorizationHandler {
                         } else {
 
                             //check that user authorize to parent of topic hierarchy
-                            boolean isUserAuthorized = isAuthorizeToParentInHierarchy(username, userRealm, topicId,
-                                    TreeNode.Permission.SUBSCRIBE);
+                            boolean isUserAuthorized = userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                    topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
 
                             if (isUserAuthorized) {
                                 //This is triggered when a new subscriber is arrived when the topic
