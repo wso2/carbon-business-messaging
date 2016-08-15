@@ -19,8 +19,6 @@ package org.wso2.carbon.andes.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.kernel.DestinationType;
-import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.carbon.andes.admin.internal.Exception.BrokerManagerAdminException;
 import org.wso2.carbon.andes.admin.internal.Message;
 import org.wso2.carbon.andes.admin.internal.Queue;
@@ -43,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides all the andes admin services that is available through the UI(JSP).
@@ -188,6 +187,25 @@ public class AndesAdminService extends AbstractAdmin {
             throw new BrokerManagerAdminException(errorMessage, e);
         }
         return queuesDTO;
+    }
+
+    /**
+     * Get a list of names of durable queues created in the broker
+     *
+     * @return a set of queue names
+     * @throws BrokerManagerAdminException on error while retrieving information
+     */
+    public Set<String> getNamesOfAllDurableQueues() throws BrokerManagerAdminException {
+        QueueManagerService queueManagerService =
+                AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+        Set<String> namesOfDurableQueues;
+        try {
+            namesOfDurableQueues = queueManagerService.getNamesOfAllDurableQueues();
+        } catch (QueueManagerException e) {
+            log.error("Error while retrieving names of durable queues ", e);
+            throw new BrokerManagerAdminException("Error while retrieving names of durable queues", e);
+        }
+        return namesOfDurableQueues;
     }
 
     /**

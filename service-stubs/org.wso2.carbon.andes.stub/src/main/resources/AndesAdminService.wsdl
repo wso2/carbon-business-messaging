@@ -49,6 +49,7 @@
                     <xs:element minOccurs="0" name="dlcMsgDestination" nillable="true" type="xs:string"/>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="messageContent" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="msgProperties" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="storageQueueName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="QueueRolePermission">
@@ -125,6 +126,18 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax23:Queue"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNamesOfAllDurableQueues">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNamesOfAllDurableQueuesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -716,6 +729,12 @@
     <wsdl:message name="getMessageCountForSubscriberResponse">
         <wsdl:part name="parameters" element="ns:getMessageCountForSubscriberResponse"/>
     </wsdl:message>
+    <wsdl:message name="getNamesOfAllDurableQueuesRequest">
+        <wsdl:part name="parameters" element="ns:getNamesOfAllDurableQueues"/>
+    </wsdl:message>
+    <wsdl:message name="getNamesOfAllDurableQueuesResponse">
+        <wsdl:part name="parameters" element="ns:getNamesOfAllDurableQueuesResponse"/>
+    </wsdl:message>
     <wsdl:message name="deleteQueueRequest">
         <wsdl:part name="parameters" element="ns:deleteQueue"/>
     </wsdl:message>
@@ -949,6 +968,11 @@
             <wsdl:input message="tns:getMessageCountForSubscriberRequest" wsaw:Action="urn:getMessageCountForSubscriber"/>
             <wsdl:output message="tns:getMessageCountForSubscriberResponse" wsaw:Action="urn:getMessageCountForSubscriberResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountForSubscriberAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getNamesOfAllDurableQueues">
+            <wsdl:input message="tns:getNamesOfAllDurableQueuesRequest" wsaw:Action="urn:getNamesOfAllDurableQueues"/>
+            <wsdl:output message="tns:getNamesOfAllDurableQueuesResponse" wsaw:Action="urn:getNamesOfAllDurableQueuesResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getNamesOfAllDurableQueuesAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="deleteQueue">
             <wsdl:input message="tns:deleteQueueRequest" wsaw:Action="urn:deleteQueue"/>
@@ -1303,6 +1327,18 @@
         </wsdl:operation>
         <wsdl:operation name="deleteQueue">
             <soap:operation soapAction="urn:deleteQueue" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getNamesOfAllDurableQueues">
+            <soap:operation soapAction="urn:getNamesOfAllDurableQueues" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1832,6 +1868,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getNamesOfAllDurableQueues">
+            <soap12:operation soapAction="urn:getNamesOfAllDurableQueues" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getQueueRolePermission">
             <soap12:operation soapAction="urn:getQueueRolePermission" style="document"/>
             <wsdl:input>
@@ -2291,6 +2339,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getNamesOfAllDurableQueues">
+            <http:operation location="getNamesOfAllDurableQueues"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getQueueRolePermission">
             <http:operation location="getQueueRolePermission"/>
             <wsdl:input>
@@ -2501,13 +2558,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesAdminService">
         <wsdl:port name="AndesAdminServiceHttpsSoap11Endpoint" binding="tns:AndesAdminServiceSoap11Binding">
-            <soap:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://192.168.1.6:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsSoap12Endpoint" binding="tns:AndesAdminServiceSoap12Binding">
-            <soap12:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://192.168.1.6:9443/services/AndesAdminService.AndesAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesAdminServiceHttpsEndpoint" binding="tns:AndesAdminServiceHttpBinding">
-            <http:address location="https://10.100.5.147:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://192.168.1.6:9443/services/AndesAdminService.AndesAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

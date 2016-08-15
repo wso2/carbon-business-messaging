@@ -59,7 +59,7 @@
             $.ajax({
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
-                type:"POST",
+                type:"GET",
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {

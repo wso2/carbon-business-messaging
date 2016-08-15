@@ -70,6 +70,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Works as the manager class for queue related tasks done from UI. (create queue, delete queue,
@@ -148,11 +149,18 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             queue.setMessageCount(QueueManagementBeans.getInstance().getMessageCount(queueName, "queue"));
 
             //show queue only if it belongs to the current tenant domain of user
-            if (Utils.isQueueInDomain(queue)) {
+            if (Utils.isQueueInDomain(queue.getQueueName())) {
                 return queue;
             }
         }
         return null;
+    }
+
+    @Override
+    public Set<String> getNamesOfAllDurableQueues() throws QueueManagerException {
+        Set<String> durableQueues = QueueManagementBeans.getInstance().getNamesOfAllDurableQueues();
+        Utils.filterDomainSpecificQueues(durableQueues);
+        return durableQueues;
     }
 
     /**
@@ -160,7 +168,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public org.wso2.carbon.andes.core.types.Queue getDLCQueue(String tenantDomain) throws QueueManagerException {
-        return getQueueByName(DLCQueueUtils.generateDLCQueueNameFromTenant(tenantDomain));
+        String tenantSpecificDLCQueueName = DLCQueueUtils.
+                generateDLCQueueNameFromTenant(tenantDomain);
+        return QueueManagementBeans.getInstance().getDLCQueue(tenantSpecificDLCQueueName);
     }
 
     /**
