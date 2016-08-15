@@ -24,6 +24,7 @@ package org.wso2.carbon.andes.core.security;
 public enum AuthorizeAction {
     CREATE,
     BIND,
+    UNBIND,
     CONSUME,
     PUBLISH,
     SUBSCRIBE,

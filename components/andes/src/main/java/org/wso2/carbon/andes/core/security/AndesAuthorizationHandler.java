@@ -25,9 +25,8 @@ import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreExcep
 import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.security.caas.user.core.store.AuthorizationStore;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class evaluates the user permissions that are allowed for a user when doing an action for a
@@ -58,7 +57,7 @@ public class AndesAuthorizationHandler {
     /**
      * This map used to handle 'consume' authorization of non durable topic
      */
-    private static Map<String, String> temporaryQueueToTopicMap = new HashMap<>();
+    private static ConcurrentHashMap<String, String> temporaryQueueToTopicMap = new ConcurrentHashMap<>();
 
 
     public static boolean handleCreateQueue(User user) throws IdentityStoreException, AuthorizationStoreException {
@@ -82,7 +81,6 @@ public class AndesAuthorizationHandler {
         boolean authorized = false;
         AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService()
                 .getAuthorizationStore();
-        properties.get("exch");
         // Bind properties
         String exchangeName =
                 AndesAuthorizationHandler.getRawExchangeName((String) properties.get("exch"));
@@ -122,7 +120,7 @@ public class AndesAuthorizationHandler {
                     authorized = true;
                 }
                 String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
-                temporaryQueueToTopicMap.put(queueName, newRoutingKey);
+                temporaryQueueToTopicMap.put(resource, newRoutingKey);
             }
         }
 
@@ -132,9 +130,9 @@ public class AndesAuthorizationHandler {
 
     public static boolean handleConsumeQueue(User user, String resource) throws
             IdentityStoreException, AuthorizationStoreException {
+        boolean authorized;
         AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService()
                 .getAuthorizationStore();
-        boolean authorized;
         if (temporaryQueueToTopicMap.get(resource) != null) {
 
             Permission topicPermission = new Permission("mb:topic/" + temporaryQueueToTopicMap.get(resource), "mb:"
@@ -149,6 +147,43 @@ public class AndesAuthorizationHandler {
         }
         return authorized;
     }
+
+    public static boolean handleUnbindQueue(User user, String resource, Properties properties) throws
+            IdentityStoreException, AuthorizationStoreException {
+
+        boolean authorized = false;
+        AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService()
+                .getAuthorizationStore();
+        String exchangeName =
+                AndesAuthorizationHandler.getRawExchangeName((String) properties.get("exch"));
+        String queueName = (String) properties.get("queue");
+        if (exchangeName.equals(DEFAULT_EXCHANGE)) {
+            authorized = true;
+        } else if (exchangeName.equals(DIRECT_EXCHANGE)) {
+            Permission queuePermission = new Permission("mb:queue", "mb:delete");
+            authorized = authorizationStore.isUserAuthorized(user.getUserId(), queuePermission, user
+                    .getIdentityStoreId());
+        } else if (exchangeName.equals(TOPIC_EXCHANGE)) {
+            Permission topicPermission = new Permission("mb:topic", "mb:delete");
+            authorized = authorizationStore.isUserAuthorized(user.getUserId(), topicPermission, user
+                    .getIdentityStoreId());
+            if (authorized) {
+                temporaryQueueToTopicMap.remove(queueName);
+            }
+        }
+        return authorized;
+    }
+
+    public static boolean handleDeleteQueue(User user, String resource, Properties properties) throws
+            IdentityStoreException, AuthorizationStoreException {
+
+        boolean authorized = false;
+        AuthorizationStore authorizationStore = AndesContext.getInstance().getRealmService()
+                .getAuthorizationStore();
+        return  true;
+
+    }
+
 
     /**
      * Internally default exchange has the name <<default>> that can not be used as Registry node.

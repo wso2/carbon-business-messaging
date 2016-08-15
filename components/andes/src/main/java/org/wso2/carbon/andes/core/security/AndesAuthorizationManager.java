@@ -70,13 +70,17 @@ public class AndesAuthorizationManager {
                         } else if (action.name().equals(AuthorizeAction.BIND.name())) {
                             authorized = AndesAuthorizationHandler.handleBindQueue(user, resource, properties);
                         } else if (action.name().equals(AuthorizeAction.CONSUME.name())) {
-
                             authorized = AndesAuthorizationHandler.handleConsumeQueue(user, resource);
+                        } else if (action.name().equals(AuthorizeAction.UNBIND.name())) {
+                            authorized = AndesAuthorizationHandler.handleUnbindQueue(user, resource, properties);
+                        } else if (action.name().equals(AuthorizeAction.DELETE.name())) {
+                            authorized = AndesAuthorizationHandler.handleDeleteQueue(user, resource, properties);
+
                         }
 
                     }
                 } catch (IdentityStoreException | StoreException | AuthorizationStoreException e) {
-                    log.error("Unable to authorize user", e);
+                    log.error("User " + user.getUserName() + "is not authorized to do " + action.name() , e);
                 }
             }
         }
