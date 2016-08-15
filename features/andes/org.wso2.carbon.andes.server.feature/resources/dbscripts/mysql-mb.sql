@@ -154,4 +154,28 @@ CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
                         PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS MB_CLUSTER_COORDINATOR_HEARTBEAT (
+                        ANCHOR INT NOT NULL,
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        LAST_HEARTBEAT BIGINT NOT NULL,
+                        THRIFT_HOST VARCHAR(512) NOT NULL,
+                        THRIFT_PORT INT NOT NULL,
+                        PRIMARY KEY (ANCHOR)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS MB_CLUSTER_NODE_HEARTBEAT (
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        LAST_HEARTBEAT BIGINT NOT NULL,
+                        IS_NEW_NODE TINYINT NOT NULL,
+                        PRIMARY KEY (NODE_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS MB_MEMBERSHIP (
+                        EVENT_ID BIGINT NOT NULL AUTO_INCREMENT,
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        CHANGE_TYPE tinyint(4) NOT NULL,
+                        CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
+                        PRIMARY KEY (EVENT_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- End of Andes Context Store Tables --

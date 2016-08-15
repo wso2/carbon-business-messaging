@@ -42,6 +42,19 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Hazelcast reliable topics are used to share all notifications across the MB cluster (e.g. subscription
         changes), And this property defines the time-to-live for a notification since its creation. (in Seconds) -->
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
+
+        <!-- Configurations related RDBMS based coordination algorithm -->
+        <rdbmsBasedCoordination enabled="false">
+            <!-- Heartbeat interval used in the RDBMS base coordination algorithm in milliseconds -->
+            <heartbeatInterval>5000</heartbeatInterval>
+
+            <!-- Time to wait before informing others about coordinator change in milliseconds. This value should be
+            larger than a database read time including network latency and should be less than heartbeatInterval -->
+            <coordinatorEntryCreationWaitTime>3000</coordinatorEntryCreationWaitTime>
+
+            <!-- Time interval used to poll database for membership related events in milliseconds. -->
+            <eventPollingInterval>4000</eventPollingInterval>
+        </rdbmsBasedCoordination>
     </coordination>
 
     <!-- You can enable/disable specific messaging transports in this section. By default all 
