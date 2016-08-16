@@ -199,4 +199,35 @@ CREATE TABLE MB_CLUSTER_EVENT (
                         EVENT_DETAILS varchar(1024) NOT NULL,
                         PRIMARY KEY (EVENT_ID)
 );
+
+--create cluster coordinator heartbeat
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_CLUSTER_COORDINATOR_HEARTBEAT]') AND TYPE IN (N'U'))
+CREATE TABLE MB_CLUSTER_COORDINATOR_HEARTBEAT (
+                        ANCHOR INT NOT NULL,
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        LAST_HEARTBEAT BIGINT NOT NULL,
+                        THRIFT_HOST VARCHAR(512) NOT NULL,
+                        THRIFT_PORT INT NOT NULL,
+                        PRIMARY KEY (ANCHOR)
+);
+
+--create cluster node heartbeat
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_CLUSTER_NODE_HEARTBEAT]') AND TYPE IN (N'U'))
+CREATE TABLE MB_CLUSTER_NODE_HEARTBEAT (
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        LAST_HEARTBEAT BIGINT NOT NULL,
+                        IS_NEW_NODE TINYINT NOT NULL,
+                        PRIMARY KEY (NODE_ID)
+);
+
+--create membership
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB_MEMBERSHIP]') AND TYPE IN (N'U'))
+CREATE TABLE MB_MEMBERSHIP (
+                        EVENT_ID BIGINT IDENTITY(1,1) NOT NULL,
+                        NODE_ID VARCHAR(512) NOT NULL,
+                        CHANGE_TYPE tinyint(4) NOT NULL,
+                        CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
+                        PRIMARY KEY (EVENT_ID)
+);
+
 -- End of Andes Context Store Tables --
