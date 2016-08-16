@@ -380,24 +380,6 @@
             </dependency>
             <!-- END of Message Broker Dependencies-->
 
-            <!-- MQTT Dependancies -->
-<!--             <dependency>
-                <groupId>io.netty.wso2</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>${netty-all.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.hawtdb</groupId>
-                <artifactId>hawtdb</artifactId>
-                <version>${hawtdb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.hawtbuf</groupId>
-                <artifactId>hawtbuf</artifactId>
-                <version>${hawtbuf.version}</version>
-            </dependency> -->
-            <!-- End of MQTT Dependancies -->
-
             <!--Dependencies for Testing-->
             <dependency>
                 <groupId>org.testng</groupId>
@@ -467,6 +449,12 @@
                 <groupId>org.ow2.spec.ee</groupId>
                 <artifactId>ow2-jta-1.1-spec</artifactId>
                 <version>${ow2.jta.spec.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${org.json.version}</version>
                 <scope>test</scope>
             </dependency>
             <!--End of Dependencies for Testing-->
@@ -545,6 +533,7 @@
         <io.swagger.jaxrs.version>1.5.8</io.swagger.jaxrs.version>
         <commons-lang.version>2.1</commons-lang.version>
         <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>
+        <org.json.version>20160212</org.json.version>
 
         <!--WSO2 related properties-->
         <andes.package.export.version.range>3.5.0</andes.package.export.version.range>
