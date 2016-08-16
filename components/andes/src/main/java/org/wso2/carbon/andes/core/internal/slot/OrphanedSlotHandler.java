@@ -28,6 +28,7 @@ import org.wso2.carbon.andes.core.DestinationType;
 import org.wso2.carbon.andes.core.MessagingEngine;
 import org.wso2.carbon.andes.core.SubscriptionListener;
 import org.wso2.carbon.andes.core.internal.AndesContext;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 import org.wso2.carbon.andes.core.subscription.SubscriptionEngine;
 

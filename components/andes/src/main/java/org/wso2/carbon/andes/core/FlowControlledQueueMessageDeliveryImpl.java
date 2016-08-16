@@ -20,7 +20,6 @@ package org.wso2.carbon.andes.core;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.core.internal.slot.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 import org.wso2.carbon.andes.core.subscription.SubscriptionEngine;
 
@@ -72,7 +71,6 @@ public class FlowControlledQueueMessageDeliveryImpl implements MessageDeliverySt
             // Handle orphaned slot created with this no subscription scenario for queue
             // clear all tracking when orphan slot situation
             messages.clear();
-            SlotDeliveryWorkerManager.getInstance().stopDeliveryForDestination(storageQueue);
         } else {
             while (iterator.hasNext()) {
 
