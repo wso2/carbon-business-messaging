@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.core.MessagingEngine;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -112,15 +113,9 @@ public class SlotDeletionExecutor {
                                 // Delete attempt not success, therefore adding slot to the queue
                                 slotsToDelete.put(slot);
                             } else {
-                                SlotDeliveryWorker slotWorker = SlotDeliveryWorkerManager.getInstance()
-                                        .getSlotWorker(slot.getStorageQueueName());
-
-                                // slotWorker can be null.
-                                // For instance if the deletion request came from coordinator after a member leaves the
+                                // Deletion request came from coordinator after a member leaves the
                                 // cluster and no subscribers on coordinator node.
-                                if (null != slotWorker) {
-                                    slotWorker.deleteSlot(slot);
-                                }
+                                SlotDeliveryWorkerManager.getInstance().deleteSlot(slot);
                             }
                         } else {
                             slotsToDelete.put(slot); // Not deleted. Hence putting back in queue

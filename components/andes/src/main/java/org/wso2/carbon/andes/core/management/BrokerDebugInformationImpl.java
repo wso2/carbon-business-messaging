@@ -19,7 +19,7 @@
 package org.wso2.carbon.andes.core.management;
 
 import org.wso2.carbon.andes.core.AndesException;
-import org.wso2.carbon.andes.core.internal.slot.SlotDeliveryWorkerManager;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.management.mbeans.BrokerDebugInformationMXBean;
 
 import java.io.File;

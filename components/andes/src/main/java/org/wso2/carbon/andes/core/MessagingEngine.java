@@ -29,12 +29,12 @@ import org.wso2.carbon.andes.core.internal.cluster.coordination.ClusterCoordinat
 import org.wso2.carbon.andes.core.internal.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
 import org.wso2.carbon.andes.core.internal.configuration.enums.AndesConfiguration;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.internal.slot.ConnectionException;
 import org.wso2.carbon.andes.core.internal.slot.Slot;
 import org.wso2.carbon.andes.core.internal.slot.SlotCoordinator;
 import org.wso2.carbon.andes.core.internal.slot.SlotCoordinatorCluster;
 import org.wso2.carbon.andes.core.internal.slot.SlotCoordinatorStandalone;
-import org.wso2.carbon.andes.core.internal.slot.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.internal.slot.SlotManagerClusterMode;
 import org.wso2.carbon.andes.core.internal.slot.SlotManagerStandalone;
 import org.wso2.carbon.andes.core.internal.slot.SlotMessageCounter;
@@ -741,7 +741,7 @@ public class MessagingEngine {
     public void startMessageDelivery() {
         log.info("Starting SlotDelivery Workers.");
         //Start all slotDeliveryWorkers
-        SlotDeliveryWorkerManager.getInstance().startAllSlotDeliveryWorkers();
+        SlotDeliveryWorkerManager.getInstance().startMessageDelivery();
         //Start thrift reconnecting thread if started
         if (MBThriftClient.isReconnectingStarted()) {
             MBThriftClient.setReconnectingFlag(true);
@@ -756,7 +756,7 @@ public class MessagingEngine {
 
         log.info("Stopping SlotDelivery Worker.");
         //Stop all slotDeliveryWorkers
-        SlotDeliveryWorkerManager.getInstance().stopSlotDeliveryWorkers();
+        SlotDeliveryWorkerManager.getInstance().stopMessageDelivery();
         //Stop thrift reconnecting thread if started
         if (MBThriftClient.isReconnectingStarted()) {
             MBThriftClient.setReconnectingFlag(false);

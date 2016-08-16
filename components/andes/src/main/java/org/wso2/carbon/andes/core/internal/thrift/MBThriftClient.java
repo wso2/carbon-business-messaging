@@ -29,21 +29,23 @@ import org.apache.thrift.transport.TTransportException;
 import org.wso2.carbon.andes.core.internal.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
 import org.wso2.carbon.andes.core.internal.configuration.enums.AndesConfiguration;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.internal.slot.ConnectionException;
 import org.wso2.carbon.andes.core.internal.slot.Slot;
 import org.wso2.carbon.andes.core.internal.slot.SlotCoordinationConstants;
-import org.wso2.carbon.andes.core.internal.slot.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.internal.thrift.exception.ThriftClientException;
 import org.wso2.carbon.andes.core.internal.thrift.slot.gen.SlotInfo;
 import org.wso2.carbon.andes.core.internal.thrift.slot.gen.SlotManagementService;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A wrapper client for the native thrift client. All the public methods in this class are
  * synchronized in order to avoid out of sequence response exception from thrift server. Only one
  * method should be triggered at a time in order to get the responses from the server in order.
  */
-
 public class MBThriftClient {
 
     /**
@@ -57,6 +59,10 @@ public class MBThriftClient {
     private static SlotManagementService.Client client = null;
 
     private static final Log log = LogFactory.getLog(MBThriftClient.class);
+
+    private static final Queue<ThriftConnectionListener> connectionListenerQueue = new ConcurrentLinkedQueue<>();
+
+    private static AtomicBoolean isConnected = new AtomicBoolean(false);
 
     /**
      * getSlot method. Returns Slot Object, when the
@@ -76,7 +82,7 @@ public class MBThriftClient {
             return convertSlotInforToSlot(slotInfo);
         } catch (TException e) {
             try {
-                //retry once
+                // Retry once
                 reConnectToServer();
                 slotInfo = client.getSlotInfo(queueName, nodeId);
                 return convertSlotInforToSlot(slotInfo);
@@ -157,7 +163,7 @@ public class MBThriftClient {
             deleteSuccess = client.deleteSlot(queueName, slotInfo, nodeId);
         } catch (TException e) {
             try {
-                //retry to connect once
+                // Retry to connect once
                 reConnectToServer();
                 deleteSuccess = client.deleteSlot(queueName, slotInfo, nodeId);
             } catch (TException e1) {
@@ -266,6 +272,7 @@ public class MBThriftClient {
      * Start the thrift server reconnecting thread when the coordinator of the cluster is changed.
      */
     private static void handleCoordinatorChanges() {
+        notifyDisconnection();
         resetServiceClient();
         if (!isReconnectingStarted()) {
             setReconnectingFlag(true);
@@ -280,7 +287,6 @@ public class MBThriftClient {
         client = null;
         transport.close();
     }
-
     /**
      * Try to reconnect to server by taking latest values in the hazelcalst thrift server details
      * map
@@ -308,6 +314,7 @@ public class MBThriftClient {
             transport.open();
             TProtocol protocol = new TBinaryProtocol(transport);
             client = new SlotManagementService.Client(protocol);
+            notifyConnection();
         } catch (TTransportException e) {
             log.error("Could not connect to the Thrift Server " + thriftCoordinatorServerIP + ":" +
                               thriftCoordinatorServerPort + e.getMessage(), e);
@@ -315,6 +322,38 @@ public class MBThriftClient {
                     "Could not connect to the Thrift Server " + thriftCoordinatorServerIP + ":" +
                             thriftCoordinatorServerPort, e);
         } catch (InterruptedException ignore) {
+        }
+    }
+
+    /**
+     * Add Thrift connection listener
+     *
+     * @param connectionListener {@link ThriftConnectionListener}
+     *
+     */
+    public static void addConnectionListener(ThriftConnectionListener connectionListener) {
+        connectionListenerQueue.add(connectionListener);
+    }
+
+    /**
+     * Notify Thrift connection establish signal to the {@link ThriftConnectionListener}
+     */
+    private static void notifyConnection() {
+        if (isConnected.compareAndSet(false, true)) {
+            for (ThriftConnectionListener listener : connectionListenerQueue) {
+                listener.onThriftClientConnect();
+            }
+        }
+    }
+
+    /**
+     * Notify Thrift connection disconnect to the {@link ThriftConnectionListener}s
+     */
+    private static void notifyDisconnection() {
+        if (isConnected.compareAndSet(true, false)) {
+            for (ThriftConnectionListener listener : connectionListenerQueue) {
+                listener.onThriftClientDisconnect();
+            }
         }
     }
 
@@ -337,17 +376,14 @@ public class MBThriftClient {
 
                     try {
                         reConnectToServer();
-                        /**
-                         * If re connect to server is successful, following code segment will be
-                         * executed
-                         */
+
+                        // If re connect to server is successful, following code segment will be executed
                         reconnectingStarted = false;
-                        slotDeliveryWorkerManager.startAllSlotDeliveryWorkers();
                     } catch (TTransportException e) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException ignored) {
-                            //silently ignore
+                            Thread.currentThread().interrupt();
                         }
                     } catch (Throwable e) {
                         log.error("Error occurred while re connecting to thrift server ", e);
@@ -357,7 +393,6 @@ public class MBThriftClient {
             }
         }.start();
     }
-
 
     /**
      * A flag to specify whether the reconnecting to thrift server is happening or not

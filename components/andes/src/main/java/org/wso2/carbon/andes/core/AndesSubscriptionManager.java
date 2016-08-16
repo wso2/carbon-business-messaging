@@ -27,8 +27,8 @@ import org.wso2.carbon.andes.core.internal.cluster.coordination.hazelcast.Hazelc
 import org.wso2.carbon.andes.core.internal.cluster.error.detection.NetworkPartitionListener;
 import org.wso2.carbon.andes.core.internal.configuration.AndesConfigurationManager;
 import org.wso2.carbon.andes.core.internal.configuration.enums.AndesConfiguration;
+import org.wso2.carbon.andes.core.internal.outbound.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.internal.slot.OrphanedSlotHandler;
-import org.wso2.carbon.andes.core.internal.slot.SlotDeliveryWorkerManager;
 import org.wso2.carbon.andes.core.subscription.BasicSubscription;
 import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 import org.wso2.carbon.andes.core.subscription.SubscriptionEngine;
@@ -157,27 +157,26 @@ public class AndesSubscriptionManager implements NetworkPartitionListener {
 
         }
 
-        //store subscription in context store.
+        // Store subscription in context store.
         if (!durableTopicSubFoundAndUpdated) {
             subscriptionEngine.createDisconnectOrRemoveLocalSubscription(localSubscription,
                                                                          SubscriptionListener.SubscriptionChange.ADDED);
         }
 
-        //start a slot delivery worker on the destination (or topicQueue) subscription refers
+        // Start a slot delivery worker on the destination (or topicQueue) subscription refers
         SlotDeliveryWorkerManager slotDeliveryWorkerManager = SlotDeliveryWorkerManager.getInstance();
-        slotDeliveryWorkerManager.startSlotDeliveryWorker(localSubscription.getStorageQueueName(),
+        slotDeliveryWorkerManager.onSubscriptionAdded(localSubscription.getStorageQueueName(),
                                                           subscriptionEngine.getDestination(localSubscription),
                                                           localSubscription.getProtocolType(),
                                                           localSubscription.getDestinationType());
 
-        //notify the local subscription change to listeners. For durable topic subscriptions this will update
+        // Notify the local subscription change to listeners. For durable topic subscriptions this will update
         // existing inactive one if it matches
         notifyLocalSubscriptionHasChanged(localSubscription, SubscriptionListener.SubscriptionChange.ADDED);
 
         // Now remove the mock subscriptions. Removing should do after adding the new subscription
-        // . Otherwise subscription list will be null at some point.
-
-        if (0 != mockSubscriptionList.size()) {
+        // Otherwise subscription list will be null at some point.
+        if (!mockSubscriptionList.isEmpty()) {
             for (LocalSubscription mockSubscription : mockSubscriptionList) {
                 subscriptionEngine.removeLocalSubscription(mockSubscription);
                 notifyLocalSubscriptionHasChanged(mockSubscription, SubscriptionListener.SubscriptionChange.DELETED);
