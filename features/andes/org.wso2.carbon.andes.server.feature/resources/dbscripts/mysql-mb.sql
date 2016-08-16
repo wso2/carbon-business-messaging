@@ -178,4 +178,13 @@ CREATE TABLE IF NOT EXISTS MB_MEMBERSHIP (
                         PRIMARY KEY (EVENT_ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS MB_CLUSTER_EVENT (
+                        EVENT_ID BIGINT NOT NULL AUTO_INCREMENT,
+                        ORIGINATED_NODE_ID VARCHAR(512) NOT NULL,
+                        DESTINED_NODE_ID VARCHAR(512) NOT NULL,
+                        EVENT_TYPE VARCHAR(25) NOT NULL,
+                        EVENT_DETAILS VARCHAR(1024) NOT NULL,
+                        PRIMARY KEY (EVENT_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- End of Andes Context Store Tables --
