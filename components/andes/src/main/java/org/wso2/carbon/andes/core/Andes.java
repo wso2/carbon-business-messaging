@@ -230,7 +230,7 @@ public class Andes {
     public void ackReceived(AndesAckData ackData) throws AndesException {
 
         //Tracing Message
-        MessageTracer.trace(ackData.getAcknowledgedMessage().getMessageID(),
+        MessageTracer.trace(ackData.getAcknowledgedMessage().getMessageId(),
                             ackData.getAcknowledgedMessage().getDestination(),
                             MessageTracer.ACK_RECEIVED_FROM_PROTOCOL);
 
@@ -471,9 +471,9 @@ public class Andes {
      * @param metadataList     The updated meta data list.
      * @throws AndesException
      */
-    public void updateMetaDataInformation(String currentQueueName, List<AndesMessageMetadata> metadataList)
+    public void updateMetadataInformation(String currentQueueName, List<AndesMessageMetadata> metadataList)
             throws AndesException {
-        messagingEngine.updateMetaDataInformation(currentQueueName, metadataList);
+        messagingEngine.updateMetadataInformation(currentQueueName, metadataList);
     }
 
     /**
@@ -576,9 +576,9 @@ public class Andes {
      * @return List of message metadata
      * @throws AndesException
      */
-    public List<DeliverableAndesMetadata> getMetaDataList(Slot slot, final String queueName, long firstMsgId,
+    public List<DeliverableAndesMetadata> getMetadataList(Slot slot, final String queueName, long firstMsgId,
                                                           long lastMsgID) throws AndesException {
-        return messagingEngine.getMetaDataList(slot, queueName, firstMsgId, lastMsgID);
+        return messagingEngine.getMetadataList(slot, queueName, firstMsgId, lastMsgID);
     }
 
     /**

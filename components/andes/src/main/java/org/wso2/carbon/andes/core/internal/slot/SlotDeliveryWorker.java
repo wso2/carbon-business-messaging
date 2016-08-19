@@ -265,9 +265,9 @@ public class SlotDeliveryWorker extends Thread implements StoreHealthListener, N
         // Filter already read messages
         while (readMessageIterator.hasNext()) {
             DeliverableAndesMetadata currentMessage = readMessageIterator.next();
-            if (slot.checkIfMessageIsAlreadyAdded(currentMessage.getMessageID())) {
+            if (slot.checkIfMessageIsAlreadyAdded(currentMessage.getMessageId())) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Tracker rejected message id= " + currentMessage.getMessageID() + " from buffering "
+                    log.debug("Tracker rejected message id= " + currentMessage.getMessageId() + " from buffering "
                                       + "to deliver. This is an already buffered message");
                 }
                 readMessageIterator.remove();
@@ -356,12 +356,12 @@ public class SlotDeliveryWorker extends Thread implements StoreHealthListener, N
             long firstMsgId = slot.getStartMessageId();
             long lastMsgId = slot.getEndMessageId();
             //Read messages in the slot
-            messagesRead = MessagingEngine.getInstance().getMetaDataList(slot, storageQueueName, firstMsgId, lastMsgId);
+            messagesRead = MessagingEngine.getInstance().getMetadataList(slot, storageQueueName, firstMsgId, lastMsgId);
 
             if (log.isDebugEnabled()) {
                 StringBuilder messageIDString = new StringBuilder();
                 for (DeliverableAndesMetadata metadata : messagesRead) {
-                    messageIDString.append(metadata.getMessageID()).append(" , ");
+                    messageIDString.append(metadata.getMessageId()).append(" , ");
                 }
                 log.debug("Messages Read: " + messageIDString);
             }

@@ -148,7 +148,7 @@ public class MessagePreProcessor implements EventHandler<InboundEventContainer> 
 
         if (log.isDebugEnabled()) {
             log.debug("[ Sequence " + sequence + " ] Pre processing message. Message ID "
-                              + message.getMetadata().getMessageID());
+                              + message.getMetadata().getMessageId());
         }
 
         if (message.getMetadata().getDeliveryStrategy().equalsIgnoreCase(AndesUtils.TOPIC_DELIVERY_STRATEGY)) {
@@ -203,7 +203,7 @@ public class MessagePreProcessor implements EventHandler<InboundEventContainer> 
 
                     if (MessageTracer.isEnabled()) {
                         MessageTracer.trace(message, MessageTracer.MESSAGE_CLONED + clonedMessage.getMetadata()
-                                .getMessageID() + " for " + clonedMessage.getMetadata().getStorageDestination());
+                                .getMessageId() + " for " + clonedMessage.getMetadata().getStorageDestination());
                     }
 
                     if (subscription.isDurable()) {
@@ -217,7 +217,7 @@ public class MessagePreProcessor implements EventHandler<InboundEventContainer> 
                     }
                     if (log.isDebugEnabled()) {
                         log.debug("Storing metadata queue " + subscription.getStorageQueueName() + " messageID "
-                                          + clonedMessage.getMetadata().getMessageID() + " isTopic");
+                                          + clonedMessage.getMetadata().getMessageId() + " isTopic");
                     }
 
                     // add the topic wise cloned message to the events list. Message writers will pick that and
@@ -248,12 +248,12 @@ public class MessagePreProcessor implements EventHandler<InboundEventContainer> 
 
                 event.clearMessageList();
                 log.info("Message routing key: " + message.getMetadata().getDestination() + " No routes in " +
-                                 "cluster. Ignoring Message id " + message.getMetadata().getMessageID());
+                                 "cluster. Ignoring Message id " + message.getMetadata().getMessageId());
             }
 
         } catch (AndesException e) {
             log.error("Error occurred while processing routing information fot topic message. Routing Key " +
-                              messageRoutingKey + ", Message ID " + message.getMetadata().getMessageID());
+                              messageRoutingKey + ", Message ID " + message.getMetadata().getMessageId());
         }
     }
 
@@ -291,7 +291,7 @@ public class MessagePreProcessor implements EventHandler<InboundEventContainer> 
             MessageTracer.trace(message, MessageTracer.MESSAGE_ID_MAPPED + " id: " + messageId);
         }
 
-        message.getMetadata().setMessageID(messageId);
+        message.getMetadata().setMessageId(messageId);
 
         for (AndesMessagePart messagePart : message.getContentChunkList()) {
             messagePart.setMessageID(messageId);

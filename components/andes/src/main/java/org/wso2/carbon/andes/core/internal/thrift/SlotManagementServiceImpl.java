@@ -60,7 +60,7 @@ public class SlotManagementServiceImpl implements SlotManagementService.Iface {
                                 long localSafeZone) throws TException {
         if (AndesContext.getInstance().getClusterAgent().isCoordinator()) {
             try {
-                slotManager.updateMessageID(queueName, nodeId, startMessageId, endMessageId, localSafeZone);
+                slotManager.updateMessageId(queueName, nodeId, startMessageId, endMessageId, localSafeZone);
             } catch (AndesException e) {
                 throw new TException("Failed to update message id for queue: " + queueName + " nodeId: " + nodeId, e);
             }

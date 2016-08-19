@@ -126,7 +126,7 @@ public class SlowestSubscriberTopicMessageDeliveryImpl implements MessageDeliver
                     }
                     iterator.remove();
                     if (log.isDebugEnabled()) {
-                        log.debug("Removing Scheduled to send message from buffer. MsgId= " + message.getMessageID());
+                        log.debug("Removing Scheduled to send message from buffer. MsgId= " + message.getMessageId());
                     }
                     sentMessageCount++;
                 } else {

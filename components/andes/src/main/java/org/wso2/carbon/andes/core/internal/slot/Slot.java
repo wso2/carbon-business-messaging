@@ -165,7 +165,7 @@ public class Slot implements Serializable, Comparable<Slot> {
      * @param metadata metadata of the message to add
      */
     public void addMessageToSlotIfAbsent(DeliverableAndesMetadata metadata) {
-        messagesOfSlot.putIfAbsent(metadata.getMessageID(), metadata);
+        messagesOfSlot.putIfAbsent(metadata.getMessageId(), metadata);
     }
 
     /**
@@ -205,7 +205,7 @@ public class Slot implements Serializable, Comparable<Slot> {
      */
     public void deleteAllMessagesInSlot() {
         for (DeliverableAndesMetadata messageMetadata : messagesOfSlot.values()) {
-            long messageId = messageMetadata.getMessageID();
+            long messageId = messageMetadata.getMessageId();
             messageMetadata.markAsSlotRemoved();
             if (messageMetadata.isOKToDispose()) {
                 if (log.isDebugEnabled()) {

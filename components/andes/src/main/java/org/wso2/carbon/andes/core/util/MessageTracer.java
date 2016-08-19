@@ -84,7 +84,7 @@ public class MessageTracer {
      * @param content Message activity
      */
     public static void trace(AndesMessage message, String content) {
-        trace(message.getMetadata().getMessageID(), message.getMetadata().getDestination(), content);
+        trace(message.getMetadata().getMessageId(), message.getMetadata().getDestination(), content);
     }
 
     /**
@@ -95,7 +95,7 @@ public class MessageTracer {
      * @param content  message activity
      */
     public static void trace(AndesMessageMetadata metadata, String content) {
-        trace(metadata.getMessageID(), metadata.getDestination(), content);
+        trace(metadata.getMessageId(), metadata.getDestination(), content);
     }
 
     /**

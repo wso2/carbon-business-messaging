@@ -46,7 +46,7 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
     /**
      * Unique identifier of the message
      */
-    private long messageID;
+    private long messageId;
 
     /**
      * Content length of the message in bytes
@@ -133,7 +133,7 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      * @param protocolType protocol type of the metadata
      */
     public AndesMessageMetadata(long messageId, String destination, ProtocolType protocolType) {
-        setMessageID(messageId);
+        setMessageId(messageId);
         setProtocolType(protocolType);
         setDestination(destination);
         setStorageDestination(destination);
@@ -206,7 +206,7 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      */
     private ByteBuffer encode() {
         ByteBuffer byteBuffer = ByteBuffer.allocate(getStorableSize());
-        AndesEncodingUtil.putLong(byteBuffer, getMessageID());
+        AndesEncodingUtil.putLong(byteBuffer, getMessageId());
         AndesEncodingUtil.putInt(byteBuffer, getMessageContentLength());
         AndesEncodingUtil.putLong(byteBuffer, getExpirationTime());
         AndesEncodingUtil.putLong(byteBuffer, getArrivalTime());
@@ -234,7 +234,7 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      */
     private void decode(byte[] src) throws AndesException {
         ByteBuffer byteBuffer = ByteBuffer.wrap(src);
-        setMessageID(AndesEncodingUtil.getEncodedLong(byteBuffer));
+        setMessageId(AndesEncodingUtil.getEncodedLong(byteBuffer));
         setMessageContentLength(AndesEncodingUtil.getEncodedInt(byteBuffer));
         setExpirationTime(AndesEncodingUtil.getEncodedLong(byteBuffer));
         setArrivalTime(AndesEncodingUtil.getEncodedLong(byteBuffer));
@@ -298,8 +298,8 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      *
      * @return unque message id
      */
-    public long getMessageID() {
-        return messageID;
+    public long getMessageId() {
+        return messageId;
     }
 
     /**
@@ -308,10 +308,10 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      * {@link org.wso2.carbon.andes.core.internal.inbound.MessagePreProcessor}
      * </p>
      *
-     * @param messageID unique message id
+     * @param messageId unique message id
      */
-    public void setMessageID(long messageID) {
-        this.messageID = messageID;
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
     }
 
     /**
@@ -555,10 +555,10 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
      */
     @Override
     public int compareTo(AndesMessageMetadata other) {
-        if (this.getMessageID() == other.getMessageID()) {
+        if (this.getMessageId() == other.getMessageId()) {
             return 0;
         } else {
-            return this.getMessageID() > other.getMessageID() ? 1 : -1;
+            return this.getMessageId() > other.getMessageId() ? 1 : -1;
         }
     }
 
@@ -617,7 +617,7 @@ public class AndesMessageMetadata implements Comparable<AndesMessageMetadata> {
     @Override
     public String toString() {
         return "AndesMessageMetadata{" +
-                "messageID=" + messageID +
+                "messageId=" + messageId +
                 ", messageContentLength=" + messageContentLength +
                 ", expirationTime=" + expirationTime +
                 ", arrivalTime=" + arrivalTime +

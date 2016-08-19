@@ -45,7 +45,7 @@ public class SlotUtils {
     public static boolean checkSlotEmptyFromMessageStore(Slot slot) {
         try {
             List<DeliverableAndesMetadata> messagesReturnedFromCassandra =
-                    MessagingEngine.getInstance().getMetaDataList(slot,
+                    MessagingEngine.getInstance().getMetadataList(slot,
                                                                   slot.getStorageQueueName(), slot.getStartMessageId(),
                                                                   slot.getEndMessageId());
             return messagesReturnedFromCassandra == null || messagesReturnedFromCassandra.isEmpty();

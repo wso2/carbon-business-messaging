@@ -37,7 +37,7 @@ public class MessagePurgeRule implements CommonDeliveryRule {
     @Override
     public boolean evaluate(DeliverableAndesMetadata message, ProtocolType protocolType,
                             DestinationType destinationType) throws AndesException {
-        long messageID = message.getMessageID();
+        long messageID = message.getMessageId();
 
         // Get last purged timestamp of the destination queue.
         long lastPurgedTimestampOfQueue =

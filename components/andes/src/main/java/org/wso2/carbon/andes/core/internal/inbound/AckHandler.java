@@ -80,7 +80,7 @@ public class AckHandler implements BatchEventHandler, StoreHealthListener {
         if (log.isTraceEnabled()) {
             StringBuilder messageIDsString = new StringBuilder();
             for (InboundEventContainer inboundEvent : eventList) {
-                messageIDsString.append(inboundEvent.ackData.getAcknowledgedMessage().getMessageID()).append(" , ");
+                messageIDsString.append(inboundEvent.ackData.getAcknowledgedMessage().getMessageId()).append(" , ");
             }
             log.trace(eventList.size() + " messages received : " + messageIDsString);
         }
@@ -112,11 +112,11 @@ public class AckHandler implements BatchEventHandler, StoreHealthListener {
             boolean deleteMessage = ack.getAcknowledgedMessage().markAsAcknowledgedByChannel(ack.getChannelID());
 
             LocalSubscription subscription = subscriptionEngine.getLocalSubscriptionForChannelId(ack.getChannelID());
-            subscription.ackReceived(ack.getAcknowledgedMessage().getMessageID());
+            subscription.ackReceived(ack.getAcknowledgedMessage().getMessageId());
 
             if (deleteMessage) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Ok to delete message id " + ack.getAcknowledgedMessage().getMessageID());
+                    log.debug("Ok to delete message id " + ack.getAcknowledgedMessage().getMessageId());
                 }
                 //it is a must to set this to event container. Otherwise, multiple event handlers will see the status
                 event.ackData.setBaringMessageRemovable();
@@ -161,7 +161,7 @@ public class AckHandler implements BatchEventHandler, StoreHealthListener {
             if (log.isTraceEnabled()) {
                 StringBuilder messageIDsString = new StringBuilder();
                 for (DeliverableAndesMetadata metadata : messagesToRemove) {
-                    messageIDsString.append(metadata.getMessageID()).append(" , ");
+                    messageIDsString.append(metadata.getMessageId()).append(" , ");
                 }
                 log.trace(messagesToRemove.size() + " message ok to remove : " + messageIDsString);
             }

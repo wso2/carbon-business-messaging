@@ -106,7 +106,7 @@ public class SlotCreator implements Runnable {
             }
 
             if (AndesContext.getInstance().isClusteringEnabled()) {
-                SlotManagerClusterMode.getInstance().updateMessageID(queueName,
+                SlotManagerClusterMode.getInstance().updateMessageId(queueName,
                                                                      AndesContext.getInstance().getClusterAgent()
                                                                              .getLocalNodeIdentifier(),
                                                                      firstMessageID,

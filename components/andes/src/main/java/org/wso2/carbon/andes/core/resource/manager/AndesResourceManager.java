@@ -329,7 +329,7 @@ public class AndesResourceManager {
 
                     messagesToRemove.add(metadata);
 
-                    AndesMessageMetadata clonedMetadata = metadata.shallowCopy(metadata.getMessageID());
+                    AndesMessageMetadata clonedMetadata = metadata.shallowCopy(metadata.getMessageId());
                     AndesMessage andesMessage = new AndesMessage(clonedMetadata);
 
                     // Update Andes message with all the chunk details
@@ -398,7 +398,7 @@ public class AndesResourceManager {
 
                     metadata.setDestination(newDestinationQueueName);
                     metadata.setDeliveryStrategy(AndesUtils.QUEUE_DELIVERY_STRATEGY);
-                    AndesMessageMetadata clonedMetadata = metadata.shallowCopy(metadata.getMessageID());
+                    AndesMessageMetadata clonedMetadata = metadata.shallowCopy(metadata.getMessageId());
                     AndesMessage andesMessage = new AndesMessage(clonedMetadata);
 
                     messagesToRemove.add(metadata);

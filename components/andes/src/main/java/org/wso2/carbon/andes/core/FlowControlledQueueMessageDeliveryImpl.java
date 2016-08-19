@@ -100,7 +100,7 @@ public class FlowControlledQueueMessageDeliveryImpl implements MessageDeliverySt
                                 continue; // continue on to match selectors of other subscribers
                             }
                             if (log.isDebugEnabled()) {
-                                log.debug("Scheduled to send id = " + message.getMessageID());
+                                log.debug("Scheduled to send id = " + message.getMessageId());
                             }
 
                             // In a re-queue for delivery scenario we need the correct destination. Hence setting
@@ -125,7 +125,7 @@ public class FlowControlledQueueMessageDeliveryImpl implements MessageDeliverySt
 
                         if (log.isDebugEnabled()) {
                             log.debug(
-                                    "Removing Scheduled to send message from buffer. MsgId= " + message.getMessageID());
+                                    "Removing Scheduled to send message from buffer. MsgId= " + message.getMessageId());
                         }
 
                         sentMessageCount++;

@@ -242,7 +242,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
             channelInformation.incrementDeliveryCount();
         } else {
             // No need to increase deliveryCount if this message is beyond the last rollback.
-            MessageTracer.trace(getMessageID(), getDestination(), MessageTracer.MESSAGE_BEYOND_LAST_ROLLBACK);
+            MessageTracer.trace(getMessageId(), getDestination(), MessageTracer.MESSAGE_BEYOND_LAST_ROLLBACK);
         }
     }
 
@@ -496,7 +496,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
                 messageStatus.add(state);
             } else {
                 log.warn(
-                        "Invalid message state transition suggested: " + state + " Message ID: " + getMessageID() +
+                        "Invalid message state transition suggested: " + state + " Message ID: " + getMessageId() +
                                 "slot = "
                                 + slot.getId());
             }
@@ -506,7 +506,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
                 messageStatus.add(state);
             } else {
                 log.warn("Invalid message state transition from " + messageStatus.get(messageStatus.size() - 1)
-                                 + " suggested: " + state + " Message ID: " + getMessageID() + " slot = " + slot.getId()
+                                 + " suggested: " + state + " Message ID: " + getMessageId() + " slot = " + slot.getId()
                                  + " Message Status History >> " + messageStatus);
             }
         }
@@ -534,7 +534,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
         StringBuilder information = new StringBuilder();
 
         information.append("Message ID ");
-        information.append(Long.toString(getMessageID()));
+        information.append(Long.toString(getMessageId()));
         information.append(',');
         information.append("Message Header ");
         information.append("null");
@@ -605,7 +605,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
                 } else {
                     log.warn(
                             "Invalid channel message state transition suggested: " + state + " Message ID: " +
-                                    getMessageID() + " Slot = " + slot.getId() + " Message Status History >> " +
+                                    getMessageId() + " Slot = " + slot.getId() + " Message Status History >> " +
                                     messageStatus);
                 }
             } else {
@@ -617,7 +617,7 @@ public class DeliverableAndesMetadata extends AndesMessageMetadata {
                 } else {
                     log.warn("Invalid channel message state transition from " + messageStatusesForChannel
                             .get(messageStatusesForChannel.size() - 1) + " suggested: " + state + " Message ID: "
-                                     + getMessageID() + " Slot = " + slot.getId() + " Channel Status History >> "
+                                     + getMessageId() + " Slot = " + slot.getId() + " Channel Status History >> "
                                      + messageStatusesForChannel);
                 }
             }

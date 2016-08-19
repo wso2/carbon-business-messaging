@@ -135,7 +135,7 @@ public class GuavaBasedMessageCacheImpl implements AndesMessageCache {
     @Override
     public void addToCache(AndesMessage message) {
 
-        cache.put(message.getMetadata().getMessageID(), message);
+        cache.put(message.getMetadata().getMessageId(), message);
 
     }
 

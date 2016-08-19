@@ -145,7 +145,7 @@ public class DeliveryEventData {
 
     @Override
     public String toString() {
-        return "Message ID: " + metadata.getMessage().getMessageID() + ", Error occurred : " + isErrorOccurred();
+        return "Message ID: " + metadata.getMessage().getMessageId() + ", Error occurred : " + isErrorOccurred();
     }
 
     /**

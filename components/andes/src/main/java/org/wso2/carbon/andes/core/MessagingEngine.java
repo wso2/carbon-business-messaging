@@ -220,11 +220,11 @@ public class MessagingEngine {
         andesMetadata.markAsNackedByClient(channelID);
         LocalSubscription subToResend = subscriptionEngine.getLocalSubscriptionForChannelId(channelID);
         if (subToResend != null) {
-            subToResend.msgRejectReceived(andesMetadata.getMessageID());
+            subToResend.msgRejectReceived(andesMetadata.getMessageId());
             reQueueMessageToSubscriber(andesMetadata, subToResend);
         } else {
             log.warn("Cannot handle reject. Subscription not found for channel " + channelID + "Dropping message id= "
-                             + andesMetadata.getMessageID());
+                             + andesMetadata.getMessageId());
             andesMetadata.markDeliveredChannelAsClosed(channelID);
         }
         //Tracing message activity
@@ -263,7 +263,7 @@ public class MessagingEngine {
         if (!messageMetadata.isOKToDispose()) {
             MessageFlusher.getInstance().reQueueMessage(messageMetadata, destinationType);
             //Tracing Message
-            MessageTracer.trace(messageMetadata.getMessageID(), messageMetadata.getDestination(),
+            MessageTracer.trace(messageMetadata.getMessageId(), messageMetadata.getDestination(),
                                 MessageTracer.MESSAGE_REQUEUED_BUFFER);
         }
     }
@@ -280,7 +280,7 @@ public class MessagingEngine {
             throws AndesException {
         String deadLetterQueueName = DLCQueueUtils.identifyTenantInformationAndGenerateDLCString(destinationQueueName);
 
-        messageStore.moveMetadataToDLC(messageToRemove.getMessageID(), deadLetterQueueName);
+        messageStore.moveMetadataToDLC(messageToRemove.getMessageId(), deadLetterQueueName);
 
         // Increment count by 1 in DLC and decrement by 1 in original queue
 
@@ -288,7 +288,7 @@ public class MessagingEngine {
         messageToRemove.getSlot().decrementPendingMessageCount();
 
         //Tracing message activity
-        MessageTracer.trace(messageToRemove.getMessageID(), destinationQueueName, MessageTracer.MOVED_TO_DLC);
+        MessageTracer.trace(messageToRemove.getMessageId(), destinationQueueName, MessageTracer.MOVED_TO_DLC);
     }
 
     /**
@@ -583,7 +583,7 @@ public class MessagingEngine {
      * @return List of message metadata
      * @throws AndesException
      */
-    public List<DeliverableAndesMetadata> getMetaDataList(final Slot slot, final String queueName, long firstMsgId,
+    public List<DeliverableAndesMetadata> getMetadataList(final Slot slot, final String queueName, long firstMsgId,
                                                           long lastMsgID) throws AndesException {
         return messageStore.getMetadataList(slot, queueName, firstMsgId, lastMsgID);
     }
@@ -696,7 +696,7 @@ public class MessagingEngine {
      * @param metadataList     The updated meta data list.
      * @throws AndesException
      */
-    public void updateMetaDataInformation(String currentQueueName, List<AndesMessageMetadata> metadataList)
+    public void updateMetadataInformation(String currentQueueName, List<AndesMessageMetadata> metadataList)
             throws AndesException {
         messageStore.updateMetadataInformation(currentQueueName, metadataList);
     }
@@ -858,7 +858,7 @@ public class MessagingEngine {
      * @throws AndesException
      */
     public AndesContent getRetainedMessageContent(AndesMessageMetadata metadata) throws AndesException {
-        long messageID = metadata.getMessageID();
+        long messageID = metadata.getMessageId();
         int contentSize = metadata.getMessageContentLength();
 
         Map<Integer, AndesMessagePart> retainedContentParts = messageStore.getRetainedContentParts(messageID);

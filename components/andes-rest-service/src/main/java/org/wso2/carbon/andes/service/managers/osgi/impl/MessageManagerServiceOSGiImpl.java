@@ -134,7 +134,7 @@ public class MessageManagerServiceOSGiImpl implements MessageManagerService {
     private Message getMessageFromAndesMessage(AndesMessage andesMessage, MessageDecoder messageDecoder)
             throws AndesException {
         Message message = new Message();
-        message.setAndesMsgMetadataId(andesMessage.getMetadata().getMessageID());
+        message.setAndesMsgMetadataId(andesMessage.getMetadata().getMessageId());
         message.setDestination(andesMessage.getMetadata().getDestination());
         message.setMessageProperties(messageDecoder.getMessageProperties(andesMessage.getMetadata()));
         message.setMessageContent(messageDecoder.getMessageContent(andesMessage));

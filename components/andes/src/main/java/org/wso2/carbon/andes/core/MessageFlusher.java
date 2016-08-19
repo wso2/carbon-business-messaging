@@ -369,7 +369,7 @@ public class MessageFlusher {
         if (evaluateDeliveryRules(message, subscription.getProtocolType(), subscription.getDestinationType())) {
             if (log.isDebugEnabled()) {
                 log.debug(
-                        "Scheduled message id= " + message.getMessageID() + " to be sent to subscription= " +
+                        "Scheduled message id= " + message.getMessageId() + " to be sent to subscription= " +
                                 subscription);
             }
             //mark message as came into the subscription for deliver
@@ -379,7 +379,7 @@ public class MessageFlusher {
             ProtocolMessage protocolMessage = message.generateProtocolDeliverableMessage(subscription.getChannelID());
             flusherExecutor.submit(subscription, protocolMessage);
         } else {
-            log.warn("Common delivery rules failed for message id " + message.getMessageID()
+            log.warn("Common delivery rules failed for message id " + message.getMessageId()
                              + " Hence not delivered.");
         }
     }

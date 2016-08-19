@@ -190,7 +190,7 @@ public abstract class DefaultResourceHandler implements ResourceHandler {
         if (null != destination) {
             AndesMessage andesMessage = MessagingEngine.getInstance().getNextNMessagesFromQueue(destinationName,
                     andesMessageID, 1, content).stream().findFirst().orElse(null);
-            if (null != andesMessage && andesMessage.getMetadata().getMessageID() != andesMessageID) {
+            if (null != andesMessage && andesMessage.getMetadata().getMessageId() != andesMessageID) {
                 andesMessage = null;
             }
 
