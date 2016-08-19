@@ -439,9 +439,7 @@ public class AndesAuthorizationHandler {
                             //given topic permission assigned to admin. If admin has permission, then we not allow to
                             //other user to authorize.
                             boolean isAdminAuthorized = false;
-                            if (userRealm.getAuthorizationManager().isUserAuthorized(
-                                    userRealm.getRealmConfiguration().getAdminUserName(),
-                                    topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
+                            if (RegistryClient.isResourceExist(CommonsUtil.getTopicID(newRoutingKey))) {
                                 isAdminAuthorized = true;
                             }
 
@@ -592,7 +590,7 @@ public class AndesAuthorizationHandler {
      * @return ALLOWED/DENIED
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
-    public static Result handleUnbindQueue(ObjectProperties properties)
+    public static Result handleUnbindQueue(String username, UserRealm userRealm, ObjectProperties properties)
             throws AndesAuthorizationHandlerException {
         // Bind properties
         String exchangeName =
@@ -611,10 +609,33 @@ public class AndesAuthorizationHandler {
                 RegistryClient.deleteSubscription(newRoutingKey, newQName);
                 // delete tmp queue to topic mapping
                 temporaryQueueToTopicMap.remove(queueName);
+                //clear permission assigned to admin role when unbind from topic
+                if (isAdmin(username, userRealm)) {
+                    //get admin role of admin user (super tenant admin or tenant admin)
+                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
+                    String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
+                    String role = null;
+                    for (String userRole : userRoles) {
+                        if (userRole.equals(adminRole)) {
+                            role = userRole;
+                            break;
+                        }
+                    }
+                    String queueID = CommonsUtil.getQueueID(queueName);
+                    String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, queueID,
+                            TreeNode.Permission.CONSUME.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, topicId,
+                            TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, topicId,
+                            TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, topicId,
+                            PERMISSION_CHANGE_PERMISSION);
+                }
             }
 
             return Result.ALLOWED;
-        } catch (RegistryClientException e) {
+        } catch (RegistryClientException | UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling unbind queue.", e);
         }
     }
