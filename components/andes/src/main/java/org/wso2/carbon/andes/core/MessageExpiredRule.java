@@ -36,7 +36,7 @@ public class MessageExpiredRule implements CommonDeliveryRule {
     @Override
     public boolean evaluate(DeliverableAndesMetadata message, ProtocolType protocolType,
                             DestinationType destinationType) {
-        long messageID = message.getMessageID();
+        long messageID = message.getMessageId();
         //Check if destination entry has expired. Any expired message will not be delivered
         if (message.isExpired()) {
             log.warn("Message is expired. Routing Message to DLC : id= " + messageID);

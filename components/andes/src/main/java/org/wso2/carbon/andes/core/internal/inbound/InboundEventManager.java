@@ -201,13 +201,13 @@ public class InboundEventManager {
 
         //Tracing message
         if (MessageTracer.isEnabled()) {
-            MessageTracer.trace(ackData.getAcknowledgedMessage().getMessageID(), ackData.getAcknowledgedMessage()
+            MessageTracer.trace(ackData.getAcknowledgedMessage().getMessageId(), ackData.getAcknowledgedMessage()
                     .getDestination(), MessageTracer.ACK_PUBLISHED_TO_DISRUPTOR);
         }
 
         if (log.isDebugEnabled()) {
             log.debug("[ sequence: " + sequence + " ] Message acknowledgement published to disruptor. Message id " +
-                              ackData.getAcknowledgedMessage().getMessageID());
+                              ackData.getAcknowledgedMessage().getMessageId());
         }
     }
 

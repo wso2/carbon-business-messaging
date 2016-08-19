@@ -240,7 +240,7 @@ public class InboundTransactionEvent implements AndesInboundStateEvent {
 
             if (log.isDebugEnabled()) {
                 log.debug("Enqueue message with message id " +
-                                  message.getMetadata().getMessageID() + " for transaction ");
+                                  message.getMetadata().getMessageId() + " for transaction ");
             }
         }
     }

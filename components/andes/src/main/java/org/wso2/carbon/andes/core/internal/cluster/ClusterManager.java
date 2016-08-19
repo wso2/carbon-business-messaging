@@ -268,17 +268,17 @@ public class ClusterManager implements StoreHealthListener {
     /**
      * Clears all persisted states of a disappeared node
      *
-     * @param nodeID node ID
+     * @param nodeId node ID
      * @throws AndesException
      */
-    private void clearAllPersistedStatesOfDisappearedNode(String nodeID) throws AndesException {
+    private void clearAllPersistedStatesOfDisappearedNode(String nodeId) throws AndesException {
 
-        log.info("Clearing the Persisted State of Node with ID " + nodeID);
+        log.info("Clearing the Persisted State of Node with ID " + nodeId);
 
         //remove node from nodes list
-        andesContextStore.removeNodeData(nodeID);
+        andesContextStore.removeNodeData(nodeId);
         //close all local queue and topic subscriptions belonging to the node
-        ClusterResourceHolder.getInstance().getSubscriptionManager().closeAllClusterSubscriptionsOfNode(nodeID);
+        ClusterResourceHolder.getInstance().getSubscriptionManager().closeAllClusterSubscriptionsOfNode(nodeId);
 
     }
 

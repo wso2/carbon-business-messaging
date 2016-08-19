@@ -142,7 +142,7 @@ public class MessageWriter implements BatchEventHandler, StoreHealthListener {
             if (log.isTraceEnabled()) {
                 StringBuilder messageIDsString = new StringBuilder();
                 for (AndesMessage message : currentMessageList) {
-                    messageIDsString.append(message.getMetadata().getMessageID()).append(" , ");
+                    messageIDsString.append(message.getMetadata().getMessageId()).append(" , ");
                 }
                 log.trace(currentMessageList.size() + " messages written : " + messageIDsString);
             }

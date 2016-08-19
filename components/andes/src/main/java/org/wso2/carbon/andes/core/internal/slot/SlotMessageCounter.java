@@ -159,8 +159,8 @@ public class SlotMessageCounter {
         Slot currentSlot = queueToSlotMap.get(storageQueueName);
         if (currentSlot == null) {
             currentSlot = new Slot();
-            currentSlot.setStartMessageId(metadata.getMessageID());
-            currentSlot.setEndMessageId(metadata.getMessageID());
+            currentSlot.setStartMessageId(metadata.getMessageId());
+            currentSlot.setEndMessageId(metadata.getMessageId());
             currentSlot.setMessageCount(1L);
             queueToSlotMap.put(storageQueueName, currentSlot);
             slotTimeOutMap.put(storageQueueName, System.currentTimeMillis());
@@ -168,7 +168,7 @@ public class SlotMessageCounter {
             long currentMsgCount = currentSlot.getMessageCount();
             long newMessageCount = currentMsgCount + 1;
             currentSlot.setMessageCount(newMessageCount);
-            currentSlot.setEndMessageId(metadata.getMessageID());
+            currentSlot.setEndMessageId(metadata.getMessageId());
             queueToSlotMap.put(storageQueueName, currentSlot);
         }
         return currentSlot;

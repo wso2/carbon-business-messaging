@@ -132,7 +132,7 @@ public class StateEventHandler implements EventHandler<InboundEventContainer> {
         if (log.isTraceEnabled()) {
             StringBuilder messageIds = new StringBuilder();
             for (AndesMessage message : messageList) {
-                messageIds.append(message.getMetadata().getMessageID()).append(" , ");
+                messageIds.append(message.getMetadata().getMessageId()).append(" , ");
             }
             log.debug("Messages STATE UPDATED: " + messageIds);
         }

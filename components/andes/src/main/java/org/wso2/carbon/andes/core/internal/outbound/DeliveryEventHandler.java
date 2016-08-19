@@ -116,7 +116,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
                     onSendError(message, subscription);
                     onSubscriptionAlreadyClosed(message, subscription);
                     // Tracing Message
-                    MessageTracer.trace(message.getMessageID(), message.getDestination(),
+                    MessageTracer.trace(message.getMessageId(), message.getDestination(),
                                         MessageTracer.DISCARD_STALE_MESSAGE);
 
                 }
@@ -137,7 +137,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
                 reQueueMessageIfDurable(message, subscription);
 
             } catch (Throwable e) {
-                log.error("Unexpected error while delivering message. Message id " + message.getMessageID(), e);
+                log.error("Unexpected error while delivering message. Message id " + message.getMessageId(), e);
                 onDeliveryException(message, subscription);
                 reQueueMessageIfDurable(message, subscription);
 
@@ -162,7 +162,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
             MessagingEngine.getInstance().reQueueMessage(message, subscription.getDestinationType());
         } else {
             if (!message.isOKToDispose()) {
-                log.warn("Cannot send message id= " + message.getMessageID() + " as subscriber is closed");
+                log.warn("Cannot send message id= " + message.getMessageId() + " as subscriber is closed");
             }
         }
     }
@@ -201,7 +201,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
         //Send failed. Rollback changes done that assumed send would be success
         UUID channelID = localSubscription.getChannelID();
         messageMetadata.markDeliveryFailureOfASentMessage(channelID);
-        localSubscription.removeSentMessageFromTracker(messageMetadata.getMessageID());
+        localSubscription.removeSentMessageFromTracker(messageMetadata.getMessageId());
     }
 
     /**
@@ -216,7 +216,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
     private void onDeliveryException(DeliverableAndesMetadata messageMetadata, LocalSubscription localSubscription) {
         UUID channelID = localSubscription.getChannelID();
         messageMetadata.markDeliveryFailureByProtocol(channelID);
-        localSubscription.removeSentMessageFromTracker(messageMetadata.getMessageID());
+        localSubscription.removeSentMessageFromTracker(messageMetadata.getMessageId());
     }
 
     /**
@@ -231,7 +231,7 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
         // If message is a queue message we move the message to the Dead Letter Channel
         // since topics doesn't have a Dead Letter Channel
         if ((!internalErrorOccured) && subscription.isDurable()) {
-            log.warn("Moving message to Dead Letter Channel Due to Send Error. Message ID " + message.getMessageID());
+            log.warn("Moving message to Dead Letter Channel Due to Send Error. Message ID " + message.getMessageId());
             try {
                 Andes.getInstance().moveMessageToDeadLetterChannel(message, message.getDestination());
             } catch (AndesException dlcException) {
@@ -239,11 +239,11 @@ public class DeliveryEventHandler implements EventHandler<DeliveryEventData> {
                 // There's a possibility that we might lose this message
                 // If the message is not removed the slot will not get removed which will lead to an
                 // inconsistency
-                log.error("Error moving message " + message.getMessageID() + " to dead letter channel.", dlcException);
+                log.error("Error moving message " + message.getMessageId() + " to dead letter channel.", dlcException);
             }
         } else {
             //for non durable topic messages see if we can delete the message
-            log.warn("Discarding topic message id = " + message.getMessageID() + " as delivery failed");
+            log.warn("Discarding topic message id = " + message.getMessageId() + " as delivery failed");
             message.markAsRejectedByClient(subscription.getChannelID());
             List<DeliverableAndesMetadata> messagesToRemove = new ArrayList<>();
             message.evaluateMessageAcknowledgement();

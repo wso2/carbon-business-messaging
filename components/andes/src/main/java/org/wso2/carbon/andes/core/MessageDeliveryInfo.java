@@ -79,7 +79,7 @@ public class MessageDeliveryInfo {
      * @param message message metadata to buffer
      */
     public void bufferMessage(DeliverableAndesMetadata message) {
-        readButUndeliveredMessages.put(message.getMessageID(), message);
+        readButUndeliveredMessages.put(message.getMessageId(), message);
         message.markAsBuffered();
         //Tracing message
         MessageTracer.trace(message, MessageTracer.METADATA_BUFFERED_FOR_DELIVERY);
@@ -92,7 +92,7 @@ public class MessageDeliveryInfo {
      * @param message Message metadata to buffer
      */
     public void reBufferMessage(DeliverableAndesMetadata message) {
-        readButUndeliveredMessages.putIfAbsent(message.getMessageID(), message);
+        readButUndeliveredMessages.putIfAbsent(message.getMessageId(), message);
         message.markAsBuffered(); //Tracing message
         MessageTracer.trace(message, MessageTracer.METADATA_BUFFERED_FOR_DELIVERY);
 

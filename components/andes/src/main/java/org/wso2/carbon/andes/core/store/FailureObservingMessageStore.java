@@ -341,7 +341,7 @@ public class FailureObservingMessageStore implements MessageStore {
             //Tracing message activity
             if (MessageTracer.isEnabled()) {
                 for (AndesMessageMetadata message : messagesToRemove) {
-                    MessageTracer.trace(message.getMessageID(), storageQueueName, MessageTracer.MESSAGE_DELETED);
+                    MessageTracer.trace(message.getMessageId(), storageQueueName, MessageTracer.MESSAGE_DELETED);
                 }
             }
 

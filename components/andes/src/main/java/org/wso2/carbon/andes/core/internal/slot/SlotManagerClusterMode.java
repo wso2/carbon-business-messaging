@@ -259,7 +259,7 @@ public class SlotManagerClusterMode {
      * @param nodeId                  Node ID of the node that is sending the request.
      * @param localSafeZone           Local safe zone of the requesting node.
      */
-    public void updateMessageID(String queueName, String nodeId, long startMessageIdInTheSlot,
+    public void updateMessageId(String queueName, String nodeId, long startMessageIdInTheSlot,
                                 long lastMessageIdInTheSlot, long localSafeZone) throws AndesException {
 
         //setting up first message id of the slot
@@ -585,7 +585,7 @@ public class SlotManagerClusterMode {
                         // Trigger a submit slot for each queue so that new slots are created
                         // for queues that have not published any messages after a node crash
                         try {
-                            updateMessageID(queueName, deletedNodeId, lastId - 1, lastId, lastId);
+                            updateMessageId(queueName, deletedNodeId, lastId - 1, lastId, lastId);
                         } catch (AndesException ex) {
                             log.error("Failed to update message id", ex);
                         }

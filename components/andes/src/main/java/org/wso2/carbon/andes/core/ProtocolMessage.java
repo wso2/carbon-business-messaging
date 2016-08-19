@@ -63,7 +63,7 @@ public class ProtocolMessage {
     public ProtocolMessage(DeliverableAndesMetadata message, UUID channelID) {
         this.message = message;
         this.channelID = channelID;
-        this.messageID = message.getMessageID();
+        this.messageID = message.getMessageId();
         this.numberOfDeliveriesForProtocolChannel = message.getNumOfDeliveries4Channel(channelID);
         if (numberOfDeliveriesForProtocolChannel > 1) {
             isRedelivered = true;
