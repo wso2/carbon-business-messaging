@@ -65,7 +65,11 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
 import java.lang.management.ManagementFactory;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Works as the manager class for queue related tasks done from UI. (create queue, delete queue,
@@ -80,6 +84,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static final String CF_NAME_PREFIX = "connectionfactory.";
     private static final String QUEUE_NAME_PREFIX = "queue.";
     private static final String CF_NAME = "qpidConnectionfactory";
+    protected static final String EVENT_TOPICS = "event/topics/";
 
     private static final String AT_REPLACE_CHAR = "_";
     private static final String QUEUE_ROLE_PREFIX = "Q_";
@@ -207,9 +212,37 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                         subscriptionId.split(":")[1]);
                 userRegistry.delete(resourcePathForTopic);
                 userRegistry.delete(resourcePathForQueue);
+                String userName = getLoggedInUserName();
+                //clear permission assigned to admin role when unbind from topic
+                if (Utils.isAdmin(userName)) {
+                    UserRealm userRealm =
+                            QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
+                                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext
+                                            .getThreadLocalCarbonContext()
+                                            .getTenantId());
+                    //get admin role of admin user (super tenant admin or tenant admin)
+                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(userName);
+                    String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
+                    String role = null;
+                    for (String userRole : userRoles) {
+                        if (userRole.equals(adminRole)) {
+                            role = userRole;
+                            break;
+                        }
+                    }
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, resourcePathForQueue,
+                            TreeNode.Permission.CONSUME.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                            TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                            TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                            PERMISSION_CHANGE_PERMISSION);
+                }
             }
 
-        } catch (RegistryException e) {
+        } catch (RegistryException | UserStoreException e) {
             String message = e.getMessage();
             throw new QueueManagerException("Failed to delete topic: " + topicName + " from " +
                     "registry " +
