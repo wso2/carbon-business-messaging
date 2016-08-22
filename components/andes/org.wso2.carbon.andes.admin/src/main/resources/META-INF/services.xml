@@ -162,7 +162,10 @@
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+        <operation name="getFilteredSubscriptions">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getMessageCountForSubscriber">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
@@ -172,6 +175,9 @@
         </operation>
         <operation name="rerouteAllMessagesFromDeadLetterChannelForQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="getTotalSubscriptionCountForSearchResult">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
     </service>
 </serviceGroup>

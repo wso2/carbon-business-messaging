@@ -17,11 +17,14 @@
  */
 package org.wso2.carbon.andes.core.internal.util;
 
-/***
- * This class holds the MBean related constants so that they can be referred and modified from a single point within carbon-business-messaging.
+/**
+ * This class holds the MBean related constants so that they can be referred and modified from a single point within
+ * carbon-business-messaging.
  */
 public class SubscriptionManagementConstants {
 
     public static final String SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getSubscriptions";
 	public static final String SUBSCRIPTION_CLOSE_MBEAN_ATTRIBUTE = "removeSubscription";
+	public static final String FILTERED_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getFilteredSubscriptions";
+	public static final String FILTERED_SUBSCRIPTION_COUNT_MBEAN_ATTRIBUTE = "getTotalSubscriptionCountForSearchResult";
 }

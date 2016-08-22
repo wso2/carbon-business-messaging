@@ -190,7 +190,7 @@
 %>
 
 <div id="middle">
-    <div id="workArea">
+     <div id="workArea">
         <h2><fmt:message key="add.topic"/></h2>
         <table id="topicAddTable" class="styledLeft" style="width:100%">
             <thead>

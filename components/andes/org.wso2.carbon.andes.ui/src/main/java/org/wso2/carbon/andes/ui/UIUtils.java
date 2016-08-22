@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
@@ -29,24 +28,24 @@ import org.wso2.andes.configuration.modules.JKSStore;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub;
-import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub;
+import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
 import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.ServerConstants;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * This class is used by the UI to connect to services and provides utilities. Used by JSP pages.

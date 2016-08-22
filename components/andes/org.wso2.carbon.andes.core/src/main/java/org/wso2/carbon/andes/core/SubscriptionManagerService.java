@@ -29,16 +29,58 @@ public interface SubscriptionManagerService {
     /**
      * Retrieve all matching subscriptions from andes for the given criteria.
      *
-     * @param isDurable Retrieve durable subscriptions (can be true/false)
-     * @param isActive Retrieve active subscriptions (can be true/false/*, * meaning any)
-     * @param protocolType The protocol type of the subscriptions to retrieve
-     * @param destinationType The destination type of the subscriptions to retrieve
+     * @param isDurable retrieve durable subscriptions (can be true/false)
+     * @param isActive retrieve active subscriptions (can be true/false/*, * meaning any)
+     * @param protocolType the protocol type of the subscriptions to retrieve
+     * @param destinationType the destination type of the subscriptions to retrieve
      *
-     * @return The list of subscriptions matching the given criteria
+     * @return the list of subscriptions matching the given criteria
      * @throws SubscriptionManagerException
      */
     public List<Subscription> getSubscriptions(String isDurable, String isActive, String protocolType,
                                                String destinationType) throws SubscriptionManagerException;
+
+    /**
+     * Retrieve all matching subscriptions from andes for the given search criteria.
+     *
+     * @param isDurable                         retrieve durable subscriptions (can be true/false)
+     * @param isActive                          retrieve active subscriptions (can be true/false/*, * meaning any)
+     * @param protocolType                      the protocol type of the subscriptions to retrieve
+     * @param destinationType                   the destination type of the subscriptions to retrieve
+     * @param filteredNamePattern               queue or topic name pattern to search the subscriptions (* for all)
+     * @param identifierPattern                 identifier pattern to search the subscriptions (* for all)
+     * @param ownNodeId                         node Id of the node which own the subscriptions
+     * @param pageNumber                        page number in the pagination table
+     * @param subscriptionCountPerPage          number of subscriptions to be shown in the UI per page
+     * @param isFilteredNameByExactMatch        exactly match the name or not
+     * @param isIdentifierPatternByExactMatch   exactly match the identifier or not
+     * @return list of subscriptions matching to the search criteria
+     * @throws SubscriptionManagerException throws when an error occurs
+     */
+    public List<Subscription> getFilteredSubscriptions(String isDurable, String isActive, String protocolType,
+            String destinationType, String filteredNamePattern, String identifierPattern, String ownNodeId,
+            int pageNumber, int subscriptionCountPerPage, boolean isFilteredNameByExactMatch,
+		    boolean isIdentifierPatternByExactMatch) throws SubscriptionManagerException;
+
+    /**
+     * Returns the total subscription count matching to a particular search criteria.
+     *
+     * @param isDurable                         retrieve durable subscriptions (can be true/false)
+     * @param isActive                          retrieve active subscriptions (can be true/false/*, * meaning any)
+     * @param protocolType                      the protocol type of the subscriptions to retrieve
+     * @param destinationType                   the destination type of the subscriptions to retrieve
+     * @param filteredNamePattern               queue or topic name pattern to search the subscriptions (* for all)
+     * @param identifierPattern                 identifier pattern to search the subscriptions (* for all)
+     * @param ownNodeId                         node Id of the node which own the subscriptions
+     * @param isFilteredNameByExactMatch        exactly match the name or not
+     * @param isIdentifierPatternByExactMatch   exactly match the identifier or not
+     * @return total subscription count matching to the given criteria
+     * @throws SubscriptionManagerException throws when an error occurs
+     */
+    public int getTotalSubscriptionCountForSearchResult(String isDurable, String isActive, String protocolType,
+            String destinationType, String filteredNamePattern, String identifierPattern, String ownNodeId,
+		    boolean isFilteredNameByExactMatch, boolean isIdentifierPatternByExactMatch) throws
+            SubscriptionManagerException;
 
 	/**
 	 * Close subscription by subscriptionID. This method will break the connection

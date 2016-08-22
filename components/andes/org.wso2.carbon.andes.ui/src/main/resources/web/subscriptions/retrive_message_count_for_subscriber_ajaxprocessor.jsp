@@ -2,17 +2,16 @@
 <%@page import="org.wso2.carbon.ui.CarbonUIMessage"%>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
-<%@ page import="org.wso2.andes.kernel.DestinationType" %>
-<%@ page import="org.wso2.andes.kernel.ProtocolType" %>
 
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
     String numberOfMessages = "-1";
     try{
         String subscriptionID = request.getParameter("subscriptionID");
-        ProtocolType protocolType = request.getParameter("protocolType");
-        DestinationType destinationType = request.getParameter("destinationType");
-        int messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable)
+        String durable = request.getParameter("durable");
+        String protocolType = request.getParameter("protocolType");
+        String destinationType = request.getParameter("destinationType");
+        int messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable),
                             protocolType, destinationType);
         numberOfMessages = Integer.toString(messageCount);
 

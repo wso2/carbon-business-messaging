@@ -400,10 +400,10 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Retrieve subscriptions matching the given criteria.
      *
-     * @param isDurable Are the subscriptions to be retrieved durable (true/false)
-     * @param isActive Are the subscriptions to be retrieved active (true/false/*, * meaning any)
-     * @param protocolType The protocol type of the subscriptions to be retrieved
-     * @param destinationType The destination type of the subscriptions to be retrieved
+     * @param isDurable are the subscriptions to be retrieved durable (true/false)
+     * @param isActive are the subscriptions to be retrieved active (true/false/*, * meaning any)
+     * @param protocolType the protocol type of the subscriptions to be retrieved
+     * @param destinationType the destination type of the subscriptions to be retrieved
      *
      * @return The list of subscriptions matching the given criteria
      * @throws BrokerManagerAdminException
@@ -411,7 +411,7 @@ public class AndesAdminService extends AbstractAdmin {
     public Subscription[] getSubscriptions(String isDurable, String isActive, String protocolType,
                                            String destinationType) throws BrokerManagerAdminException {
 
-        List<Subscription> allSubscriptions = new ArrayList<Subscription>();
+        List<Subscription> allSubscriptions = new ArrayList<>();
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
@@ -443,6 +443,102 @@ public class AndesAdminService extends AbstractAdmin {
             throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionsDTO;
+    }
+
+    /**
+     * Retrieve subscriptions matching to the given search criteria.
+     *
+     * @param isDurable                         are the subscriptions durable (true/ false)
+     * @param isActive                          are the subscriptions active (true/false/*, * meaning any)
+     * @param protocolType                      the protocol type of the subscriptions to be retrieved
+     * @param destinationType                   the destination type of the subscriptions to be retrieved
+     * @param filteredNamePattern               queue or topic name pattern to search the subscriptions (* for all)
+     * @param identifierPattern                 identifier pattern to search the subscriptions (* for all)
+     * @param ownNodeId                         node Id of the node which own the subscriptions
+     * @param pageNumber                        page number in the pagination table
+     * @param subscriptionCountPerPage          number of subscriptions to be shown in the UI per page
+     * @param isFilteredNameByExactMatch        exactly match the name or not
+     * @param isIdentifierPatternByExactMatch   exactly match the identifier or not
+     * @return a list of subscriptions which match to the search criteria
+     * @throws BrokerManagerAdminException throws when an error occurs
+     */
+    public Subscription[] getFilteredSubscriptions(String isDurable, String isActive, String protocolType,
+            String destinationType, String filteredNamePattern, String identifierPattern, String ownNodeId,
+            int pageNumber, int subscriptionCountPerPage, boolean isFilteredNameByExactMatch,
+            boolean isIdentifierPatternByExactMatch) throws BrokerManagerAdminException {
+
+        List<Subscription> allSubscriptions = new ArrayList<>();
+        Subscription[] subscriptionsDTO;
+
+        try {
+            SubscriptionManagerService subscriptionManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
+                    .getFilteredSubscriptions(isDurable, isActive, protocolType, destinationType,
+                            filteredNamePattern, identifierPattern, ownNodeId, pageNumber, subscriptionCountPerPage,
+                            isFilteredNameByExactMatch, isIdentifierPatternByExactMatch);
+            subscriptionsDTO = new Subscription[subscriptions.size()];
+            for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
+                Subscription subscriptionDTO = new Subscription();
+                subscriptionDTO.setSubscriptionIdentifier(sub.getSubscriptionIdentifier());
+                subscriptionDTO.setSubscribedQueueOrTopicName(sub.getSubscribedQueueOrTopicName());
+                subscriptionDTO.setSubscriberQueueBoundExchange(sub.getSubscriberQueueBoundExchange());
+                subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
+                subscriptionDTO.setDurable(sub.isDurable());
+                subscriptionDTO.setActive(sub.isActive());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
+                        .getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setSubscriberNodeAddress(sub.getSubscriberNodeAddress());
+                subscriptionDTO.setProtocolType(sub.getProtocolType());
+                subscriptionDTO.setDestinationType(sub.getDestinationType());
+
+                allSubscriptions.add(subscriptionDTO);
+            }
+            CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
+            Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
+            allSubscriptions.toArray(subscriptionsDTO);
+        } catch (SubscriptionManagerException e) {
+            String errorMessage = "An error occurred while retrieving subscriptions from backend ";
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return subscriptionsDTO;
+    }
+
+    /**
+     * Returns the total subscription count relevant to a particular search criteria.
+     *
+     * @param isDurable           are the subscriptions to be retrieve durable (true/ false)
+     * @param isActive            are the subscriptions to be retrieved active (true/false/*, * meaning any)
+     * @param protocolType        the protocol type of the subscriptions to be retrieved
+     * @param destinationType     the destination type of the subscriptions to be retrieved
+     * @param filteredNamePattern queue or topic name pattern to search the subscriptions (* for all)
+     * @param identifierPattern   identifier pattern to search the subscriptions (* for all)
+     * @param ownNodeId           node Id of the node which own the subscriptions
+     * @param isFilteredNameByExactMatch        exactly match the name or not
+     * @param isIdentifierPatternByExactMatch   exactly match the identifier or not
+     * @return total subscription count matching to the given criteria
+     * @throws BrokerManagerAdminException hrows when an error occurs
+     */
+    public int getTotalSubscriptionCountForSearchResult(String isDurable, String isActive, String protocolType,
+            String destinationType, String filteredNamePattern, String identifierPattern, String ownNodeId,
+            boolean isFilteredNameByExactMatch, boolean isIdentifierPatternByExactMatch) throws BrokerManagerAdminException {
+
+        int subscriptionCountForSearchResult;
+        try {
+            SubscriptionManagerService subscriptionManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+            subscriptionCountForSearchResult = subscriptionManagerService
+                    .getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
+                            filteredNamePattern, identifierPattern, ownNodeId, isFilteredNameByExactMatch, isIdentifierPatternByExactMatch);
+
+        } catch (SubscriptionManagerException e) {
+            String errorMessage = "Error occurred while retrieving subscription count for the search criteria"
+                                  + e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return subscriptionCountForSearchResult;
     }
 
     /**
