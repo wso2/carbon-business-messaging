@@ -33,6 +33,11 @@ public class InboundBindingEvent extends AndesBinding implements AndesInboundSta
     private static Log log = LogFactory.getLog(InboundBindingEvent.class);
 
     /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Supported state events
      */
     private enum EventType {

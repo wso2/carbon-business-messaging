@@ -32,6 +32,11 @@ public class AndesBinding implements Serializable {
     public transient AndesQueue boundQueue;
 
     /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * create an instance of andes binding
      *
      * @param boundExchangeName name of exchange binding carries

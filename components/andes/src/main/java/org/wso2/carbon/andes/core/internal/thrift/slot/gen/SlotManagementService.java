@@ -770,6 +770,12 @@ public class SlotManagementService {
 
     public static class getSlotInfo_args implements org.apache.thrift.TBase<getSlotInfo_args, getSlotInfo_args
             ._Fields>, java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "getSlotInfo_args");
 
@@ -1199,6 +1205,12 @@ public class SlotManagementService {
 
     public static class getSlotInfo_result implements org.apache.thrift.TBase<getSlotInfo_result, getSlotInfo_result
             ._Fields>, java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "getSlotInfo_result");
 
@@ -1524,6 +1536,12 @@ public class SlotManagementService {
 
     public static class updateMessageId_args implements org.apache.thrift.TBase<updateMessageId_args,
             updateMessageId_args._Fields>, java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "updateMessageId_args");
 
@@ -2256,6 +2274,12 @@ public class SlotManagementService {
 
     public static class updateMessageId_result implements org.apache.thrift.TBase<updateMessageId_result,
             updateMessageId_result._Fields>, java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "updateMessageId_result");
 
@@ -2472,6 +2496,12 @@ public class SlotManagementService {
 
     public static class deleteSlot_args implements org.apache.thrift.TBase<deleteSlot_args, deleteSlot_args._Fields>,
                                                    java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "deleteSlot_args");
 
@@ -3007,6 +3037,12 @@ public class SlotManagementService {
 
     public static class deleteSlot_result implements org.apache.thrift.TBase<deleteSlot_result, deleteSlot_result
             ._Fields>, java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "deleteSlot_result");
 
@@ -3331,6 +3367,12 @@ public class SlotManagementService {
     public static class reAssignSlotWhenNoSubscribers_args implements org.apache.thrift
                                                                               .TBase<reAssignSlotWhenNoSubscribers_args, reAssignSlotWhenNoSubscribers_args._Fields>,
                                                                       java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "reAssignSlotWhenNoSubscribers_args");
 
@@ -3767,6 +3809,11 @@ public class SlotManagementService {
 
 
         /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
+        /**
          * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
          */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -3980,6 +4027,11 @@ public class SlotManagementService {
     public static class updateCurrentMessageIdForSafeZone_args implements org.apache.thrift
                                                                                   .TBase<updateCurrentMessageIdForSafeZone_args, updateCurrentMessageIdForSafeZone_args._Fields>,
                                                                           java.io.Serializable, Cloneable {
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "updateCurrentMessageIdForSafeZone_args");
 
@@ -4411,6 +4463,12 @@ public class SlotManagementService {
     public static class updateCurrentMessageIdForSafeZone_result implements org.apache.thrift
                                                                                     .TBase<updateCurrentMessageIdForSafeZone_result, updateCurrentMessageIdForSafeZone_result._Fields>,
                                                                             java.io.Serializable, Cloneable {
+
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "updateCurrentMessageIdForSafeZone_result");
 
@@ -4736,6 +4794,11 @@ public class SlotManagementService {
     public static class clearAllActiveSlotRelationsToQueue_args implements org.apache.thrift
                                                                                    .TBase<clearAllActiveSlotRelationsToQueue_args, clearAllActiveSlotRelationsToQueue_args._Fields>,
                                                                            java.io.Serializable, Cloneable {
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
+
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "clearAllActiveSlotRelationsToQueue_args");
 
@@ -5067,6 +5130,10 @@ public class SlotManagementService {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct(
                 "clearAllActiveSlotRelationsToQueue_result");
 
+        /**
+         * Default Serialization UID
+         */
+        private static final long serialVersionUID = 1L;
 
         /**
          * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
