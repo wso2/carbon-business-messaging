@@ -56,7 +56,7 @@ public class Slot implements Serializable, Comparable<Slot> {
      * Keep messages read from the message ranges of the slot. Messages are unique and
      * kept until slot is deleted
      */
-    private ConcurrentHashMap<Long, DeliverableAndesMetadata> messagesOfSlot;
+    private transient ConcurrentHashMap<Long, DeliverableAndesMetadata> messagesOfSlot;
 
     /**
      * QueueName which the slot belongs to. This is set when the slot is assigned to a subscriber

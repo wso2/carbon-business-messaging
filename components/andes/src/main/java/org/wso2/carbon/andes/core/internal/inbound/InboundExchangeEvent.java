@@ -46,7 +46,7 @@ public class InboundExchangeEvent extends AndesExchange implements AndesInboundS
     /**
      * Reference to AndesContextInformationManager to update create/ remove queue state
      */
-    private AndesContextInformationManager contextInformationManager;
+    private transient AndesContextInformationManager contextInformationManager;
 
     /**
      * create an instance of Andes Exchange

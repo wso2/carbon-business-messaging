@@ -51,7 +51,7 @@ public class InboundBindingEvent extends AndesBinding implements AndesInboundSta
     /**
      * Reference to AndesContextInformationManager for add/remove binding
      */
-    private AndesContextInformationManager contextInformationManager;
+    private transient AndesContextInformationManager contextInformationManager;
 
     /**
      * Andes binding related event type of this event
