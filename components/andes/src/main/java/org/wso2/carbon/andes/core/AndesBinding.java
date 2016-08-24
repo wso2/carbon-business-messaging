@@ -29,7 +29,7 @@ public class AndesBinding implements Serializable {
 
     public String boundExchangeName;
     public String routingKey;
-    public AndesQueue boundQueue;
+    public transient AndesQueue boundQueue;
 
     /**
      * create an instance of andes binding
