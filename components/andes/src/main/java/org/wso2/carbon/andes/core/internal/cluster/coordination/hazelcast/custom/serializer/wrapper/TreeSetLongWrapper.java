@@ -28,6 +28,11 @@ import java.util.TreeSet;
  */
 public class TreeSetLongWrapper implements Serializable {
 
+    /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
     private TreeSet<Long> longTreeSet = new TreeSet<Long>();
 
     public TreeSet<Long> getLongTreeSet() {

@@ -30,6 +30,11 @@ public class ClusterNotification implements Serializable {
     private String description;
 
     /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * create an instance of cluster notification
      *
      * @param encodedAsString encoded string to transfer thro

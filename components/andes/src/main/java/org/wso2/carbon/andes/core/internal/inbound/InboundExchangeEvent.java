@@ -31,6 +31,11 @@ public class InboundExchangeEvent extends AndesExchange implements AndesInboundS
 
     private static Log log = LogFactory.getLog(InboundExchangeEvent.class);
 
+    /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
     private enum EventType {
 
         CREATE_EXCHANGE_EVENT,

@@ -38,6 +38,11 @@ public class Slot implements Serializable, Comparable<Slot> {
     private static Log log = LogFactory.getLog(Slot.class);
 
     /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Number of messages in the slot
      */
     private long messageCount;

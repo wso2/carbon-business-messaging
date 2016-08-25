@@ -30,6 +30,11 @@ import java.util.TreeSet;
  */
 public class TreeSetSlotWrapper implements Serializable {
 
+    /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
     private TreeSet<Slot> slotTreeSet = new TreeSet<Slot>();
 
     public TreeSet<Slot> getSlotTreeSet() {

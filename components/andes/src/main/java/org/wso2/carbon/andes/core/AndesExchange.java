@@ -31,6 +31,11 @@ public class AndesExchange implements Serializable {
     public boolean autoDelete;
 
     /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * create an instance of Andes Exchange
      *
      * @param exchangeName name of exchange

@@ -35,6 +35,11 @@ import java.util.TreeSet;
  */
 public class HashmapStringTreeSetWrapper implements Serializable {
 
+    /**
+     * Default Serialization UID
+     */
+    private static final long serialVersionUID = 1L;
+
     private HashMap<String, TreeSet<Slot>> stringListHashMap;
 
 
