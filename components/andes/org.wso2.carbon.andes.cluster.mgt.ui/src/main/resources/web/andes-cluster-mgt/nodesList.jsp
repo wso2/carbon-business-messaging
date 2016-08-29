@@ -30,14 +30,12 @@
     ClusterManagerClient client;
     boolean isClusteringEnabled = false;
     String[] allClusterNodeAddresses;
-    String coordinatorAddress = "";
     String nodeID = "";
 
     try {
         client = new ClusterManagerClient(configContext, serverURL, cookie);
         isClusteringEnabled = client.isClusteringEnabled();
         allClusterNodeAddresses = client.getAllClusterNodeAddresses();
-        coordinatorAddress = client.getCoordinatorNodeAddress();
         nodeID = client.getMyNodeID();
 
     } catch (Exception e) {
@@ -99,11 +97,9 @@
                                 %>
                             </td>
                             <td>
-                                <% if((allClusterNodeAddresses[i].split(",")[1] + "," +
-                                        allClusterNodeAddresses[i].split(",")[2])
-                                        .equals(coordinatorAddress)){%>
+                                <% if((allClusterNodeAddresses[i].split(",")[3]).equals("true")){ %>
                                     Yes
-                                <% }else{ %>
+                                <% } else { %>
                                     No
                                 <% } %>
                             </td>

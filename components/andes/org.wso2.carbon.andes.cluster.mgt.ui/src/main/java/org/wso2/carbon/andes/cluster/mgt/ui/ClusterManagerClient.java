@@ -70,16 +70,6 @@ public class ClusterManagerClient {
     }
 
     /**
-     * Returns the coordinator node address
-     *
-     * @return the address
-     */
-    public String getCoordinatorNodeAddress()
-            throws AndesManagerServiceClusterMgtAdminExceptionException, RemoteException {
-        return stub.getCoordinatorNodeAddress();
-    }
-
-    /**
      * check if broker is running in clustered mode
      *
      * @return whether clustering is enabled

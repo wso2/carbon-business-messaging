@@ -47,21 +47,6 @@ public class ClusterManagerService extends AbstractAdmin {
     }
 
     /**
-     * Gets the coordinator node's host address and port in a cluster
-     *
-     * @return The coordinator node's host address and port
-     * @throws ClusterMgtAdminException
-     */
-    public String getCoordinatorNodeAddress() throws ClusterMgtAdminException {
-        try {
-            ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
-            return clusterManagementBeans.getCoordinatorNodeAddress();
-        } catch (ClusterMgtException e) {
-            throw new ClusterMgtAdminException("Cannot get coordinator node address. Check if clustering is enabled.", e);
-        }
-    }
-
-    /**
      * check if broker is in clustering mode
      *
      * @return boolean if clustering enabled
