@@ -35,6 +35,14 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Thrift is used to maintain and sync slot (message groups) ranges between MB nodes. -->
         <thriftServerHost>localhost</thriftServerHost>
         <thriftServerPort>7611</thriftServerPort>
+        
+	<!-- In NATed environments and some containerized environments, the local ip and port of the Thrfit Server 
+        denoted by thriftServerHost and thriftServerPort will not be publicly accessible. In such cases 
+	thriftServerAdvertisedHost and thriftServerAdvertisedPort are used to advertise the publicly accessible
+	ip and port to other members of the cluster -->
+	<!--thriftServerAdvertisedHost>localhost</thriftServerAdvertisedHost>
+        <thriftServerAdvertisedPort>7611</thriftServerAdvertisedPort-->
+
         <thriftSOTimeout>0</thriftSOTimeout>
         <!--Thrift server reconnect timeout. Value specified in SECONDS-->
         <thriftServerReconnectTimeout>5</thriftServerReconnectTimeout>
