@@ -185,6 +185,11 @@
                 <artifactId>lz4</artifactId>
                 <version>${lz4.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${findbug.annotations.version}</version>
+            </dependency>
             <!--End 3rd Party Dependencies-->
 
             <!--Carbon Dependencies-->
@@ -534,6 +539,7 @@
         <commons-lang.version>2.1</commons-lang.version>
         <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>
         <org.json.version>20160212</org.json.version>
+        <findbug.annotations.version>3.0.0</findbug.annotations.version>
 
         <!--WSO2 related properties-->
         <andes.package.export.version.range>3.5.0</andes.package.export.version.range>

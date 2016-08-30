@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.andes.core;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.core.internal.inbound.FlowControlListener;
@@ -85,8 +86,10 @@ public class AndesChannel {
     private AtomicInteger messagesOnBuffer;
 
     /**
-     * Indicate if the flow control is enabled for this channel
+     * Indicate if the flow control is enabled for this channel.
+     * TODO: Need to evaluate change flowControlEnabled to volatile.
      */
+    @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC")
     private boolean flowControlEnabled;
 
     /**

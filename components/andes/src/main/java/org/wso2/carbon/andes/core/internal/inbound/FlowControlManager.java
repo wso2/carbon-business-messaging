@@ -19,6 +19,7 @@
 package org.wso2.carbon.andes.core.internal.inbound;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.core.AndesChannel;
@@ -90,7 +91,9 @@ public class FlowControlManager implements StoreHealthListener, NetworkPartition
 
     /**
      * Indicate if the flow control is enabled globally
+     * TODO: Need to evaluate change globalBufferBasedFlowControlEnabled to volatile.
      */
+    @SuppressFBWarnings(value = "IS2_INCONSISTENT_SYNC")
     private boolean globalBufferBasedFlowControlEnabled;
 
     /**
