@@ -114,11 +114,61 @@ function showManageQueueWindow(queueName) {
     var request = YAHOO.util.Connect.asyncRequest('POST', "load_queue_details_from_bEnd_ajaxprocessor.jsp", callback, "queueName=" + encodeURIComponent(queueName) + "&type=input");
 }
 
- function doDelete(queueName) {
-        var theform = document.getElementById('deleteForm');
-        theform.queueName.value = queueName;
-        theform.submit();
- }
+function doDelete(queueName) {
+
+    CARBON.showConfirmationDialog("Are you sure you want to delete " + queueName + " ?", function() {
+        $.ajax({
+            url: '../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName,
+            async: true,
+            type: "POST",
+            success: function(o) {
+                if (o.indexOf("Error") > -1) {
+                    CARBON.showErrorDialog("" + o, function() {
+                        location.href = 'queue_details.jsp';
+                    });
+                } else {
+                    CARBON.showInfoDialog('Queue ' + queueName + ' successfully deleted.', function() {
+                        location.href = 'queue_details.jsp';
+                    });
+                }
+            },
+            failure: function(o) {
+                if (o.responseText !== undefined) {
+                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                }
+            }
+        });
+    });
+
+}
+
+function doPurge(queueName) {
+
+    CARBON.showConfirmationDialog("Are you sure you want to purge " + queueName + " ?", function() {
+        $.ajax({
+            url: '../queues/queue_purge_ajaxprocessor.jsp?nameOfQueue=' + queueName,
+            async: true,
+            type: "POST",
+            success: function(o) {
+                if (o.indexOf("Error") > -1) {
+                    CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>', function() {
+                        location.href = 'queue_details.jsp';
+                    });
+                } else {
+                    CARBON.showInfoDialog('Queue ' + queueName + ' successfully purged.', function() {
+                        location.href = 'queue_details.jsp';
+                    });
+                }
+            },
+            failure: function(o) {
+                if (o.responseText !== undefined) {
+                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                }
+            }
+        });
+    });
+
+}
  
  
  function doDeleteDLC(nameOfQueue) {
