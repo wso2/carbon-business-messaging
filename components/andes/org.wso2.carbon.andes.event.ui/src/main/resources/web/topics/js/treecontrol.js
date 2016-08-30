@@ -88,30 +88,29 @@ function treeColapse(icon) {
 
 // Deleting a topic
 function deleteTopic(topic) {
-    var callback =
-    {
-        success:function(o) {
-            if (o.responseText !== undefined) {
-                if (o.responseText.indexOf("Error") > -1) {
-                    CARBON.showErrorDialog("" + o.responseText, function() {
-                        location.href = "../topics/topics.jsp"
-                    });
+    CARBON.showConfirmationDialog("Are you sure you want to delete " + topic + " ?", function() {
+        jQuery.ajax({
+            url: '../topics/delete_topic_ajaxprocessor.jsp?topic=' + topic,
+            async: true,
+            type: "POST",
+            success: function(o) {
+                if (o.indexOf("Error") > -1) {
+                    CARBON.showErrorDialog("" + o, function() {
+                                            location.href = '../topics/topics.jsp';
+                                        });
                 } else {
-                    CARBON.showInfoDialog("" + o.responseText, function() {
-                        location.href = "../topics/topics.jsp"
-                    });
+                    CARBON.showInfoDialog('Topic ' + topic + ' successfully deleted.', function() {
+                                            location.href = '../topics/topics.jsp';
+                                        });
                 }
-
+            },
+            failure: function(o) {
+                if (o.responseText !== undefined) {
+                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                }
             }
-        },
-        failure:function(o) {
-            topic
-            if (o.responseText !== undefined) {
-                alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
-            }
-        }
-    };
-    var request = YAHOO.util.Connect.asyncRequest('POST', "delete_topic_ajaxprocessor.jsp", callback, "topic=" + topic);
+        });
+    });
 
 }
 

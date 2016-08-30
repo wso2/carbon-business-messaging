@@ -27,35 +27,6 @@
         request.getSession().removeAttribute("pageNumberToMessageIdMap");
 
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
-    %>
-
-    <%
-
-        String queueName = request.getParameter("queueName");
-        if (queueName != null) {
-            try {
-                stub.deleteQueue(queueName);
-    %>
-    <script type="text/javascript">
-
-        CARBON.showInfoDialog('Queue <%=queueName %> successfully deleted.', function() {
-            location.href = 'queue_details.jsp';
-        });
-    </script>
-    <%
-    } catch (AndesAdminServiceBrokerManagerAdminException e) {
-    %>
-    <script type="text/javascript">
-        CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
-                () {
-            location.href = 'queue_details.jsp#';
-        });</script>
-    <%
-            }
-        }
-    %>
-
-    <%
 
         Queue[] filteredQueueList = null;
         Queue[] queueList;
@@ -86,31 +57,6 @@
     </script>
     <%
             return;
-        }
-    %>
-
-
-    <%
-        if(request.getParameter("purge") != null && request.getParameter("purge").equalsIgnoreCase("true")){
-            String queuename = request.getParameter("nameOfQueue");
-            try {
-                stub.purgeMessagesOfQueue(queuename);
-    %>
-
-    <script type="text/javascript">CARBON.showInfoDialog('Queue <%=queuename %> successfully purged.', function
-            () {
-        location.href = 'queue_details.jsp';
-    });</script>
-
-    <%
-            } catch (AndesAdminServiceBrokerManagerAdminException e) {
-    %>
-            <script type="text/javascript">CARBON.showErrorDialog('<%=e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage()%>' , function
-                    () {
-                location.href = 'queue_details.jsp';
-            });</script>
-    <%
-            }
         }
     %>
 
@@ -224,7 +170,7 @@
                         <% try {
                             if (stub.checkCurrentUserHasPurgeQueuePermission()) { %>
                         <td><img src="images/minus.gif" alt=""/>&nbsp;<a
-                                href="queue_details.jsp?purge=true&nameOfQueue=<%=encodedNameOfQueue%>">Purge Messages</a></td>
+                              href="#" onclick="doPurge('<%=encodedNameOfQueue%>')">Purge Messages</a></td>
                         <% } else { %>
                         <td><img src="images/minus.gif" alt=""/>&nbsp;<a href="#" class="disabled-ahref">Purge
                             Messages</a></td>
@@ -269,11 +215,6 @@
             <%
                 }
             %>
-            <div>
-                <form id="deleteForm" name="input" action="" method="get"><input type="HIDDEN"
-                                                                                 name="queueName"
-                                                                                 value=""/></form>
-            </div>
         </div>
     </div>
 </fmt:bundle>
