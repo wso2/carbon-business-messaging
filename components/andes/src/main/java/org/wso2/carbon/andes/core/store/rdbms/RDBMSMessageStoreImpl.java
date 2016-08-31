@@ -659,30 +659,6 @@ public class RDBMSMessageStoreImpl implements MessageStore {
     }
 
     /**
-     * Add metadata entry to expiry table.
-     *
-     * @param connection SQLConnection. Connection resource is not closed within the method
-     * @param metadata   AndesMessageMetadata
-     * @throws SQLException
-     */
-    private void addToExpiryTable(Connection connection, AndesMessageMetadata metadata) throws SQLException {
-        PreparedStatement preparedStatement = null;
-        Timer.Context contextWrite = AndesContext.getInstance().getMetricService().timer(MetricsConstants.DB_WRITE,
-                                                                                         Level.INFO).start();
-        try {
-            if (metadata.getExpirationTime() > 0) {
-                preparedStatement = connection.prepareStatement(RDBMSConstants.PS_INSERT_EXPIRY_DATA);
-                addExpiryTableEntryToBatch(preparedStatement, metadata);
-                preparedStatement.executeBatch();
-                connection.commit();
-            }
-        } finally {
-            contextWrite.stop();
-            close(preparedStatement, "adding entry to expiry table");
-        }
-    }
-
-    /**
      * Add a list of metadata entries to expiry table
      *
      * @param connection SQLConnection. Connection resource is not closed within the method
@@ -1401,30 +1377,6 @@ public class RDBMSMessageStoreImpl implements MessageStore {
     @Override
     public void close() {
 
-    }
-
-    /**
-     * This method is expected to be used in a transaction based update.
-     *
-     * @param connection       connection to be used
-     * @param messagesToRemove AndesRemovableMetadata
-     * @throws SQLException
-     */
-    private void deleteFromExpiryQueue(Connection connection, List<AndesMessageMetadata> messagesToRemove)
-            throws SQLException {
-
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(RDBMSConstants.PS_DELETE_EXPIRY_DATA);
-            for (AndesMessageMetadata md : messagesToRemove) {
-                preparedStatement.setLong(1, md.getMessageId());
-                preparedStatement.addBatch();
-            }
-            preparedStatement.executeBatch();
-
-        } finally {
-            close(preparedStatement, RDBMSConstants.TASK_DELETING_FROM_EXPIRY_TABLE);
-        }
     }
 
     /**
