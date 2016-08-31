@@ -301,8 +301,7 @@ public class AndesKernelBoot {
         // Having existing active durable subscribers causes them to not be able to reconnect to the broker
         // The deactivation should not be performed by just any node but the first node to start
         boolean isClusteringEnabled = AndesContext.getInstance().isClusteringEnabled();
-        if (!(isClusteringEnabled)
-                || (isClusteringEnabled && AndesContext.getInstance().getClusterAgent().isCoordinator())) {
+        if (!(isClusteringEnabled) || AndesContext.getInstance().getClusterAgent().isCoordinator()) {
             ClusterResourceHolder.getInstance().getSubscriptionManager().deactivateAllActiveSubscriptions();
         }
 
