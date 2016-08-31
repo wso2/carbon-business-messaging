@@ -27,9 +27,11 @@ import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 import org.wso2.carbon.andes.core.subscription.OutboundSubscription;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -110,7 +112,9 @@ public class AndesUtils {
     public static void writeToFile(String whatToWrite, String filePath) {
         try {
             if (printWriterGlobal == null) {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath));
+                OutputStreamWriter streamWriter = new OutputStreamWriter(new FileOutputStream(filePath),
+                                                                         StandardCharsets.UTF_8);
+                BufferedWriter bufferedWriter = new BufferedWriter(streamWriter);
                 printWriterGlobal = new PrintWriter(bufferedWriter);
             }
 

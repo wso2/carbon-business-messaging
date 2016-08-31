@@ -37,8 +37,10 @@ import org.wso2.carbon.andes.core.store.StoreHealthListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -505,7 +507,8 @@ public class SlotDeliveryWorker extends Thread implements StoreHealthListener, N
      */
     public void dumpAllSlotInformationToFile(File fileToWrite) throws AndesException {
         try {
-            FileWriter information = new FileWriter(fileToWrite);
+            OutputStreamWriter information = new OutputStreamWriter(new FileOutputStream(fileToWrite),
+                                                                    StandardCharsets.UTF_8);
             for (Map.Entry<String, Map<String, Slot>> storageQueueToSlotEntry : storageQueueToSlotTracker.entrySet()) {
                 String storageQueue = storageQueueToSlotEntry.getKey();
                 Map<String, Slot> slotIdToSlotMap = storageQueueToSlotEntry.getValue();
