@@ -80,7 +80,7 @@ public class AndesEncodingUtil {
         int length = buffer.getInt();
         byte[] byteArray = new byte[length];
         buffer.get(byteArray);
-        return new String(byteArray);
+        return new String(byteArray, StandardCharsets.UTF_8);
     }
 
     /**
