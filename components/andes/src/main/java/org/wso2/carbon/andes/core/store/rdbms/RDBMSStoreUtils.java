@@ -433,23 +433,6 @@ public class RDBMSStoreUtils {
         return configValues;
     }
 
-
-    /**
-     * Extract the vendor specific error code from a sql exception
-     *
-     * @param sqlException the error
-     * @return the error code supplied by the vendor
-     */
-    private int extractErrorCode(SQLException sqlException) {
-        int errorCode = sqlException.getErrorCode();
-        SQLException nextEx = sqlException.getNextException();
-        while (errorCode == 0 && nextEx != null) {
-            errorCode = nextEx.getErrorCode();
-            nextEx = nextEx.getNextException();
-        }
-        return errorCode;
-    }
-
     /**
      * Extracts SQL State from a given sql exception
      *

@@ -424,18 +424,6 @@ public class AndesKernelBoot {
     }
 
     /**
-     * Stop worker threads, close transports and stop message delivery
-     */
-    private static void stopMessaging() {
-        // NOTE: Feature Message Expiration moved to a future release
-//        Andes.getInstance().stopMessageExpirationWorker();
-
-        //this will un-assign all slots currently owned
-        Andes.getInstance().stopMessageDelivery();
-    }
-
-
-    /**
      * Start the thrift server
      *
      * @throws AndesException

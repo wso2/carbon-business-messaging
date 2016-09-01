@@ -21,7 +21,6 @@ package org.wso2.carbon.andes.core;
 import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.ProtocolVersion;
 import org.wso2.carbon.andes.core.internal.AndesContext;
 import org.wso2.carbon.andes.core.subscription.LocalSubscription;
 import org.wso2.carbon.andes.core.subscription.OutboundSubscription;
@@ -230,17 +229,4 @@ public class AndesUtils {
         }
         return destinations;
     }
-
-    /**
-     * Resolve a protocol version from AMQP to a protocol type in Andes.
-     * Ideally this protocol specific logic should be removed from Andes.
-     *
-     * @param protocolVersion The AMQP specific protocol version.
-     * @return Andes specific ProtocolType object
-     * @throws AndesException
-     */
-    private static ProtocolType createProtocolType(ProtocolVersion protocolVersion) throws AndesException {
-        return new ProtocolType("AMQP", protocolVersion.toString());
-    }
-
 }
