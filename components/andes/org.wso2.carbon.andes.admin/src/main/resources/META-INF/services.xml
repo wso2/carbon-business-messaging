@@ -113,10 +113,10 @@
         <operation name="deleteTopicFromRegistry">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/delete</parameter>
         </operation>
-        <operation name="restoreMessagesFromDeadLetterQueue">
+        <operation name="restoreSelectedMessagesFromDeadLetterChannel">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/restore</parameter>
         </operation>
-        <operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
+        <operation name="rerouteSelectedMessagesFromDeadLetterChannel">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="deleteMessagesFromDeadLetterQueue">
@@ -166,6 +166,12 @@
         </operation>
         <operation name="getMessageCountForSubscriber">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+        <operation name="getMessageMetadataInDeadLetterChannel">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
+        </operation>
+        <operation name="rerouteAllMessagesFromDeadLetterChannelForQueue">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
     </service>
 </serviceGroup>

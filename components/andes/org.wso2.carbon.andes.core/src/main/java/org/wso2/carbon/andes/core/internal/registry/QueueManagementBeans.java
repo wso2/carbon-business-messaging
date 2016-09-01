@@ -238,7 +238,7 @@ public class QueueManagementBeans {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
-            String operationName = "restoreMessagesFromDeadLetterQueue";
+            String operationName = "restoreSelectedMessagesFromDeadLetterChannel";
             Object[] parameters = new Object[]{messageIDs, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             mBeanServer.invoke(
@@ -267,8 +267,8 @@ public class QueueManagementBeans {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
-            String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, newDestinationQueueName, destinationQueueName};
+            String operationName = "rerouteSelectedMessagesFromDeadLetterChannel";
+            Object[] parameters = new Object[]{messageIDs, destinationQueueName, newDestinationQueueName };
             String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
             mBeanServer.invoke(
                     objectName,

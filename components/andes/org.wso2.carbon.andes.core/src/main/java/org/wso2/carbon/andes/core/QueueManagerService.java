@@ -229,9 +229,35 @@ public interface QueueManagerService {
      * @param nextMessageIdToRead next start message id to get message list
      * @param maxMessageCount     the maximum messages to return
      * @return an array of messages
-     * @throws QueueManagerException
+     * @throws QueueManagerException if an exception occurs when invoking the MBean Service.
      */
     Message[] getMessageInDLCForQueue(String queueName,
                                       long nextMessageIdToRead, int maxMessageCount)
             throws QueueManagerException;
+
+    /**
+     * Returns a paginated list of message metadata destined for the inputQueueName but currently living in the Dead Letter Channel.
+     *
+     * @param targetQueue    Name of the destination queue
+     * @param startMessageId Start point of the queue message id to start reading
+     * @param pageLimit      Maximum messages required in a single response
+     * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
+     * @throws QueueManagerException if an error occurs while invoking the MBean to fetch messages.
+     */
+    Message[] getMessageMetadataInDLC(String targetQueue, long startMessageId, int pageLimit)
+            throws QueueManagerException;
+
+    /**
+     * Restore messages destined for the input sourceQueue into a different targetQueue.
+     * If the sourceQueue is DLCQueue, all messages in the DLC will be restored to the targetQueue.
+     *
+     * @param sourceQueue Name of the source queue
+     * @param targetQueue Name of the target queue.
+     * @param internalBatchSize even with this method, the MB server will internally read messages in DLC in batches,
+     *                          and simulate each batch as a new message list to the targetQueue. internalBatchSize
+     *                          controls the number of messages processed in a single batch internally.
+     * @throws QueueManagerException if an exception occurs while invoking the MBean service.
+     */
+    int rerouteMessagesFromDeadLetterChannelForQueue(String sourceQueue, String targetQueue, int internalBatchSize) throws
+            QueueManagerException;
 }

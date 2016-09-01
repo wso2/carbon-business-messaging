@@ -246,7 +246,7 @@ function doReRouteAllMessages(nameOfQueue) {
             // Getting selected source destination and target destination
             var sourceDestination = jQuery('#sourceDestinations').val();
             var targetDestination = jQuery('#targetDestinations').val();
-            
+
             // Getting message IDs belonging to the source destination in the DLC
             var checkedValues;
             jQuery.ajax({

@@ -19,8 +19,6 @@ package org.wso2.carbon.andes.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.kernel.DestinationType;
-import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.carbon.andes.admin.internal.Exception.BrokerManagerAdminException;
 import org.wso2.carbon.andes.admin.internal.Message;
 import org.wso2.carbon.andes.admin.internal.Queue;
@@ -258,7 +256,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
      * @throws BrokerManagerAdminException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+    public void restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
@@ -279,7 +277,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
      * @throws BrokerManagerAdminException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public void rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws BrokerManagerAdminException {
@@ -1187,6 +1185,82 @@ public class AndesAdminService extends AbstractAdmin {
         @Override
         public int compare(Subscription sub1, Subscription sub2) {
             return sub1.getNumberOfMessagesRemainingForSubscriber() - sub2.getNumberOfMessagesRemainingForSubscriber();
+        }
+    }
+
+    /**
+     * Returns a paginated list of message metadata destined for the inputQueueName but currently living in the
+     * Dead Letter Channel.
+     *
+     * @param targetQueue    Name of the destination queue
+     * @param startMessageId Start point of the queue message id to start reading
+     * @param pageLimit      Maximum messages required in a single response
+     * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
+     * @throws BrokerManagerAdminException if an error occurs while invoking the MBean to fetch messages.
+     */
+    public Message[] getMessageMetadataInDeadLetterChannel(String targetQueue, long startMessageId, int pageLimit)
+            throws BrokerManagerAdminException {
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+        List<Message> messageDTOList = new ArrayList<>();
+        try {
+            org.wso2.carbon.andes.core.types.Message[] messages = queueManagerService
+                    .getMessageMetadataInDLC(targetQueue, startMessageId, pageLimit);
+            for (org.wso2.carbon.andes.core.types.Message message : messages) {
+                Message messageDTO = new Message();
+                messageDTO.setMsgProperties(message.getMsgProperties());
+                messageDTO.setContentType(message.getContentType());
+                messageDTO.setMessageContent(message.getMessageContent());
+                messageDTO.setJMSMessageId(message.getJMSMessageId());
+                messageDTO.setJMSReDelivered(message.getJMSReDelivered());
+                // Delivery mode is received is not set when received from backend as its always persisted mode.
+                messageDTO.setJMSDeliveredMode("null");
+                messageDTO.setJMSTimeStamp(message.getJMSTimeStamp());
+                messageDTO.setDlcMsgDestination(message.getDlcMsgDestination());
+                messageDTO.setAndesMsgMetadataId(message.getAndesMsgMetadataId());
+                messageDTOList.add(messageDTO);
+            }
+        } catch (QueueManagerException e) {
+            String errorMessage = "Error occurred while listing messages in DLC for queue : " + targetQueue;
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return messageDTOList.toArray(new Message[messageDTOList.size()]);
+    }
+
+    /**
+     * Move messages destined for the input sourceQueue into a different targetQueue.
+     * If the sourceQueue is DLCQueue, all messages in the DLC will be restored to the targetQueue.
+     *
+     * @param sourceQueue       Name of the source queue
+     * @param targetQueue       Name of the target queue.
+     * @param internalBatchSize even with this method, the MB server will internally read messages in DLC in batches,
+     *                          and simulate each batch as a new message list to the targetQueue. internalBatchSize
+     *                          controls the number of messages processed in a single batch internally.
+     * @return String message containing the number of messages that were restored.
+     */
+    public String rerouteAllMessagesFromDeadLetterChannelForQueue(String sourceQueue, String targetQueue,
+            int internalBatchSize) throws BrokerManagerAdminException {
+
+        int movedMessageCount;
+
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+
+        try {
+            movedMessageCount = queueManagerService
+                    .rerouteMessagesFromDeadLetterChannelForQueue(sourceQueue, targetQueue, internalBatchSize);
+        } catch (QueueManagerException e) {
+            String errorMessage = "Error occurred while rerouting all messages from sourceQueue : " + sourceQueue + ""
+                    + " to targetQueue : " + targetQueue;
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+
+        if (-1 < movedMessageCount) {
+            return "Messages were successfully restored to the target queue : " + targetQueue + ". movedMessageCount : "
+                    + movedMessageCount;
+        } else {
+            return "An error occured while restoring messages to the target queue : " + targetQueue + ". "
+                    + "movedMessageCount : " + movedMessageCount;
         }
     }
 }
