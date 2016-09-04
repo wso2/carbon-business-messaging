@@ -35,8 +35,10 @@ import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The following class contains the MBeans invoking services related to queue resources.
@@ -131,6 +133,47 @@ public class QueueManagementBeans {
             throw new QueueManagerException("Incompatible attributes for operation to retrieve all queues", e);
         }
         return queueList;
+    }
+
+
+    /**
+     * Get DLC queue registered in broker by given name (tenant information included)
+     *
+     * @param DLCQueueName name of the queue
+     * @return Queue Bean
+     * @throws QueueManagerException
+     */
+    public Queue getDLCQueue(String DLCQueueName) throws QueueManagerException {
+        Queue DLCQueue = null;
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+
+            String operationName = QueueManagementConstants.DLC_QUEUE_INFO_MBEAN_OPERATION;
+            Object[] parameters = new Object[]{DLCQueueName};
+            String[] signature = new String[]{String.class.getName()};
+
+            Object result = mBeanServer.invoke(
+                    objectName,
+                    operationName,
+                    parameters,
+                    signature);
+
+            if (result != null) {
+                Map<String, Long> queueCountMap = (Map<String, Long>) result;
+                for (Map.Entry<String, Long> entry : queueCountMap.entrySet()) {
+                    Queue queue = new Queue();
+                    queue.setQueueName(entry.getKey());
+                    queue.setMessageCount(entry.getValue());
+                    DLCQueue =  queue;
+                }
+            }
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new QueueManagerException("Cannot access mBean operations for message counts:", e);
+        }
+
+        return DLCQueue;
     }
 
     /**
@@ -388,4 +431,30 @@ public class QueueManagementBeans {
         }
         return browseMessageList;
     }
+
+    /**
+     * Invoke service bean to retrieve names of all durable queues
+     *
+     * @return Set of queue names
+     * @throws QueueManagerException
+     */
+    public Set<String> getNamesOfAllDurableQueues() throws QueueManagerException {
+        Set<String> namesOfDurableQueues = new HashSet<>();
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            Object result = mBeanServer.getAttribute(objectName,
+                    QueueManagementConstants.DURABLE_QUEUE_NAMES__MBEAN_ATTRIBUTE);
+            if (result != null) {
+                namesOfDurableQueues = (Set<String>) result;
+            }
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new QueueManagerException("Cannot access mBean operations for qet all queue names:", e);
+        } catch (AttributeNotFoundException e) {
+            throw new QueueManagerException("Incompatible attributes for operation to retrieve all queue names", e);
+        }
+        return namesOfDurableQueues;
+    }
+
 }

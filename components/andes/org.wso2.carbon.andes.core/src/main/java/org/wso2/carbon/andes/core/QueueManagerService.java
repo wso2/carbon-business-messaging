@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.core;
 import org.wso2.carbon.andes.core.types.Message;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This interface provides the base for managing all queue related services
@@ -42,6 +43,14 @@ public interface QueueManagerService {
      * @return {@link org.wso2.carbon.andes.core.types.Queue} the queue
      */
     public org.wso2.carbon.andes.core.types.Queue getQueueByName(String queueName) throws QueueManagerException;
+
+
+    /**
+     * Retrieve names of all durable queues created
+     * @return List of names
+     * @throws QueueManagerException on an issue getting information
+     */
+    Set<String> getNamesOfAllDurableQueues() throws QueueManagerException;
 
     /**
      * Retrieve the dlc queue associated to a tenant

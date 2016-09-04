@@ -13,34 +13,10 @@
     String destinationList = "";
     try {
         String dlcQueueName = request.getParameter("nameOfQueue");
-
-        // Getting the number of messages belonging to a DLC queue
-        int totalMsgsInDlc = 0;
-        if (DLCQueueUtils.isDeadLetterQueue(dlcQueueName)) {
-            totalMsgsInDlc = (int) stub.getTotalMessagesInQueue(dlcQueueName);
-        } else {
-            totalMsgsInDlc = (int) stub.getNumberOfMessagesInDLCForQueue(dlcQueueName);
-        }
-
-        // Getting messages belonging to a DLC queue
-        Message[] dlcMessages = null;
-        if (DLCQueueUtils.isDeadLetterQueue(dlcQueueName)) {
-            dlcMessages = stub.browseQueue(dlcQueueName, 0, totalMsgsInDlc);
-        } else {
-            dlcMessages = stub.getMessageInDLCForQueue(dlcQueueName, 0, totalMsgsInDlc);
-        }
-
-        // Removing duplications using a set
-        Set<String> destinationSet = new HashSet<String>();
-        for (Message dlcMessage : dlcMessages) {
-            if (null != dlcMessage && null != dlcMessage.getDlcMsgDestination()) {
-                destinationSet.add(dlcMessage.getDlcMsgDestination());
-            }
-        }
-
+        String[] durableQueues = stub.getNamesOfAllDurableQueues();
         // Creating a string with all destinations with delimiter as #
-        for (String destination : destinationSet) {
-            destinationList += destination + "#";
+        for (String queueName : durableQueues) {
+            destinationList += queueName + "#";
         }
 
         // We can remove the # tag only if the destinationList is not empty

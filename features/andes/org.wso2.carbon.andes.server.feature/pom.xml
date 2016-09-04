@@ -84,6 +84,54 @@
             <artifactId>disruptor</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.googlecode.cqengine</groupId>
+            <artifactId>cqengine</artifactId>
+        </dependency>
+		<dependency>
+		    <groupId>de.javakaffee</groupId>
+		    <artifactId>kryo-serializers</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.esotericsoftware</groupId>
+		    <artifactId>kryo</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.esotericsoftware</groupId>
+		    <artifactId>minlog</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.concurrent-trees</groupId>
+		    <artifactId>concurrent-trees</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.objenesis</groupId>
+		    <artifactId>objenesis</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.esotericsoftware</groupId>
+		    <artifactId>reflectasm</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.ow2.asm</groupId>
+		    <artifactId>asm</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.javassist</groupId>
+		    <artifactId>javassist</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.antlr</groupId>
+		    <artifactId>antlr4-runtime</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.xerial</groupId>
+		    <artifactId>sqlite-jdbc</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.google.protobuf</groupId>
+		    <artifactId>protobuf-java</artifactId>
+		</dependency>
+        <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>
@@ -257,6 +305,18 @@
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.andes.wso2:andes:${andes.dependency.version}</bundleDef>
                                 <bundleDef>org.wso2.orbit.com.lmax:disruptor</bundleDef>
+								<bundleDef>com.googlecode.cqengine:cqengine:${cqengine.version}</bundleDef>
+								<bundleDef>de.javakaffee:kryo-serializers:${kryo-serializers.version}</bundleDef>
+								<bundleDef>com.esotericsoftware:kryo:${kryo.version}</bundleDef>
+								<bundleDef>com.esotericsoftware:minlog:${minlog.version}</bundleDef>
+								<bundleDef>com.googlecode.concurrent-trees:concurrent-trees:${concurrent-trees.version}</bundleDef>
+								<bundleDef>org.objenesis:objenesis:${objenesis.version}</bundleDef>
+								<bundleDef>com.esotericsoftware:reflectasm:${reflectasm.version}</bundleDef>
+								<bundleDef>org.ow2.asm:asm:${asm.version}</bundleDef>
+								<bundleDef>org.javassist:javassist:${javassist.version}</bundleDef>
+								<bundleDef>org.antlr:antlr4-runtime:${antlr4-runtime.version}</bundleDef>
+								<bundleDef>org.xerial:sqlite-jdbc:${sqlite-jdbc.version}</bundleDef>
+								<bundleDef>com.google.protobuf:protobuf-java:${protobuf-java.version}</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
                                 <bundleDef>commons-configuration:commons-configuration</bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>

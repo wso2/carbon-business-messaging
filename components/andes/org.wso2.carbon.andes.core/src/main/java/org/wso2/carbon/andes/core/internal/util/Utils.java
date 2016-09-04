@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.andes.core.internal.util;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.wso2.andes.configuration.AndesConfigurationManager;
@@ -36,7 +34,6 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
-import org.wso2.carbon.utils.ServerConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.jms.BytesMessage;
@@ -47,16 +44,15 @@ import javax.jms.MessageEOFException;
 import javax.jms.ObjectMessage;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides common utilities for UI related functions and services.
@@ -170,7 +166,7 @@ public class Utils {
     public static List<Queue> filterDomainSpecificQueues(List<Queue> fullList) {
         ArrayList<Queue> tenantFilteredQueues = new ArrayList<>();
         for (Queue queue : fullList) {
-            if (isQueueInDomain(queue)) {
+            if (isQueueInDomain(queue.getQueueName())) {
                 tenantFilteredQueues.add(queue);
             }
         }
@@ -178,23 +174,39 @@ public class Utils {
     }
 
     /**
+     * Filter queue name list to suit the tenant domain
+     *
+     * @param fullList Full queue name list to filter
+     * @return Filtered list of queues beloging to the tenant
+     */
+    public static Set<String> filterDomainSpecificQueues(Set<String> fullList) {
+        Set<String> filteredQueues = new HashSet<>();
+        for (String queueName : fullList) {
+            if (isQueueInDomain(queueName)) {
+                filteredQueues.add(queueName);
+            }
+        }
+        return filteredQueues;
+    }
+
+    /**
      * Method to check if the queue is allowed in the tenant domain.
      *
-     * @param queue The queue to check if allowed
+     * @param queueName The queue to check if allowed
      * @return true is queue is allowed
      */
-    public static boolean isQueueInDomain(Queue queue) {
+    public static boolean isQueueInDomain(String queueName) {
         String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         // If the current tenant is not the super tenant,
         if (!(domainName.equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME))) {
-            if (queue.getQueueName().startsWith(domainName)) {
+            if (queueName.startsWith(domainName)) {
                 return true;
             }
         }
         //for super tenant load all queues not specific to a domain. That means queues created by external
         //JMS clients are visible, and those names should not have the tenant separator "/" in their queue names
         else {
-            if (!queue.getQueueName().contains(AndesConstants.TENANT_SEPARATOR)) {
+            if (!queueName.contains(AndesConstants.TENANT_SEPARATOR)) {
                 return true;
             }
         }
@@ -244,10 +256,22 @@ public class Utils {
      */
     public static Subscription parseStringToASubscription(String subscriptionInfo) {
 
-        //  subscriptionInfo =  subscriptionIdentifier |  subscribedQueueOrTopicName | subscriberQueueBoundExchange |
-        // subscriberQueueName |  isDurable | isActive | numberOfMessagesRemainingForSubscriber | subscriberNodeAddress
+        /**
+         *  encodedSubscriptionInfo =  subscriptionIdentifier
+         + ";" + subscription.getStorageQueue().getMessageRouterBindingKey()
+         + ";" + subscription.getStorageQueue().getMessageRouter().getName()
+         + ";" + subscription.getStorageQueue().getName()
+         + ";" + subscription.isDurable()
+         + ";" + isActive
+         + ";" + pendingMessageCount
+         + ";" + ((null == subscription.getSubscriberConnection()) ? "N/A": subscription
+         .getSubscriberConnection().getConnectedNode())
+         + ";" + subscription.getStorageQueue().getMessageRouterBindingKey()
+         + ";" + subscription.getProtocolType().name()
+         + ";" + destinationType;
+         */
 
-        String[] subInfo = subscriptionInfo.split("\\|");
+        String[] subInfo = subscriptionInfo.split(";");
         Subscription subscription = new Subscription();
         subscription.setSubscriptionIdentifier(subInfo[0]);
         subscription.setSubscribedQueueOrTopicName(subInfo[1]);

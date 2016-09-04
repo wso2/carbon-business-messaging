@@ -195,8 +195,10 @@ CREATE TABLE MB_CLUSTER_EVENT (
                         EVENT_ID bigint IDENTITY(1,1) NOT NULL,
                         ORIGINATED_NODE_ID varchar(512) NOT NULL,
                         DESTINED_NODE_ID varchar(512) NOT NULL,
+                        EVENT_ARTIFACT VARCHAR(25) NOT NULL,
                         EVENT_TYPE varchar(25) NOT NULL,
                         EVENT_DETAILS varchar(1024) NOT NULL,
+                        EVENT_DESCRIPTION VARCHAR(1024),
                         PRIMARY KEY (EVENT_ID)
 );
 

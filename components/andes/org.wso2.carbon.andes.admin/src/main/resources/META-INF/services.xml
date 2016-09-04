@@ -44,6 +44,9 @@
         <operation name="getQueueByName">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
         </operation>
+        <operation name="getNamesOfAllDurableQueues">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete</parameter>
+        </operation>
         <operation name="getDLCQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
         </operation>
