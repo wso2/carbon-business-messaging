@@ -17,7 +17,7 @@
     }
 
     try {
-        stub.rerouteSelectedMessagesFromDeadLetterChannel(andesMessageIDs, newQueueName, nameOfQueue);
+        stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(andesMessageIDs, newQueueName, nameOfQueue);
 
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);

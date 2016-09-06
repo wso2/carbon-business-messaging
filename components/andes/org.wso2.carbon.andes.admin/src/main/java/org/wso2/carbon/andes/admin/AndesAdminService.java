@@ -256,7 +256,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
      * @throws BrokerManagerAdminException
      */
-    public void restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName)
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
@@ -277,7 +277,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
      * @throws BrokerManagerAdminException
      */
-    public void rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
+    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws BrokerManagerAdminException {

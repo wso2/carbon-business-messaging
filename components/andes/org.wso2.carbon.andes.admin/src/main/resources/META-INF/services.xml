@@ -113,10 +113,10 @@
         <operation name="deleteTopicFromRegistry">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/delete</parameter>
         </operation>
-        <operation name="restoreSelectedMessagesFromDeadLetterChannel">
+        <operation name="restoreMessagesFromDeadLetterQueue">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/restore</parameter>
         </operation>
-        <operation name="rerouteSelectedMessagesFromDeadLetterChannel">
+        <operation name="restoreMessagesFromDeadLetterQueueWithDifferentDestination">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/reroute</parameter>
         </operation>
         <operation name="deleteMessagesFromDeadLetterQueue">
