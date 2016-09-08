@@ -280,10 +280,11 @@ public class Utils {
         subscription.setDurable(Boolean.parseBoolean(subInfo[4]));
         subscription.setActive(Boolean.parseBoolean(subInfo[5]));
         subscription.setNumberOfMessagesRemainingForSubscriber(Integer.parseInt(subInfo[6]));
-        subscription.setSubscriberNodeAddress(subInfo[7]);
+        subscription.setConnectedNodeAddress(subInfo[7]);
         subscription.setDestination(subInfo[8]);
         subscription.setProtocolType(subInfo[9]);
         subscription.setDestinationType(subInfo[10]);
+        subscription.setOriginHostAddress(subInfo[11]);
 
 
         return subscription;

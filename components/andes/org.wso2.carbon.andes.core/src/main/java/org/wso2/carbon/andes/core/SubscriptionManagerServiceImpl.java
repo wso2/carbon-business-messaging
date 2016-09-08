@@ -48,6 +48,42 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     }
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
+													   String destinationType, String filteredNamePattern,
+													   boolean isFilteredNameByExactMatch, String identifierPattern,
+													   boolean isIdentifierPatternByExactMatch, String ownNodeId,
+													   int pageNumber, int subscriptionCountPerPage) throws
+													   SubscriptionManagerException {
+
+		List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getFilteredSubscriptions
+				(isDurable, isActive, protocolType, destinationType, filteredNamePattern, isFilteredNameByExactMatch,
+				identifierPattern, isIdentifierPatternByExactMatch, ownNodeId, pageNumber, subscriptionCountPerPage);
+
+		return Utils.filterDomainSpecificSubscribers(subscriptions);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
+														String destinationType, String filteredNamePattern,
+														boolean isFilteredNameByExactMatch, String identiferPattern,
+														boolean isIdentifierPatternByExactMatch, String ownNodeId) throws
+														SubscriptionManagerException {
+
+		int subscriptionCountForSearchResult = SubscriptionManagementBeans.getInstance()
+				.getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
+				filteredNamePattern, isFilteredNameByExactMatch, identiferPattern, isIdentifierPatternByExactMatch,
+				ownNodeId);
+
+		return subscriptionCountForSearchResult;
+	}
+
+	/**
 	 * Close subscription by subscriptionID. This method will break the connection
 	 *
 	 * between server and particular subscription

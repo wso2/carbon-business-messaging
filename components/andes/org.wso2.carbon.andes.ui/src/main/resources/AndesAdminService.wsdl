@@ -16,7 +16,7 @@
                     <xs:element minOccurs="0" name="durable" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="numberOfMessagesRemainingForSubscriber" type="xs:int"/>
                     <xs:element minOccurs="0" name="subscribedQueueOrTopicName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="subscriberNodeAddress" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="connectedNodeAddress" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="subscriberQueueBoundExchange" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="subscriberQueueName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="subscriptionIdentifier" nillable="true" type="xs:string"/>

@@ -452,7 +452,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             already expired. If expired at that time add that message to a queue for a future batch
             delete. This interval decides on the time gap between the batch deletes. Time interval
             specified in seconds.-->
-            <preDeliveryExpiryDeletionInterval>600</preDeliveryExpiryDeletionInterval>
+            <preDeliveryExpiryDeletionInterval>10</preDeliveryExpiryDeletionInterval>
 
             <!-- Periodically check the database for new expired messages which were not assigned to
              any slot delivery worker so far and delete them. This interval decides on the time gap between

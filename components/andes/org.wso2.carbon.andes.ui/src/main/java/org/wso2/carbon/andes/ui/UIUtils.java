@@ -236,11 +236,11 @@ public class UIUtils {
                 subscription.setActive(subscriptionDetail.getActive());
                 subscription.setNumberOfMessagesRemainingForSubscriber(
                         subscriptionDetail.getNumberOfMessagesRemainingForSubscriber());
-                subscription.setSubscriberNodeAddress(subscriptionDetail.getSubscriberNodeAddress());
+                subscription.setConnectedNodeAddress(subscriptionDetail.getConnectedNodeAddress());
                 subscription.setDestination(subscriptionDetail.getDestination());
                 subscription.setProtocolType(subscriptionDetail.getProtocolType());
                 subscription.setDestinationType(subscriptionDetail.getDestinationType());
-
+                subscription.setOriginHostAddress(subscriptionDetail.getOriginHostAddress());
 
                 subscriptionDetailsArray[subscriptionDetailsIndex] = subscription;
 
