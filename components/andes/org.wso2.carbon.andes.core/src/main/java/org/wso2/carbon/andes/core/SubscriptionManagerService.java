@@ -41,6 +41,52 @@ public interface SubscriptionManagerService {
                                                String destinationType) throws SubscriptionManagerException;
 
 	/**
+	 * Retrieve all matching subscriptions from andes for the given search criteria.
+	 *
+	 * @param isDurable  are the subscriptions to be retrieve durable (true/ false)
+	 * @param isActive   are the subscriptions to be retrieved active (true/false)
+	 * @param protocolType  the protocol type of the subscriptions to be retrieved
+	 * @param destinationType the destination type of the subscriptions to be retrieved
+	 * @param filteredNamePattern queue or topic name pattern to search the subscriptions ("" for all)
+	 * @param isFilteredNameByExactMatch exactly match the name or not
+	 * @param identifierPattern  identifier pattern to search the subscriptions ("" for all)
+	 * @param isIdentifierPatternByExactMatch  exactly match the identifier or not
+	 * @param ownNodeId node Id of the node which own the subscriptions
+	 * @param pageNumber  page number in the pagination table
+	 * @param subscriptionCountPerPage number of subscriptions to be shown in the UI per page
+	 * @return list of subscriptions matching to the search criteria
+	 * @throws SubscriptionManagerException throws when an error occurs
+	 */
+	public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
+													   String destinationType, String filteredNamePattern,
+													   boolean isFilteredNameByExactMatch, String identifierPattern,
+													   boolean isIdentifierPatternByExactMatch, String ownNodeId, int
+													   pageNumber, int subscriptionCountPerPage)
+													   throws SubscriptionManagerException;
+
+	/**
+	 * Returns the total subscription count matching to a particular search criteria.
+	 *
+	 * @param isDurable are the subscriptions to be retrieve durable (true/ false)
+	 * @param isActive are the subscriptions to be retrieved active (true/false)
+	 * @param protocolType the protocol type of the subscriptions to be retrieved
+	 * @param destinationType the destination type of the subscriptions to be retrieved
+	 * @param filteredNamePattern queue or topic name pattern to search the subscriptions ("" for all)
+	 * @param isFilteredNameByExactMatch exactly match the name or not
+	 * @param identifierPattern identifier pattern to search the subscriptions ("" for all)
+	 * @param isIdentifierPatternByExactMatch exactly match the identifier or not
+	 * @param ownNodeId node Id of the node which own the subscriptions
+	 * @return total subscription count matching to the given criteria
+	 * @throws SubscriptionManagerException throws when an error occurs
+	 */
+	public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
+														String destinationType, String filteredNamePattern, boolean
+														isFilteredNameByExactMatch, String identifierPattern,
+														boolean isIdentifierPatternByExactMatch, String ownNodeId)
+														throws SubscriptionManagerException;
+
+
+	/**
 	 * Close subscription by subscriptionID. This method will break the connection
 	 *
 	 * between server and particular subscription

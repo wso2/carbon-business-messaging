@@ -28,7 +28,8 @@ public class Subscription {
     private boolean isActive;
     private String destination;
     private int numberOfMessagesRemainingForSubscriber;
-    private String subscriberNodeAddress;
+    private String connectedNodeAddress;
+    private String originHostAddress;
     private String protocolType;
     private String destinationType;
 
@@ -44,12 +45,12 @@ public class Subscription {
         this.subscriptionIdentifier = subscriptionIdentifier;
     }
 
-    public String getSubscriberNodeAddress() {
-        return subscriberNodeAddress;
+    public String getConnectedNodeAddress() {
+        return connectedNodeAddress;
     }
 
-    public void setSubscriberNodeAddress(String subscriberNodeAddress) {
-        this.subscriberNodeAddress = subscriberNodeAddress;
+    public void setConnectedNodeAddress(String connectedNodeAddress) {
+        this.connectedNodeAddress = connectedNodeAddress;
     }
 
     public String getSubscribedQueueOrTopicName() {
@@ -122,5 +123,13 @@ public class Subscription {
 
     public void setDestinationType(String destinationType) {
         this.destinationType = destinationType;
+    }
+
+    public String getOriginHostAddress() {
+        return originHostAddress;
+    }
+
+    public void setOriginHostAddress(String originHostAddress) {
+        this.originHostAddress = originHostAddress;
     }
 }
