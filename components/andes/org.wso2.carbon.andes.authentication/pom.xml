@@ -76,8 +76,8 @@
                         </Export-Package>
                         <Import-Package>
                             org.wso2.andes.*,
-                            org.wso2.carbon.identity.oauth2.stub;version="${carbon.identity.version.range}",
-                            org.wso2.carbon.identity.oauth2.stub.dto;version="${carbon.identity.version.range}",
+                            org.wso2.carbon.identity.oauth2.stub;version="${carbon.identity.oauth2.version.range}",
+                            org.wso2.carbon.identity.oauth2.stub.dto;version="${carbon.identity.oauth2.version.range}",
                             org.apache.commons.httpclient,
                             org.apache.commons.httpclient.params,
                             org.apache.commons.pool,
