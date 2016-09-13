@@ -18,6 +18,7 @@
 <%@ page import="org.wso2.andes.kernel.ProtocolType" %>
 <%@ page import="org.wso2.andes.configuration.AndesConfigurationManager" %>
 <%@ page import="org.wso2.andes.configuration.enums.AndesConfiguration" %>
+<%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
 
 <script>
     function refreshMessageCount(obj, durable){
@@ -61,10 +62,13 @@
         aTag.css('font-weight', 'bolder');
 
         CARBON.showConfirmationDialog("Are you sure you want to unsubscribe?", function(){
-            $.ajax({
+             jQuery.ajax({
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
                 type:"POST",
+                beforeSend: function(xhr) {
+                            xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                        },
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {
