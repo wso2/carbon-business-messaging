@@ -33,6 +33,19 @@ public interface TopicManagerService {
      */
     public TopicNode getTopicTree() throws EventBrokerException;
 
+
+    /**
+     * Get the paginated topic tree.
+     *
+     * @param topicPath                   path of the node in the topic tree
+     * @param startIndex             start index of the paginated tree
+     * @param numberOfTopicsPerRound number of topics should be shown per round
+     * @return a subset of topic tree
+     * @throws EventBrokerException
+     */
+    public TopicNode getPaginatedTopicTree(String topicPath, int startIndex, int numberOfTopicsPerRound) throws
+            EventBrokerException;
+
     /**
      * Adds a new topic
      *

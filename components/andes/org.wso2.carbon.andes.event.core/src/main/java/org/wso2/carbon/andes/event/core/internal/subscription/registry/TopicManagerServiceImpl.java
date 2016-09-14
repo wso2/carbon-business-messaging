@@ -18,16 +18,16 @@ package org.wso2.carbon.andes.event.core.internal.subscription.registry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.CarbonConstants;
 import org.wso2.andes.server.NameValidationUtils;
+import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.event.core.TopicManagerService;
 import org.wso2.carbon.andes.event.core.TopicNode;
 import org.wso2.carbon.andes.event.core.TopicRolePermission;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import org.wso2.carbon.andes.event.core.internal.ds.EventBrokerHolder;
+import org.wso2.carbon.andes.event.core.internal.util.JavaUtil;
 import org.wso2.carbon.andes.event.core.subscription.Subscription;
 import org.wso2.carbon.andes.event.core.util.EventBrokerConstants;
-import org.wso2.carbon.andes.event.core.internal.util.JavaUtil;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Resource;
@@ -41,7 +41,14 @@ import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +110,33 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             }
             Resource root = userRegistry.get(this.topicStoragePath);
             TopicNode rootTopic = new TopicNode("/", "/");
-            buildTopicTree(rootTopic, (Collection) root, userRegistry);
+            buildTopicTree(rootTopic, ((Collection) root).getChildren());
+            return rootTopic;
+        } catch (RegistryException e) {
+            throw new EventBrokerException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicNode getPaginatedTopicTree(String topicPath, int startIndex, int numberOfTopicsPerRound) throws
+            EventBrokerException {
+        try {
+            UserRegistry userRegistry =
+                    this.registryService.getGovernanceSystemRegistry(EventBrokerHolder.getInstance().getTenantId());
+            if (!userRegistry.resourceExists(topicPath)) {
+                userRegistry.put(topicPath, userRegistry.newCollection());
+            }
+            log.info("Before calling userregistry.get method");
+            Collection collection = (Collection) userRegistry.get(topicPath);
+            log.info("After calling userregistry.get method");
+            String[] paths = collection.getChildren(startIndex, numberOfTopicsPerRound);
+            log.info("Children Paths length: " + paths.length);
+            TopicNode rootTopic = new TopicNode("/", "/");
+            buildTopicTree(rootTopic, paths);
+            log.info("After building topic Tree");
             return rootTopic;
         } catch (RegistryException e) {
             throw new EventBrokerException(e.getMessage(), e);
@@ -113,40 +146,53 @@ public class TopicManagerServiceImpl implements TopicManagerService {
     /**
      * Building the topic tree
      *
-     * @param topicNode    node of the topic
-     * @param resource     the resource that holds child topics
-     * @param userRegistry user registry
+     * @param topicNode node of the topic
+     * @param paths     paths of the child topics
      * @throws EventBrokerException
      */
-    private void buildTopicTree(TopicNode topicNode, Collection resource, UserRegistry userRegistry)
+    private void buildTopicTree(TopicNode topicNode, String[] paths)
             throws EventBrokerException {
-        try {
-            String[] children = resource.getChildren();
-            if (children != null) {
-                List<TopicNode> nodes = new ArrayList<TopicNode>();
-                for (String childTopic : children) {
-                    Resource childResource = userRegistry.get(childTopic);
-                    if (childResource instanceof Collection) {
-                        if (childTopic.endsWith("/")) {
-                            childTopic = childTopic.substring(0, childTopic.length() - 2);
-                        }
-                        String nodeName = childTopic.substring(childTopic.lastIndexOf("/") + 1);
-                        if (!nodeName.equals(EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME) &&
-                            !nodeName.equals(EventBrokerConstants.EB_CONF_JMS_SUBSCRIPTION_COLLECTION_NAME)) {
-                            childTopic =
-                                    childTopic.substring(childTopic.indexOf(this.topicStoragePath)
-                                                         + this.topicStoragePath.length() + 1);
-                            TopicNode childNode = new TopicNode(nodeName, childTopic);
-                            nodes.add(childNode);
-                            buildTopicTree(childNode, (Collection) childResource, userRegistry);
-                        }
-                    }
+        String[] children = paths;
+        if (children != null) {
+            List<TopicNode> nodes = new ArrayList<TopicNode>();
+            for (String childTopic : children) {
+                if (childTopic.endsWith("/")) {
+                    childTopic = childTopic.substring(0, childTopic.length() - 2);
                 }
-                topicNode.setChildren(nodes.toArray(new TopicNode[nodes.size()]));
+                String nodeName = childTopic.substring(childTopic.lastIndexOf("/") + 1);
+                if (!nodeName.equals(EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME) &&
+                    !nodeName.equals(EventBrokerConstants.EB_CONF_JMS_SUBSCRIPTION_COLLECTION_NAME)) {
+                    childTopic =
+                            childTopic.substring(childTopic.indexOf(this.topicStoragePath)
+                                                 + this.topicStoragePath.length() + 1);
+                    TopicNode childNode = new TopicNode(nodeName, childTopic);
+                    childNode.setLeafNode(false);
+                    nodes.add(childNode);
+                }
             }
-        } catch (RegistryException e) {
-            throw new EventBrokerException(e.getMessage(), e);
+            topicNode.setChildren(nodes.toArray(new TopicNode[nodes.size()]));
         }
+    }
+
+    /**
+     * Check whether the given node is a leaf node in the tree
+     *
+     * @param resource resource to be checked
+     * @return whether the resource is a leaf node or not
+     * @throws RegistryException
+     */
+    private boolean isLeafNode(Resource resource) throws RegistryException {
+        String[] childrenNodesNames = ((Collection) resource).getChildren();
+        if (null != childrenNodesNames) {
+            for (String nodeName : childrenNodesNames) {
+                nodeName = nodeName.substring(nodeName.lastIndexOf("/") + 1);
+                if (!nodeName.equals(EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME) &&
+                    !nodeName.equals(EventBrokerConstants.EB_CONF_JMS_SUBSCRIPTION_COLLECTION_NAME)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

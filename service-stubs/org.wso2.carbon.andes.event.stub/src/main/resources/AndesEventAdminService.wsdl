@@ -1,4 +1,5 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax29="http://exception.admin.event.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/event/admin/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax214="http://subscription.core.event.andes.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ax213="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/event/admin" xmlns:ax211="http://core.event.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/event/admin">
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax29="http://exception.admin.event.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/event/admin/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax214="http://subscription.core.event.andes.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ax213="http://admin.event.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:tns="http://wso2.org/carbon/andes/event/admin" xmlns:ax211="http://core.event.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wso2.org/carbon/andes/event/admin">
     <wsdl:documentation>AndesEventAdminService</wsdl:documentation>
     <wsdl:types>
         <xs:schema xmlns:ax215="http://subscription.core.event.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.event.andes.carbon.wso2.org/xsd">
@@ -29,6 +30,14 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="updatePermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="topicRolePermissions" nillable="true" type="ax212:TopicRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getAllTopics">
                 <xs:complexType>
                     <xs:sequence/>
@@ -38,14 +47,6 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="ax212:TopicNode"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="updatePermission">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="topicRolePermissions" nillable="true" type="ax212:TopicRolePermission"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -61,10 +62,54 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="getPaginatedTopicTree">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topicPath" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startIndex" type="xs:int"/>
+                        <xs:element minOccurs="0" name="numberOfTopicsPerRound" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getPaginatedTopicTreeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax212:TopicNode"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="addTopic">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllWSSubscriptionCountForTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTopicRolePermissions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTopicRolePermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax212:TopicRolePermission"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -198,6 +243,20 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="removeTopic">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeTopicResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="checkCurrentUserHasPublishTopicPermission">
                 <xs:complexType>
                     <xs:sequence>
@@ -227,62 +286,21 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="removeTopic">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="removeTopicResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getTopicRolePermissions">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getTopicRolePermissionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax212:TopicRolePermission"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllWSSubscriptionCountForTopic">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="topic" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllWSSubscriptionCountForTopicResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:int"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
         </xs:schema>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://core.event.andes.carbon.wso2.org/xsd">
-            <xs:complexType name="TopicNode">
-                <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="ax211:TopicNode"/>
-                    <xs:element minOccurs="0" name="nodeName" nillable="true" type="xs:string"/>
-                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
             <xs:complexType name="TopicRolePermission">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="allowedToPublish" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="allowedToSubscribe" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="roleName" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TopicNode">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="ax211:TopicNode"/>
+                    <xs:element minOccurs="0" name="leafNode" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="nodeName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
@@ -335,6 +353,12 @@
     </wsdl:message>
     <wsdl:message name="getAllWSSubscriptionCountForTopicResponse">
         <wsdl:part name="parameters" element="ns:getAllWSSubscriptionCountForTopicResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getPaginatedTopicTreeRequest">
+        <wsdl:part name="parameters" element="ns:getPaginatedTopicTree"/>
+    </wsdl:message>
+    <wsdl:message name="getPaginatedTopicTreeResponse">
+        <wsdl:part name="parameters" element="ns:getPaginatedTopicTreeResponse"/>
     </wsdl:message>
     <wsdl:message name="addTopicRequest">
         <wsdl:part name="parameters" element="ns:addTopic"/>
@@ -441,6 +465,11 @@
             <wsdl:input message="tns:getAllWSSubscriptionCountForTopicRequest" wsaw:Action="urn:getAllWSSubscriptionCountForTopic"/>
             <wsdl:output message="tns:getAllWSSubscriptionCountForTopicResponse" wsaw:Action="urn:getAllWSSubscriptionCountForTopicResponse"/>
             <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getAllWSSubscriptionCountForTopicAndesEventAdminServiceEventAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getPaginatedTopicTree">
+            <wsdl:input message="tns:getPaginatedTopicTreeRequest" wsaw:Action="urn:getPaginatedTopicTree"/>
+            <wsdl:output message="tns:getPaginatedTopicTreeResponse" wsaw:Action="urn:getPaginatedTopicTreeResponse"/>
+            <wsdl:fault message="tns:AndesEventAdminServiceEventAdminException" name="AndesEventAdminServiceEventAdminException" wsaw:Action="urn:getPaginatedTopicTreeAndesEventAdminServiceEventAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="addTopic">
             <wsdl:input message="tns:addTopicRequest" wsaw:Action="urn:addTopic"/>
@@ -565,6 +594,18 @@
         </wsdl:operation>
         <wsdl:operation name="getAllWSSubscriptionCountForTopic">
             <soap:operation soapAction="urn:getAllWSSubscriptionCountForTopic" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getPaginatedTopicTree">
+            <soap:operation soapAction="urn:getPaginatedTopicTree" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -806,6 +847,18 @@
                 <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getPaginatedTopicTree">
+            <soap12:operation soapAction="urn:getPaginatedTopicTree" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesEventAdminServiceEventAdminException">
+                <soap12:fault use="literal" name="AndesEventAdminServiceEventAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="addTopic">
             <soap12:operation soapAction="urn:addTopic" style="document"/>
             <wsdl:input>
@@ -1022,6 +1075,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getPaginatedTopicTree">
+            <http:operation location="getPaginatedTopicTree"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="addTopic">
             <http:operation location="addTopic"/>
             <wsdl:input>
@@ -1151,13 +1213,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesEventAdminService">
         <wsdl:port name="AndesEventAdminServiceHttpsSoap11Endpoint" binding="tns:AndesEventAdminServiceSoap11Binding">
-            <soap:address location="https://192.168.1.2:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://172.17.0.1:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesEventAdminServiceHttpsSoap12Endpoint" binding="tns:AndesEventAdminServiceSoap12Binding">
-            <soap12:address location="https://192.168.1.2:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://172.17.0.1:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesEventAdminServiceHttpsEndpoint" binding="tns:AndesEventAdminServiceHttpBinding">
-            <http:address location="https://192.168.1.2:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsEndpoint/"/>
+            <http:address location="https://172.17.0.1:9443/services/AndesEventAdminService.AndesEventAdminServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

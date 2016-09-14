@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.andes.event.admin;
 
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.event.admin.exception.EventAdminException;
@@ -30,8 +29,6 @@ import org.wso2.carbon.andes.event.core.exception.EventBrokerException;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 
 /**
@@ -60,6 +57,29 @@ public class AndesEventAdminService extends AbstractAdmin {
             throw new EventAdminException(errorMessage, e);
         }
     }
+
+    /**
+     * Gets a subset of the topics
+     *
+     * @param startIndex             start index of the paginated tree
+     * @param numberOfTopicsPerRound number of topics should be shown per round
+     * @return a topic node which includes a subset of topic tree
+     * @throws EventAdminException
+     */
+    public TopicNode getPaginatedTopicTree(String topicPath, int startIndex, int numberOfTopicsPerRound) throws
+            EventAdminException {
+        EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
+        try {
+            return eventBroker.getTopicManagerService().getPaginatedTopicTree(topicPath, startIndex,
+                    numberOfTopicsPerRound);
+        } catch (EventBrokerException e) {
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new EventAdminException(errorMessage, e);
+        }
+    }
+
+
 
     /**
      * Gets the permission roles for a topic

@@ -24,10 +24,12 @@ public class TopicNode {
     private String nodeName;
     private String topicName;
     private TopicNode[] children;
+    private boolean isLeafNode;
 
     public TopicNode(String nodeName, String topicName) {
         this.nodeName = nodeName;
         this.topicName = topicName;
+        isLeafNode = true;
     }
 
     public String getNodeName() {
@@ -52,5 +54,13 @@ public class TopicNode {
 
     public void setChildren(TopicNode[] children) {
         this.children = children;
+    }
+
+    public boolean getLeafNode() {
+        return isLeafNode;
+    }
+
+    public void setLeafNode(boolean isLeafNode) {
+        this.isLeafNode = isLeafNode;
     }
 }
