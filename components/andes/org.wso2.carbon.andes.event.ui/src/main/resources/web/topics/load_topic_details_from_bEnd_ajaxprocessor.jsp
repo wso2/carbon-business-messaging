@@ -29,8 +29,6 @@
         String topic = request.getParameter("topicPath");
         session.setAttribute("topicRolePermission", stub.getTopicRolePermissions(topic));
         session.setAttribute("topic", topic);
-        session.setAttribute("topicWsSubscriptions", stub.getWsSubscriptionsForTopic(topic));
-        session.setAttribute("topicJMSSubscriptions", stub.getJMSSubscriptionsForTopic(topic));
     } catch (AndesEventAdminServiceEventAdminException e) {
         message = "Error: " + e.getFaultMessage().getEventAdminException().getErrorMessage();
     }

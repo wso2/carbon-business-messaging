@@ -43,6 +43,9 @@
         <operation name="getAllTopics">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
         </operation>
+        <operation name="getPaginatedTopicTree">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details,/permission/admin/manage/topic/delete</parameter>
+        </operation>
         <operation name="getTopicRolePermissions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/add,/permission/admin/manage/topic/details</parameter>
         </operation>

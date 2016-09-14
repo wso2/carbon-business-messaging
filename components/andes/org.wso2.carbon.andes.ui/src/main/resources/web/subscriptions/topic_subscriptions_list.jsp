@@ -424,7 +424,8 @@ No subscriptions to show.
                   page="topic_subscriptions_list.jsp" pageNumberParameterName="normalTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
-                  parameters="<%=concatenatedParams%>"/>
+                  parameters="<%=concatenatedParams%>"
+                  action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
     <thead>
     <tr>
@@ -506,7 +507,8 @@ No subscriptions to show.
                   page="topic_subscriptions_list.jsp" pageNumberParameterName="activeDurableTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
-                  parameters="<%=concatenatedParams%>"/>
+                  parameters="<%=concatenatedParams%>"
+                  action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
     <thead>
     <tr>
@@ -612,7 +614,8 @@ No subscriptions to show.
                   page="topic_subscriptions_list.jsp" pageNumberParameterName="inactiveDurableTopicPageNumber"
                   resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                   prevKey="prev" nextKey="next"
-                  parameters="<%=concatenatedParams%>"/>
+                  parameters="<%=concatenatedParams%>"
+                  action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
     <thead>
     <tr>
