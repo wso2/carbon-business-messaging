@@ -10,11 +10,8 @@
     String numberOfMessages = "-1";
     try{
         String subscriptionID = request.getParameter("subscriptionID");
-        ProtocolType protocolType = request.getParameter("protocolType");
-        DestinationType destinationType = request.getParameter("destinationType");
-        int messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable)
-                            protocolType, destinationType);
-        numberOfMessages = Integer.toString(messageCount);
+        long messageCount = stub.getPendingMessageCount(subscriptionID);
+        numberOfMessages = Long.toString(messageCount);
 
     } catch (Exception e) {
         numberOfMessages = "Error";

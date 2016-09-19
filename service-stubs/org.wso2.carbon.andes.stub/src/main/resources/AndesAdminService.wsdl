@@ -70,57 +70,17 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getDLCQueue">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getDLCQueueResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getNamesOfAllDurableQueues">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getNamesOfAllDurableQueuesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getMessageCount">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="destinationName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getMessageCountResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:long"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="deleteQueue">
+            <xs:element name="getQueueByName">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="deleteTopicFromRegistry">
+            <xs:element name="getQueueByNameResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="subscriptionId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -135,30 +95,6 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="getSubscriptionsResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Subscription"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getFilteredSubscriptions">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="isDurable" type="xs:boolean"/>
-                        <xs:element minOccurs="0" name="isActive" type="xs:boolean"/>
-                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="filteredNamePattern" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="isFilteredNameByExactMatch" type="xs:boolean"/>
-                        <xs:element minOccurs="0" name="identifierPattern" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="isIdentifierPatternByExactMatch" type="xs:boolean"/>
-                        <xs:element minOccurs="0" name="ownNodeId" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="pageNumber" type="xs:int"/>
-                        <xs:element minOccurs="0" name="subscriptionCountPerPage" type="xs:int"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getFilteredSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Subscription"/>
@@ -217,18 +153,6 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getAllQueues">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllQueuesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
             <xs:element name="updatePermission">
                 <xs:complexType>
                     <xs:sequence>
@@ -268,6 +192,20 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:QueueRolePermission"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasPublishPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasPublishPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -318,17 +256,17 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="checkCurrentUserHasPublishPermission">
+            <xs:element name="getPendingMessageCount">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="subscriptionID" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="checkCurrentUserHasPublishPermissionResponse">
+            <xs:element name="getPendingMessageCountResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="return" type="xs:long"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -579,17 +517,69 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getQueueByName">
+            <xs:element name="getDLCQueue">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getDLCQueueResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllQueues">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllQueuesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNamesOfAllDurableQueues">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getNamesOfAllDurableQueuesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCount">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="destinationName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCountResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteQueue">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="queueName" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getQueueByNameResponse">
+            <xs:element name="deleteTopicFromRegistry">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax24:Queue"/>
+                        <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="subscriptionId" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -641,6 +631,30 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="getAllSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFilteredSubscriptions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="isDurable" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="isActive" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="filteredNamePattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isFilteredNameByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="identifierPattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isIdentifierPatternByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="ownNodeId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="pageNumber" type="xs:int"/>
+                        <xs:element minOccurs="0" name="subscriptionCountPerPage" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFilteredSubscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax24:Subscription"/>
@@ -748,6 +762,12 @@
     </wsdl:message>
     <wsdl:message name="checkCurrentUserHasRestoreMessagesInDLCPermissionResponse">
         <wsdl:part name="parameters" element="ns:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getPendingMessageCountRequest">
+        <wsdl:part name="parameters" element="ns:getPendingMessageCount"/>
+    </wsdl:message>
+    <wsdl:message name="getPendingMessageCountResponse">
+        <wsdl:part name="parameters" element="ns:getPendingMessageCountResponse"/>
     </wsdl:message>
     <wsdl:message name="getSubscriptionsRequest">
         <wsdl:part name="parameters" element="ns:getSubscriptions"/>
@@ -996,6 +1016,11 @@
             <wsdl:input message="tns:checkCurrentUserHasRestoreMessagesInDLCPermissionRequest" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermission"/>
             <wsdl:output message="tns:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse"/>
             <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermissionAndesAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getPendingMessageCount">
+            <wsdl:input message="tns:getPendingMessageCountRequest" wsaw:Action="urn:getPendingMessageCount"/>
+            <wsdl:output message="tns:getPendingMessageCountResponse" wsaw:Action="urn:getPendingMessageCountResponse"/>
+            <wsdl:fault message="tns:AndesAdminServiceBrokerManagerAdminException" name="AndesAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getPendingMessageCountAndesAdminServiceBrokerManagerAdminException"/>
         </wsdl:operation>
         <wsdl:operation name="getSubscriptions">
             <wsdl:input message="tns:getSubscriptionsRequest" wsaw:Action="urn:getSubscriptions"/>
@@ -1311,6 +1336,18 @@
         </wsdl:operation>
         <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
             <soap:operation soapAction="urn:checkCurrentUserHasRestoreMessagesInDLCPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getPendingMessageCount">
+            <soap:operation soapAction="urn:getPendingMessageCount" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1876,6 +1913,18 @@
                 <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="getPendingMessageCount">
+            <soap12:operation soapAction="urn:getPendingMessageCount" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
         <wsdl:operation name="getSubscriptions">
             <soap12:operation soapAction="urn:getSubscriptions" style="document"/>
             <wsdl:input>
@@ -2385,6 +2434,15 @@
         </wsdl:operation>
         <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
             <http:operation location="checkCurrentUserHasRestoreMessagesInDLCPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getPendingMessageCount">
+            <http:operation location="getPendingMessageCount"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

@@ -41,6 +41,15 @@ public interface SubscriptionManagerService {
                                                String destinationType) throws SubscriptionManagerException;
 
 	/**
+	 * Get the pending message count for the specified subscription
+	 *
+	 * @param subscriptionID subscription identifier for which the pending message cound need to be calculated
+	 * @return The pending message count for that subscription
+	 * @throws SubscriptionManagerException
+     */
+	public long getPendingMessageCount(String subscriptionID) throws SubscriptionManagerException;
+
+	/**
 	 * Retrieve all matching subscriptions from andes for the given search criteria.
 	 *
 	 * @param isDurable  are the subscriptions to be retrieve durable (true/ false)

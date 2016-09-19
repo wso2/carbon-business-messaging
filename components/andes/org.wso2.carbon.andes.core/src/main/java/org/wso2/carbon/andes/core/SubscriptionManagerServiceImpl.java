@@ -47,6 +47,12 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         return Utils.filterDomainSpecificSubscribers(subscriptions);
     }
 
+	public long getPendingMessageCount(String subscriptionID) throws SubscriptionManagerException{
+
+		return SubscriptionManagementBeans.getInstance().getPendingMessageCount(subscriptionID);
+
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

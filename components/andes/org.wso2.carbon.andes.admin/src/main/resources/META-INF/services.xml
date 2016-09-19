@@ -170,6 +170,9 @@
         <operation name="getFilteredSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
+        <operation name="getPendingMessageCount">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
         <operation name="getMessageCountForSubscriber">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
