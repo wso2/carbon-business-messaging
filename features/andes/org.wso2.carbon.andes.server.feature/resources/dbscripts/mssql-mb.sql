@@ -229,7 +229,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[DB0].[MB
 CREATE TABLE MB_MEMBERSHIP (
                         EVENT_ID BIGINT IDENTITY(1,1) NOT NULL,
                         NODE_ID VARCHAR(512) NOT NULL,
-                        CHANGE_TYPE tinyint(4) NOT NULL,
+                        CHANGE_TYPE TINYINT NOT NULL,
                         CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
                         PRIMARY KEY (EVENT_ID)
 );
