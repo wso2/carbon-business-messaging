@@ -131,7 +131,7 @@
             } catch (Exception e) {
             %>
            <script type="text/javascript">
-               CARBON.showErrorDialog('Error occurred when getting cluster nodes addresses');
+               CARBON.showErrorDialog('Error occurred when getting cluster nodes addresses, ' + e.getMessage());
            </script>
             <%
                 return;
@@ -185,7 +185,7 @@
     %>
 
     <script type="text/javascript">
-        CARBON.showErrorDialog('Error occurred when getting filtered subscriptions');
+        CARBON.showErrorDialog('Error occurred when getting filtered subscriptions, ' + e.getMessage());
     </script>
     <%
             return;
@@ -240,7 +240,8 @@
                                      <option selected="selected" value="<%=nodeId%>"><%=nodeId%></option>
                                 <%  }
                             } catch (Exception e) {%>
-                              <script type="text/javascript">CARBON.showErrorDialog('Failed with BE.<%=e%>');</script>
+                              <script type="text/javascript">CARBON.showErrorDialog('Failed with BE.<%=e.getMessage()%>');
+                              </script>
                                 <%  return;
                                 } %>
                             </select>
