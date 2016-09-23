@@ -50,6 +50,14 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
 	/**
 	 * {@inheritDoc}
 	 */
+	public long getPendingMessageCount(String queueName) throws SubscriptionManagerException{
+
+		return SubscriptionManagementBeans.getInstance().getPendingMessageCount(queueName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
 													   String destinationType, String filteredNamePattern,
 													   boolean isFilteredNameByExactMatch, String identifierPattern,

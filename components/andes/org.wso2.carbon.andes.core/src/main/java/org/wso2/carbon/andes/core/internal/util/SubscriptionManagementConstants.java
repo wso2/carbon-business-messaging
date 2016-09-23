@@ -26,4 +26,6 @@ public class SubscriptionManagementConstants {
 	public static final String SUBSCRIPTION_CLOSE_MBEAN_ATTRIBUTE = "removeSubscription";
     public static final String FILTERED_SUBSCRIPTIONS_MBEAN_ATTRIBUTE = "getFilteredSubscriptions";
     public static final String FILTERED_SUBSCRIPTION_COUNT_MBEAN_ATTRIBUTE = "getTotalSubscriptionCountForSearchResult";
+    public static final String PENDING_MESSAGE_COUNT_MBEAN_ATTRIBUTE = "getPendingMessageCount";
+
 }

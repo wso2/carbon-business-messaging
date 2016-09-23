@@ -11,6 +11,7 @@
 <%@ page import="org.wso2.carbon.andes.cluster.mgt.ui.ClusterManagerClient" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Arrays" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
 <%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
@@ -23,27 +24,28 @@
 <script>
     function refreshMessageCount(obj, durable){
         var aTag = jQuery(obj);
-        var subscriptionID = aTag.attr('data-id');
+        var queueName = aTag.attr('data-id');
         aTag.css('font-weight', 'bolder');
 
         var destinationType;
 
         if (durable == 'true') {
-            destinationType = <%=DestinationType.TOPIC.name()%>;
+            destinationType = "<%= DestinationType.DURABLE_TOPIC.name()%>";
         } else {
-            destinationType = <%=DestinationType.DURABLE_TOPIC.name()%>;
+            destinationType = "<%= DestinationType.TOPIC.name()%>";
         }
 
         jQuery.ajax({
-            url:"retrive_message_count_for_subscriber_ajaxprocessor.jsp?subscriptionID=" + subscriptionID
-            + "&durable=" + durable + "&protocolType=" + <%=ProtocolType.AMQP.name()%>
-            + "&destinationType=" + destinationType,
+            url:"retrive_message_count_for_subscriber_ajaxprocessor.jsp?queueName=" + queueName,
             data:{},
             type:"POST",
+            beforeSend: function(xhr) {
+                        xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                    },
             success:function(data){
                 data = data.trim();
-                //$('#msg-'+subscriptionID).html(data);
-                $(document.getElementById('msg-'+subscriptionID)).html(data);
+                //$('#msg-'+queueName).html(data);
+                $(document.getElementById('msg-'+queueName)).html(data);
                 aTag.css('font-weight', 'normal');
                 // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
             },
@@ -62,7 +64,7 @@
         aTag.css('font-weight', 'bolder');
 
         CARBON.showConfirmationDialog("Are you sure you want to unsubscribe?", function(){
-             jQuery.ajax({
+             $.ajax({
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
                 type:"POST",
@@ -105,6 +107,9 @@
                                                              + destinationType,
                 async:true,
                 type:"POST",
+                beforeSend: function(xhr) {
+                            xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                      },
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {
@@ -162,7 +167,7 @@
         identifierPattern = "";
     }
     ClusterManagerClient client;
-    String[] allClusterNodeAddresses;
+    String[] allClusterNodeAddressesInDropdown;
     boolean isClusteringEnabled = false;
     String serverURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute
@@ -173,7 +178,12 @@
     try {
         client = new ClusterManagerClient(configContext, serverURL, cookie);
         isClusteringEnabled = client.isClusteringEnabled();
-        allClusterNodeAddresses = client.getAllClusterNodeAddresses();
+        allClusterNodeAddressesInDropdown = client.getAllClusterNodeAddresses();
+        if(isClusteringEnabled){
+           List clusterNodesDropdownList = new ArrayList(Arrays.asList(allClusterNodeAddressesInDropdown));
+           clusterNodesDropdownList.add("All");
+           allClusterNodeAddressesInDropdown = (String[]) clusterNodesDropdownList.toArray(new String[0]);
+        }
         nodeId = client.getMyNodeID();
     } catch (Exception e) {
         CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
@@ -348,11 +358,13 @@
                                     if (isClusteringEnabled) {
                             %>
                                  <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
-                                 <% for(int i = 0; i < allClusterNodeAddresses.length; i++){
-
+                                 <% for(int i = 0; i < allClusterNodeAddressesInDropdown.length; i++){
+                                         if(!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])){
                                  %>
-                                     <option value="<%=allClusterNodeAddresses[i].split(",")[0]%>"><%=allClusterNodeAddresses[i].split(",")[0]%></option>
-                                 <% } %>
+                                     <option value="<%=allClusterNodeAddressesInDropdown[i].split(",")[0]%>">
+                                     <%=allClusterNodeAddressesInDropdown[i].split(",")[0]%></option>
+                                 <%     }
+                                    }%>
                                 <%  }else{ %>
                                      <option selected="selected" value="<%=nodeId%>"><%=nodeId%></option>
                                 <%  }
@@ -530,12 +542,12 @@ No subscriptions to show.
         <td><%=sub.getOriginHostAddress()%>
         </td>
 
-        <td id="msg-<%=sub.getSubscriptionIdentifier()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
+        <td id="msg-<%=sub.getSubscriberQueueName()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
         </td>
          <td>
             <a style="background-image: url(images/refresh.gif);"
                class="icon-link"
-               data-id="<%=sub.getSubscriptionIdentifier()%>"
+               data-id="<%=sub.getSubscriberQueueName()%>"
                subscription-destination="<%=sub.getSubscribedQueueOrTopicName()%>"
                onclick="refreshMessageCount(this, 'true')">Refresh
             </a>

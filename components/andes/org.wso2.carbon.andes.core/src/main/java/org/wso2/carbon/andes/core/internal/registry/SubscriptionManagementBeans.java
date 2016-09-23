@@ -93,6 +93,41 @@ public class SubscriptionManagementBeans {
 	}
 
     /**
+     * Get the pending message count for the specified subscription
+     *
+     * @param queueName subscription identifier for which the pending message cound need to be calculated
+     * @return The pending message count for that subscription
+     * @throws SubscriptionManagerException
+     */
+    public long getPendingMessageCount(String queueName) throws SubscriptionManagerException{
+
+        long messageCount = 0;
+
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
+                            "name=SubscriptionManagementInformation");
+
+            Object[] parameters = new Object[]{queueName};
+            String[] signature = new String[]{String.class.getName()};
+
+            Object result = mBeanServer.invoke(objectName,
+                    SubscriptionManagementConstants.PENDING_MESSAGE_COUNT_MBEAN_ATTRIBUTE,
+                    parameters, signature);
+
+            if (result != null) {
+                messageCount = (long) result;
+            }
+            return messageCount;
+
+        } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
+            throw new SubscriptionManagerException("Error while invoking mBean operations to get "
+                    + "message count for a subscription", e);
+        }
+    }
+
+    /**
      * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
      * to retrieve subscriptions matching to the given search criteria
      *
