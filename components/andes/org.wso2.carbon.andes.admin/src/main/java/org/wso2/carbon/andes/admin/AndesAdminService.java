@@ -881,6 +881,27 @@ public class AndesAdminService extends AbstractAdmin {
     }
 
     /**
+     * Get the pending message count for the specified subscription
+     *
+     * @param queueName queue name for which the pending message cound need to be calculated
+     * @return The pending message count for that subscription
+     * @throws BrokerManagerAdminException
+     */
+    public long getPendingMessageCount(String queueName) throws BrokerManagerAdminException {
+        try {
+            SubscriptionManagerService subscriptionManagerService =
+                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+            return subscriptionManagerService.getPendingMessageCount(queueName);
+
+        } catch (Exception e) {
+            log.error("Error while calculating the pending message count for storage queue", e);
+            throw new BrokerManagerAdminException("Error while calculate the pending message count for "
+                    + "storage queue");
+        }
+    }
+
+
+    /**
      * Check if current user is has publish permission for a queue.
      * Suppressing "unused" warning as this is an API.
      *
