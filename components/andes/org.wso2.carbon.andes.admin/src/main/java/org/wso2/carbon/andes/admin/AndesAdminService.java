@@ -818,7 +818,7 @@ public class AndesAdminService extends AbstractAdmin {
     /**
      * Gets the number of messages remaining for a subscriber.
      *
-     * @param subscriptionID   The subscription ID.
+     * @param subscriptionId   The subscription ID.
      * @param durable          Whether the subscription is durable or not.
      * @param protocolType     The protocol type which the subscription belongs to
      * @param destinationType  The destination type which the subscription belongs to
@@ -826,33 +826,26 @@ public class AndesAdminService extends AbstractAdmin {
      * @return The number of remaining messages.
      * @throws BrokerManagerAdminException
      */
-    public int getMessageCountForSubscriber(String subscriptionID, boolean durable, String protocolType,
+    public long getMessageCountForSubscriber(String subscriptionId, boolean durable, String protocolType,
                                             String destinationType) throws BrokerManagerAdminException {
-        int remainingMessages = 0;
+        long remainingMessages;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions;
             if (durable) {
-                subscriptions = subscriptionManagerService.getSubscriptions("true", "*", protocolType, destinationType);
+                remainingMessages = subscriptionManagerService.getPendingMessageCount(subscriptionId, "true", "*",
+                        protocolType, destinationType);
             } else {
-                subscriptions = subscriptionManagerService.getSubscriptions("false", "*", protocolType,
-                        destinationType);
+                remainingMessages = subscriptionManagerService.getPendingMessageCount(subscriptionId, "false", "*",
+                        protocolType, destinationType);
             }
 
-            for (org.wso2.carbon.andes.core.types.Subscription subscription : subscriptions) {
-                if (subscription.getSubscriptionIdentifier().equals(subscriptionID)) {
-                    remainingMessages = subscription.getNumberOfMessagesRemainingForSubscriber();
-                    break;
-                }
-            }
         } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error("Admin service exception while getting message for subscriber "
-                    + subscriptionID, e);
+            String errorMessage = "Error occurred while getting pending message count from MBean for subscription Id "
+                                  + subscriptionId;
+            log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }
-
         return remainingMessages;
     }
 

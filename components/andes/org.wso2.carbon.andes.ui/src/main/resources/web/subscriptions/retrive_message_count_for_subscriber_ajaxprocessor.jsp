@@ -11,9 +11,9 @@
         String durable = request.getParameter("durable");
         String protocolType = request.getParameter("protocolType");
         String destinationType = request.getParameter("destinationType");
-        int messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable),
+        long messageCount = stub.getMessageCountForSubscriber(subscriptionID, Boolean.parseBoolean(durable),
                             protocolType, destinationType);
-        numberOfMessages = Integer.toString(messageCount);
+        numberOfMessages = Long.toString(messageCount);
 
     } catch (Exception e) {
         numberOfMessages = "Error";

@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.core;
 import org.wso2.carbon.andes.core.types.Subscription;
 
 import java.util.List;
+import javax.management.MBeanException;
 
 public interface SubscriptionManagerService {
 
@@ -39,6 +40,21 @@ public interface SubscriptionManagerService {
      */
     public List<Subscription> getSubscriptions(String isDurable, String isActive, String protocolType,
                                                String destinationType) throws SubscriptionManagerException;
+
+
+    /**
+     * Return pending message count for the given subscription
+     *
+     * @param subscriptionId of the subscription
+     * @param isDurable of type String (acceptable values => * | true | false)
+     * @param isActive of type String (acceptable values => * | true | false)
+     * @param protocolType The protocol type of the subscriptions
+     * @param destinationType The destination type of the subscriptions
+     * @return pending message count for the given subscription
+     * @throws MBeanException
+     */
+    public long getPendingMessageCount(String subscriptionId, String isDurable, String isActive, String protocolType,
+                                       String destinationType) throws SubscriptionManagerException;
 
     /**
      * Retrieve all matching subscriptions from andes for the given search criteria.

@@ -129,22 +129,19 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             if (!userRegistry.resourceExists(topicPath)) {
                 userRegistry.put(topicPath, userRegistry.newCollection());
             }
-            log.info("Before calling userregistry.get method");
             Collection collection = (Collection) userRegistry.get(topicPath);
-            log.info("After calling userregistry.get method");
+            //Getting the child paths in paginated way in order to increase performance
             String[] paths = collection.getChildren(startIndex, numberOfTopicsPerRound);
-            log.info("Children Paths length: " + paths.length);
             TopicNode rootTopic = new TopicNode("/", "/");
             buildTopicTree(rootTopic, paths);
-            log.info("After building topic Tree");
             return rootTopic;
         } catch (RegistryException e) {
-            throw new EventBrokerException(e.getMessage(), e);
+            throw new EventBrokerException("Error occurred while retrieving the paginated topic tree", e);
         }
     }
 
     /**
-     * Building the topic tree
+     * Building the topic tree by setting the child nodes to parent nodes
      *
      * @param topicNode node of the topic
      * @param paths     paths of the child topics
@@ -154,12 +151,13 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             throws EventBrokerException {
         String[] children = paths;
         if (children != null) {
-            List<TopicNode> nodes = new ArrayList<TopicNode>();
+            List<TopicNode> nodes = new ArrayList<>();
             for (String childTopic : children) {
                 if (childTopic.endsWith("/")) {
                     childTopic = childTopic.substring(0, childTopic.length() - 2);
                 }
                 String nodeName = childTopic.substring(childTopic.lastIndexOf("/") + 1);
+                //Remove jms subscription and ws subscription from node list
                 if (!nodeName.equals(EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME) &&
                     !nodeName.equals(EventBrokerConstants.EB_CONF_JMS_SUBSCRIPTION_COLLECTION_NAME)) {
                     childTopic =
@@ -172,27 +170,6 @@ public class TopicManagerServiceImpl implements TopicManagerService {
             }
             topicNode.setChildren(nodes.toArray(new TopicNode[nodes.size()]));
         }
-    }
-
-    /**
-     * Check whether the given node is a leaf node in the tree
-     *
-     * @param resource resource to be checked
-     * @return whether the resource is a leaf node or not
-     * @throws RegistryException
-     */
-    private boolean isLeafNode(Resource resource) throws RegistryException {
-        String[] childrenNodesNames = ((Collection) resource).getChildren();
-        if (null != childrenNodesNames) {
-            for (String nodeName : childrenNodesNames) {
-                nodeName = nodeName.substring(nodeName.lastIndexOf("/") + 1);
-                if (!nodeName.equals(EventBrokerConstants.EB_CONF_WS_SUBSCRIPTION_COLLECTION_NAME) &&
-                    !nodeName.equals(EventBrokerConstants.EB_CONF_JMS_SUBSCRIPTION_COLLECTION_NAME)) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     /**

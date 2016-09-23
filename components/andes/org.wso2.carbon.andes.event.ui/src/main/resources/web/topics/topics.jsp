@@ -64,7 +64,7 @@
                     <td valign="top" style="width:200px;" class="leftBox">
                         <div class="treeControl" id="topicTree">
                             <%
-                                int TopicCountPerRound = 100;
+                                int topicCountPerRound = 100;
                                 boolean isLastSet = false;
                                 ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
                                         .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -83,7 +83,7 @@
 
                                 TopicNode topicNode = null;
                                 try {
-                                    topicNode = stub.getPaginatedTopicTree("event/topics",0, TopicCountPerRound);
+                                    topicNode = stub.getPaginatedTopicTree("event/topics",0, topicCountPerRound);
                                 } catch (AndesEventAdminServiceEventAdminException e) {
                                 %>
                             <script type="text/javascript">
@@ -95,7 +95,7 @@
                                 Stack stack = new Stack();
                                 stack.add(topicNode);
                                 if(topicNode.getChildren() != null){
-                                    if (topicNode.getChildren().length < TopicCountPerRound){
+                                    if (topicNode.getChildren().length < topicCountPerRound){
                                         isLastSet = true;
                                     }
                                 } else{
@@ -280,7 +280,7 @@
                            },
                            failure: function(o) {
                                if (o.responseText !== undefined) {
-                                   alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                                    CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
                                }
                            }
                        });
@@ -334,7 +334,7 @@
                                          },
                                          failure: function(o) {
                                              if (o.responseText !== undefined) {
-                                                 alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                                                CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
                                              }
                                          }
                                      });
@@ -381,7 +381,7 @@
                              },
                              failure: function(o) {
                                  if (o.responseText !== undefined) {
-                                     alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                                    CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
                                  }
                              }
                         });

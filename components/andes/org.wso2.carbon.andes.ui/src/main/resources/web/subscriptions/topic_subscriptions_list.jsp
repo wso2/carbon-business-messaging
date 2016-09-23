@@ -49,7 +49,7 @@
             },
             failure: function(o) {
                 if (o.responseText !== undefined) {
-                    alert("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                    CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
                 }
             }
         });
@@ -146,10 +146,10 @@
     boolean isIdentifierPatternByExactMatch = false;
 
     if(filteredName == null || filteredName.trim().length() == 0){
-        filteredName = "*";
+        filteredName = "";
     }
     if(identifierPattern == null || identifierPattern.trim().length() == 0){
-        identifierPattern = "*";
+        identifierPattern = "";
     }
 
     if(null != filteredNameByExactMatch){
@@ -183,12 +183,10 @@
         }
         nodeID = client.getMyNodeID();
     } catch (Exception e) {
-        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
     %>
-    <script type="text/javascript">
-        location.href = "../admin/error.jsp";
-        alert("error");
-    </script>
+   <script type="text/javascript">
+       CARBON.showErrorDialog('Error occurred when getting cluster nodes addresses');
+   </script>
     <%
         return;
     }
@@ -286,13 +284,9 @@
         }
 
     } catch (Exception e) {
-        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-        e.printStackTrace();
 %>
-
 <script type="text/javascript">
-    location.href = "../admin/error.jsp";
-    alert("error");
+    CARBON.showErrorDialog('Error occurred when getting filtered subscriptions');
 </script>
 <%
         return;
@@ -300,7 +294,7 @@
 %>
 
 <carbon:breadcrumb
-        label="queues.list"
+        label="topics.list"
         resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
         topPage="false"
         request="<%=request%>"/>
@@ -323,7 +317,7 @@
 
 
                 <tr>
-                    <td class="leftCol-big" style="padding-right: 0 !important;">Enter topic name pattern (* for all)
+                    <td class="leftCol-big" style="padding-right: 0 !important;">Enter topic name pattern
                     </td>
                     <td>
                         <input type="text" name="topicNamePattern" value="<%=filteredName%>"/>
@@ -348,25 +342,26 @@
                                 try {
                                     if (isClusteringEnabled) {
                             %>
-                                 <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
-                                 <% for(int i = 0; i < allClusterNodeAddressesInDropdown.length; i++){
-                                     if(!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])){
-                                 %>
-                                     <option value="<%=allClusterNodeAddressesInDropdown[i].split(",")[0]%>"><%=allClusterNodeAddressesInDropdown[i].split(",")[0]%></option>
-                                 <%  }
-                                    }
-                                }else{ %>
-                                     <option selected="selected" value="<%=nodeID%>"><%=nodeID%></option>
-                                <%  }
+                                         <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
+                                         <% for(int i = 0; i < allClusterNodeAddressesInDropdown.length; i++){
+                                             if(!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])){
+                                         %>
+                                             <option value="<%=allClusterNodeAddressesInDropdown[i].split(",")[0]%>"><%=allClusterNodeAddressesInDropdown[i].split(",")[0]%></option>
+                                         <%  }
+                                            }
+                                    }else{ %>
+                                         <option selected="selected" value="<%=nodeID%>"><%=nodeID%></option>
+                                    <%  }
                                 } catch (Exception e) {%>
-                                  <script type="text/javascript">CARBON.showErrorDialog('Failed with BE.<%=e%>');</script>
+                                  <script type="text/javascript">CARBON.showErrorDialog('Failed with BE error');
+                                  </script>
                                     <%  return;
                                 } %>
                         </select>
                     </td>
                 </tr>
                 <tr>
-                    <td class="leftCol-big" style="padding-right: 0 !important;">Enter identifier pattern (* for all)
+                    <td class="leftCol-big" style="padding-right: 0 !important;">Enter identifier pattern
                     </td>
                     <td>
                         <input type="text" name="identifier" value="<%=identifierPattern%>"/>

@@ -94,6 +94,49 @@ public class SubscriptionManagementBeans {
 
     /**
      * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
+     * to get pending message ccount of subscriber
+     *
+     * @param subscriptionId  Id of the subscriber
+     * @param isDurable       filter subscriptions for durable topics
+     * @param isActive        filter only active subscriptions
+     * @param protocolType    The protocol type of the subscriptions
+     * @param destinationType The destination type of the subscriptions
+     * @return ArrayList\<Subscription\>
+     * @throws SubscriptionManagerException
+     */
+    public long getPendingMessageCount(String subscriptionId, String isDurable, String isActive,
+                                      String protocolType, String destinationType)
+            throws SubscriptionManagerException {
+
+        long pendingMessageCount = 0;
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,"
+                                   + "name=SubscriptionManagementInformation");
+
+            Object[] parameters = new Object[]{subscriptionId, isDurable, isActive, protocolType, destinationType};
+            String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(),
+                    String.class.getName(), String.class.getName()};
+
+            Object result = mBeanServer.invoke(objectName,
+                    SubscriptionManagementConstants.PENDING_MESSAGE_COUNT_MBEAN_ATTRIBUTE,
+                    parameters, signature);
+
+            if (result != null) {
+                pendingMessageCount = (long) result;
+
+            }
+            return pendingMessageCount;
+
+        } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
+            throw new SubscriptionManagerException("Error while invoking mBean operations to get "
+                                                   + "pending message count", e);
+        }
+    }
+
+    /**
+     * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
      * to retrieve subscriptions matching to the given search criteria
      *
      * @param isDurable                         retrieve durable subscriptions (can be true/false)

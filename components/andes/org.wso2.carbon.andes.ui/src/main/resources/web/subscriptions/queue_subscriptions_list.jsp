@@ -102,10 +102,10 @@
         }
 
         if(filteredName == null || filteredName.trim().length() == 0){
-            filteredName = "*";
+            filteredName = "";
         }
         if(identifierPattern == null || identifierPattern.trim().length() == 0){
-            identifierPattern = "*";
+            identifierPattern = "";
         }
         ClusterManagerClient client;
         String[] allClusterNodeAddresses;
@@ -129,12 +129,10 @@
                 }
                 nodeId = client.getMyNodeID();
             } catch (Exception e) {
-                CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
             %>
-            <script type="text/javascript">
-                location.href = "../admin/error.jsp";
-                alert("error");
-            </script>
+           <script type="text/javascript">
+               CARBON.showErrorDialog('Error occurred when getting cluster nodes addresses');
+           </script>
             <%
                 return;
             }
@@ -184,13 +182,10 @@
                 numberOfPages = (int) Math.ceil(((float) totalQueueSubscriptionCount) / subscriptionCountPerPage);
             }
         } catch (Exception e) {
-            CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-            e.printStackTrace();
     %>
 
     <script type="text/javascript">
-        location.href = "../admin/error.jsp";
-        alert("error");
+        CARBON.showErrorDialog('Error occurred when getting filtered subscriptions');
     </script>
     <%
             return;
@@ -211,8 +206,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="leftCol-big" style="padding-right: 0 !important;">Enter queue name pattern
-                            (*for all)</td>
+                            <td class="leftCol-big" style="padding-right: 0 !important;">Enter queue name pattern </td>
                             <td>
                                 <input type="text" name="queueNamePattern" value="<%=filteredName%>"/>
                                 <%
@@ -253,8 +247,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="leftCol-big" style="padding-right: 0 !important;">Enter identifier pattern (*
-                                                        for all)</td>
+                            <td class="leftCol-big" style="padding-right: 0 !important;">Enter identifier pattern </td>
                             <td>
                                 <input type="text" name="identifier" value="<%=identifierPattern%>"/>
                                  <%

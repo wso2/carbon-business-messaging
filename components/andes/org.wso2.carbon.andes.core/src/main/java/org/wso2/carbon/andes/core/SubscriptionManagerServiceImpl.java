@@ -47,6 +47,13 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         return Utils.filterDomainSpecificSubscribers(subscriptions);
     }
 
+    @Override
+    public long getPendingMessageCount(String subscriptionId, String isDurable, String isActive, String protocolType,
+                                       String destinationType) throws SubscriptionManagerException {
+        return  SubscriptionManagementBeans.getInstance().getPendingMessageCount( subscriptionId, isDurable, isActive,
+                protocolType, destinationType);
+    }
+
     /**
      * {@inheritDoc}
      */
