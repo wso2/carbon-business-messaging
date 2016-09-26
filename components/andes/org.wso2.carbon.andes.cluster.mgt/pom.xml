@@ -21,12 +21,12 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.1.12</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>3.1.12</version>
     <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Component - MB Cluster Management - BE</name>
