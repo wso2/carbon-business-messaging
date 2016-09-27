@@ -171,10 +171,7 @@ public class AndesAuthorizationHandler {
                         PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
-                } else if (isDurableTopicSubscriberQueue(
-                        properties.get(ObjectProperties.Property.NAME),
-                        properties.get(ObjectProperties.Property.OWNER))
-                           && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     registerAndAuthorizeQueue(username, userRealm, properties);
                     accessResult = Result.ALLOWED;
@@ -225,10 +222,7 @@ public class AndesAuthorizationHandler {
                     //we have to check admin user who is in the same tenant domain has permission for durable topic
                     //internal queue or non durable topic tmp queue as we grant in bind call. This is to restrict any
                     //tenant admin to consume messages in durable topic or non durable topic
-                    if (isDurableTopicSubscriberQueue(
-                            properties.get(ObjectProperties.Property.NAME),
-                            properties.get(ObjectProperties.Property.OWNER))
-                            && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                    if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                             Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                         if (userRealm.getAuthorizationManager().isUserAuthorized(username, queueID,
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
@@ -263,11 +257,7 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                     }
-                } else if (isDurableTopicSubscriberQueue(
-                        // If this queue is created internally for the use of Durable Topics then authorize
-                        properties.get(ObjectProperties.Property.NAME),
-                        properties.get(ObjectProperties.Property.OWNER)) &&
-                        Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     accessResult = Result.ALLOWED;
                 }
@@ -360,10 +350,7 @@ public class AndesAuthorizationHandler {
                                 username, queueID,
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                             accessResult = Result.ALLOWED;
-                        } else if (isDurableTopicSubscriberQueue(
-                                properties.get(ObjectProperties.Property.QUEUE_NAME),
-                                properties.get(ObjectProperties.Property.OWNER)) &&
-                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                                 Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                             accessResult = Result.ALLOWED;
                         } else if (isTopicSubscriberQueue(queueName) && !Boolean.valueOf(
@@ -671,9 +658,7 @@ public class AndesAuthorizationHandler {
                         PERMISSION_ADMIN_MANAGE_TOPIC_DELETE, UI_EXECUTE)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
-                } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
-                                                properties.get(ObjectProperties.Property.OWNER)) &&
-                                Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
@@ -712,9 +697,7 @@ public class AndesAuthorizationHandler {
                         PERMISSION_ADMIN_MANAGE_QUEUE_PURGE, UI_EXECUTE)) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
-                } else if (isDurableTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME),
-                        properties.get(ObjectProperties.Property.OWNER)) &&
-                        Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     deleteQueueFromRegistry(queueName);
                     accessResult = Result.ALLOWED;
@@ -761,10 +744,7 @@ public class AndesAuthorizationHandler {
             //we avoid creating role for non durable topic subscriber temporary queue and durable topic subscriber
             //subscription id queue
             boolean isCreateRole = true;
-            if (isDurableTopicSubscriberQueue(
-                    properties.get(ObjectProperties.Property.NAME),
-                    properties.get(ObjectProperties.Property.OWNER))
-                    && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+            if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                     Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                 isCreateRole = false;
             } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
@@ -891,10 +871,7 @@ public class AndesAuthorizationHandler {
                 } else if (isTopicSubscriberQueue(routingKey) &&
                         !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
                     isOwnDomain = true;
-                } else if (isDurableTopicSubscriberQueue(
-                        routingKey,
-                        properties.get(ObjectProperties.Property.OWNER))
-                        && Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
                     isOwnDomain = true;
                 }
@@ -920,19 +897,6 @@ public class AndesAuthorizationHandler {
     private static boolean isTopicSubscriberQueue(String queueName) {
         return queueName.startsWith(TEMP_QUEUE_SUFFIX);
 
-    }
-
-    /**
-     * Durable queue created with prefix of virtual host name when a subscriber is created for a
-     * durable topic. This check whether subscription for create durable topic.
-     *
-     * @param queueName   durable topic subscriber's queue
-     * @param virtualHost virtual host name
-     * @return check queue name start with virtual host name to verify subscription is for durable
-     * topic
-     */
-    private static boolean isDurableTopicSubscriberQueue(String queueName, String virtualHost) {
-        return (null != virtualHost) && !virtualHost.isEmpty() && queueName.startsWith(virtualHost);
     }
 
     /**
