@@ -25,5 +25,9 @@
             <DisplayName>Nodes</DisplayName>
             <ResourceId>/permission/admin/manage/cluster/list</ResourceId>
         </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Dynamic Discovery</DisplayName>
+            <ResourceId>/permission/admin/manage/brokerDiscovery</ResourceId>
+        </ManagementPermission>
     </ManagementPermissions>
 </component>

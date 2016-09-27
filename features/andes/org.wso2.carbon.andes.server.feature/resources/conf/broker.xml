@@ -94,6 +94,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
             <allowSharedTopicSubscriptions>false</allowSharedTopicSubscriptions>
             <allowStrictNameValidation>true</allowStrictNameValidation>
+            <dynamicDiscovery>org.wso2.carbon.andes.discovery.LocalCluster</dynamicDiscovery>
 
             <!-- Refer repository/conf/advanced/qpid-config.xml for further AMQP-specific configurations.-->
         </amqp>

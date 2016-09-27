@@ -186,4 +186,18 @@ CREATE TABLE IF NOT EXISTS MB_MEMBERSHIP (
                         PRIMARY KEY (EVENT_ID)
 );
 
+CREATE TABLE IF NOT EXISTS NODE_DETAIL_TABLE (
+                         NODE_IDENTIFIER VARCHAR(512) NOT NULL,
+                         NODE_PORT INT,
+                         NODE_SSL_PORT INT,
+                         PRIMARY KEY (NODE_IDENTIFIER)
+);
+
+CREATE TABLE IF NOT EXISTS ADDRESS_DETAIL_TABLE (
+                         NODE_IDENTIFIER VARCHAR(512),
+                         NODE_INTERFACE VARCHAR(512),
+                         NODE_ADDRESS VARCHAR(512),
+                         FOREIGN KEY (NODE_IDENTIFIER) REFERENCES NODE_DETAIL_TABLE (NODE_IDENTIFIER)
+                         ON DELETE CASCADE
+);
 -- End of Andes Context Store Tables --

@@ -191,4 +191,21 @@ CREATE TABLE IF NOT EXISTS MB_CLUSTER_EVENT (
                         PRIMARY KEY (EVENT_ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS NODE_DETAIL_TABLE (
+                        NODE_IDENTIFIER VARCHAR(512),
+                        NODE_PORT INT,
+                        NODE_SSL_PORT INT,
+                        PRIMARY KEY (NODE_IDENTIFIER)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+CREATE TABLE IF NOT EXISTS ADDRESS_DETAIL_TABLE (
+                        NODE_IDENTIFIER VARCHAR(512),
+                        NODE_INTERFACE VARCHAR(512),
+                        NODE_ADDRESS VARCHAR(512),
+                        FOREIGN KEY (NODE_IDENTIFIER) REFERENCES NODE_DETAIL_TABLE (NODE_IDENTIFIER)
+                        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- End of Andes Context Store Tables --

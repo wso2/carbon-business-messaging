@@ -32,10 +32,28 @@
                              class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
         </messageReceivers>
         <parameter name="ServiceClass">org.wso2.carbon.andes.cluster.mgt.ClusterManagerService</parameter>
-    </service>
 
-    <parameter name="adminService" locked="true">true</parameter>
-    <parameter name="hiddenService" locked="true">true</parameter>
-    <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
-    
+        <parameter name="adminService" locked="true">true</parameter>
+        <parameter name="hiddenService" locked="true">true</parameter>
+
+        <operation name="getAllClusterNodeAddresses">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+
+        <operation name="isClusteringEnabled">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+
+        <operation name="getMyNodeID">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+
+        <operation name="getStoreHealth">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
+        </operation>
+
+        <operation name="getBrokerInformation">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/brokerDiscovery</parameter>
+        </operation>
+    </service>
 </serviceGroup>

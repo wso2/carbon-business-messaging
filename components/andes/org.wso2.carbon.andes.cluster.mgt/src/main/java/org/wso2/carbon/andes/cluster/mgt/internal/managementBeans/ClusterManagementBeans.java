@@ -49,7 +49,7 @@ public class ClusterManagementBeans {
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
+                            "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.IS_CLUSTERING_ENABLED);
 
             if (result != null) {
@@ -82,7 +82,7 @@ public class ClusterManagementBeans {
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
+                            "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.MY_NODE_ID);
 
             if (result != null) {
@@ -115,7 +115,7 @@ public class ClusterManagementBeans {
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
+                            "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.COORDINATOR_NODE_ADDRESS);
             if (result != null) {
                 coordinatorNodeAddress = (String) result;
@@ -148,7 +148,7 @@ public class ClusterManagementBeans {
 
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
+                            "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.ALL_CLUSTER_NODE_ADDRESSES);
 
             if (result != null) {
@@ -181,7 +181,7 @@ public class ClusterManagementBeans {
         try {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=ClusterManagementInformation," +
-                                   "name=ClusterManagementInformation");
+                            "name=ClusterManagementInformation");
             Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.STORE_HEALTH);
             if (result != null) {
                 storeHealth = (Boolean) result;
@@ -200,4 +200,35 @@ public class ClusterManagementBeans {
             throw new ClusterMgtException("Cannot get message store health.", e);
         }
     }
+
+    /**
+     * Got the live nodes details on cluster
+     *
+     * @return String node IPs and Ports
+     * @throws ClusterMgtException
+     */
+
+    public String getBrokerInformation() throws ClusterMgtException {
+        String brokerInformation = "";
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+
+            ObjectName objectName =
+                    new ObjectName("org.wso2.andes:type=ClusterManagementInformation,"
+                            + "name=ClusterManagementInformation");
+            Object result = mBeanServer.getAttribute(objectName, ClusterMgtConstants.BROKER_DETAIL);
+
+            if (result != null) {
+                brokerInformation = (String) result;
+            }
+
+
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | AttributeNotFoundException | InstanceNotFoundException e) {
+            throw new ClusterMgtException("Cannot get live node addresses", e);
+        }
+
+        return brokerInformation;
+    }
+
+
 }

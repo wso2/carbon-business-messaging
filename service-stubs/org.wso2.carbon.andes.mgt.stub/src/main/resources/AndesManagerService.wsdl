@@ -1,4 +1,4 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://mgt.cluster.andes.carbon.wso2.org" xmlns:ax27="http://mgt.cluster.andes.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.mgt.cluster.andes.carbon.wso2.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://mgt.cluster.andes.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax27="http://mgt.cluster.andes.carbon.wso2.org/xsd" xmlns:ns="http://mgt.cluster.andes.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://internal.mgt.cluster.andes.carbon.wso2.org/xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://mgt.cluster.andes.carbon.wso2.org">
     <wsdl:documentation>AndesManagerService</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://mgt.cluster.andes.carbon.wso2.org/xsd">
@@ -22,19 +22,7 @@
             <xs:element name="AndesManagerServiceClusterMgtException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="ClusterMgtException" nillable="true" type="ax25:ClusterMgtException"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getMyNodeID">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getMyNodeIDResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="ClusterMgtException" nillable="true" type="ax26:ClusterMgtException"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -50,10 +38,22 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="getMyNodeID">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMyNodeIDResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="AndesManagerServiceClusterMgtAdminException">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="ClusterMgtAdminException" nillable="true" type="ax27:ClusterMgtAdminException"/>
+                        <xs:element minOccurs="0" name="ClusterMgtAdminException" nillable="true" type="ax28:ClusterMgtAdminException"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -66,6 +66,18 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getBrokerInformation">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getBrokerInformationResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -92,14 +104,20 @@
     <wsdl:message name="AndesManagerServiceClusterMgtAdminException">
         <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtAdminException"/>
     </wsdl:message>
+    <wsdl:message name="isClusteringEnabledRequest">
+        <wsdl:part name="parameters" element="ns:isClusteringEnabled"/>
+    </wsdl:message>
+    <wsdl:message name="isClusteringEnabledResponse">
+        <wsdl:part name="parameters" element="ns:isClusteringEnabledResponse"/>
+    </wsdl:message>
+    <wsdl:message name="AndesManagerServiceClusterMgtException">
+        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtException"/>
+    </wsdl:message>
     <wsdl:message name="getStoreHealthRequest">
         <wsdl:part name="parameters" element="ns:getStoreHealth"/>
     </wsdl:message>
     <wsdl:message name="getStoreHealthResponse">
         <wsdl:part name="parameters" element="ns:getStoreHealthResponse"/>
-    </wsdl:message>
-    <wsdl:message name="AndesManagerServiceClusterMgtException">
-        <wsdl:part name="parameters" element="ns:AndesManagerServiceClusterMgtException"/>
     </wsdl:message>
     <wsdl:message name="getMyNodeIDRequest">
         <wsdl:part name="parameters" element="ns:getMyNodeID"/>
@@ -107,17 +125,22 @@
     <wsdl:message name="getMyNodeIDResponse">
         <wsdl:part name="parameters" element="ns:getMyNodeIDResponse"/>
     </wsdl:message>
-    <wsdl:message name="isClusteringEnabledRequest">
-        <wsdl:part name="parameters" element="ns:isClusteringEnabled"/>
+    <wsdl:message name="getBrokerInformationRequest">
+        <wsdl:part name="parameters" element="ns:getBrokerInformation"/>
     </wsdl:message>
-    <wsdl:message name="isClusteringEnabledResponse">
-        <wsdl:part name="parameters" element="ns:isClusteringEnabledResponse"/>
+    <wsdl:message name="getBrokerInformationResponse">
+        <wsdl:part name="parameters" element="ns:getBrokerInformationResponse"/>
     </wsdl:message>
     <wsdl:portType name="AndesManagerServicePortType">
         <wsdl:operation name="getAllClusterNodeAddresses">
             <wsdl:input message="ns:getAllClusterNodeAddressesRequest" wsaw:Action="urn:getAllClusterNodeAddresses"/>
             <wsdl:output message="ns:getAllClusterNodeAddressesResponse" wsaw:Action="urn:getAllClusterNodeAddressesResponse"/>
             <wsdl:fault message="ns:AndesManagerServiceClusterMgtAdminException" name="AndesManagerServiceClusterMgtAdminException" wsaw:Action="urn:getAllClusterNodeAddressesAndesManagerServiceClusterMgtAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="isClusteringEnabled">
+            <wsdl:input message="ns:isClusteringEnabledRequest" wsaw:Action="urn:isClusteringEnabled"/>
+            <wsdl:output message="ns:isClusteringEnabledResponse" wsaw:Action="urn:isClusteringEnabledResponse"/>
+            <wsdl:fault message="ns:AndesManagerServiceClusterMgtException" name="AndesManagerServiceClusterMgtException" wsaw:Action="urn:isClusteringEnabledAndesManagerServiceClusterMgtException"/>
         </wsdl:operation>
         <wsdl:operation name="getStoreHealth">
             <wsdl:input message="ns:getStoreHealthRequest" wsaw:Action="urn:getStoreHealth"/>
@@ -129,10 +152,10 @@
             <wsdl:output message="ns:getMyNodeIDResponse" wsaw:Action="urn:getMyNodeIDResponse"/>
             <wsdl:fault message="ns:AndesManagerServiceClusterMgtException" name="AndesManagerServiceClusterMgtException" wsaw:Action="urn:getMyNodeIDAndesManagerServiceClusterMgtException"/>
         </wsdl:operation>
-        <wsdl:operation name="isClusteringEnabled">
-            <wsdl:input message="ns:isClusteringEnabledRequest" wsaw:Action="urn:isClusteringEnabled"/>
-            <wsdl:output message="ns:isClusteringEnabledResponse" wsaw:Action="urn:isClusteringEnabledResponse"/>
-            <wsdl:fault message="ns:AndesManagerServiceClusterMgtException" name="AndesManagerServiceClusterMgtException" wsaw:Action="urn:isClusteringEnabledAndesManagerServiceClusterMgtException"/>
+        <wsdl:operation name="getBrokerInformation">
+            <wsdl:input message="ns:getBrokerInformationRequest" wsaw:Action="urn:getBrokerInformation"/>
+            <wsdl:output message="ns:getBrokerInformationResponse" wsaw:Action="urn:getBrokerInformationResponse"/>
+            <wsdl:fault message="ns:AndesManagerServiceClusterMgtException" name="AndesManagerServiceClusterMgtException" wsaw:Action="urn:getBrokerInformationAndesManagerServiceClusterMgtException"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="AndesManagerServiceSoap11Binding" type="ns:AndesManagerServicePortType">
@@ -147,6 +170,18 @@
             </wsdl:output>
             <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
                 <soap:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="isClusteringEnabled">
+            <soap:operation soapAction="urn:isClusteringEnabled" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesManagerServiceClusterMgtException">
+                <soap:fault use="literal" name="AndesManagerServiceClusterMgtException"/>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getStoreHealth">
@@ -173,8 +208,8 @@
                 <soap:fault use="literal" name="AndesManagerServiceClusterMgtException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="isClusteringEnabled">
-            <soap:operation soapAction="urn:isClusteringEnabled" style="document"/>
+        <wsdl:operation name="getBrokerInformation">
+            <soap:operation soapAction="urn:getBrokerInformation" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -198,6 +233,18 @@
             </wsdl:output>
             <wsdl:fault name="AndesManagerServiceClusterMgtAdminException">
                 <soap12:fault use="literal" name="AndesManagerServiceClusterMgtAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="isClusteringEnabled">
+            <soap12:operation soapAction="urn:isClusteringEnabled" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesManagerServiceClusterMgtException">
+                <soap12:fault use="literal" name="AndesManagerServiceClusterMgtException"/>
             </wsdl:fault>
         </wsdl:operation>
         <wsdl:operation name="getStoreHealth">
@@ -224,8 +271,8 @@
                 <soap12:fault use="literal" name="AndesManagerServiceClusterMgtException"/>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="isClusteringEnabled">
-            <soap12:operation soapAction="urn:isClusteringEnabled" style="document"/>
+        <wsdl:operation name="getBrokerInformation">
+            <soap12:operation soapAction="urn:getBrokerInformation" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -241,6 +288,15 @@
         <http:binding verb="POST"/>
         <wsdl:operation name="getAllClusterNodeAddresses">
             <http:operation location="getAllClusterNodeAddresses"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="isClusteringEnabled">
+            <http:operation location="isClusteringEnabled"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -266,8 +322,8 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="isClusteringEnabled">
-            <http:operation location="isClusteringEnabled"/>
+        <wsdl:operation name="getBrokerInformation">
+            <http:operation location="getBrokerInformation"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -278,13 +334,13 @@
     </wsdl:binding>
     <wsdl:service name="AndesManagerService">
         <wsdl:port name="AndesManagerServiceHttpsSoap11Endpoint" binding="ns:AndesManagerServiceSoap11Binding">
-            <soap:address location="https://172.17.0.1:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap11Endpoint/"/>
+            <soap:address location="https://10.100.4.165:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesManagerServiceHttpsSoap12Endpoint" binding="ns:AndesManagerServiceSoap12Binding">
-            <soap12:address location="https://172.17.0.1:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap12Endpoint/"/>
+            <soap12:address location="https://10.100.4.165:9443/services/AndesManagerService.AndesManagerServiceHttpsSoap12Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="AndesManagerServiceHttpsEndpoint" binding="ns:AndesManagerServiceHttpBinding">
-            <http:address location="https://172.17.0.1:9443/services/AndesManagerService.AndesManagerServiceHttpsEndpoint/"/>
+            <http:address location="https://10.100.4.165:9443/services/AndesManagerService.AndesManagerServiceHttpsEndpoint/"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

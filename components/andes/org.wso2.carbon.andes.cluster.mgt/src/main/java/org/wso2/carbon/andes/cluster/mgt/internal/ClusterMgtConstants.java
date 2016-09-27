@@ -46,4 +46,9 @@ public class ClusterMgtConstants {
      * Attribute name for 'StoreHealth'
      */
     public static final String STORE_HEALTH = "StoreHealth";
+
+    /**
+     * Attribute name for 'AllLiveNodeAddresses'
+     */
+    public static final String BROKER_DETAIL = "BrokerDetail";
 }

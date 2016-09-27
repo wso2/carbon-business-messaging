@@ -6,7 +6,7 @@
  *   in compliance with the License.
  *   You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0p
  *
  *   Unless required by applicable law or agreed to in writing,
  *   software distributed under the License is distributed on an
@@ -32,6 +32,7 @@ import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
+import org.wso2.andes.server.cluster.IpAddressRetriever;
 import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
@@ -52,15 +53,15 @@ import org.wso2.carbon.server.admin.common.IServerAdmin;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Set;
 import java.util.Stack;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 /**
  * @scr.component name="org.wso2.carbon.andes.internal.QpidServiceComponent"
@@ -105,6 +106,12 @@ import javax.management.ObjectName;
  * cardinality="1..1" policy="dynamic"
  * bind="setIServerAdmin"
  * unbind="unsetIServerAdmin"
+ * @scr.reference name="org.wso2.andes.server.cluster.IpAddressRetriever"
+ * interface="org.wso2.andes.server.cluster.IpAddressRetriever"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setAddressRetriever"
+ * unbind="unsetAddressRetriever"
  */
 public class QpidServiceComponent {
 
@@ -295,6 +302,20 @@ public class QpidServiceComponent {
         QpidServiceDataHolder.getInstance().setService(null);
     }
 
+
+    protected void setAddressRetriever(IpAddressRetriever ipAddressRetriever){
+
+        String loadClassName = AndesConfigurationManager.readValue(AndesConfiguration.DYNAMIC_DISCOVERY);
+        if (ipAddressRetriever.getClass().getName().equals(loadClassName)) {
+            AndesContext.getInstance().setAddressRetriever(ipAddressRetriever);
+        }
+    }
+
+
+    protected void unsetAddressRetriever(IpAddressRetriever ipAddressRetriever){
+        AndesContext.getInstance().setAddressRetriever(null);
+
+    }
     /**
      * Shutdown from the carbon kernel level.
      */

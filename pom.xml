@@ -39,8 +39,10 @@
         <module>service-stubs</module>
         <module>components/andes</module>
         <module>components/metrics</module>
+        <module>components/extensions</module>
         <module>features/andes</module>
         <module>features/metrics</module>
+        <module>features/extensions</module>
     </modules>
 
     <scm>
@@ -658,6 +660,11 @@
                 <groupId>commons-httpclient.wso2</groupId>
                 <artifactId>commons-httpclient</artifactId>
                 <version>${orbit.version.commons.httpclient}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.dynamic-discovery</artifactId>
+                <version>${carbon.messaging.version}</version>
             </dependency>
             <dependency>
                  <groupId>org.apache.commons</groupId>

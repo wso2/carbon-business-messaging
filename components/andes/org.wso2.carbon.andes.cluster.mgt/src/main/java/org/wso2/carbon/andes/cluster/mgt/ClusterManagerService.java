@@ -77,4 +77,16 @@ public class ClusterManagerService extends AbstractAdmin {
         ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
         return clusterManagementBeans.getStoreHealth();
     }
+
+    /**
+     * Gets the live node ip and port details in cluster
+     * @return String node ip and port eg- 127.0.0.1:5672
+     * @throws ClusterMgtException
+     */
+    public String getBrokerInformation() throws ClusterMgtException {
+
+        ClusterManagementBeans clusterManagementBeans = new ClusterManagementBeans();
+        return clusterManagementBeans.getBrokerInformation();
+
+    }
 }
