@@ -64,6 +64,8 @@
                     <td valign="top" style="width:200px;" class="leftBox">
                         <div class="treeControl" id="topicTree">
                             <%
+                                int topicCountPerRound = 100;
+                                boolean isLastSet = false;
                                 ConfigurationContext configContext = (ConfigurationContext) config.getServletContext()
                                         .getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
                                 //Server URL which is defined in the server.xml
@@ -81,7 +83,7 @@
 
                                 TopicNode topicNode = null;
                                 try {
-                                    topicNode = stub.getAllTopics();
+                                    topicNode = stub.getPaginatedTopicTree("event/topics",0, topicCountPerRound);
                                 } catch (AndesEventAdminServiceEventAdminException e) {
                                 %>
                             <script type="text/javascript">
@@ -90,10 +92,15 @@
                                 <%
                                 }
 
-
                                 Stack stack = new Stack();
                                 stack.add(topicNode);
-
+                                if(topicNode.getChildren() != null){
+                                    if (topicNode.getChildren().length < topicCountPerRound){
+                                        isLastSet = true;
+                                    }
+                                } else{
+                                   isLastSet = true;
+                                }
                                 while (!stack.isEmpty()) {
                                     Object obj = stack.pop();
                                     if (obj instanceof String) {
@@ -111,11 +118,27 @@
                                         }
                                     }
                                 }
-                            %>
-                                <li><a class="minus" onclick="treeColapse(this)">&nbsp;</a>
 
+                            %>
+                                <%
+                                   if(node.getLeafNode()){
+                                %>
+                                <li id="nodeList<%=node.getTopicName()%>"><a class="minus"
+                                nodeId="<%=node.getTopicName()%>" listId="nodeList<%=node.getTopicName()%>">&nbsp;</a>
+
+                                <%
+                                  } else {
+
+                                %>
+                                <li id="nodeList<%=node.getTopicName()%>">
+                                <a class="plus" nodeId="<%=node.getTopicName()%>" listId="nodeList<%=node.getTopicName()%>">&nbsp;
+                                </a>
+
+                                <%
+                                 }
+                                 %>
                                     <a class="treeNode" onclick="hideTheRestAndShowMe(this)"
-                                       href="#"
+                                       href="javascript:void(0)"
                                        title="<%=node.getTopicName()%>"><%=node.getNodeName()%>
                                     </a>
 
@@ -180,9 +203,6 @@
 
                                     <% } %>
 
-
-
-
                                 </p>
                                 <%
 
@@ -190,7 +210,19 @@
                                     }
                                 %>
                             </ul>
-                            <span id="domChecker"></span>
+                             <span id="domChecker"></span>
+                            <%
+                               if(!isLastSet){
+
+                            %>
+
+                            <a style="background-image: url(images/show.gif);" id="showMore" class="icon-link">Show more
+                            </a>
+
+                            <%
+                                }
+
+                            %>
                         </div>
                     </td>
                         <%--<td valign="top" class="topicData" id="topicData">
@@ -198,6 +230,7 @@
                         </td>--%>
                 </tr>
             </table>
+
         </div>
     </div>
 
@@ -217,6 +250,157 @@
             jQuery(".topicDetailsStyle").hide();
             jQuery(".topicSubscribeStyle").hide();
             jQuery(".topicDeleteStyle").hide();
+
+              var startIndex = 100;
+              var topicCountPerRound = 100;
+              var nodeIdToStartIndex = {};
+              var nodeIdToPlusButtonStatus = {};
+              jQuery('#showMore').click(function() {
+                //send a ajax request here and set html equal to data recevide by ajax
+                jQuery.ajax({
+                           url:"topic_list_ajaxprocessor.jsp?startIndex="+startIndex + "&count=" + topicCountPerRound
+                            + "&topicPath=event/topics",
+                        data:{},
+                        type:"POST",
+                        success:function(data){
+                        data = data.trim();
+                        if(data == "No more topics to show"){
+                            jQuery("#showMore").hide();
+                        }else if (data == "Error"){
+                            jQuery("#showMore").hide();
+                            jQuery('#nodeList\\/').append(data);
+                        }else{
+                            jQuery('#nodeList\\/').append(data);
+                            jQuery(".addSubtopicStyle").hide();
+                            jQuery(".topicDetailsStyle").hide();
+                            jQuery(".topicSubscribeStyle").hide();
+                            jQuery(".topicDeleteStyle").hide();
+                            startIndex = startIndex + topicCountPerRound;
+                        }
+                           },
+                           failure: function(o) {
+                               if (o.responseText !== undefined) {
+                                    CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                               }
+                           }
+                       });
+              });
+
+               jQuery('.showMoreSubTopic').live('click', function() {
+                                var nodeId = jQuery(this).attr("nodeId");
+                                if(nodeId == "/"){
+                                  nodeId = "";
+                                }
+                                var listId = jQuery(this).attr("listId");
+                                if(typeof nodeIdToStartIndex[nodeId] == "undefined"){
+                                    nodeIdToStartIndex[nodeId] = 0;
+                                }else{
+                                    nodeIdToStartIndex[nodeId] = nodeIdToStartIndex[nodeId] + topicCountPerRound;
+                                }
+                                var temp = nodeIdToStartIndex[nodeId];
+                                if(jQuery(this).hasClass("plus")){
+                                    jQuery(this).removeClass('plus').addClass('minus');
+                                } else{
+                                    jQuery(this).next().remove();
+                                    jQuery(this).remove();
+                                }
+                              //send a ajax request here and set html equal to data recevide by ajax
+                              jQuery.ajax({
+                                         url:"topic_list_ajaxprocessor.jsp?startIndex="+ nodeIdToStartIndex[nodeId] +
+                                         "&count=100&topicPath=event/topics/"+nodeId,
+                                         data:{},
+                                         type:"POST",
+                                         success:function(data){
+                                              data = data.trim();
+                                              if(data == "No more topics to show"){
+                                                 // Do nothing
+                                              }else if (data == "Error"){
+                                                    jQuery('#' + listId.replace(/\//g, '\\/')).append(data);
+                                              }else{
+                                                  if(nodeId != ""){
+                                                      data = data + "<ul><li><a style=\"background-image: url(images/show.gif);\" ";
+                                                      data = data + "id=\"showMoreSubTopic\" ";
+                                                      data = data + "nodeId=\"" + nodeId + "\" ";
+                                                      data = data + "listId=\"" + listId + "\" ";
+                                                      data = data + "class=\"icon-link showMoreSubTopic\">Show more</a></br></li></ul>";
+                                                  }
+                                                  jQuery('#' + listId.replace(/\//g, '\\/')).append(data);
+                                                  jQuery(".addSubtopicStyle").hide();
+                                                  jQuery(".topicDetailsStyle").hide();
+                                                  jQuery(".topicSubscribeStyle").hide();
+                                                  jQuery(".topicDeleteStyle").hide();
+                                              }
+
+                                         },
+                                         failure: function(o) {
+                                             if (o.responseText !== undefined) {
+                                                CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                                             }
+                                         }
+                                     });
+                });
+
+                  jQuery('.plus').live('click', function() {
+                    var nodeId = jQuery(this).attr("nodeId");
+                    if(nodeId == "/"){
+                      nodeId = "";
+                      nodeIdToStartIndex[nodeId] = 0;
+                    }
+                    var listId = jQuery(this).attr("listId");
+                    if(typeof nodeIdToStartIndex[nodeId] == "undefined"){
+                        nodeIdToStartIndex[nodeId] = 0;
+                        //send a ajax request here and set html equal to data received by ajax
+                         jQuery.ajax({
+                             url:"topic_list_ajaxprocessor.jsp?startIndex=0" +
+                             "&count=100&topicPath=event/topics/"+nodeId,
+                             data:{},
+                             type:"POST",
+                             success:function(data){
+                                data = data.trim();
+                                if(data == "No more topics to show"){
+                                    //Do nothing
+                                }else if (data == "Error"){
+                                    jQuery('#' + listId.replace(/\//g, '\\/')).append(data);
+                                }else{
+                                    if(nodeId != ""){
+                                        data = data + "<ul><li><a style=\"background-image: url(images/show.gif);\" ";
+                                        data = data + "id=\"showMoreSubTopic\" ";
+                                        data = data + "nodeId=\"" + nodeId + "\" ";
+                                        data = data + "listId=\"" + listId + "\" ";
+                                        data = data + "class=\"icon-link showMoreSubTopic\">Show more</a></br></li></ul>";
+                                    }
+
+                                    jQuery('#' + listId.replace(/\//g, '\\/')).append(data);
+                                    jQuery(".addSubtopicStyle").hide();
+                                    jQuery(".topicDetailsStyle").hide();
+                                    jQuery(".topicSubscribeStyle").hide();
+                                    jQuery(".topicDeleteStyle").hide();
+                                }
+
+
+                             },
+                             failure: function(o) {
+                                 if (o.responseText !== undefined) {
+                                    CARBON.showErrorDialog("Error " + o.status + "\n Following is the message from the server.\n" + o.responseText);
+                                 }
+                             }
+                        });
+                    } else {
+                        jQuery('#' + listId.replace(/\//g, '\\/') + ' ul').show();
+
+                    }
+                    jQuery(this).removeClass('plus').addClass('minus');
+
+                  });
+
+
+                jQuery('.minus').live('click', function() {
+                    //send a ajax request here and set html equal to data recevide by ajax
+                    var listId = jQuery(this).attr("listId");
+                    jQuery('#' + listId.replace(/\//g, '\\/') + ' ul').hide();
+                    jQuery(this).removeClass('minus').addClass('plus');
+                });
+
         });
     </script>
 

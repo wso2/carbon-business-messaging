@@ -134,39 +134,6 @@
         pageNumberInt = Integer.parseInt(pageNumberAsStr);
     }
 
-    Subscription[] addedSubscriptions = new Subscription[0];
-    try {
-        addedSubscriptions = stub.getAllWSSubscriptionsForTopic(topic, pageNumberInt * 10, 10);
-    } catch (AndesEventAdminServiceEventAdminException e) {
-%>
-<script type="text/javascript">
-    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
-</script>
-<%
-    }
-    session.removeAttribute("topicWsSubscriptions");
-    if (addedSubscriptions != null) {
-        session.setAttribute("topicWsSubscriptions", addedSubscriptions);
-    }
-
-    Subscription[] topicJMSSubscriptions = (Subscription[]) session.getAttribute("topicJMSSubscriptions");
-
-
-    int wsSubscriptionCount = 0;
-    try {
-        wsSubscriptionCount = stub.getAllWSSubscriptionCountForTopic(topic);
-    } catch (AndesEventAdminServiceEventAdminException e) {
-%>
-<script type="text/javascript">
-    CARBON.showErrorDialog('<%= e.getFaultMessage().getEventAdminException().getErrorMessage()%>');
-</script>
-<%
-    }
-    int pageCount = (int) Math.ceil(((float) wsSubscriptionCount) / 10);
-    if (pageCount <= 0) {
-        //this is to make sure it works with defualt values
-        pageCount = 1;
-    }
     String parameters = "serviceTypeFilter=" + "&serviceGroupSearchString=";
 
 %>
@@ -257,56 +224,6 @@
     </tr>
     </tbody>
 </table>
-<div style="clear:both">&nbsp;</div>
-<carbon:paginator pageNumber="<%=pageNumberInt%>" numberOfPages="<%=pageCount%>"
-                  page="topic_manage.jsp" pageNumberParameterName="pageNumber"
-                  resourceBundle="org.wso2.carbon.andes.event.ui.i18n.Resources"
-                  prevKey="prev" nextKey="next"
-                  parameters="<%=parameters%>"/>
-
-<div style="clear:both">&nbsp;</div>
-<h3><fmt:message key="jms.subscription.details"/></h3>
-<table class="styledLeft"
-       <%if (topicJMSSubscriptions == null || topicJMSSubscriptions.length < 1 ) {%>style="display:none"<%}%>
-       id="jmsSubscriptionsTable">
-    <tbody>
-    <tr>
-        <td>
-            <table class="normal" style="width:100%">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Created Time</th>
-                    <th>Owner</th>
-                </tr>
-                </thead>
-                <tbody>
-                <%
-                    if (topicJMSSubscriptions != null) {
-                        for (Subscription subscriptionDetails : topicJMSSubscriptions) {
-                %>
-                <tr>
-                    <td><%=subscriptionDetails.getId()%>
-                    </td>
-                    <td><%=ConverterUtil.convertToString(subscriptionDetails.getCreatedTime())%>
-                    </td>
-                    <td><%=subscriptionDetails.getOwner()%>
-                    </td>
-                </tr>
-                <%
-                        }
-                    }
-                %>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div id="noJMSSubscriptionsDiv" class="noDataDiv"
-     <%if (topicJMSSubscriptions != null) {%>style="display:none"<%}%>>
-    No JMS Subscriptions Defined
-</div>
 <div style="clear:both">&nbsp;</div>
 
 <h3><fmt:message key="publish"/></h3>
