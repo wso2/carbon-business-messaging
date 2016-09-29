@@ -206,6 +206,9 @@
     AndesAdminServiceStub andesAdminStub = UIUtils.getAndesAdminServiceStub(config, session, request);
     AndesEventAdminServiceStub andesEventAdminStub = UIUtils.getAndesEventAdminServiceStub(config, session, request);
     AndesManagerServiceStub managerServiceStub = UIUtils.getAndesManagerServiceStub(config, session);
+    long totalNormalTopicSubscriptionCount = 0;
+    long totalActiveDurableTopicSubscriptionCount = 0;
+    long totalInactiveDurableTopicSubscriptionCount = 0;
     Subscription[] filteredNormalTopicSubscriptionList = null;
     Subscription[] filteredActiveDurableTopicSubscriptionList = null;
     Subscription[] filteredInActiveDurableTopicSubscriptionList = null;
@@ -234,9 +237,7 @@
     String myNodeID;
     try {
         myNodeID = managerServiceStub.getMyNodeID();
-        long totalNormalTopicSubscriptionCount;
-        long totalActiveDurableTopicSubscriptionCount;
-        long totalInactiveDurableTopicSubscriptionCount;
+
         String normalTopicPageNumberAsStr = request.getParameter("normalTopicPageNumber");
         String activeDurableTopicPageNumberAsStr = request.getParameter("activeDurableTopicPageNumber");
         String inactiveDurableTopicPageNumberAsStr = request.getParameter("inactiveDurableTopicPageNumber");
@@ -427,6 +428,7 @@ No subscriptions to show.
                   parameters="<%=concatenatedParams%>"
                   action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
+    <caption>Total temporary subscription count is <%=totalNormalTopicSubscriptionCount%></caption>
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
@@ -510,6 +512,7 @@ No subscriptions to show.
                   parameters="<%=concatenatedParams%>"
                   action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
+    <caption>Total durable active subscription count is <%=totalActiveDurableTopicSubscriptionCount%></caption>
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
@@ -617,6 +620,7 @@ No subscriptions to show.
                   parameters="<%=concatenatedParams%>"
                   action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
+    <caption>Total durable inactive subscription count is <%=totalInactiveDurableTopicSubscriptionCount%></caption>
     <thead>
     <tr>
         <th><fmt:message key="subscription.durable.identifier"/></th>

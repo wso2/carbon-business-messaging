@@ -146,6 +146,7 @@
         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
         AndesManagerServiceStub managerServiceStub = UIUtils.getAndesManagerServiceStub(config, session);
         Subscription[] filteredSubscriptionList = null;
+        int totalQueueSubscriptionCount = 0;
         Subscription[] subscriptionList;
         Subscription[] filteredSubscriptionListForSearch;
         int subscriptionCountPerPage = 20;
@@ -166,7 +167,7 @@
         try {
             myNodeID = managerServiceStub.getMyNodeID();
 
-            int totalQueueSubscriptionCount;
+
             String pageNumberAsStr = request.getParameter("pageNumber");
             if (pageNumberAsStr != null) {
                 pageNumber = Integer.parseInt(pageNumberAsStr);
@@ -296,6 +297,7 @@
                               prevKey="prev" nextKey="next"
                               parameters="<%=concatenatedParams%>"/>
             <table class="styledLeft" style="width:100%">
+                <caption>Total queue subscription count is <%=totalQueueSubscriptionCount%></caption>
                 <thead>
                 <tr>
                     <th><fmt:message key="subscription.identifier"/></th>
