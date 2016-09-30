@@ -439,13 +439,13 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <transactionMessageWriters>1</transactionMessageWriters>
         </inboundEvents>
 
-        <!--Message expiration can be set to each messages which are published to Wso2 MB
-         After the expiration time the messages will not delivered to the consumers. Eventually
-         they got deleted inside the MB-->
+        <!--Message expiration can be set for each messages which are published to Wso2 MB.
+         After the expiration time, the messages will not be delivered to the consumers. Eventually
+         they got deleted inside the MB.-->
         <messageExpiration>
             <!-- Messages in MB are expired based on their time to live value. There is a possibility of
-             messages get expired when they are in DLC. In this case whether they need to be detected as
-             expired messages and got deleted or not.-->
+             messages getting expired when they are in DLC. This property decides whether they need to be detected as
+             expired messages and get deleted or not.-->
             <expireMessagesInDLC>false</expireMessagesInDLC>
 
             <!-- When messages delivered, in the delivery path messages were checked whether they are
@@ -460,10 +460,10 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <periodicMessageDeletionInterval>900</periodicMessageDeletionInterval>
 
             <!-- When checking the database for expired messages, the messages which were handled by the slot
-            delivery worker should no be touched since that messed up the slot delivery worker functionality.
+            delivery worker should no be touched since that mess up the slot delivery worker functionality.
             Those messages anyways get caught at the message delivery path. So there is a need to have a safe
             buffer of slots which can be allocated to a slot delivery worker in the near future. The specified
-            number of slots form the last assigned should not be touched by the periodic deletion task.-->
+            number of slots from the last assigned should not be touched by the periodic deletion task.-->
             <safetySlotCount>3</safetySlotCount>
         </messageExpiration>
 
