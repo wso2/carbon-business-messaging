@@ -36,6 +36,6 @@
 
     <parameter name="adminService" locked="true">true</parameter>
     <parameter name="hiddenService" locked="true">true</parameter>
-    <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list</parameter>
+    <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/cluster/list,/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
     
 </serviceGroup>
