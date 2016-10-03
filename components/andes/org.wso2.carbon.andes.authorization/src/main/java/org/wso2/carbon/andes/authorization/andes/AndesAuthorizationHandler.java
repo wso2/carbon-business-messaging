@@ -869,11 +869,17 @@ public class AndesAuthorizationHandler {
                         isOwnDomain = true;
                     }
                 } else if (isTopicSubscriberQueue(routingKey) &&
-                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) { //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
+                        !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                    //allow permission to non durable topics to create temporary queue i.e. tmp_127_0_0_1_46981_1
                     isOwnDomain = true;
                 } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
-                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) { //allow permission to durable topics to create internal queue i.e. carbon:subId
-                    isOwnDomain = true;
+                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
+                    //only sub tenant call comes into this block, super tenant call would evaluate in above
+                    //allow permission only if subscription id prefix with tenant domain
+                    //i.e. {tenant_domain}/{subscription_id}
+                    if (routingKey.substring(routingKey.lastIndexOf(":") + 1).startsWith(tenantDomain)) {
+                        isOwnDomain = true;
+                    }
                 }
             }
         } else {
