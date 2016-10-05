@@ -45,7 +45,9 @@
             success:function(data){
                 data = data.trim();
                 //$('#msg-'+queueName).html(data);
-                $(document.getElementById('msg-'+queueName)).html(data);
+                $(document.getElementsByName('msg-'+queueName)).each(function(index) {
+                    $( this ).html(data);
+                });
                 aTag.css('font-weight', 'normal');
                 // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
             },
@@ -547,7 +549,7 @@ No subscriptions to show.
         <td><%=sub.getOriginHostAddress()%>
         </td>
 
-        <td id="msg-<%=sub.getSubscriberQueueName()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
+        <td name="msg-<%=sub.getSubscriberQueueName()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
         </td>
          <td>
             <a style="background-image: url(images/refresh.gif);"
@@ -646,7 +648,7 @@ No subscriptions to show.
         <td><%=sub.getSubscribedQueueOrTopicName()%>
         </td>
 
-        <td id="msg-<%=sub.getSubscriptionIdentifier()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
+        <td name="msg-<%=sub.getSubscriptionIdentifier()%>"><%=sub.getNumberOfMessagesRemainingForSubscriber()%>
         </td>
 
         <%--Refresh--%>
