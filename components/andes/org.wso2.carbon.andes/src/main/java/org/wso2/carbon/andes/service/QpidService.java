@@ -180,7 +180,8 @@ public interface QpidService {
     public boolean getIfSSLOnly() throws Exception;
 
     /**
-     * Method declaration to register broker lifecycle listener
+     * Register broker lifecycle listener.
+     *
      * @param brokerLifecycleListener
      */
     public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener);

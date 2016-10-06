@@ -154,18 +154,18 @@
     boolean isFilteredNameByExactMatch = false;
     boolean isIdentifierPatternByExactMatch = false;
 
-    if(null != filteredNameByExactMatch){
+    if (null != filteredNameByExactMatch) {
         isFilteredNameByExactMatch = true;
     }
 
-    if(null != identifierPatternByExactMatch){
+    if (null != identifierPatternByExactMatch) {
         isIdentifierPatternByExactMatch = true;
     }
 
-    if(filteredName == null || filteredName.trim().length() == 0){
+    if (filteredName == null || filteredName.trim().length() == 0) {
         filteredName = "";
     }
-    if(identifierPattern == null || identifierPattern.trim().length() == 0){
+    if (identifierPattern == null || identifierPattern.trim().length() == 0) {
         identifierPattern = "";
     }
     ClusterManagerClient client;
@@ -181,18 +181,16 @@
         client = new ClusterManagerClient(configContext, serverURL, cookie);
         isClusteringEnabled = client.isClusteringEnabled();
         allClusterNodeAddressesInDropdown = client.getAllClusterNodeAddresses();
-        if(isClusteringEnabled){
+        if (isClusteringEnabled) {
            List clusterNodesDropdownList = new ArrayList(Arrays.asList(allClusterNodeAddressesInDropdown));
            clusterNodesDropdownList.add("All");
            allClusterNodeAddressesInDropdown = (String[]) clusterNodesDropdownList.toArray(new String[0]);
         }
         nodeId = client.getMyNodeID();
     } catch (Exception e) {
-        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
     %>
     <script type="text/javascript">
-        location.href = "../admin/error.jsp";
-        alert("error");
+        CARBON.showErrorDialog('Error in getting the cluster node addresses <%=e.getMessage()%>');
     </script>
     <%
         return;
@@ -298,14 +296,10 @@
         }
 
     } catch (Exception e) {
-        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
-        e.printStackTrace();
 %>
-
-<script type="text/javascript">
-    location.href = "../admin/error.jsp";
-    alert("error");
-</script>
+    <script type="text/javascript">
+        CARBON.showErrorDialog('Error in getting the subscriptions <%=e.getMessage()%>');
+    </script>
 <%
         return;
     }

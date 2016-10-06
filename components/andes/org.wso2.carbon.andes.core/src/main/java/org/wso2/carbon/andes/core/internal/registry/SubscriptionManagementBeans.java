@@ -93,10 +93,10 @@ public class SubscriptionManagementBeans {
 	}
 
     /**
-     * Get the pending message count for the specified subscription
+     * Get the pending message count for the specified subscription.
      *
      * @param queueName subscription identifier for which the pending message cound need to be calculated
-     * @return The pending message count for that subscription
+     * @return pending message count for that subscription
      * @throws SubscriptionManagerException
      */
     public long getPendingMessageCount(String queueName) throws SubscriptionManagerException{
@@ -106,8 +106,8 @@ public class SubscriptionManagementBeans {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
-                            "name=SubscriptionManagementInformation");
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,"
+                            + "name=SubscriptionManagementInformation");
 
             Object[] parameters = new Object[]{queueName};
             String[] signature = new String[]{String.class.getName()};
@@ -116,7 +116,7 @@ public class SubscriptionManagementBeans {
                     SubscriptionManagementConstants.PENDING_MESSAGE_COUNT_MBEAN_ATTRIBUTE,
                     parameters, signature);
 
-            if (result != null) {
+            if (null != result) {
                 messageCount = (long) result;
             }
             return messageCount;
@@ -129,7 +129,7 @@ public class SubscriptionManagementBeans {
 
     /**
      * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
-     * to retrieve subscriptions matching to the given search criteria
+     * to retrieve subscriptions matching to the given search criteria.
      *
      * @param isDurable  are the subscriptions to be retrieve durable (true/ false)
      * @param isActive   are the subscriptions to be retrieved active (true/false)
@@ -156,8 +156,8 @@ public class SubscriptionManagementBeans {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
-                            "name=SubscriptionManagementInformation");
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,"
+                            + "name=SubscriptionManagementInformation");
 
             Object[] parameters = new Object[]{isDurable, isActive, protocolType, destinationType,
                     filteredNamePattern, isFilteredNameByExactMatch,identifierPattern,
@@ -169,8 +169,7 @@ public class SubscriptionManagementBeans {
                     int.class.getName()};
 
             Object result = mBeanServer.invoke(objectName,
-                    SubscriptionManagementConstants.FILTERED_SUBSCRIPTIONS_MBEAN_ATTRIBUTE,
-                    parameters, signature);
+                    SubscriptionManagementConstants.FILTERED_SUBSCRIPTIONS_MBEAN_ATTRIBUTE, parameters, signature);
 
             if (null != result) {
                 String[] subscriptionInformationList = (String[]) result;
@@ -184,8 +183,8 @@ public class SubscriptionManagementBeans {
             return subscriptionDetailsList;
 
         } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
-            throw new SubscriptionManagerException("Error while invoking mBean operations to get " +
-                    "subscription list", e);
+            throw new SubscriptionManagerException("Error while invoking mBean operations to get "
+                    + "subscription list", e);
         }
 
     }
@@ -193,7 +192,7 @@ public class SubscriptionManagementBeans {
     /**
      *
      * This method invokes the SubscriptionManagementInformationMBean initialized by andes component
-     * to retrieve total subscription count matching to the given search criteria
+     * to retrieve total subscription count matching to the given search criteria.
      *
      * @param isDurable are the subscriptions to be retrieve durable (true/ false)
      * @param isActive are the subscriptions to be retrieved active (true/false)
@@ -216,8 +215,8 @@ public class SubscriptionManagementBeans {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation," +
-                            "name=SubscriptionManagementInformation");
+                    new ObjectName("org.wso2.andes:type=SubscriptionManagementInformation,"
+                            + "name=SubscriptionManagementInformation");
 
             Object[] parameters = new Object[]{isDurable, isActive, protocolType, destinationType,
                     filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
@@ -227,16 +226,15 @@ public class SubscriptionManagementBeans {
                     String.class.getName(), boolean.class.getName(), String.class.getName()};
 
             Object result = mBeanServer.invoke(objectName,
-                    SubscriptionManagementConstants.FILTERED_SUBSCRIPTION_COUNT_MBEAN_ATTRIBUTE,
-                    parameters, signature);
+                    SubscriptionManagementConstants.FILTERED_SUBSCRIPTION_COUNT_MBEAN_ATTRIBUTE, parameters, signature);
 
             if (null != result) {
                 totalSubscriptionCount = (int) result;
             }
 
         } catch (MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException e) {
-            throw new SubscriptionManagerException("Error while invoking mBean operations to get " +
-                    "subscription list", e);
+            throw new SubscriptionManagerException("Error while invoking mBean operations to get "
+                    + "subscription list", e);
         }
         return totalSubscriptionCount;
 

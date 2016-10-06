@@ -67,11 +67,9 @@ public interface SubscriptionManagerService {
 	 * @throws SubscriptionManagerException throws when an error occurs
 	 */
 	public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
-													   String destinationType, String filteredNamePattern,
-													   boolean isFilteredNameByExactMatch, String identifierPattern,
-													   boolean isIdentifierPatternByExactMatch, String ownNodeId, int
-													   pageNumber, int subscriptionCountPerPage)
-													   throws SubscriptionManagerException;
+			String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
+			String identifierPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId, int pageNumber,
+			int subscriptionCountPerPage) throws SubscriptionManagerException;
 
 	/**
 	 * Returns the total subscription count matching to a particular search criteria.
@@ -89,11 +87,9 @@ public interface SubscriptionManagerService {
 	 * @throws SubscriptionManagerException throws when an error occurs
 	 */
 	public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
-														String destinationType, String filteredNamePattern, boolean
-														isFilteredNameByExactMatch, String identifierPattern,
-														boolean isIdentifierPatternByExactMatch, String ownNodeId)
-														throws SubscriptionManagerException;
-
+			String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
+			String identifierPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId)
+			throws SubscriptionManagerException;
 
 	/**
 	 * Close subscription by subscriptionID. This method will break the connection
