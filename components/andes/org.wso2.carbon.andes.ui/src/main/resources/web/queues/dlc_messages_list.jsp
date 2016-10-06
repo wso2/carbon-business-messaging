@@ -174,7 +174,7 @@
                     <td class="formRaw leftCol-big">
                     Destination : <br/>
                     For queues ==> queue name <br/>
-                    For durable topics ==>  [clientID]:[subscriptionID]
+                    For durable topics ==> carbon:[subscriptionID]
                     </td>
                     <td><input type="text" id="destinationName" value="<%= previouslySearchedDestination %>">
                         <input id="searchButton" class="button" type="submit"
