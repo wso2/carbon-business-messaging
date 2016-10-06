@@ -171,7 +171,11 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="formRaw leftCol-big">Destination :</td>
+                    <td class="formRaw leftCol-big">
+                    Destination : <br/>
+                    For queues ==> queue name <br/>
+                    For durable topics ==>  [clientID]:[subscriptionID]
+                    </td>
                     <td><input type="text" id="destinationName" value="<%= previouslySearchedDestination %>">
                         <input id="searchButton" class="button" type="submit"
                                onclick="return filterByDestination();" value="Filter">
