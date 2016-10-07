@@ -443,11 +443,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
          After the expiration time, the messages will not be delivered to the consumers. Eventually
          they got deleted inside the MB.-->
         <messageExpiration>
-            <!-- Messages in MB are expired based on their time to live value. There is a possibility of
-             messages getting expired when they are in DLC. This property decides whether they need to be detected as
-             expired messages and get deleted or not.-->
-            <expireMessagesInDLC>false</expireMessagesInDLC>
-
             <!-- When messages delivered, in the delivery path messages were checked whether they are
             already expired. If expired at that time add that message to a queue for a future batch
             delete. This interval decides on the time gap between the batch deletes. Time interval
