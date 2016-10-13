@@ -10,6 +10,8 @@
     String newQueueName = request.getParameter("newQueueName");
     String nameOfQueue = request.getParameter("nameOfQueue");
 
+    long unavailableMessageCount = 0;
+
     String[] idArray = idList.split(",");
     if(!idList.isEmpty()) {
         long[] andesMessageIDs = new long[idArray.length];
@@ -18,7 +20,8 @@
         }
 
         try {
-            stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(andesMessageIDs, newQueueName, nameOfQueue);
+            unavailableMessageCount = stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(andesMessageIDs,
+            newQueueName, nameOfQueue);
 
         } catch (AndesAdminServiceBrokerManagerAdminException e) {
             CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().
@@ -31,3 +34,4 @@
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
     }
 %>
+<%=unavailableMessageCount%>

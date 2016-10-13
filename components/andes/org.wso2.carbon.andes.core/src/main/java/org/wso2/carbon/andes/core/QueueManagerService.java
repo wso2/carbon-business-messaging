@@ -90,9 +90,10 @@ public interface QueueManagerService {
      *
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
+     * @return unavailable message count
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException;
 
     /**
@@ -101,9 +102,10 @@ public interface QueueManagerService {
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param newDestinationQueueName         The new destination queue for the messages in the same tenant
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
+     * @return unavailable message count
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws QueueManagerException;

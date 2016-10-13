@@ -274,14 +274,15 @@ public class AndesAdminService extends AbstractAdmin {
      *
      * @param messageIDs          Browser Message Id / External Message Id list.
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
+     * @return unavailable message count
      * @throws BrokerManagerAdminException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            queueManagerService.restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
+            return queueManagerService.restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
             log.error(errorMessage, e);
@@ -295,16 +296,17 @@ public class AndesAdminService extends AbstractAdmin {
      * @param messageIDs          Browser Message Id / External Message Id list.
      * @param newDestinationQueueName         The new destination queue for the messages in the same tenant.
      * @param destinationQueueName Dead Letter Queue name for the respective tenant.
+     * @return unavailable message count
      * @throws BrokerManagerAdminException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
+            return queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
                     newDestinationQueueName, destinationQueueName);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();

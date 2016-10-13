@@ -264,22 +264,20 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
-            throws
-            QueueManagerException {
-        QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
+    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+            throws QueueManagerException {
+        return QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
-            throws
-            QueueManagerException {
-        QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
+            throws QueueManagerException {
+        return QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
                 newDestinationQueueName, destinationQueueName);
     }
 
