@@ -94,16 +94,6 @@ public class QpidServiceImpl implements QpidService {
     private Integer amqpSSLPort = 8672;
 
     /**
-     * The default MQTT port.
-     */
-    private Integer mqttPort = 1883;
-
-    /**
-     * The default MQTT SSL port.
-     */
-    private Integer mqttSSLPort = 8883;
-
-    /**
      * Creates a new Qpid Service.
      *
      * @param accessKey The access key for in VM connection string.
@@ -133,11 +123,6 @@ public class QpidServiceImpl implements QpidService {
         // Read Qpid broker SSL amqpPort from configuration file
         amqpSSLPort = readSSLPortFromConfig();
 
-        // Read MQTT amqpPort from configuration file
-        mqttPort = readMQTTPortFromConfig();
-
-        // Read MQTT ssl port value from configuation file
-        mqttSSLPort = readMQTTSSLPortFromConfig();
     }
 
     /**
@@ -204,38 +189,6 @@ public class QpidServiceImpl implements QpidService {
         this.amqpSSLPort = amqpSSLPort;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer getMqttPort() {
-        return mqttPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMqttPort(Integer mqttPort) {
-        this.mqttPort = mqttPort;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer getMqttSSLPort() {
-        return mqttSSLPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMqttSSLPort(Integer mqttSSLPort) {
-        this.mqttSSLPort = mqttSSLPort;
-    }
 
     /**
      * {@inheritDoc}
@@ -352,25 +305,6 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-     * Reads the MQTT port value from configuration.
-     *
-     * @return The port value
-     */
-    private Integer readMQTTPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_DEFAULT_CONNECTION_PORT);
-
-    }
-
-    /**
-     * Reads the MQTT SSL port value from configuration.
-     *
-     * @return The port value
-     */
-    private Integer readMQTTSSLPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_PORT);
-    }
-
-    /**
      * Converts domain username to tenant format username by replacing "@" by "!".
      *
      * @param username The username.
@@ -381,16 +315,6 @@ public class QpidServiceImpl implements QpidService {
         // E.g. foo@bar.com -> foo!bar.com
         // Note : The Qpid authorization handler uses ! to extract domain name from username when authorizing
         return username.replace(DOMAIN_NAME_SEPARATOR, DOMAIN_NAME_SEPARATOR_INTERNAL);
-    }
-
-    /**
-     * Returns true if SSL port enabled and default port disabled.
-     *
-     * @return if only port enabled is SSL port
-     * @throws ConfigurationException
-     */
-    public boolean getMQTTSSLOnly() throws ConfigurationException {
-        return ApplicationRegistry.getInstance().getConfiguration().getMQTTSSLOnly();
     }
 
 

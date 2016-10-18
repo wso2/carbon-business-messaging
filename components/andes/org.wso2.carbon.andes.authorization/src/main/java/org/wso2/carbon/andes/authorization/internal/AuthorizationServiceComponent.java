@@ -66,7 +66,6 @@ public class AuthorizationServiceComponent {
         try {
             //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
             AndesConfigurationManager.initialize(getPortOffset());
-            AuthorizationConfigurationManager.getInstance().initConfig();
             // Register security plugin factory
             securityPluginFactory = ctx.getBundleContext().registerService(
                     SecurityPluginFactory.class.getName(), AndesAuthorizationPlugin.FACTORY, null);

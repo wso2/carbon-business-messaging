@@ -73,14 +73,6 @@ public interface QpidService {
 
     public void setAMQPSSLPort(Integer amqpSSLPort);
 
-    public Integer getMqttPort();
-
-    public void setMqttPort(Integer mqttPort);
-
-    public Integer getMqttSSLPort();
-
-    public void setMqttSSLPort(Integer mqttSSLPort);
-
     /**
         * Get In-VM AMQP connection URL for internal components
         *
