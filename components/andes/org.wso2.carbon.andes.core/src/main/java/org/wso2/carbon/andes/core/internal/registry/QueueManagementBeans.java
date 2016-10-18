@@ -272,10 +272,12 @@ public class QueueManagementBeans {
      *
      * @param messageIDs          Browser message Id / External message Id list to be deleted
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
+     * @return unavailable message count
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
+    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
             QueueManagerException {
+        long unavailableMessageCount = 0L;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -284,11 +286,15 @@ public class QueueManagementBeans {
             String operationName = "restoreMessagesFromDeadLetterQueue";
             Object[] parameters = new Object[]{messageIDs, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName()};
-            mBeanServer.invoke(
+            Object result = mBeanServer.invoke(
                     objectName,
                     operationName,
                     parameters,
                     signature);
+            if (null != result) {
+                unavailableMessageCount = (Long) result;
+            }
+            return unavailableMessageCount;
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
                     destinationQueueName, e);
@@ -301,10 +307,12 @@ public class QueueManagementBeans {
      * @param messageIDs          Browser message Id / External message Id list to be deleted
      * @param newDestinationQueueName         The new destination for the messages in the same tenant
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
+     * @return unavailable message count
      * @throws QueueManagerException
      */
-    public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
             String newDestinationQueueName, String destinationQueueName) throws QueueManagerException {
+        long unavailableMessageCount = 0L;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
             ObjectName objectName =
@@ -313,11 +321,15 @@ public class QueueManagementBeans {
             String operationName = "restoreMessagesFromDeadLetterQueue";
             Object[] parameters = new Object[]{messageIDs, newDestinationQueueName, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
-            mBeanServer.invoke(
+            Object result = mBeanServer.invoke(
                     objectName,
                     operationName,
                     parameters,
                     signature);
+            if (null != result) {
+                unavailableMessageCount = (Long) result;
+            }
+            return unavailableMessageCount;
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new QueueManagerException("Error restoring messages from Dead Letter Queue : " +
                     destinationQueueName + " to " + newDestinationQueueName, e);

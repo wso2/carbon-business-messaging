@@ -216,11 +216,26 @@ function doPurge(queueName) {
 	 				dataType:"html",
 	 				data : { msgList : checkedValues },
 	 				type: "POST",
-	 				success: function() {
-       	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.restore"], function(){
-       	                		location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-	                		 });
-       	                   
+	 				success: function(data) {
+       	                	data = data.trim();
+       	                	var unavailableMessageCount = parseFloat(data);
+       	                	if(unavailableMessageCount > 0) {
+                                if(unavailableMessageCount == checkedValues.split(",").length) {
+                                    CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.fail.restore"],
+                                    function(){
+                                        location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                     });
+                                }else {
+                                     CARBON.showInfoDialog(unavailableMessageCount + " " +org_wso2_carbon_andes_ui_jsi18n[
+                                     "info.partial.successful.restore"],function(){
+                                        location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                     });
+                                }
+       	                	}else {
+       	                	    CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.restore"], function(){
+                                       	location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                });
+       	                	}
        	                },
 	
        	             failure: function(transport) {
@@ -324,10 +339,28 @@ function doReRouteAllMessages(nameOfQueue) {
                     data: { msgList : checkedValues.trim(),
                             nameOfQueue : sourceDestination,
                             newQueueName : targetDestination },
-                    success: function () {
-                        CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"], function () {
-                            location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                        });
+                    success: function (data) {
+                        data = data.trim();
+                        var unavailableMessageCount = parseFloat(data);
+                        if(unavailableMessageCount > 0) {
+                            if(unavailableMessageCount == checkedValues.split(",").length) {
+                                CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.fail.reRoute"],
+                                function(){
+                                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                });
+                            }else {
+                                CARBON.showInfoDialog(unavailableMessageCount + " "
+                                + org_wso2_carbon_andes_ui_jsi18n["info.partial.successful.reRoute"],
+                                function(){
+                                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                });
+                            }
+                        }else {
+                            CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"],
+                            function(){
+                                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                            });
+                        }
                     },
 
                     failure: function (transport) {
@@ -380,11 +413,28 @@ function doReRouteMessages(nameOfQueue) {
                                         newQueueName : selectedQueue,
                                         msgList : checkedValues },
                             type: "POST",
-                            success: function () {
-                                CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"], function () {
-                                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                                });
-
+                            success: function (data) {
+                                data = data.trim();
+                                var unavailableMessageCount = parseFloat(data);
+                                if(unavailableMessageCount > 0) {
+                                       if(unavailableMessageCount == checkedValues.split(",").length) {
+                                            CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.fail.reRoute"],
+                                            function(){
+                                                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                             });
+                                       }else {
+                                            CARBON.showInfoDialog(unavailableMessageCount + " "
+                                            + org_wso2_carbon_andes_ui_jsi18n["info.partial.successful.reRoute"],
+                                            function(){
+                                                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                            });
+                                       }
+                                }else {
+                                    CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"],
+                                    function(){
+                                        location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
+                                    });
+                                }
                             },
 
                             failure: function (transport) {

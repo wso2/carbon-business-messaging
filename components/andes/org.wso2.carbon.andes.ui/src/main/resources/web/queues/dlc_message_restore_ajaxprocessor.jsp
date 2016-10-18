@@ -9,16 +9,20 @@
     String idList = request.getParameter("msgList");
     String nameOfQueue = request.getParameter("nameOfQueue");
 
+    long unavailableMessageCount = 0;
+
     String[] idArray = idList.split(",");
     long[] andesMessageIDs = new long[idArray.length];
     for (int i = 0; i < idArray.length; i++) {
         andesMessageIDs[i] = Long.parseLong(idArray[i]);
     }
     try {
-        stub.restoreMessagesFromDeadLetterQueue(andesMessageIDs, nameOfQueue);
+        unavailableMessageCount = stub.restoreMessagesFromDeadLetterQueue(andesMessageIDs, nameOfQueue);
 
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
-        CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
+        CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR,
+         e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
     }
 %>
+<%=unavailableMessageCount%>
