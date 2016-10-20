@@ -36,6 +36,8 @@ import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
+import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
+import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
@@ -43,22 +45,21 @@ import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
-import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
+import org.wso2.carbon.core.ServerRestartHandler;
+import org.wso2.carbon.core.ServerShutdownHandler;
 import org.wso2.carbon.server.admin.common.IServerAdmin;
 import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.utils.ConfigurationContextService;
-import org.wso2.carbon.utils.WaitBeforeShutdownObserver;
 
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Set;
 import java.util.Stack;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 /**
  * @scr.component name="org.wso2.carbon.andes.internal.QpidServiceComponent"
@@ -165,24 +166,12 @@ public class QpidServiceComponent {
                 }
             }
 
+            MBShutdownHandler mbShutdownHandler = new MBShutdownHandler();
             registrations.push(bundleContext.registerService(
-                    WaitBeforeShutdownObserver.class.getName(), new WaitBeforeShutdownObserver() {
-                boolean status = false;
+                    ServerShutdownHandler.class.getName(), mbShutdownHandler, null));
+            registrations.push(bundleContext.registerService(
+                    ServerRestartHandler.class.getName(), mbShutdownHandler, null));
 
-                public void startingShutdown() {
-                    try {
-                        AndesKernelBoot.shutDownAndesKernel();
-                    } catch (AndesException e) {
-                        log.error("Error while shutting down Andes kernel. ", e);
-                    } finally {
-                        status = true;
-                    }
-                }
-
-                public boolean isTaskComplete() {
-                    return status;
-                }
-            }, null));
 
         } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
@@ -535,6 +524,20 @@ public class QpidServiceComponent {
             }
         } else {
             log.warn("MQTT Transport is disabled as per configuration.");
+        }
+    }
+
+    /**
+     * Private class containing the tasks that need to be done at server shut down
+     */
+    private static class MBShutdownHandler implements ServerShutdownHandler, ServerRestartHandler {
+        @Override
+        public void invoke() {
+            try {
+                AndesKernelBoot.shutDownAndesKernel();
+            } catch (AndesException e) {
+                log.error("Error while shutting down Andes kernel. ", e);
+            }
         }
     }
 
