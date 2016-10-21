@@ -510,7 +510,8 @@ public class AndesAdminService extends AbstractAdmin {
                 subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
                 subscriptionDTO.setDurable(sub.isDurable());
                 subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub.getNumberOfMessagesRemainingForSubscriber());
+                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(sub
+                        .getNumberOfMessagesRemainingForSubscriber());
                 subscriptionDTO.setConnectedNodeAddress(sub.getConnectedNodeAddress());
                 subscriptionDTO.setProtocolType(sub.getProtocolType());
                 subscriptionDTO.setDestinationType(sub.getDestinationType());
@@ -556,10 +557,10 @@ public class AndesAdminService extends AbstractAdmin {
             subscriptionCountForSearchResult = subscriptionManagerService
                     .getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
                             filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
-                            isIdentifierPatternByExactMatch,ownNodeId);
+                            isIdentifierPatternByExactMatch, ownNodeId);
 
         } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
+            String errorMessage = "An error occurred while getting subscription count from backend " + e.getMessage();
             log.error(errorMessage, e);
             throw new BrokerManagerAdminException(errorMessage, e);
         }

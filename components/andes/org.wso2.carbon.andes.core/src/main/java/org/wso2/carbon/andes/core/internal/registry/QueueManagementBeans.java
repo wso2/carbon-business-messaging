@@ -291,7 +291,7 @@ public class QueueManagementBeans {
                     operationName,
                     parameters,
                     signature);
-            if (null != result) {
+            if (result != null) {
                 unavailableMessageCount = (Long) result;
             }
             return unavailableMessageCount;
