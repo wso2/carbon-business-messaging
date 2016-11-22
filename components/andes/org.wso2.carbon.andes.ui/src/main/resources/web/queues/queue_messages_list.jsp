@@ -12,6 +12,8 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
+
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
 
@@ -149,6 +151,7 @@
                         <%=StringEscapeUtils.escapeHtml(messageContent[0])%>
                         <!-- This is converted to a POST to avoid message length eating up the URI request length. -->
                         <form name="msgViewForm<%=contentDisplayID%>" method="POST" action="message_content.jsp">
+                            <input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>" />
                             <input type="hidden" name="message" value="<%=StringEscapeUtils.escapeHtml(messageContent[1])%>" />
                             <a href="javascript:document.msgViewForm<%=contentDisplayID%>.submit()">&nbsp;&nbsp;&nbsp;more..</a>
                         </form>
