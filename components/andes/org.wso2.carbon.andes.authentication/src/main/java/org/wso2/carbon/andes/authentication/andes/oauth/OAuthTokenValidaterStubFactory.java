@@ -99,8 +99,8 @@ public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
 					auth.setPreemptiveAuthentication(true);
 					String username = config.getUsername();
 					String password = config.getPassword();
-					auth.setPassword(username);
-					auth.setUsername(password);
+					auth.setUsername(username);
+					auth.setPassword(password);
 
 					Options options = client.getOptions();
 					options.setProperty(HTTPConstants.AUTHENTICATE, auth);
