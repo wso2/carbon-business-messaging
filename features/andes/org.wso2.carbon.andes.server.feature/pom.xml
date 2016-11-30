@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>3.1.2</version>
+        <version>3.1.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
-    <version>3.1.2</version>
+    <version>3.1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes - Server</name>
     <url>http://wso2.org</url>
@@ -266,7 +266,7 @@
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.rabbitmq.amqp.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.identity:org.wso2.carbon.identity.oauth.stub:${carbon.identity.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.identity:org.wso2.carbon.identity.oauth.stub:${carbon.identity.oauth.stub.version}</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
