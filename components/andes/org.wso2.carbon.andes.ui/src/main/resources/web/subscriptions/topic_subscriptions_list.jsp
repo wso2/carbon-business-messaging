@@ -42,7 +42,7 @@
             beforeSend: function(xhr) {
                         xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
                     },
-            success:function(data){
+            success:function(data) {
                 data = data.trim();
                 //$('#msg-'+queueName).html(data);
                 $(document.getElementsByName('msg-'+queueName)).each(function(index) {
@@ -65,7 +65,7 @@
         var topicName = aTag.attr('data-id-topic');
         aTag.css('font-weight', 'bolder');
 
-        CARBON.showConfirmationDialog("Are you sure you want to unsubscribe?", function(){
+        CARBON.showConfirmationDialog("Are you sure you want to unsubscribe?", function() {
              $.ajax({
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
@@ -196,7 +196,7 @@
         return;
     }
     String ownNodeId = request.getParameter("ownNodeId");
-    if(ownNodeId == null || ownNodeId.trim().length() == 0){
+    if (ownNodeId == null || ownNodeId.trim().length() == 0) {
         if (isClusteringEnabled) {
             ownNodeId = "All";
         } else {
@@ -226,11 +226,11 @@
     String concatenatedParams = "region=region1&item=Topic_subscriptions&topicNamePattern="+ filteredName
         + "&identifier=" + identifierPattern + "&ownNodeId=" + ownNodeId;
 
-    if(isFilteredNameByExactMatch){
+    if (isFilteredNameByExactMatch) {
         concatenatedParams += "&isTopicExactlyMatch="+ filteredNameByExactMatch;
     }
 
-    if(isIdentifierPatternByExactMatch){
+    if (isIdentifierPatternByExactMatch) {
         concatenatedParams += "&isIdentifierExactlyMatch=" + identifierPatternByExactMatch;
     }
 
@@ -334,11 +334,11 @@
                     <td>
                         <input type="text" name="topicNamePattern" value="<%=filteredName%>"/>
                         <%
-                           if(isFilteredNameByExactMatch){
+                           if (isFilteredNameByExactMatch) {
                         %>
                              <input type="checkbox" name="isTopicExactlyMatch" checked/>Match entire word only
                         <%
-                           }else {
+                           } else {
                         %>
                              <input type="checkbox" name="isTopicExactlyMatch" />Match entire word only
                         <%
@@ -355,14 +355,14 @@
                                     if (isClusteringEnabled) {
                             %>
                                  <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
-                                 <% for(int i = 0; i < allClusterNodeAddressesInDropdown.length; i++){
-                                         if(!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])){
+                                 <% for (int i = 0; i < allClusterNodeAddressesInDropdown.length; i++) {
+                                         if (!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])) {
                                  %>
                                      <option value="<%=allClusterNodeAddressesInDropdown[i].split(",")[0]%>">
                                      <%=allClusterNodeAddressesInDropdown[i].split(",")[0]%></option>
                                  <%     }
                                     }%>
-                                <%  }else{ %>
+                                <%  } else { %>
                                      <option selected="selected" value="<%=nodeId%>"><%=nodeId%></option>
                                 <%  }
                                 } catch (Exception e) {%>
@@ -378,11 +378,11 @@
                     <td>
                         <input type="text" name="identifier" value="<%=identifierPattern%>"/>
                          <%
-                          if(isIdentifierPatternByExactMatch){
+                          if (isIdentifierPatternByExactMatch) {
                          %>
                              <input type="checkbox" name="isIdentifierExactlyMatch" checked/>Match entire word only
                          <%
-                           }else {
+                           } else {
                          %>
                              <input type="checkbox" name="isIdentifierExactlyMatch" />Match entire word only
                          <%
@@ -451,8 +451,8 @@ No subscriptions to show.
             <%--Subscription close--%>
         <% try {
             //close is only allowed for subscriptions on this node
-            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
-                    sub.getConnectedNodeAddress().equals(myNodeID)){ %>
+            if (andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
+                    sub.getConnectedNodeAddress().equals(myNodeID)) { %>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
@@ -528,7 +528,7 @@ No subscriptions to show.
     <tr>
         <%
             String identifierForActiveSub = sub.getSubscriptionIdentifier();
-            if(allowSharedSubscribers){
+            if (allowSharedSubscribers) {
                 identifierForActiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
             }
         %>
@@ -558,8 +558,8 @@ No subscriptions to show.
             <%--Subscription close--%>
         <% try {
             //close is only allowed for subscriptions on this node
-            if(andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
-                    sub.getConnectedNodeAddress().equals(myNodeID)){ %>
+            if (andesAdminStub.checkCurrentUserHasTopicSubscriptionClosePermission() &&
+                    sub.getConnectedNodeAddress().equals(myNodeID)) { %>
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
@@ -633,7 +633,7 @@ No subscriptions to show.
     <tr>
         <%
             String identifierForInactiveSub = sub.getSubscriptionIdentifier();
-            if(allowSharedSubscribers){
+            if (allowSharedSubscribers) {
                 identifierForInactiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
             }
         %>

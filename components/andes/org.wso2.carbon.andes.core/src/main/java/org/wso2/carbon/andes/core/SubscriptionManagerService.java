@@ -41,9 +41,9 @@ public interface SubscriptionManagerService {
                                                String destinationType) throws SubscriptionManagerException;
 
 	/**
-	 * Get the pending message count for the specified subscription
+	 * Get the pending message count for the specified subscription.
 	 *
-	 * @param queueName for which the pending message cound need to be calculated
+	 * @param queueName for which the pending message count need to be calculated
 	 * @return The pending message count for that subscription
 	 * @throws SubscriptionManagerException
      */

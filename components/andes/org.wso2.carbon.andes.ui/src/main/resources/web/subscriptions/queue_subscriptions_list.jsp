@@ -134,7 +134,7 @@
                 return;
             }
         String ownNodeId = request.getParameter("ownNodeId");
-        if(ownNodeId == null || ownNodeId.trim().length() == 0){
+        if (ownNodeId == null || ownNodeId.trim().length() == 0) {
             if (isClusteringEnabled) {
                 ownNodeId = "All";
             } else {
@@ -208,11 +208,11 @@
                             <td>
                                 <input type="text" name="queueNamePattern" value="<%=filteredName%>"/>
                                 <%
-                                    if(isFilteredNameByExactMatch){
+                                    if (isFilteredNameByExactMatch) {
                                 %>
                                      <input type="checkbox" name="isQueueExactlyMatch" checked/>Match entire word only
                                 <%
-                                    }else {
+                                    } else {
                                 %>
                                      <input type="checkbox" name="isQueueExactlyMatch" />Match entire word only
                                 <%
@@ -228,14 +228,14 @@
                                         if (isClusteringEnabled) {
                                 %>
                                     <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
-                                    <% for(int i = 0; i < allClusterNodeAddressesInDropdown.length; i++){
-                                            if(!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])){
+                                    <% for (int i = 0; i < allClusterNodeAddressesInDropdown.length; i++) {
+                                            if (!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])) {
                                      %>
                                         <option value="<%=allClusterNodeAddressesInDropdown[i].split(",")[0]%>">
                                         <%=allClusterNodeAddressesInDropdown[i].split(",")[0]%></option>
                                     <%      }
                                         } %>
-                                    <%}else{ %>
+                                    <%} else { %>
                                      <option selected="selected" value="<%=nodeId%>"><%=nodeId%></option>
                                 <%  }
                             } catch (Exception e) {%>
@@ -251,11 +251,11 @@
                             <td>
                                 <input type="text" name="identifier" value="<%=identifierPattern%>"/>
                                  <%
-                                    if(isIdentifierPatternByExactMatch){
+                                    if (isIdentifierPatternByExactMatch) {
                                 %>
                                      <input type="checkbox" name="isIdentifierExactlyMatch" checked/>Match entire word only
                                 <%
-                                    }else {
+                                    } else {
                                 %>
                                      <input type="checkbox" name="isIdentifierExactlyMatch" />Match entire word only
                                 <%
@@ -341,8 +341,8 @@
                     <%--Subscription close--%>
                     <% try {
                         //close is only allowed for subscriptions on this node
-                        if(stub.checkCurrentUserHasQueueSubscriptionClosePermission() &&
-                                sub.getConnectedNodeAddress().equals(myNodeID)){ %>
+                        if (stub.checkCurrentUserHasQueueSubscriptionClosePermission() &&
+                                sub.getConnectedNodeAddress().equals(myNodeID)) { %>
                     <td>
                         <a style="background-image: url(images/unsubscribe.png);"
                            class="icon-link"
