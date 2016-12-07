@@ -62,6 +62,30 @@ CREATE TABLE IF NOT EXISTS MB_RETAINED_METADATA (
                 PRIMARY KEY (TOPIC_ID)
 );
 
+CREATE TABLE IF NOT EXIST MB_DTX_PREPARED_XID (
+                ID INT AUTO_INCREMENT,
+                FORMAT BIGINT,
+                GLOBAL_ID BINARY,
+                BRANCH_ID BINARY,
+                PRIMARY KEY (ID)
+
+);
+
+CREATE TABLE IF NOT EXIST MB_DTX_PREPARED_ENQUEUE_RECORD (
+                XID INT,
+                MESSAGE_ID BIGINT,
+                QUEUE_ID INT,
+                MESSAGE_METADATA BINARY,
+                PRIMARY KEY (XID, MESSAGE_ID, QUEUE_ID)
+);
+
+CREATE TABLE IF NOT EXIST MB_DTX_PREPARED_DEQUEUE_RECORD (
+                XID INT,
+                MESSAGE_ID BIGINT,
+                QUEUE_ID INT,
+                PRIMARY KEY (XID, MESSAGE_ID, QUEUE_ID)
+);
+
 -- End of Message Store Tables --
 
 -- Start of Andes Context Store Tables --
