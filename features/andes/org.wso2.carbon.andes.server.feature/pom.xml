@@ -133,6 +133,10 @@
             <groupId>org.apache.axis2.transport</groupId>
             <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -262,6 +266,7 @@
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.rabbitmq.amqp.version}</bundleDef>
+                                <bundleDef>org.apache.commons:commons-pool2:${org.apache.commons.pool.version}</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}

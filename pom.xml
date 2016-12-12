@@ -584,6 +584,11 @@
                 <artifactId>org.wso2.carbon.registry.resource.stub</artifactId>
                 <version>${carbon.registry.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${org.apache.commons.pool.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -643,7 +648,6 @@
         <orbit.version.poi>3.9.0.wso2v1</orbit.version.poi>
         <orbit.version.h2.engine>1.2.140.wso2v3</orbit.version.h2.engine>
         <orbit.version.commons.httpclient>3.1.0.wso2v2</orbit.version.commons.httpclient>
-        <orbit.version.commons.pool>1.5.6.wso2v1</orbit.version.commons.pool>
         <orbit.version.commons.fileuploader>1.2.0.wso2v1</orbit.version.commons.fileuploader>
         <orbit.version.org.apache.geronimo.components.wso2.geronimo-connector>2.0.1.wso2v1
         </orbit.version.org.apache.geronimo.components.wso2.geronimo-connector>
@@ -699,6 +703,7 @@
         <carbon.metrics.version>1.2.0</carbon.metrics.version>
         <gson.version>2.3.1</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
+        <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
     </properties>
 
 </project>
