@@ -659,6 +659,11 @@
                 <artifactId>commons-httpclient</artifactId>
                 <version>${orbit.version.commons.httpclient}</version>
             </dependency>
+            <dependency>
+                 <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${org.apache.commons.pool.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -719,7 +724,6 @@
         <orbit.version.poi>3.9.0.wso2v1</orbit.version.poi>
         <orbit.version.h2.engine>1.2.140.wso2v3</orbit.version.h2.engine>
         <orbit.version.commons.httpclient>3.1.0.wso2v2</orbit.version.commons.httpclient>
-        <orbit.version.commons.pool>1.5.6.wso2v1</orbit.version.commons.pool>
         <orbit.version.commons.fileuploader>1.2.0.wso2v1</orbit.version.commons.fileuploader>
         <orbit.version.org.apache.geronimo.components.wso2.geronimo-connector>2.0.1.wso2v1
         </orbit.version.org.apache.geronimo.components.wso2.geronimo-connector>
@@ -790,6 +794,7 @@
 		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
 		<sqlite-jdbc.version>3.8.11.2</sqlite-jdbc.version>
 		<protobuf-java.version>2.6.1</protobuf-java.version>
+        <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
     </properties>
 
 </project>
