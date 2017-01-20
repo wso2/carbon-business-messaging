@@ -57,7 +57,7 @@ public class UIUtils {
 
     public static final String QPID_CONF = "qpid.conf";
     private static String qpidPath = System.getProperty(QPID_CONF);
-    private static  String ANDES_CONF_DIR = "/repository/conf/advanced/";
+    private static String andesConfDir = "/repository/conf/advanced/";
     private static final String ANDES_CONF_FILE = "qpid-config.xml";
     private static final String ANDES_CONF_CONNECTOR_NODE = "connector";
     private static final String ANDES_CONF_SSL_NODE = "ssl";
@@ -66,7 +66,7 @@ public class UIUtils {
     private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
     private static final String ANDES_ADMIN_SERVICE_NAME = "AndesAdminService";
     private static final String ANDES_ADMIN_EVENT_SERVICE_NAME = "AndesEventAdminService";
-	private static final String ANDES_MANAGER_SERVICE_NAME = "AndesManagerService";
+    private static final String ANDES_MANAGER_SERVICE_NAME = "AndesManagerService";
 
     /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
@@ -109,33 +109,34 @@ public class UIUtils {
         return stub;
     }
 
-	/**
-	 * Get Andes Manager Service stub. This stub has methods to receive cluster related information
-	 * @param config the servlet configuration
-	 * @param session the http session
-	 * @return instance of AndesManagerServiceStub
-	 * @throws Exception
-	 */
-	public static AndesManagerServiceStub getAndesManagerServiceStub(ServletConfig config,
-																	 HttpSession session) throws AxisFault{
-		String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-		String serviceURL = backendServerURL + ANDES_MANAGER_SERVICE_NAME;
-		ConfigurationContext configContext =
-				(ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
-		AndesManagerServiceStub stub = new AndesManagerServiceStub(configContext, serviceURL);
-		String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
-		if (cookie != null) {
-			Options option = stub._getServiceClient().getOptions();
-			option.setManageSession(true);
-			option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
-		}
-		return stub;
-	}
+    /**
+     * Get Andes Manager Service stub. This stub has methods to receive cluster related information
+     *
+     * @param config  the servlet configuration
+     * @param session the http session
+     * @return instance of AndesManagerServiceStub
+     * @throws Exception
+     */
+    public static AndesManagerServiceStub getAndesManagerServiceStub(ServletConfig config,
+                                                                     HttpSession session) throws AxisFault {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        String serviceURL = backendServerURL + ANDES_MANAGER_SERVICE_NAME;
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        AndesManagerServiceStub stub = new AndesManagerServiceStub(configContext, serviceURL);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        if (cookie != null) {
+            Options option = stub._getServiceClient().getOptions();
+            option.setManageSession(true);
+            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+        }
+        return stub;
+    }
 
     /**
      * Get the AndesEventAdminService stub
      *
-     * @param config the servlet configuration
+     * @param config  the servlet configuration
      * @param session the http session
      * @param request the http servlet request
      * @return an AndesEventAdminServiceStub
@@ -270,18 +271,18 @@ public class UIUtils {
      */
     public static String getTCPConnectionURL(String userName, String accessKey)
             throws FileNotFoundException,
-                   XMLStreamException, AndesException {
+            XMLStreamException, AndesException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
 
         String CARBON_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT));
 
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT));
-        if(qpidPath != null){
-            ANDES_CONF_DIR = Paths.get(qpidPath).toString();
+        if (qpidPath != null) {
+            andesConfDir = Paths.get(qpidPath).toString();
         }
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR + ANDES_CONF_FILE);
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + andesConfDir + ANDES_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(
@@ -303,14 +304,14 @@ public class UIUtils {
             // }'&key_store_password='{key_store_pwd}''";
 
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                   ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + trustStore.getStoreLocation() +
-                   "'&trust_store_password='" + trustStore.getPassword() + "'&key_store='" +
-                   keyStore.getStoreLocation() + "'&key_store_password='" + trustStore.getPassword() + "''";
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + trustStore.getStoreLocation() +
+                    "'&trust_store_password='" + trustStore.getPassword() + "'&key_store='" +
+                    keyStore.getStoreLocation() + "'&key_store_password='" + trustStore.getPassword() + "''";
         } else {
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                   ":" + CARBON_PORT + "'";
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_PORT + "'";
         }
     }
 
@@ -323,17 +324,17 @@ public class UIUtils {
      */
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        return (Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
-                !(Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
+        return (Boolean) AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
+                !(Boolean) AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
     }
 
     /**
      * Filter the full user-roles list to suit the range.
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
-     * @param allPermissions    full list of roles
-     * @param startingIndex     starting index to filter
-     * @param maxRolesCount     maximum number of roles that the filtered list can contain
+     * @param allPermissions full list of roles
+     * @param startingIndex  starting index to filter
+     * @param maxRolesCount  maximum number of roles that the filtered list can contain
      * @return ArrayList<QueueRolePermission>
      */
     @SuppressWarnings("UnusedDeclaration")

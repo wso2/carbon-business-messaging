@@ -31,6 +31,7 @@ import org.wso2.carbon.andes.commons.registry.RegistryClientException;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.utils.ServerConstants;
 import org.wso2.carbon.utils.CarbonUtils;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -62,8 +63,7 @@ public class QpidServiceImpl implements QpidService {
      * The location for the qpid configuration file directory.
      */
     public static final String QPID_CONF = "qpid.conf";
-    private static String qpidPath;
-    private static  String QPID_CONF_DIR = "/repository/conf/advanced/";
+    private static String QPID_CONF_DIR = "/repository/conf/advanced/";
 
     /**
      * Default domain separator.
@@ -248,7 +248,7 @@ public class QpidServiceImpl implements QpidService {
 
         // amqp://{username}:{accessKey}@carbon/carbon?brokerlist='vm://:1'
         return "amqp://" + username + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-               CARBON_VIRTUAL_HOST_NAME + "?brokerlist='vm://:1'";
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='vm://:1'";
     }
 
     /**
@@ -258,7 +258,7 @@ public class QpidServiceImpl implements QpidService {
     public String getTCPConnectionURL(String username, String password) {
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
         return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
-               CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -268,7 +268,7 @@ public class QpidServiceImpl implements QpidService {
     public String getTCPConnectionURL(String username, String password, String clientID) {
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
         return "amqp://" + username + ":" + password + "@" + clientID + "/" +
-               CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -280,7 +280,7 @@ public class QpidServiceImpl implements QpidService {
 
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
         return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
-               CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -292,7 +292,7 @@ public class QpidServiceImpl implements QpidService {
 
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
         return "amqp://" + username + ":" + password + "@" + clientID + "/" +
-               CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -301,9 +301,9 @@ public class QpidServiceImpl implements QpidService {
     @Override
     public String getQpidHome() {
         //get system property value for qpid-config.xml if exists
-        qpidPath = System.getProperty(QPID_CONF);
+        String qpidPath = System.getProperty(QPID_CONF);
 
-        if(qpidPath != null){
+        if (qpidPath != null) {
             QPID_CONF_DIR = Paths.get(qpidPath).toString();
         }
         return System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR;
