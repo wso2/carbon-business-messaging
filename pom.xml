@@ -692,10 +692,10 @@
         <imp.pkg.version.neethi>[2.0.4.wso2v4, 3.0.0)</imp.pkg.version.neethi>
         <commons-lang.version>2.6</commons-lang.version>
         <!-- Apache Axiom -->
-        <orbit.version.axiom>1.2.11.wso2v10</orbit.version.axiom>
-        <exp.pkg.version.axiom>1.2.11.wso2v10</exp.pkg.version.axiom>
+        <orbit.version.axiom>1.2.11.wso2v11</orbit.version.axiom>
+        <exp.pkg.version.axiom>1.2.11.wso2v11</exp.pkg.version.axiom>
         <imp.pkg.version.axiom>[1.2.11, 1.3.0)</imp.pkg.version.axiom>
-        <version.axiom>1.2.11-wso2v6</version.axiom>
+        <version.axiom>1.2.11-wso2v11</version.axiom>
         <!-- Apache Axis2 -->
         <orbit.version.axis2>1.6.1.wso2v12</orbit.version.axis2>
         <exp.pkg.version.axis2>1.6.1.wso2v12</exp.pkg.version.axis2>
