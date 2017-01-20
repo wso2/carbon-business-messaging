@@ -36,6 +36,7 @@ import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.ServerConstants;
+import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -47,13 +48,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.nio.file.Paths;
 
 /**
  * This class is used by the UI to connect to services and provides utilities. Used by JSP pages.
  */
 public class UIUtils {
 
-    private static final String ANDES_CONF_DIR = "/repository/conf/advanced/";
+    public static final String QPID_CONF = "qpid.conf";
+    private static String qpidPath = System.getProperty(QPID_CONF);
+    private static  String ANDES_CONF_DIR = "/repository/conf/advanced/";
     private static final String ANDES_CONF_FILE = "qpid-config.xml";
     private static final String ANDES_CONF_CONNECTOR_NODE = "connector";
     private static final String ANDES_CONF_SSL_NODE = "ssl";
@@ -273,6 +277,9 @@ public class UIUtils {
 
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT));
+        if(qpidPath != null){
+            ANDES_CONF_DIR = Paths.get(qpidPath).toString();
+        }
 
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR + ANDES_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
