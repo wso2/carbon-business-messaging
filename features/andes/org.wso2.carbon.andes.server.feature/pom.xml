@@ -65,6 +65,10 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.messaging</groupId>
+            <artifactId>org.wso2.carbon.andes.admin.mqtt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes.event.core</artifactId>
         </dependency>
         <dependency>
@@ -305,6 +309,7 @@
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.commons:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.core:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin:${carbon.messaging.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin.mqtt:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.core:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.admin:${carbon.messaging.version}</bundleDef>
                                 <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
