@@ -88,16 +88,6 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>wso2-staging</id>
-            <name>WSO2 Staging Repository</name>
-            <url>https://maven.wso2.org/nexus/content/repositories/orgwso2andes-1013</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -620,7 +610,7 @@
         <carbon.commons.version>4.5.4</carbon.commons.version>
         <carbon.multitenancy.version>4.4.4</carbon.multitenancy.version>
         <carbon.registry.version>4.6.0</carbon.registry.version>
-        <carbon.messaging.version>3.1.14-SNAPSHOT</carbon.messaging.version>
+        <carbon.messaging.version>3.1.13</carbon.messaging.version>
         <andes.dependency.version>3.1.12</andes.dependency.version>
         <andes.export.version>3.1.12</andes.export.version>
         <andes.import.version>3.1.12</andes.import.version>
