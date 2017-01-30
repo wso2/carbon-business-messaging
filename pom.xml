@@ -622,7 +622,7 @@
         <xmlsec.version>1.4.2-patched</xmlsec.version>
         <!-- Carbon Identity -->
         <carbon.identity.version>5.2.0</carbon.identity.version>
-        <carbon.identity.oauth2.version.range>[5.0.8,6.0.0]</carbon.identity.oauth2.version.range>
+        <carbon.identity.oauth2.version.range>[5.0.0,6.0.0]</carbon.identity.oauth2.version.range>
         <carbon.identity.oauth.stub.version>5.0.8</carbon.identity.oauth.stub.version>
         <!-- Apache  -->
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
