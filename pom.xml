@@ -88,6 +88,16 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>wso2-staging</id>
+            <name>WSO2 Staging Repository</name>
+            <url>https://maven.wso2.org/nexus/content/repositories/orgwso2andes-1013</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -611,9 +621,9 @@
         <carbon.multitenancy.version>4.4.4</carbon.multitenancy.version>
         <carbon.registry.version>4.6.0</carbon.registry.version>
         <carbon.messaging.version>3.1.13-SNAPSHOT</carbon.messaging.version>
-        <andes.dependency.version>3.1.12-SNAPSHOT</andes.dependency.version>
-        <andes.export.version>3.1.12-SNAPSHOT</andes.export.version>
-        <andes.import.version>3.1.12-SNAPSHOT</andes.import.version>
+        <andes.dependency.version>3.1.12</andes.dependency.version>
+        <andes.export.version>3.1.12</andes.export.version>
+        <andes.import.version>3.1.12</andes.import.version>
         <carbon.kernel.version>4.4.10</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
@@ -622,7 +632,7 @@
         <xmlsec.version>1.4.2-patched</xmlsec.version>
         <!-- Carbon Identity -->
         <carbon.identity.version>5.2.0</carbon.identity.version>
-        <carbon.identity.oauth2.version.range>[5.0.8,6.0.0]</carbon.identity.oauth2.version.range>
+        <carbon.identity.oauth2.version.range>[5.0.0,6.0.0]</carbon.identity.oauth2.version.range>
         <carbon.identity.oauth.stub.version>5.0.8</carbon.identity.oauth.stub.version>
         <!-- Apache  -->
         <orbit.version.neethi>2.0.4.wso2v4</orbit.version.neethi>
@@ -713,8 +723,8 @@
         <codahale.metrics.version>3.0.2</codahale.metrics.version>
         <metrics-core.version>2.0.3.wso2v1</metrics-core.version>
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
-        <axis2.transport.jms.version>1.1.0-wso2v14</axis2.transport.jms.version>
-        <axis2.transport.rabbitmq.amqp.version>1.1.0-wso2v14</axis2.transport.rabbitmq.amqp.version>
+        <axis2.transport.jms.version>2.0.0-wso2v1</axis2.transport.jms.version>
+        <axis2.transport.rabbitmq.amqp.version>2.0.0-wso2v1</axis2.transport.rabbitmq.amqp.version>
         <carbon.metrics.version>1.2.2</carbon.metrics.version>
         <gson.version>2.3.1</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
