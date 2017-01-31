@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS MB_RETAINED_METADATA (
 
 CREATE TABLE IF NOT EXISTS MB_DTX_PREPARED_XID (
                 INTERNAL_XID BIGINT NOT NULL,
-                NODE_ID varchar(512) NOT NULL,
+                NODE_ID VARCHAR(512) NOT NULL,
                 FORMAT_CODE BIGINT NOT NULL,
                 GLOBAL_ID BINARY NOT NULL,
                 BRANCH_ID BINARY NOT NULL,
@@ -137,47 +137,47 @@ CREATE TABLE IF NOT EXISTS MB_BINDING (
 );
 
 CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
-                    QUEUE_NAME VARCHAR NOT NULL,
-                    MESSAGE_COUNT BIGINT,
-                    PRIMARY KEY (QUEUE_NAME)
+                QUEUE_NAME VARCHAR NOT NULL,
+                MESSAGE_COUNT BIGINT,
+                PRIMARY KEY (QUEUE_NAME)
 );
                     
 CREATE TABLE IF NOT EXISTS MB_SLOT (
-                        SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
-                        START_MESSAGE_ID bigint(20) NOT NULL,
-                        END_MESSAGE_ID bigint(20) NOT NULL,
-                        STORAGE_QUEUE_NAME varchar(512) NOT NULL,
-                        SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
-                        ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
-                        ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
-                        PRIMARY KEY (SLOT_ID)
+                SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
+                START_MESSAGE_ID bigint(20) NOT NULL,
+                END_MESSAGE_ID bigint(20) NOT NULL,
+                STORAGE_QUEUE_NAME varchar(512) NOT NULL,
+                SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
+                ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
+                ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
+                PRIMARY KEY (SLOT_ID)
 );
 
 -- Default value '1' for SLOT_STATE stands for CREATED state of slot
 
 CREATE TABLE IF NOT EXISTS MB_SLOT_MESSAGE_ID (
-                        QUEUE_NAME varchar(512) NOT NULL,
-                        MESSAGE_ID bigint(20) NOT NULL,
-                        PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
+                QUEUE_NAME VARCHAR(512) NOT NULL,
+                MESSAGE_ID bigint(20) NOT NULL,
+                PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
 );
 
 CREATE TABLE IF NOT EXISTS MB_NODE_TO_LAST_PUBLISHED_ID (
-                        NODE_ID varchar(512) NOT NULL,
-                        MESSAGE_ID bigint(20) NOT NULL,
-                        PRIMARY KEY (NODE_ID)
+                NODE_ID VARCHAR(512) NOT NULL,
+                MESSAGE_ID bigint(20) NOT NULL,
+                PRIMARY KEY (NODE_ID)
 );
 
 CREATE TABLE IF NOT EXISTS MB_QUEUE_TO_LAST_ASSIGNED_ID (
-                        QUEUE_NAME varchar(512) NOT NULL,
-                        MESSAGE_ID bigint(20) NOT NULL,
-                        PRIMARY KEY (QUEUE_NAME)
+                QUEUE_NAME VARCHAR(512) NOT NULL,
+                MESSAGE_ID bigint(20) NOT NULL,
+                PRIMARY KEY (QUEUE_NAME)
 );
 
 CREATE TABLE IF NOT EXISTS MB_RETAINED_CONTENT (
-                        MESSAGE_ID BIGINT,
-                        CONTENT_OFFSET INT,
-                        MESSAGE_CONTENT BINARY NOT NULL,
-                        PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
+                MESSAGE_ID BIGINT,
+                CONTENT_OFFSET INT,
+                MESSAGE_CONTENT BINARY NOT NULL,
+                PRIMARY KEY (MESSAGE_ID,CONTENT_OFFSET)
 );
 
 CREATE TABLE IF NOT EXISTS MB_MSG_STORE_STATUS (
@@ -198,29 +198,29 @@ CREATE TABLE IF NOT EXISTS MB_CLUSTER_EVENT (
 );
 
 CREATE TABLE IF NOT EXISTS MB_COORDINATOR_HEARTBEAT (
-                        ANCHOR INT NOT NULL,
-                        NODE_ID VARCHAR(512) NOT NULL,
-                        LAST_HEARTBEAT BIGINT NOT NULL,
-                        THRIFT_HOST VARCHAR(512) NOT NULL,
-                        THRIFT_PORT INT NOT NULL,
-                        PRIMARY KEY (ANCHOR)
+                ANCHOR INT NOT NULL,
+                NODE_ID VARCHAR(512) NOT NULL,
+                LAST_HEARTBEAT BIGINT NOT NULL,
+                THRIFT_HOST VARCHAR(512) NOT NULL,
+                THRIFT_PORT INT NOT NULL,
+                PRIMARY KEY (ANCHOR)
 );
 
 CREATE TABLE IF NOT EXISTS MB_NODE_HEARTBEAT (
-                        NODE_ID VARCHAR(512) NOT NULL,
-                        LAST_HEARTBEAT BIGINT NOT NULL,
-                        IS_NEW_NODE TINYINT NOT NULL,
-                        CLUSTER_AGENT_HOST VARCHAR(512) NOT NULL,
-                        CLUSTER_AGENT_PORT INT NOT NULL,
-                        PRIMARY KEY (NODE_ID)
+                NODE_ID VARCHAR(512) NOT NULL,
+                LAST_HEARTBEAT BIGINT NOT NULL,
+                IS_NEW_NODE TINYINT NOT NULL,
+                CLUSTER_AGENT_HOST VARCHAR(512) NOT NULL,
+                CLUSTER_AGENT_PORT INT NOT NULL,
+                PRIMARY KEY (NODE_ID)
 );
 
 CREATE TABLE IF NOT EXISTS MB_MEMBERSHIP (
-                        EVENT_ID BIGINT NOT NULL AUTO_INCREMENT,
-                        NODE_ID VARCHAR(512) NOT NULL,
-                        CHANGE_TYPE tinyint(4) NOT NULL,
-                        CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
-                        PRIMARY KEY (EVENT_ID)
+                EVENT_ID BIGINT NOT NULL AUTO_INCREMENT,
+                NODE_ID VARCHAR(512) NOT NULL,
+                CHANGE_TYPE tinyint(4) NOT NULL,
+                CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
+                PRIMARY KEY (EVENT_ID)
 );
 
 -- End of Andes Context Store Tables --
