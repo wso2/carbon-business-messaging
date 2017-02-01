@@ -245,4 +245,9 @@ public interface QueueManagerService {
     Message[] getMessageInDLCForQueue(String queueName,
                                       long nextMessageIdToRead, int maxMessageCount)
             throws QueueManagerException;
+
+    /**
+     * Dump message status to a default file. This is used for troubleshooting
+     */
+    void dumpMessageStatus() throws AndesException;
 }

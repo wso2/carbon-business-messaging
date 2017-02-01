@@ -35,11 +35,11 @@ import java.util.ArrayList;
 
 public class SubscriptionManagementBeans {
 
-    public static SubscriptionManagementBeans self = new SubscriptionManagementBeans();
+    private static SubscriptionManagementBeans self = new SubscriptionManagementBeans();
 
-    public static SubscriptionManagementBeans getInstance(){
-        
-        if(self == null){
+    public static SubscriptionManagementBeans getInstance() {
+
+        if (self == null) {
             self = new SubscriptionManagementBeans();
         }
         return self;
