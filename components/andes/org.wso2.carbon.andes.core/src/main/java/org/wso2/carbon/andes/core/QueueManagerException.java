@@ -17,9 +17,11 @@
  */
 package org.wso2.carbon.andes.core;
 
-public class QueueManagerException extends Exception{
+
+public class QueueManagerException extends org.wso2.andes.kernel.AndesException{
      private String faultCode;
     private String faultString;
+
     public QueueManagerException() {
         super();
     }

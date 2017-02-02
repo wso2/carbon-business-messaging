@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class QueueManagementBeans {
 
-    public static QueueManagementBeans self;
+    private static QueueManagementBeans self;
     public static final String DIRECT_EXCHANGE = "amq.direct";
     public static final String DEFAULT_EXCHANGE = "<<default>>";
 

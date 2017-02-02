@@ -27,7 +27,9 @@ import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
 import org.wso2.carbon.andes.commons.registry.RegistryClientException;
 import org.wso2.carbon.andes.core.internal.ds.QueueManagerServiceValueHolder;
+import org.wso2.carbon.andes.core.internal.registry.MessageStatusInformationBeans;
 import org.wso2.carbon.andes.core.internal.registry.QueueManagementBeans;
+import org.wso2.carbon.andes.core.internal.registry.SubscriptionManagementBeans;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Message;
@@ -691,6 +693,13 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         }
 
         return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void dumpMessageStatus() throws AndesException {
+        MessageStatusInformationBeans.getInstance().dumpMessageStatusInformation();
     }
 
     /**

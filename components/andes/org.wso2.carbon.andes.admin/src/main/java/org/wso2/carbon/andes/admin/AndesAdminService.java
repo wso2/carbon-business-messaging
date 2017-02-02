@@ -26,6 +26,7 @@ import org.wso2.carbon.andes.admin.internal.QueueRolePermission;
 import org.wso2.carbon.andes.admin.internal.Subscription;
 import org.wso2.carbon.andes.admin.util.AndesBrokerManagerAdminServiceDSHolder;
 import org.wso2.carbon.andes.commons.CommonsUtil;
+import org.wso2.carbon.andes.core.AndesException;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
@@ -900,6 +901,23 @@ public class AndesAdminService extends AbstractAdmin {
             log.error("Error while calculating the pending message count for storage queue", e);
             throw new BrokerManagerAdminException("Error while calculate the pending message count for "
                     + "storage queue");
+        }
+    }
+
+    /**
+     * Invoke MBean operations and dump status of all messages. The file will be created
+     * inside [MB_HOME]/repository/logs
+     *
+     * @throws BrokerManagerAdminException on an issue creating/writing to file
+     */
+    public void dumpMessageStatus() throws BrokerManagerAdminException {
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
+                .getQueueManagerService();
+        try {
+            queueManagerService.dumpMessageStatus();
+        } catch (AndesException e) {
+            log.error("Error while dumping message status to file ", e);
+            throw new BrokerManagerAdminException("Error while dumping message status to file");
         }
     }
 

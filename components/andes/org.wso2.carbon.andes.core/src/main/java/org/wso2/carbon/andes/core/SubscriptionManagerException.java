@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.andes.core;
 
-public class SubscriptionManagerException extends Exception {
+public class SubscriptionManagerException extends org.wso2.andes.kernel.AndesException {
     private String faultCode;
     private String faultString;
 

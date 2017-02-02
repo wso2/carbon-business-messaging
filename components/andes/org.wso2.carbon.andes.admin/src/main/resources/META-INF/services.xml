@@ -167,6 +167,9 @@
         <operation name="getSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>
         </operation>
+        <operation name="dumpMessageStatus">
+            <parameter name="AuthorizationAction" locked="false">/permission/admin</parameter>
+        </operation>
         <operation name="getFilteredSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
