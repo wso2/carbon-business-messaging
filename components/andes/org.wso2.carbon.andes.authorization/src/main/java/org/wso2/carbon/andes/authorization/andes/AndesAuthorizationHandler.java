@@ -24,6 +24,7 @@ import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.andes.server.security.Result;
 import org.wso2.andes.server.security.access.ObjectProperties;
+import org.wso2.andes.server.security.access.Operation;
 import org.wso2.carbon.andes.authorization.internal.AuthorizationServiceDataHolder;
 import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.andes.commons.registry.RegistryClient;
@@ -134,6 +135,11 @@ public class AndesAuthorizationHandler {
     private static final String TEMP_QUEUE_SUFFIX = "tmp_";
 
     /**
+     * Empty space used to DEBUG logs
+     */
+    private static final String SPACE = " ";
+
+    /**
      * Parent resource path of each topic
      */
     private static final String PARENT_RESOURCE_PATH = "\\bevent/topics/\\b";
@@ -153,7 +159,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handleCreateQueue(String username, UserRealm userRealm,
-                                           ObjectProperties properties)
+                                           ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
@@ -184,7 +190,10 @@ public class AndesAuthorizationHandler {
         } catch (RegistryClientException | UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling create queue.", e);
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE + operation.toString() + SPACE
+                    + properties.get(ObjectProperties.Property.NAME));
+        }
         return accessResult;
     }
 
@@ -202,7 +211,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handleConsumeQueue(String username, UserRealm userRealm,
-                                            ObjectProperties properties)
+                                            ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         if (null == userRealm) {
@@ -261,13 +270,21 @@ public class AndesAuthorizationHandler {
                         Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                     accessResult = Result.ALLOWED;
                 }
-                // if non of the above deny permission
-                return accessResult;
             } catch (UserStoreException | RegistryClientException e) {
                 throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
             }
         }
-
+        if (log.isDebugEnabled()) {
+            if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
+                    !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
+                String topicName = temporaryQueueToTopicMap.get(properties.get(ObjectProperties.Property.NAME));
+                log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE + operation.toString() + SPACE
+                        + topicName);
+            } else {
+                log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE + operation.toString() + SPACE
+                        + properties.get(ObjectProperties.Property.NAME));
+            }
+        }
         return accessResult;
     }
 
@@ -281,7 +298,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handleBrowseQueue(String username, UserRealm userRealm,
-                                            ObjectProperties properties)
+                                            ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         if (null == userRealm) {
@@ -304,10 +321,13 @@ public class AndesAuthorizationHandler {
                 // if non of the above deny permission
                 return accessResult;
             } catch (UserStoreException e) {
-                throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
+                throw new AndesAuthorizationHandlerException("Error handling browse queue.", e);
             }
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE + operation.toString() + SPACE
+                    + properties.get(ObjectProperties.Property.NAME));
+        }
         return accessResult;
     }
 
@@ -322,7 +342,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handleBindQueue(String username, UserRealm userRealm,
-                                         ObjectProperties properties)
+                                         ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
@@ -339,7 +359,7 @@ public class AndesAuthorizationHandler {
                 String topicId = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
 
                 switch (exchangeName) {
-                    case DEFAULT_EXCHANGE: {
+                    case DEFAULT_EXCHANGE:
 
                         // Authorize
                         if (!isOwnDomain(routingKey, userRealm, properties)) {
@@ -357,9 +377,14 @@ public class AndesAuthorizationHandler {
                                 properties.get(ObjectProperties.Property.DURABLE))) {
                             accessResult = Result.ALLOWED;
                         }
+                        if (log.isDebugEnabled()) {
+                            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                                    + operation.toString() + SPACE
+                                    + properties.get(ObjectProperties.Property.QUEUE_NAME));
+                        }
                         break;
-                    }
-                    case DIRECT_EXCHANGE: {
+
+                    case DIRECT_EXCHANGE:
 
                         // Authorize
                         if (!isOwnDomain(routingKey, userRealm, properties)) {
@@ -371,8 +396,13 @@ public class AndesAuthorizationHandler {
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                             accessResult = Result.ALLOWED;
                         }
+                        if (log.isDebugEnabled()) {
+                            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                                    + operation.toString() + SPACE
+                                    + properties.get(ObjectProperties.Property.QUEUE_NAME));
+                        }
                         break;
-                    }
+
                     case TOPIC_EXCHANGE:
 
                         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
@@ -396,6 +426,7 @@ public class AndesAuthorizationHandler {
 
                             // Store subscription
                             RegistryClient.createSubscription(newRoutingKey, newQName, username);
+                            temporaryQueueToTopicMap.put(queueName, routingKey);
 
                             //get admin role of admin user (super tenant admin or tenant admin)
                             String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(username);
@@ -413,7 +444,7 @@ public class AndesAuthorizationHandler {
                             userRealm.getAuthorizationManager().authorizeRole(role, queueID,
                                     TreeNode.Permission.CONSUME.toString().toLowerCase());
                             //grant permission to topic hierarchy
-                            grantPermissionToHierarchyLevel(userRealm, topicId, role);
+                            grantPermissionToHierarchyLevel(username, userRealm, topicId, role);
 
 
                             accessResult = Result.ALLOWED;
@@ -483,6 +514,11 @@ public class AndesAuthorizationHandler {
                                 accessResult = Result.ALLOWED;
                             }
                         }
+                        if (log.isDebugEnabled()) {
+                            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                                    + operation.toString() + SPACE
+                                    + properties.get(ObjectProperties.Property.ROUTING_KEY));
+                        }
                         break;
                 }
             }
@@ -503,7 +539,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handlePublishToExchange(String username, UserRealm userRealm,
-                                                 ObjectProperties properties)
+                                                 ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
@@ -519,7 +555,7 @@ public class AndesAuthorizationHandler {
                 String permissionID = CommonsUtil.getTopicID(RegistryClient.getTenantBasedTopicName(routingKey));
 
                 switch (exchangeName) {
-                    case DIRECT_EXCHANGE: {  // Publish to queue
+                    case DIRECT_EXCHANGE:   // Publish to queue
 
                         // Authorize admin user
                         if (!isOwnDomain(routingKey, userRealm, properties)) {
@@ -532,7 +568,7 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                         break;
-                    }
+
                     case TOPIC_EXCHANGE:    // Publish to topic
 
                         // Authorize admin user
@@ -545,7 +581,7 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                         break;
-                    case DEFAULT_EXCHANGE: {  // Publish to queue
+                    case DEFAULT_EXCHANGE:   // Publish to queue
 
                         // Authorize
                         if (!isOwnDomain(routingKey, userRealm, properties)) {
@@ -558,7 +594,7 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                         break;
-                    }
+
                 }
             }
         } catch (UserStoreException e) {
@@ -566,7 +602,11 @@ public class AndesAuthorizationHandler {
         } catch (RegistryClientException e) {
             throw new AndesAuthorizationHandlerException("Error checking permission hierarchy", e);
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                    + operation.toString() + SPACE
+                    + properties.get(ObjectProperties.Property.ROUTING_KEY));
+        }
         return accessResult;
     }
 
@@ -577,8 +617,8 @@ public class AndesAuthorizationHandler {
      * @return ALLOWED/DENIED
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
-    public static Result handleUnbindQueue(String username, UserRealm userRealm, ObjectProperties properties)
-            throws AndesAuthorizationHandlerException {
+    public static Result handleUnbindQueue(String username, UserRealm userRealm, ObjectProperties properties,
+                                           Operation operation) throws AndesAuthorizationHandlerException {
         // Bind properties
         String exchangeName =
                 getRawExchangeName(properties.get(ObjectProperties.Property.NAME));
@@ -620,7 +660,11 @@ public class AndesAuthorizationHandler {
                             PERMISSION_CHANGE_PERMISSION);
                 }
             }
-
+            if (log.isDebugEnabled()) {
+                log.debug(username + SPACE + Result.ALLOWED.toString().toLowerCase() + SPACE
+                        + operation.toString() + SPACE
+                        + properties.get(ObjectProperties.Property.ROUTING_KEY));
+            }
             return Result.ALLOWED;
         } catch (RegistryClientException | UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling unbind queue.", e);
@@ -639,7 +683,7 @@ public class AndesAuthorizationHandler {
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
     public static Result handleDeleteQueue(String username, UserRealm userRealm,
-                                           ObjectProperties properties)
+                                           ObjectProperties properties, Operation operation)
             throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
@@ -671,6 +715,11 @@ public class AndesAuthorizationHandler {
         } catch (RegistryClientException | UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling delete queue.", e);
         }
+        if (log.isDebugEnabled()) {
+            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                    + operation.toString() + SPACE
+                    + properties.get(ObjectProperties.Property.NAME));
+        }
         return accessResult;
     }
 
@@ -684,8 +733,8 @@ public class AndesAuthorizationHandler {
      * @return ALLOWED/DENIED
      * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
      */
-    public static Result handlePurgeQueue(String username, UserRealm userRealm, ObjectProperties properties)
-            throws AndesAuthorizationHandlerException {
+    public static Result handlePurgeQueue(String username, UserRealm userRealm, ObjectProperties properties,
+                                          Operation operation) throws AndesAuthorizationHandlerException {
         Result accessResult = Result.DENIED;
         try {
             if (null != userRealm) {
@@ -709,6 +758,11 @@ public class AndesAuthorizationHandler {
             }
         } catch (RegistryClientException | UserStoreException e) {
             throw new AndesAuthorizationHandlerException("Error handling purge queue.", e);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
+                    + operation.toString() + SPACE
+                    + properties.get(ObjectProperties.Property.NAME));
         }
         return accessResult;
     }
@@ -738,6 +792,10 @@ public class AndesAuthorizationHandler {
             String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
             // Store queue details
             RegistryClient.createQueue(newQueueName, username);
+
+            if (log.isDebugEnabled()) {
+                log.debug(queueName + " created in the registry");
+            }
 
             String queueID = CommonsUtil.getQueueID(queueName);
 
@@ -800,6 +858,10 @@ public class AndesAuthorizationHandler {
 
         // Delete queue details
         RegistryClient.deleteQueue(queueName);
+
+        if (log.isDebugEnabled()) {
+            log.debug(queueName + " deleted from the registry");
+        }
 
         if (!AndesKernelBoot.isKernelShuttingDown()) {
             // Deleting internal role created for user.
@@ -945,6 +1007,10 @@ public class AndesAuthorizationHandler {
             userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
                                                               TreeNode.Permission.PUBLISH.toString()
                                                                       .toLowerCase());
+            if (log.isDebugEnabled()) {
+                log.debug("permission granted to user = " + username + " role = " + roleName
+                        + " queue = " + queueName + " queueId = " + queueId);
+            }
         } else {
             log.warn("Unable to provide permissions to the user, " +
                      " " + username + ", to subscribe and publish to " + queueName);
@@ -991,7 +1057,7 @@ public class AndesAuthorizationHandler {
             userStoreManager.updateUserListOfRole(roleName, new String[0], user);
         }
         //giving permissions to the topic
-        grantPermissionToHierarchyLevel(userRealm, topicId, roleName);
+        grantPermissionToHierarchyLevel(username, userRealm, topicId, roleName);
 
         if (isTopicSubscriberQueue(queueName)) {
             //if user has add topic permission then map tmp queue with topic name because in
@@ -1010,7 +1076,10 @@ public class AndesAuthorizationHandler {
             userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
                     PERMISSION_CHANGE_PERMISSION);
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("permission granted to user = " + username + " role = " + roleName
+                    + " topic = " + topicName + " topicId = " + topicId);
+        }
     }
 
     /**
@@ -1035,6 +1104,9 @@ public class AndesAuthorizationHandler {
             userStoreManager.deleteRole(roleName);
             authorizationManager.clearResourceAuthorizations(CommonsUtil.getQueueID(queueName));
         }
+        if (log.isDebugEnabled()) {
+            log.debug("role " + roleName + " associated with queue " + queueName + " deleted");
+        }
     }
 
     /**
@@ -1045,7 +1117,7 @@ public class AndesAuthorizationHandler {
      * @param role admin role
      * @throws UserStoreException
      */
-    private static void grantPermissionToHierarchyLevel(UserRealm userRealm, String topicId, String role)
+    private static void grantPermissionToHierarchyLevel(String username, UserRealm userRealm, String topicId, String role)
             throws UserStoreException {
         //tokenize resource path
         StringTokenizer tokenizer = new StringTokenizer(topicId, "/");
@@ -1073,6 +1145,10 @@ public class AndesAuthorizationHandler {
             count++;
             if (count < tokenCount) {
                 resourcePathBuilder.append("/");
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("permission granted to user = " + username + " role = " + role
+                        + " hierarchical topic = " + resourcePathBuilder.toString());
             }
 
         }
@@ -1129,6 +1205,10 @@ public class AndesAuthorizationHandler {
                 resourcePathBuilder.append("/");
             }
 
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(username + " is authorized to parent hierarchy topic = " + resourcePathBuilder.toString()
+                    + " topicId = " + topicId + SPACE + userAuthorized);
         }
         return userAuthorized;
     }

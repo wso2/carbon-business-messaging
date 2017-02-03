@@ -146,30 +146,30 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
                         return Result.ALLOWED;
                     } else if (ObjectType.QUEUE == objectType) {
                         return AndesAuthorizationHandler.handleCreateQueue(
-                                username, userRealm, properties);
+                                username, userRealm, properties, operation);
                     }
                 case BIND:
                     return AndesAuthorizationHandler.handleBindQueue(
-                            username, userRealm, properties);
+                            username, userRealm, properties, operation);
                 case PUBLISH:
                     return AndesAuthorizationHandler.handlePublishToExchange(
-                            username, userRealm, properties);
+                            username, userRealm, properties, operation);
                 case CONSUME:
                     return AndesAuthorizationHandler.handleConsumeQueue(
-                            username, userRealm, properties);
+                            username, userRealm, properties, operation);
                 case BROWSE:
                     return AndesAuthorizationHandler.handleBrowseQueue(
-                            username, userRealm, properties);
+                            username, userRealm, properties, operation);
                 case UNBIND:
-                    return AndesAuthorizationHandler.handleUnbindQueue(username, userRealm, properties);
+                    return AndesAuthorizationHandler.handleUnbindQueue(username, userRealm, properties, operation);
                 case DELETE:
                     if (ObjectType.EXCHANGE == objectType) {
                         return Result.ALLOWED;
                     } else if (ObjectType.QUEUE == objectType) {
-                        return AndesAuthorizationHandler.handleDeleteQueue(username, userRealm, properties);
+                        return AndesAuthorizationHandler.handleDeleteQueue(username, userRealm, properties, operation);
                     }
                 case PURGE:
-                    return AndesAuthorizationHandler.handlePurgeQueue(username, userRealm, properties);
+                    return AndesAuthorizationHandler.handlePurgeQueue(username, userRealm, properties, operation);
             }
         } catch (AndesAuthorizationHandlerException e) {
             logger.error("Error while invoking AndesAuthorizationHandler", e);
