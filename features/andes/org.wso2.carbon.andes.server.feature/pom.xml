@@ -264,7 +264,8 @@
                                         <include>dbscripts/oracle-mb.sql</include>
                                         <include>dbscripts/oracle-rac-mb.sql</include>
                                         <include>dbscripts/h2-mb.sql</include>
-                                        <include>dbscripts/migration-3.0.0_to_3.1.0/oracle-mb.sql</include> 
+                                        <include>dbscripts/migration-3.0.0_to_3.1.0/oracle-mb.sql</include>
+                                        <include>dbscripts/migration-3.1.0_to_3.2.0/*</include>
                                         <include>databases/WSO2MB_DB.h2.db</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
