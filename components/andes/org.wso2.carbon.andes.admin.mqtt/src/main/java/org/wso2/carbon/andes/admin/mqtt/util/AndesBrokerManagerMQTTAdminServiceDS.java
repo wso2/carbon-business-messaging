@@ -33,38 +33,52 @@ import org.wso2.carbon.andes.core.SubscriptionManagerService;
  * policy="dynamic"
  * bind="setAccessKey"
  * unbind="unsetAccessKey"
+ * @scr.reference name="QueueManagerMQTTService.component"
+ * interface="org.wso2.carbon.andes.core.QueueManagerService" cardinality="1..1"
+ * policy="dynamic" bind="setQueueManagerService" unbind="unSetQueueManagerService"
+ * @scr.reference name="SubscriptionManagerMQTTService.component"
+ * interface="org.wso2.carbon.andes.core.SubscriptionManagerService" cardinality="1..1"
+ * policy="dynamic" bind="setSubscriptionManagerService" unbind="unSetSubscriptionManagerService"
  */
 
-public class AndesBrokerManagerAdminServiceDS {
+public class AndesBrokerManagerMQTTAdminServiceDS {
 
     protected void activate(ComponentContext context) {
 
     }
 
+    protected void setQueueManagerService(QueueManagerService cepService) {
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
+    }
+
+    protected void unSetQueueManagerService(QueueManagerService cepService) {
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
+    }
+
     protected void setTopicManagerService(QueueManagerService cepService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
     }
 
     protected void unSetTopoicManagerService(QueueManagerService cepService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
     }
 
     protected void setSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().registerSubscriptionManagerService
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerSubscriptionManagerService
                 (subscriptionManagerService);
     }
 
     protected void unSetSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().unRegisterSubscriptionManagerService
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterSubscriptionManagerService
                 (subscriptionManagerService);
     }
 
 
     protected void setAccessKey(AuthenticationService authenticationService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().setAccessKey(authenticationService.getAccessKey());
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().setAccessKey(authenticationService.getAccessKey());
     }
 
     protected void unsetAccessKey(AuthenticationService authenticationService) {
-        AndesBrokerManagerAdminServiceDSHolder.getInstance().setAccessKey(null);
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().setAccessKey(null);
     }
 }

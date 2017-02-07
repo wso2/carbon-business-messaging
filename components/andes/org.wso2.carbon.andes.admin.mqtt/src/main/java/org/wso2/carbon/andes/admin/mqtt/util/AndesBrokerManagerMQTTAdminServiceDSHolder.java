@@ -21,15 +21,15 @@ package org.wso2.carbon.andes.admin.mqtt.util;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 
-public class AndesBrokerManagerAdminServiceDSHolder {
+public class AndesBrokerManagerMQTTAdminServiceDSHolder {
     private String accessKey;
     private QueueManagerService queueManagerService;
     private SubscriptionManagerService subscriptionManagerService;
 
-    private static AndesBrokerManagerAdminServiceDSHolder instance = new AndesBrokerManagerAdminServiceDSHolder();
+    private static AndesBrokerManagerMQTTAdminServiceDSHolder instance = new AndesBrokerManagerMQTTAdminServiceDSHolder();
 
 
-    public static AndesBrokerManagerAdminServiceDSHolder getInstance(){
+    public static AndesBrokerManagerMQTTAdminServiceDSHolder getInstance(){
         return instance;
     }
 

@@ -19,6 +19,7 @@
 package org.wso2.carbon.andes.core;
 
 import org.wso2.carbon.andes.core.internal.registry.SubscriptionManagementBeans;
+import org.wso2.carbon.andes.core.internal.util.MQTTUtils;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Subscription;
 
@@ -44,63 +45,71 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getSubscriptions
                 (isDurable, isActive, protocolType, destinationType);
 
-        return Utils.filterDomainSpecificSubscribers(subscriptions);
+        if (protocolType.equalsIgnoreCase("mqtt")) {
+            return MQTTUtils.filterDomainSpecificSubscribers(subscriptions);
+        } else {
+            return Utils.filterDomainSpecificSubscribers(subscriptions);
+        }
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getPendingMessageCount(String queueName) throws SubscriptionManagerException{
+    /**
+     * {@inheritDoc}
+     */
+    public long getPendingMessageCount(String queueName) throws SubscriptionManagerException {
 
-		return SubscriptionManagementBeans.getInstance().getPendingMessageCount(queueName);
-	}
+        return SubscriptionManagementBeans.getInstance().getPendingMessageCount(queueName);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
-			String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
-			String identifierPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId, int pageNumber,
-			int subscriptionCountPerPage) throws SubscriptionManagerException {
+    /**
+     * {@inheritDoc}
+     */
+    public List<Subscription> getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
+                                                       String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
+                                                       String identifierPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId, int pageNumber,
+                                                       int subscriptionCountPerPage) throws SubscriptionManagerException {
 
-		List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getFilteredSubscriptions
-				(isDurable, isActive, protocolType, destinationType, filteredNamePattern, isFilteredNameByExactMatch,
-				identifierPattern, isIdentifierPatternByExactMatch, ownNodeId, pageNumber, subscriptionCountPerPage);
+        List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getFilteredSubscriptions
+                (isDurable, isActive, protocolType, destinationType, filteredNamePattern, isFilteredNameByExactMatch,
+                        identifierPattern, isIdentifierPatternByExactMatch, ownNodeId, pageNumber, subscriptionCountPerPage);
 
-		return Utils.filterDomainSpecificSubscribers(subscriptions);
+        if (protocolType.equalsIgnoreCase("mqtt")) {
+            return MQTTUtils.filterDomainSpecificSubscribers(subscriptions);
+        } else {
+            return Utils.filterDomainSpecificSubscribers(subscriptions);
+        }
+    }
 
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
+                                                        String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
+                                                        String identiferPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId) throws
+            SubscriptionManagerException {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
-			String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
-			String identiferPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId) throws
-			SubscriptionManagerException {
+        int subscriptionCountForSearchResult = SubscriptionManagementBeans.getInstance()
+                .getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
+                        filteredNamePattern, isFilteredNameByExactMatch, identiferPattern, isIdentifierPatternByExactMatch,
+                        ownNodeId);
 
-		int subscriptionCountForSearchResult = SubscriptionManagementBeans.getInstance()
-				.getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
-				filteredNamePattern, isFilteredNameByExactMatch, identiferPattern, isIdentifierPatternByExactMatch,
-				ownNodeId);
+        return subscriptionCountForSearchResult;
+    }
 
-		return subscriptionCountForSearchResult;
-	}
-
-	/**
-	 * Close subscription by subscriptionID. This method will break the connection
-	 *
-	 * between server and particular subscription
-	 * @param subscriptionID ID of the subscription to close
-	 * @param destination queue/topic name of subscribed destination
-     * @param protocolType The protocol type of the subscriptions to close
+    /**
+     * Close subscription by subscriptionID. This method will break the connection
+     * <p>
+     * between server and particular subscription
+     *
+     * @param subscriptionID  ID of the subscription to close
+     * @param destination     queue/topic name of subscribed destination
+     * @param protocolType    The protocol type of the subscriptions to close
      * @param destinationType The destination type of the subscriptions to close
-	 * @throws SubscriptionManagerException
-	 */
-	public void closeSubscription(String subscriptionID, String destination, String protocolType,
+     * @throws SubscriptionManagerException
+     */
+    public void closeSubscription(String subscriptionID, String destination, String protocolType,
                                   String destinationType) throws SubscriptionManagerException {
-		SubscriptionManagementBeans.getInstance().closeSubscription(subscriptionID, destination, protocolType,
+        SubscriptionManagementBeans.getInstance().closeSubscription(subscriptionID, destination, protocolType,
                 destinationType);
-	}
+    }
 }
