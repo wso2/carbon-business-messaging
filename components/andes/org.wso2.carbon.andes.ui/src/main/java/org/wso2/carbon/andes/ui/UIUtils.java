@@ -39,6 +39,7 @@ import org.wso2.carbon.utils.ServerConstants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.servlet.ServletConfig;
@@ -52,7 +53,9 @@ import javax.xml.stream.XMLStreamException;
  */
 public class UIUtils {
 
-    private static final String ANDES_CONF_DIR = "/repository/conf/advanced/";
+    public static final String QPID_CONF = "qpid.conf";
+    private static String qpidPath = System.getProperty(QPID_CONF);
+    private static String andesConfDir = "/repository/conf/advanced/";
     private static final String ANDES_CONF_FILE = "qpid-config.xml";
     private static final String ANDES_CONF_CONNECTOR_NODE = "connector";
     private static final String ANDES_CONF_SSL_NODE = "ssl";
@@ -104,28 +107,29 @@ public class UIUtils {
         return stub;
     }
 
-	/**
-	 * Get Andes Manager Service stub. This stub has methods to receive cluster related information
-	 * @param config the servlet configuration
-	 * @param session the http session
-	 * @return instance of AndesManagerServiceStub
-	 * @throws Exception
-	 */
-	public static AndesManagerServiceStub getAndesManagerServiceStub(ServletConfig config,
-																	 HttpSession session) throws AxisFault{
-		String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-		String serviceURL = backendServerURL + ANDES_MANAGER_SERVICE_NAME;
-		ConfigurationContext configContext =
-				(ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
-		AndesManagerServiceStub stub = new AndesManagerServiceStub(configContext, serviceURL);
-		String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
-		if (cookie != null) {
-			Options option = stub._getServiceClient().getOptions();
-			option.setManageSession(true);
-			option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
-		}
-		return stub;
-	}
+    /**
+     * Get Andes Manager Service stub. This stub has methods to receive cluster related information
+     *
+     * @param config  the servlet configuration
+     * @param session the http session
+     * @return instance of AndesManagerServiceStub
+     * @throws Exception
+     */
+    public static AndesManagerServiceStub getAndesManagerServiceStub(ServletConfig config,
+                                                                     HttpSession session) throws AxisFault {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        String serviceURL = backendServerURL + ANDES_MANAGER_SERVICE_NAME;
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        AndesManagerServiceStub stub = new AndesManagerServiceStub(configContext, serviceURL);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        if (cookie != null) {
+            Options option = stub._getServiceClient().getOptions();
+            option.setManageSession(true);
+            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
+        }
+        return stub;
+    }
 
     /**
      * Get the AndesEventAdminService stub
@@ -273,7 +277,10 @@ public class UIUtils {
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT));
 
-        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + ANDES_CONF_DIR + ANDES_CONF_FILE);
+        if (qpidPath != null) {
+            andesConfDir = Paths.get(qpidPath).toString();
+        }
+        File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + andesConfDir + ANDES_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
         OMElement connectorNode = docRootNode.getFirstChildWithName(
