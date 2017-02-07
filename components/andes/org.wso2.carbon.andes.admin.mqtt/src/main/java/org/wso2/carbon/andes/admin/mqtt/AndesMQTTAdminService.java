@@ -19,7 +19,7 @@ package org.wso2.carbon.andes.admin.mqtt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.admin.mqtt.util.AndesBrokerManagerAdminServiceDSHolder;
+import org.wso2.carbon.andes.admin.mqtt.util.AndesBrokerManagerMQTTAdminServiceDSHolder;
 import org.wso2.carbon.andes.admin.mqtt.internal.Exception.BrokerManagerAdminException;
 import org.wso2.carbon.andes.admin.mqtt.internal.Subscription;
 import org.wso2.carbon.andes.core.QueueManagerException;
@@ -65,7 +65,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
         long messageCount;
         try {
             QueueManagerService queueManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getQueueManagerService();
             messageCount = queueManagerService.getMessageCount(destinationName, msgPattern);
             return messageCount;
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
     public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws BrokerManagerAdminException {
         try {
             QueueManagerService queueManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
@@ -105,7 +105,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
                                   String destinationType) throws BrokerManagerAdminException {
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             subscriptionManagerService.closeSubscription(subscriptionID, destination, protocolType, destinationType);
         } catch (SubscriptionManagerException e) {
             String errorMessage = e.getMessage();
@@ -128,7 +128,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions =
                     subscriptionManagerService.getAllSubscriptions();
             subscriptionsDTO = new Subscription[subscriptions.size()];
@@ -178,7 +178,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
         Subscription[] subscriptionsDTO;
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
                     .getSubscriptions(isDurable, isActive, protocolType, destinationType);
             subscriptionsDTO = new Subscription[subscriptions.size()];
@@ -236,7 +236,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
 
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
                     .getFilteredSubscriptions(isDurable, isActive, protocolType, destinationType,
                             filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
@@ -293,7 +293,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
         int subscriptionCountForSearchResult = 0;
         try {
             SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
+                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             subscriptionCountForSearchResult = subscriptionManagerService
                     .getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
                             filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
@@ -316,7 +316,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
      */
     public String[] getUserRoles() throws BrokerManagerAdminException {
         String[] roles;
-        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
+        QueueManagerService queueManagerService = AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         try {
             roles = queueManagerService.getBackendRoles();
