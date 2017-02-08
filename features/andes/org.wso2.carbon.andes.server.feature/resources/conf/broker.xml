@@ -256,10 +256,10 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <!--Publisher transaction related configurations.-->
     <transaction>
 
-        <!--Maximum batch size (Messages) for a transaction. Exceeding this limit will result
-        in a failure in the subsequent commit request. Default is set to 10MB. Limit is
-        calculated considering the payload of messages-->
-        <maxBatchSizeInBytes>10000000</maxBatchSizeInBytes>
+        <!--Maximum batch size (Messages) in kilobytes for a transaction. Exceeding this limit will
+         result in a failure in the subsequent commit (or prepare) request. Default is set to 1MB.
+         Limit is calculated considering the payload of messages.-->
+        <maxBatchSizeInKB>1024</maxBatchSizeInKB>
     </transaction>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
