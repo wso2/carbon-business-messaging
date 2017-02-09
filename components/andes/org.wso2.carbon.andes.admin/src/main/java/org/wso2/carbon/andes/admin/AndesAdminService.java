@@ -356,19 +356,29 @@ public class AndesAdminService extends AbstractAdmin {
 
 	/**
 	 * Close subscription defined by subscription ID forcibly
+     * @param isDurable is subscriber durable or not
 	 * @param subscriptionID ID of the subscription
-	 * @param destination queue / topic name of the subscribed destination
+	 * @param subscribedQueueOrTopicName queue / topic name of the subscribed destination
      * @param protocolType The protocol type of the subscriptions to close
      * @param destinationType The destination type of the subscriptions to close
+     * @param subscriberQueueName The bind queue of the subscriber
 	 * @throws BrokerManagerAdminException
 	 */
-	public void closeSubscription(String subscriptionID, String destination, String protocolType,
-                                  String destinationType) throws BrokerManagerAdminException {
+	public void closeSubscription(boolean isDurable, String subscriptionID, String subscribedQueueOrTopicName,
+                                  String protocolType, String destinationType, String subscriberQueueName)
+            throws BrokerManagerAdminException {
 		try {
 			SubscriptionManagerService subscriptionManagerService =
 					AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-			subscriptionManagerService.closeSubscription(subscriptionID, destination, protocolType, destinationType);
-		} catch (SubscriptionManagerException e) {
+            subscriptionManagerService.closeSubscription(subscriptionID, subscribedQueueOrTopicName, protocolType,
+                    destinationType);
+            //if non durable subscriber, then delete topic from registry after closing
+            if (!isDurable) {
+                QueueManagerService queueManagerService =
+                        AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+                queueManagerService.deleteTopicFromRegistry(subscribedQueueOrTopicName, subscriberQueueName);
+            }
+		} catch (SubscriptionManagerException | QueueManagerException e) {
 			String errorMessage = e.getMessage();
 			log.error(errorMessage, e);
 			throw new BrokerManagerAdminException(errorMessage, e);

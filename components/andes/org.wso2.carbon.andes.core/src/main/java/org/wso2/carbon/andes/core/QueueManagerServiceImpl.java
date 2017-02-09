@@ -29,7 +29,6 @@ import org.wso2.carbon.andes.commons.registry.RegistryClientException;
 import org.wso2.carbon.andes.core.internal.ds.QueueManagerServiceValueHolder;
 import org.wso2.carbon.andes.core.internal.registry.MessageStatusInformationBeans;
 import org.wso2.carbon.andes.core.internal.registry.QueueManagementBeans;
-import org.wso2.carbon.andes.core.internal.registry.SubscriptionManagementBeans;
 import org.wso2.carbon.andes.core.internal.util.QueueManagementConstants;
 import org.wso2.carbon.andes.core.internal.util.Utils;
 import org.wso2.carbon.andes.core.types.Message;
@@ -214,44 +213,48 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws QueueManagerException {
         try {
             UserRegistry userRegistry = Utils.getUserRegistry();
-
+            String resourcePathForQueue = null;
+            String resourcePathForTopic = null;
             if (subscriptionId.contains(":")) {
-                String resourcePathForQueue = null;
-                String resourcePathForTopic = null;
                 resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" +
                         subscriptionId.split(":")[1];
                 resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName,
                         subscriptionId.split(":")[1]);
                 userRegistry.delete(resourcePathForTopic);
                 userRegistry.delete(resourcePathForQueue);
-                String userName = getLoggedInUserName();
-                //clear permission assigned to admin role when unbind from topic
-                if (Utils.isAdmin(userName)) {
-                    UserRealm userRealm =
-                            QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
-                                    (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext
-                                            .getThreadLocalCarbonContext()
-                                            .getTenantId());
-                    //get admin role of admin user (super tenant admin or tenant admin)
-                    String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(userName);
-                    String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
-                    String role = null;
-                    for (String userRole : userRoles) {
-                        if (userRole.equals(adminRole)) {
-                            role = userRole;
-                            break;
-                        }
+            } else if (subscriptionId.startsWith("tmp_")) {
+                resourcePathForQueue = QueueManagementConstants.MB_QUEUE_STORAGE_PATH + "/" + subscriptionId;
+                resourcePathForTopic = CommonsUtil.getSubscriptionID(topicName, subscriptionId);
+                userRegistry.delete(resourcePathForTopic);
+                userRegistry.delete(resourcePathForQueue);
+            }
+            String userName = getLoggedInUserName();
+            //clear permission assigned to admin role when unbind from topic
+            if (Utils.isAdmin(userName)) {
+                UserRealm userRealm =
+                        QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
+                                (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                                        MultitenantConstants.SUPER_TENANT_ID : CarbonContext
+                                        .getThreadLocalCarbonContext()
+                                        .getTenantId());
+                //get admin role of admin user (super tenant admin or tenant admin)
+                String[] userRoles = userRealm.getUserStoreManager().getRoleListOfUser(userName);
+                String adminRole = userRealm.getRealmConfiguration().getAdminRoleName();
+                String role = null;
+                for (String userRole : userRoles) {
+                    if (userRole.equals(adminRole)) {
+                        role = userRole;
+                        break;
                     }
-                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, resourcePathForQueue,
-                            TreeNode.Permission.CONSUME.toString().toLowerCase());
-                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
-                            TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
-                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
-                            TreeNode.Permission.PUBLISH.toString().toLowerCase());
-                    userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
-                            PERMISSION_CHANGE_PERMISSION);
                 }
+                userRealm.getAuthorizationManager().clearRoleAuthorization(role, resourcePathForQueue,
+                        TreeNode.Permission.CONSUME.toString().toLowerCase());
+                userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                        TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
+                userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                        TreeNode.Permission.PUBLISH.toString().toLowerCase());
+                userRealm.getAuthorizationManager().clearRoleAuthorization(role, EVENT_TOPICS + topicName,
+                        PERMISSION_CHANGE_PERMISSION);
             }
 
         } catch (RegistryException | UserStoreException e) {
