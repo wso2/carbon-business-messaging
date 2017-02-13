@@ -259,11 +259,11 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!--Maximum batch size (Messages) in kilobytes for a transaction. Exceeding this limit will
          result in a failure in the subsequent commit (or prepare) request. Default is set to 1MB.
          Limit is calculated considering the payload of messages.-->
-        <maxBatchSizeInKB>1024</maxBatchSizeInKB>
+        <maxBatchSizeInKB>10240</maxBatchSizeInKB>
 
         <!-- Maximum number of parallel dtx enabled channel count. Distributed transaction
          requests exceeding this limit will fail. -->
-        <maxParallelDtxChannels>100</maxParallelDtxChannels>
+        <maxParallelDtxChannels>10</maxParallelDtxChannels>
     </transaction>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
