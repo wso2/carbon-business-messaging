@@ -50,17 +50,20 @@
 
         function closeSubscription(obj) {
             var aTag = jQuery(obj);
+            var isDurable = aTag.attr('isDurable');
             var subscriptionID = aTag.attr('subscription-id');
             var subscriptionDestination = aTag.attr('subscription-destination');
             var protocolType = aTag.attr('protocolType');
             var destinationType = aTag.attr('destinationType');
+            var subscriberQueueName = aTag.attr('subscriberQueueName');
             aTag.css('font-weight', 'bolder');
 
             CARBON.showConfirmationDialog("Are you sure you want to close this subscription?", function(){
                 $.ajax({
-                    url:'subscriptions_close_ajaxprocessor.jsp?subscriptionID=' + subscriptionID + "&destination="
-                    + subscriptionDestination + "&protocolType=" + protocolType + "&destinationType="
-                    + destinationType,
+                    url:'subscriptions_close_ajaxprocessor.jsp?isDurable=' + isDurable + '&subscriptionID='
+                    + subscriptionID + "&subscribedQueueOrTopicName=" + subscriptionDestination + "&protocolType="
+                    + protocolType + "&destinationType="+ destinationType + '&subscriberQueueName='
+                    + subscriberQueueName,
                     async:true,
                     type:"POST",
                     success: function(o) {
@@ -346,10 +349,12 @@
                     <td>
                         <a style="background-image: url(images/unsubscribe.png);"
                            class="icon-link"
+                           isDurable="<%=sub.getDurable()%>"
                            subscription-id="<%=sub.getSubscriptionIdentifier()%>"
                            subscription-destination="<%=sub.getSubscriberQueueName()%>"
                            protocolType="<%=sub.getProtocolType()%>"
                            destinationType="<%=sub.getDestinationType()%>"
+                           subscriberQueueName="<%=sub.getSubscriberQueueName()%>"
                            onclick="closeSubscription(this)">Close
                         </a>
                     </td>

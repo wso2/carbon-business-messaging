@@ -110,7 +110,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                 UserRealm userRealm =
                         QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
                                 (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                                 MultitenantConstants.SUPER_TENANT_ID : CarbonContext
+                                        MultitenantConstants.SUPER_TENANT_ID : CarbonContext
                                         .getThreadLocalCarbonContext()
                                         .getTenantId());
 
@@ -300,11 +300,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public void purgeMessagesOfQueue(String queueName) throws
-                                                       QueueManagerException {
-
-        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName, CarbonContext.getThreadLocalCarbonContext()
-                .getUsername());
+    public void purgeMessagesOfQueue(String queueName) throws QueueManagerException {
+        QueueManagementBeans.getInstance().purgeMessagesFromQueue(queueName,
+                CarbonContext.getThreadLocalCarbonContext().getUsername());
     }
 
     /**
@@ -334,7 +332,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             try {
                 userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
                         (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                         MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                                MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
                 boolean isUserHasChangePermission = false;
                 if (Utils.isAdmin(loggedInUser)) {
@@ -443,21 +441,21 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         String tenantBasedQueueName = Utils.getTenantBasedQueueName(queueName);
         if (QueueManagementBeans.queueExists(tenantBasedQueueName)) {
             queueName = CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                        queueName : queueName.replace(CarbonContext.getThreadLocalCarbonContext().getTenantDomain() +
-                                                      "/", "");
+                    queueName : queueName.replace(CarbonContext.getThreadLocalCarbonContext().getTenantDomain()
+                    + "/", "");
             String queueID = CommonsUtil.getQueueID(queueName);
             UserRealm userRealm;
             List<QueueRolePermission> queueRolePermissions = new ArrayList<>();
             try {
                 userRealm = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantUserRealm
                         (CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                         MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                                MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                                 .getTenantId());
                 String adminRole = QueueManagerServiceValueHolder.getInstance().getRealmService().getBootstrapRealm()
                         .getRealmConfiguration().getAdminRoleName();
                 for (String role : userRealm.getUserStoreManager().getRoleNames()) {
                     if (!(role.equals(adminRole) ||
-                          CarbonConstants.REGISTRY_ANONNYMOUS_ROLE_NAME.equals(role))) {
+                            CarbonConstants.REGISTRY_ANONNYMOUS_ROLE_NAME.equals(role))) {
                         QueueRolePermission queueRolePermission = new QueueRolePermission(role,
                                 userRealm.getAuthorizationManager().isRoleAuthorized(
                                         role, queueID, TreeNode.Permission.CONSUME.toString().toLowerCase()),
@@ -515,25 +513,21 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                             MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
                             .getTenantId());
             String tenantDomain = QueueManagerServiceValueHolder.getInstance().getRealmService().getTenantManager()
-                        .getDomain(CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
-                                MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
-                                .getTenantId());
-            String usernameWithoutTenant = userName;
-            int domainNameSeparatorIndex = userName.lastIndexOf(DOMAIN_NAME_SEPARATOR);
-            if (-1 != domainNameSeparatorIndex) {
-                usernameWithoutTenant = userName.substring(0, domainNameSeparatorIndex).replaceAll
-                        (DOMAIN_NAME_SEPARATOR,"@");
-            }
+                    .getDomain(CarbonContext.getThreadLocalCarbonContext().getTenantId() <= 0 ?
+                            MultitenantConstants.SUPER_TENANT_ID : CarbonContext.getThreadLocalCarbonContext()
+                            .getTenantId());
+
             if (!Utils.isOwnDomain(tenantDomain, nameOfQueue)) {
                 throw new QueueManagerException("Permission denied.");
-            } else if (Utils.isAdmin(usernameWithoutTenant)) { // Authorize admin user
-                send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
+            } else if (Utils.isAdmin(userName)) { // Authorize admin user
+                String formattedUserName = userName + DOMAIN_NAME_SEPARATOR + tenantDomain;
+                send(nameOfQueue, formattedUserName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
                         deliveryMode, priority, expireTime);
-               isSend = true;
-            } else if (userRealm.getAuthorizationManager().isUserAuthorized(
-                    usernameWithoutTenant, queueID,
+                isSend = true;
+            } else if (userRealm.getAuthorizationManager().isUserAuthorized(userName, queueID,
                     TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
-                send(nameOfQueue, userName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
+                String formattedUserName = userName + DOMAIN_NAME_SEPARATOR + tenantDomain;
+                send(nameOfQueue, formattedUserName, accessKey, jmsType, jmsCorrelationID, numberOfMessages, message,
                         deliveryMode, priority, expireTime);
                 isSend = true;
             }
@@ -546,16 +540,16 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     /**
      * Publish message to given JMS queue
      *
-     * @param nameOfQueue queue name
-     * @param userName username
-     * @param accessKey access key
-     * @param jmsType jms type
+     * @param nameOfQueue      queue name
+     * @param userName         username
+     * @param accessKey        access key
+     * @param jmsType          jms type
      * @param jmsCorrelationID message correlation id
      * @param numberOfMessages number of messages to publish
-     * @param message message body
-     * @param deliveryMode delivery mode
-     * @param priority message priority
-     * @param expireTime message expire time
+     * @param message          message body
+     * @param deliveryMode     delivery mode
+     * @param priority         message priority
+     * @param expireTime       message expire time
      * @throws QueueManagerException
      */
     private void send(String nameOfQueue, String userName, String accessKey, String jmsType, String jmsCorrelationID,
@@ -650,9 +644,9 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             return messageCount;
 
         } catch (MalformedObjectNameException | ReflectionException | MBeanException |
-                                                                    InstanceNotFoundException e) {
+                InstanceNotFoundException e) {
             throw new QueueManagerException("Cannot access mBean operations for message count in " +
-                                            "DLC for a queue:" + queueName, e);
+                    "DLC for a queue:" + queueName, e);
         }
     }
 
@@ -661,7 +655,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      */
     @Override
     public Message[] getMessageInDLCForQueue(String queueName, long nextMessageIdToRead,
-                                             int maxMessageCount) throws QueueManagerException{
+                                             int maxMessageCount) throws QueueManagerException {
         List<Message> messageList = new ArrayList<>();
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -684,10 +678,12 @@ public class QueueManagerServiceImpl implements QueueManagerService {
                     message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
                     message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
                     message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
-                    //message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation.JMS_DELIVERY_MODE));
+                    //message.setJMSDeliveredMode((Integer) messageData.get(QueueManagementInformation
+                    // .JMS_DELIVERY_MODE));
                     message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
                     message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
-                    message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
+                    message.setAndesMsgMetadataId((Long) messageData.get(QueueManagementInformation
+                            .ANDES_MSG_METADATA_ID));
                     messageList.add(message);
                 }
             }
@@ -714,7 +710,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         String userName;
         if (CarbonContext.getThreadLocalCarbonContext().getTenantId() != MultitenantConstants.SUPER_TENANT_ID) {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
-                       + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+                    + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         } else {
             userName = CarbonContext.getThreadLocalCarbonContext().getUsername();
         }
@@ -733,14 +729,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
     private static void authorizePermissionsToLoggedInUser(String queueName,
                                                            String queueId,
                                                            UserRealm userRealm)
-                                                                        throws QueueManagerException {
+            throws QueueManagerException {
         //For registry we use a modified queue name
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
 
         String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
         try {
             String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                                 queueName.replace(".","-").replace("/", "-"));
+                    queueName.replace(".", "-").replace("/", "-"));
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
                     .getUserRealm().getUserStoreManager();
 
@@ -749,15 +745,15 @@ public class QueueManagerServiceImpl implements QueueManagerService {
 
                 userStoreManager.addRole(roleName, user, null);
                 userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                                  PERMISSION_CHANGE_PERMISSION);
+                        PERMISSION_CHANGE_PERMISSION);
                 userRealm.getAuthorizationManager().authorizeRole(
                         roleName, queueId, TreeNode.Permission.CONSUME.toString().toLowerCase());
                 userRealm.getAuthorizationManager().authorizeRole(
                         roleName, queueId, TreeNode.Permission.PUBLISH.toString().toLowerCase());
             } else {
                 throw new QueueManagerException("Unable to provide permissions to the user, " +
-                                                " " + username + ", to subscribe and publish to " +
-                                                newQueueName);
+                        " " + username + ", to subscribe and publish to " +
+                        newQueueName);
             }
         } catch (UserStoreException e) {
             throw new QueueManagerException("Error while creating " + newQueueName, e);
@@ -779,7 +775,7 @@ public class QueueManagerServiceImpl implements QueueManagerService {
         String newQueueName = queueName.replace("@", AT_REPLACE_CHAR);
 
         String roleName = UserCoreUtil.addInternalDomainName(QUEUE_ROLE_PREFIX +
-                                                             newQueueName.replace(".","-").replace("/", "-"));
+                newQueueName.replace(".", "-").replace("/", "-"));
 
         try {
             UserStoreManager userStoreManager = CarbonContext.getThreadLocalCarbonContext()
