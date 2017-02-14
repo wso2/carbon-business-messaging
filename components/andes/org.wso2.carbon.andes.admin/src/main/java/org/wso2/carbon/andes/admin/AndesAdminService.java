@@ -835,9 +835,8 @@ public class AndesAdminService extends AbstractAdmin {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         try {
-            return queueManagerService.sendMessage(queueName, getCurrentUser(), getAccessKey(), jmsType,
-                    jmsCorrelationID,
-                    numberOfMessages, message, deliveryMode, priority, expireTime);
+            return queueManagerService.sendMessage(queueName, getCurrentLoggedInUser(), getAccessKey(), jmsType,
+                    jmsCorrelationID, numberOfMessages, message, deliveryMode, priority, expireTime);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
             log.error(errorMessage, e);
@@ -942,7 +941,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("unused")
     public boolean checkCurrentUserHasPublishPermission(String queueName) throws BrokerManagerAdminException {
-        return checkUserHasPublishPermission(queueName, CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasPublishPermission(queueName, getCurrentLoggedInUser());
     }
 
     /**
@@ -979,7 +978,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasAddQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasAddQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasAddQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1015,7 +1014,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasBrowseQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasBrowseQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasBrowseQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1051,7 +1050,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasDeleteQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasDeleteQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasDeleteQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1087,7 +1086,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasPurgeQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasPurgeQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasPurgeQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1123,7 +1122,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasBrowseMessagesInDLCPermission() throws BrokerManagerAdminException {
-        return checkUserHasBrowseMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasBrowseMessagesInDLCPermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1159,7 +1158,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasDeleteMessagesInDLCPermission() throws BrokerManagerAdminException {
-        return checkUserHasDeleteMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasDeleteMessagesInDLCPermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1269,7 +1268,7 @@ public class AndesAdminService extends AbstractAdmin {
 	 */
 	public boolean checkCurrentUserHasQueueSubscriptionClosePermission() throws BrokerManagerAdminException {
 		boolean hasPermission = false;
-		String username = getCurrentUser();
+		String username = getCurrentLoggedInUser();
 		try {
 			if (Utils.isAdmin(username)) {
 				hasPermission = true;
@@ -1285,44 +1284,39 @@ public class AndesAdminService extends AbstractAdmin {
 		return hasPermission;
 	}
 
-	/**
-	 * Evaluate current logged in user has close subscription permission for topic subscriptions. This service mainly
-	 * used to restrict UI
-	 * control for un-authorize users
-	 * @return true/false based on permission
-	 * @throws BrokerManagerAdminException
-	 */
-	public boolean checkCurrentUserHasTopicSubscriptionClosePermission() throws BrokerManagerAdminException {
-		boolean hasPermission = false;
-		String username = getCurrentUser();
-		try {
-			if (Utils.isAdmin(username)) {
-				hasPermission = true;
-			} else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
-					.isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
-				hasPermission = true;
-			}
-		} catch (UserStoreException | QueueManagerException e) {
-			String errorMessage = e.getMessage();
-			log.error(errorMessage, e);
-			throw new BrokerManagerAdminException(errorMessage, e);
-		}
-		return hasPermission;
-	}
+    /**
+     * Evaluate current logged in user has close subscription permission for topic subscriptions. This service mainly
+     * used to restrict UI control for un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException on an issue checking permission
+     */
+    public boolean checkCurrentUserHasTopicSubscriptionClosePermission() throws BrokerManagerAdminException {
+        boolean hasPermission = false;
+        String username = getCurrentLoggedInUser();
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
 
     /**
-     * Get current user's username.
-     * @return The user name.
+     * Get username of current logged in user. For tenant users only username is returned
+     * without the domain
+     *
+     * @return user name of logged in user
      */
-    private String getCurrentUser() {
-        String userName;
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > MultitenantConstants.INVALID_TENANT_ID) {
-            userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
-                    + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        } else {
-            userName = CarbonContext.getThreadLocalCarbonContext().getUsername();
-        }
-        return userName.trim();
+    private String getCurrentLoggedInUser() {
+        return CarbonContext.getThreadLocalCarbonContext().getUsername();
     }
 
     /**
