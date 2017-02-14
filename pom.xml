@@ -680,7 +680,7 @@
         <andes.dependency.version>3.2.x-SNAPSHOT</andes.dependency.version>
         <andes.export.version>3.2.0</andes.export.version>
         <andes.import.version>3.2.0</andes.import.version>
-        <carbon.kernel.version>4.4.9</carbon.kernel.version>
+        <carbon.kernel.version>4.4.13</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
         </carbon.platform.package.import.version.range>
