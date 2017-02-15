@@ -112,7 +112,8 @@
                 <thead>
                 <tr>
                     <th><fmt:message key="message.contenttype"/></th>
-                    <th><fmt:message key="message.messageId"/></th>
+                    <th><fmt:message key="message.jmsMessageId"/></th>
+                    <th><fmt:message key="message.internalMessageId"/></th>
                     <th><fmt:message key="message.redelivered"/></th>
                     <th><fmt:message key="message.timestamp"/></th>
                     <th><fmt:message key="message.properties"/></th>
@@ -140,6 +141,8 @@
                         <% } %>
                     </td>
                     <td><%= queueMessage.getJMSMessageId()%>
+                    </td>
+                    <td><%= queueMessage.getAndesMsgMetadataId()%>
                     </td>
                     <td><%= queueMessage.getJMSReDelivered()%>
                     </td>

@@ -288,7 +288,8 @@
                     <th><input type="checkbox" name="selectAllCheckBox"
                                onClick="toggleCheck(this)"/></th>
                     <th><fmt:message key="message.contenttype"/></th>
-                    <th><fmt:message key="message.messageId"/></th>
+                    <th><fmt:message key="message.jmsMessageId"/></th>
+                    <th><fmt:message key="message.internalMessageId"/></th>
                     <th><fmt:message key="message.timestamp"/></th>
                     <th><fmt:message key="message.destination"/></th>
                     <th><fmt:message key="message.properties"/></th>
@@ -315,6 +316,8 @@
                              alt=""/>&nbsp;&nbsp;<%= contentType%>
                     </td>
                     <td><%= queueMessage.getJMSMessageId()%>
+                    </td>
+                    <td><%= queueMessage.getAndesMsgMetadataId()%>
                     </td>
                     <td><%= queueMessage.getJMSTimeStamp()%>
                     </td>
