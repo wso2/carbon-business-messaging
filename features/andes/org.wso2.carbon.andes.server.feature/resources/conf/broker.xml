@@ -295,6 +295,16 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <!-- Maximum number of thrift client connections that should be created in the thrift connection pool -->
             <thriftClientPoolSize>10</thriftClientPoolSize>
 
+            <!-- Number of parallel threads to execute slot deletion task. Increasing this value will remove slots
+                 whose messages are read/delivered to consumers/acknowledged faster reducing heap memory used by
+                 server.-->
+            <deleteTaskCount>5</deleteTaskCount>
+
+            <!-- Max number of pending message count to delete per Slot Deleting Task. This config is used to raise
+             a WARN when pending scheduled number of slots exceeds this limit (indicate of an  issue that can lead to
+             message accumulation on server.-->
+            <SlotDeleteQueueDepthWarningThreshold>1000</SlotDeleteQueueDepthWarningThreshold>
+
         </slots>
 
         <delivery>
