@@ -594,16 +594,16 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.scm.id>my-scm-server</project.scm.id>
+        <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
         <carbon.commons.version>4.5.7</carbon.commons.version>
         <carbon.multitenancy.version>4.4.4</carbon.multitenancy.version>
         <carbon.registry.version>4.5.0</carbon.registry.version>
         <carbon.messaging.version>3.1.x-SNAPSHOT</carbon.messaging.version>
-        <andes.dependency.version>3.1.x-SNAPSHOT</andes.dependency.version>
-        <andes.export.version>3.1.0</andes.export.version>
-        <andes.import.version>3.1.0</andes.import.version>
+        <andes.dependency.version>3.1.14</andes.dependency.version>
+        <andes.export.version>3.1.14</andes.export.version>
+        <andes.import.version>3.1.14</andes.import.version>
         <carbon.kernel.version>4.4.13</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
