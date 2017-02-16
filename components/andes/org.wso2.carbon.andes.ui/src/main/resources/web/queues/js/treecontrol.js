@@ -241,7 +241,7 @@ function doReRouteAllMessages(nameOfQueue) {
     });
 
     // Showing the pop up message
-    CARBON.showPopupDialog(sourceList + targetList, "Select a queue to route messages ", 130, true,
+    CARBON.showPopupDialog("", "Select a queue to route messages ", 130, true,
         function () {
             // Getting selected source destination and target destination
             var sourceDestination = jQuery('#sourceDestinations').val();
@@ -291,6 +291,7 @@ function doReRouteAllMessages(nameOfQueue) {
 
         }, 500
     );
+    $("#popupDialog").after(sourceList + targetList);
 }
 
 function doReRouteMessages(nameOfQueue) {
@@ -317,7 +318,7 @@ function doReRouteMessages(nameOfQueue) {
             }
             selectElement += '</select>';
 
-            CARBON.showPopupDialog(selectElement, "Select a queue to route messages ", 100, true,
+            CARBON.showPopupDialog("", "Select a queue to route messages ", 100, true,
                 function () {
                     var selectedQueue = jQuery('#allQueues').val();
 
@@ -346,6 +347,7 @@ function doReRouteMessages(nameOfQueue) {
 
                 } , 300
             );
+            $("#popupDialog").after(selectElement);
         },
         failure: function(transport) {
             CARBON.showErrorDialog(trim(transport.responseText),function(){

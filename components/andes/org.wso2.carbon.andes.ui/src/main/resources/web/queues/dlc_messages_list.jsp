@@ -56,14 +56,14 @@
             }
         }
 
-        function filterByQueue() {
-            var filterQueueText = $("#queueName").val();
-            if (filterQueueText == "") {
-                $("#filterQueueName").val('<%=request.getParameter("nameOfQueue")%>');
+        function filterByDestination() {
+            var filterDestinationText = $("#destinationName").val();
+            if (filterDestinationText == "") {
+                $("#destinationFilter").val('');
             } else {
-                $("#filterQueueName").val(filterQueueText);
+                $("#destinationFilter").val(filterDestinationText);
             }
-            document.getElementById('dummyForm').submit();
+            document.getElementById('filterByDestinationForm').submit();
         }
 
         $(document).ready(function () {
@@ -72,76 +72,87 @@
         })
     </script>
 
-    <%
-        boolean allowReRouteAllInDLC = AndesConfigurationManager.readValue(
-                    AndesConfiguration.MANAGEMENT_CONSOLE_ALLOW_REREOUTE_ALL_IN_DLC);
+ <%
+         boolean allowReRouteAllInDLC = AndesConfigurationManager.readValue(
+                                                                            AndesConfiguration.MANAGEMENT_CONSOLE_ALLOW_REREOUTE_ALL_IN_DLC);
+         String destinationFilter = StringUtils.trimToEmpty(request.getParameter("destinationFilter"));
 
-        AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
-        String nameOfQueue = stub.getDLCQueue().getQueueName();
-        String concatenatedParameters = "nameOfQueue=" + nameOfQueue;
-        String pageNumberAsStr = request.getParameter("pageNumber");
-        int msgCountPerPage = AndesConfigurationManager.readValue(
-                AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BROWSE_PAGE_SIZE);
+         AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
+         String nameOfQueue = null;
+         String dlcName = stub.getDLCQueue().getQueueName();
 
-        Map<Integer, Long> pageNumberToMessageIdMap;
-        if (null != request.getSession().getAttribute("pageNumberToMessageIdMap")) {
-            pageNumberToMessageIdMap = (Map<Integer, Long>) request.getSession().getAttribute("pageNumberToMessageIdMap");
-        } else {
-            pageNumberToMessageIdMap = new HashMap<Integer, Long>();
-        }
+         if (StringUtils.EMPTY.equals(destinationFilter)) {
+             nameOfQueue = dlcName;
+         } else {
+             nameOfQueue = destinationFilter;
+         }
 
-        int pageNumber = 0;
-        int numberOfPages = 1;
-        long totalMsgsInQueue;
-        long startMessageIdOfPage;
-        long nextMessageIdToRead = 0L;
+         String concatenatedParameters = "destinationFilter=" + nameOfQueue;
+         String pageNumberAsStr = request.getParameter("pageNumber");
+         int msgCountPerPage = AndesConfigurationManager.readValue(
+                                                                   AndesConfiguration.MANAGEMENT_CONSOLE_MESSAGE_BROWSE_PAGE_SIZE);
 
-        Message[] filteredMsgArray = null;
-        if (null != pageNumberAsStr) {
-            pageNumber = Integer.parseInt(pageNumberAsStr);
-        }
-        try {
-            // The total number of messages depends on whether the filter was used or not
-            if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
-                totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
-            } else {
-                totalMsgsInQueue = stub.getNumberOfMessagesInDLCForQueue(nameOfQueue);
-            }
-            numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
+         Map<Integer, Long> pageNumberToMessageIdMap;
+         if (null != request.getSession().getAttribute("pageNumberToMessageIdMap")) {
+             pageNumberToMessageIdMap = (Map<Integer, Long>) request.getSession()
+                                                                    .getAttribute("pageNumberToMessageIdMap");
+         } else {
+             pageNumberToMessageIdMap = new HashMap<Integer, Long>();
+         }
 
-            if (pageNumberToMessageIdMap.size() > 0) {
-                if (0 == pageNumber){
-                    nextMessageIdToRead = 0;
-                }
-                else if (null != pageNumberToMessageIdMap.get(pageNumber)) {
-                    nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
-                }
-            }
-            // The source of the messages depends on whether the filter was used or not
-            if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
-                filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
-            } else {
-                filteredMsgArray = stub.getMessageInDLCForQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
-            }
-            if (null != filteredMsgArray && filteredMsgArray.length > 0) {
-                startMessageIdOfPage = filteredMsgArray[0].getAndesMsgMetadataId();
-                pageNumberToMessageIdMap.put(pageNumber, startMessageIdOfPage);
-                nextMessageIdToRead = filteredMsgArray[filteredMsgArray.length - 1].getAndesMsgMetadataId() + 1;
-                pageNumberToMessageIdMap.put((pageNumber + 1), nextMessageIdToRead);
-                request.getSession().setAttribute("pageNumberToMessageIdMap", pageNumberToMessageIdMap);
-            }
-        } catch (AndesAdminServiceBrokerManagerAdminException e) {
-            CarbonUIMessage.sendCarbonUIMessage(e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(),
-                                                CarbonUIMessage.ERROR, request, e);
-        }
+         int pageNumber = 0;
+         int numberOfPages = 1;
+         long totalMsgsInQueue;
+         long startMessageIdOfPage;
+         long nextMessageIdToRead = 0L;
 
-        // When searched for a queue, the queue name should persist in the text box.
-        String previouslySearchedQueueName = StringUtils.EMPTY;
-        if (!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
-            previouslySearchedQueueName = nameOfQueue;
-        }
-    %>
-    <carbon:breadcrumb
+         Message[] filteredMsgArray = null;
+         if (null != pageNumberAsStr) {
+             pageNumber = Integer.parseInt(pageNumberAsStr);
+         }
+         try {
+             // The total number of messages depends on whether the filter was used or not
+             if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+                 totalMsgsInQueue = stub.getTotalMessagesInQueue(nameOfQueue);
+             } else {
+                 totalMsgsInQueue = stub.getNumberOfMessagesInDLCForQueue(nameOfQueue);
+             }
+             numberOfPages = (int) Math.ceil(((float) totalMsgsInQueue) / msgCountPerPage);
+
+             if (pageNumberToMessageIdMap.size() > 0) {
+                 if (0 == pageNumber) {
+                     nextMessageIdToRead = 0;
+                 } else if (null != pageNumberToMessageIdMap.get(pageNumber)) {
+                     nextMessageIdToRead = pageNumberToMessageIdMap.get(pageNumber);
+                 }
+             }
+             // The source of the messages depends on whether the filter was used or not
+             if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+                 filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
+             } else {
+                 filteredMsgArray = stub.getMessageInDLCForQueue(nameOfQueue, nextMessageIdToRead,
+                                                                 msgCountPerPage);
+             }
+             if (null != filteredMsgArray && filteredMsgArray.length > 0) {
+                 startMessageIdOfPage = filteredMsgArray[0].getAndesMsgMetadataId();
+                 pageNumberToMessageIdMap.put(pageNumber, startMessageIdOfPage);
+                 nextMessageIdToRead = filteredMsgArray[filteredMsgArray.length - 1].getAndesMsgMetadataId() + 1;
+                 pageNumberToMessageIdMap.put((pageNumber + 1), nextMessageIdToRead);
+                 request.getSession().setAttribute("pageNumberToMessageIdMap", pageNumberToMessageIdMap);
+             }
+         } catch (AndesAdminServiceBrokerManagerAdminException e) {
+             CarbonUIMessage.sendCarbonUIMessage(e.getFaultMessage().getBrokerManagerAdminException()
+                                                  .getErrorMessage(),
+                                                 CarbonUIMessage.ERROR, request, e);
+         }
+
+         // When searched for a queue, the queue name should persist in the text box.
+         String previouslySearchedDestination = StringUtils.EMPTY;
+         if (!DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
+             previouslySearchedDestination = nameOfQueue;
+         }
+ %>
+ <carbon:breadcrumb
             label="queue.content"
             resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
             topPage="false"
@@ -160,13 +171,13 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="formRaw leftCol-big">Queue Name:</td>
-                    <td><input type="text" id="queueName" value="<%= previouslySearchedQueueName %>">
-                        <input id="searchButton" class="button" type="button"
-                               onclick="return filterByQueue();" value="Filter">
+                    <td class="formRaw leftCol-big">Destination :</td>
+                    <td><input type="text" id="destinationName" value="<%= previouslySearchedDestination %>">
+                        <input id="searchButton" class="button" type="submit"
+                               onclick="return filterByDestination();" value="Filter">
 
-                        <form id="dummyForm" action="dlc_messages_list.jsp" method="post">
-                            <input type="hidden" name="nameOfQueue" id="filterQueueName" value=""/>
+                        <form id="filterByDestinationForm" action="dlc_messages_list.jsp" method="post">
+                            <input type="hidden" name="destinationFilter" id="destinationFilter" value=""/>
                         </form>
                     </td>
                 </tr>

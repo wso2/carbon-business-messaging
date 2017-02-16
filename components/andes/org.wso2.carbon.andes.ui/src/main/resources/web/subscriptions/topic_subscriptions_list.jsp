@@ -1,5 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="carbon" uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" %>
+<%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
 <%@ page import="org.wso2.carbon.andes.stub.AndesAdminServiceStub" %>
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
@@ -40,6 +41,9 @@
             + "&destinationType=" + destinationType,
             data:{},
             type:"POST",
+            beforeSend: function(xhr) {
+                    xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                },
             success:function(data){
                 data = data.trim();
                 //$('#msg-'+subscriptionID).html(data);
@@ -66,6 +70,9 @@
                 url:'../queues/queue_delete_ajaxprocessor.jsp?nameOfQueue=' + queueName+"&nameOfTopic=" + topicName,
                 async:true,
                 type:"POST",
+                beforeSend: function(xhr) {
+                        xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                    },
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {
@@ -102,6 +109,9 @@
                                                              + destinationType,
                 async:true,
                 type:"POST",
+                beforeSend: function(xhr) {
+                        xhr.setRequestHeader("<csrf:tokenname/>","<csrf:tokenvalue/>");
+                    },
                 success: function(o) {
                     if (o.indexOf("Error") > -1) {
                         CARBON.showErrorDialog("" + o, function() {

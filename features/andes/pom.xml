@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>business-messaging</artifactId>
-        <version>3.1.16-SNAPSHOT</version>
+        <version>3.1.x-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>andes-feature</artifactId>
-    <version>3.1.16-SNAPSHOT</version>
+    <version>3.1.x-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes Aggregator Module</name>
     <url>http://wso2.org</url>
