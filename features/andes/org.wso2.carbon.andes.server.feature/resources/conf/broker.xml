@@ -272,38 +272,40 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <performanceTuning>
 
         <slots>
+
+            <!--Rough estimate for size of a slot. What is meant by size is the number of messages
+            contained within bounties of a slot. -->
+            <windowSize>1000</windowSize>
+
             <!--
-                If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
-                This will add an latency to messages. Therefore broker will mark the slot as 
-                ready to deliver before even the slot is entirely filled after specified time.
-                NOTE: specified in milliseconds.
+            If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
+            This will add an latency to messages. Therefore broker will mark the slot as
+            ready to deliver before even the slot is entirely filled after specified time.
+            NOTE: specified in milliseconds.
             -->
             <messageAccumulationTimeout>2000</messageAccumulationTimeout>
-
-            <!--Rough estimate for size of a slot-->
-            <windowSize>1000</windowSize>
 
             <!-- Time interval which broker check for slots that can be marked as 'ready to deliver' 
                  (- slots which have a aged more than 'messageAccumulationTimeout')
                  NOTE: specified in milliseconds.
             -->
-            <timerPeriod>1000</timerPeriod>
+            <maxSubmitDelay>1000</maxSubmitDelay>
 
-            <!--Number of SlotDeliveryWorker threads that should be started-->
-            <workerThreadCount>5</workerThreadCount>
-
-            <!-- Maximum number of thrift client connections that should be created in the thrift connection pool -->
-            <thriftClientPoolSize>10</thriftClientPoolSize>
+            <!--Number of MessageDeliveryWorker threads that should be started-->
+            <deliveryThreadCount>5</deliveryThreadCount>
 
             <!-- Number of parallel threads to execute slot deletion task. Increasing this value will remove slots
                  whose messages are read/delivered to consumers/acknowledged faster reducing heap memory used by
                  server.-->
-            <deleteTaskCount>5</deleteTaskCount>
+            <deleteThreadCount>5</deleteThreadCount>
 
             <!-- Max number of pending message count to delete per Slot Deleting Task. This config is used to raise
              a WARN when pending scheduled number of slots exceeds this limit (indicate of an  issue that can lead to
              message accumulation on server.-->
             <SlotDeleteQueueDepthWarningThreshold>1000</SlotDeleteQueueDepthWarningThreshold>
+
+            <!-- Maximum number of thrift client connections that should be created in the thrift connection pool -->
+            <thriftClientPoolSize>10</thriftClientPoolSize>
 
         </slots>
 
