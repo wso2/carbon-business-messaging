@@ -13,30 +13,34 @@
     try {
         String queueName = request.getParameter("nameOfQueue");
         queueList = stub.getAllQueues();
-        //the queueName is not set, it is assumed that the requirement is to get all queues
-        if ("".equals(queueName) || null == queueName) {
-            for (Queue queue : queueList) {
-                if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(queue.getQueueName()))) {
-                    queueListString = queueListString + queue.getQueueName() + "#";
-                }
-            }
-        } else {
-            //If the queue name contains ":" then it's a durable topic. Therefore, we should only show durable topics
-            //else, we only show queues
-            if (queueName.contains(":")) {
+        // When there are only durable topic subscribers, queueList getting null because admin service does not return
+        // queue name starts with carbon:
+        if (queueList != null) {
+            //the queueName is not set, it is assumed that the requirement is to get all queues
+            if ("".equals(queueName) || null == queueName) {
                 for (Queue queue : queueList) {
-                    String currentQueueName = queue.getQueueName();
-                    if (currentQueueName.contains(":")) {
-                        queueListString = queueListString + currentQueueName + "#";
+                    if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(queue.getQueueName()))) {
+                        queueListString = queueListString + queue.getQueueName() + "#";
                     }
-
                 }
             } else {
-                for (Queue queue : queueList) {
-                    String currentQueueName = queue.getQueueName();
-                    if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(currentQueueName))) {
-                        if (!currentQueueName.contains(":")) {
+                //If the queue name contains ":" then it's a durable topic. Therefore, we should only show durable topics
+                //else, we only show queues
+                if (queueName.contains(":")) {
+                    for (Queue queue : queueList) {
+                        String currentQueueName = queue.getQueueName();
+                        if (currentQueueName.contains(":")) {
                             queueListString = queueListString + currentQueueName + "#";
+                        }
+
+                    }
+                } else {
+                    for (Queue queue : queueList) {
+                        String currentQueueName = queue.getQueueName();
+                        if (!(Constants.DEAD_LETTER_QUEUE_NAME.equals(currentQueueName))) {
+                            if (!currentQueueName.contains(":")) {
+                                queueListString = queueListString + currentQueueName + "#";
+                            }
                         }
                     }
                 }
