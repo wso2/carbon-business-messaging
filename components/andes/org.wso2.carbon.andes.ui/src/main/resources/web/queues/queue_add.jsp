@@ -5,6 +5,7 @@
 <%@ page import="org.wso2.carbon.andes.ui.UIUtils" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.regex.Pattern" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!--Local js includes-->
@@ -180,7 +181,7 @@
             <tr>
                 <td class="formRaw leftCol-big"><fmt:message key="queue"/><span
                         class="required">*</span></td>
-                <td><input type="text" id="queue" value="<%=queueName%>" maxlength="238" /></td>
+                <td><input type="text" id="queue" value="<%=Encode.forHtml(queueName)%>" maxlength="238" /></td>
             </tr>
             </tbody>
         </table>
@@ -197,7 +198,7 @@
             <tr>
                 <td class="leftCol-big"><fmt:message key="search.label"/></td>
                 <td>
-                    <input type="text" id="search" value="<%=searchTerm%>"/>
+                    <input type="text" id="search" value="<%=Encode.forHtml(searchTerm)%>"/>
                     <input id="searchButton" class="button" type="button" onclick="searchRole()"
                            value="Search"/>
                 </td>
