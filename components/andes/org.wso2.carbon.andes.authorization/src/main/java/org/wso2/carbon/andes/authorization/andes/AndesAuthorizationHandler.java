@@ -441,8 +441,8 @@ public class AndesAuthorizationHandler {
 
                             // admin user who is in the same tenant domain get consume and publish permission for
                             // durable topic internal queue or non durable topic tmp queue
-                            userRealm.getAuthorizationManager().authorizeRole(role, queueID,
-                                    TreeNode.Permission.CONSUME.toString().toLowerCase());
+                            authorizeRole(userRealm, role, queueID,
+                                          TreeNode.Permission.CONSUME.toString().toLowerCase());
                             //grant permission to topic hierarchy
                             grantPermissionToHierarchyLevel(username, userRealm, topicId, role);
 
@@ -498,14 +498,7 @@ public class AndesAuthorizationHandler {
                                     for (String userRole : userRoles) {
                                         if (userRealm.getAuthorizationManager().isRoleAuthorized(
                                                 userRole, topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
-                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                    TreeNode.Permission.CONSUME.toString()
-                                                            .toLowerCase());
-                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                    TreeNode.Permission.PUBLISH.toString()
-                                                            .toLowerCase());
-                                            userRealm.getAuthorizationManager().authorizeRole(userRole, queueID,
-                                                    PERMISSION_CHANGE_PERMISSION);
+                                            authorizeRoleToPublishConsume(userRealm, userRole, queueID);
                                         }
 
                                     }
@@ -999,14 +992,7 @@ public class AndesAuthorizationHandler {
         if (!userStoreManager.isExistingRole(roleName)) {
             String[] user = {MultitenantUtils.getTenantAwareUsername(username)};
             userStoreManager.addRole(roleName, user, null);
-            userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                              PERMISSION_CHANGE_PERMISSION);
-            userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                              TreeNode.Permission.CONSUME.toString()
-                                                                      .toLowerCase());
-            userRealm.getAuthorizationManager().authorizeRole(roleName, queueId,
-                                                              TreeNode.Permission.PUBLISH.toString()
-                                                                      .toLowerCase());
+            authorizeRoleToPublishConsume(userRealm, roleName, queueId);
             if (log.isDebugEnabled()) {
                 log.debug("permission granted to user = " + username + " role = " + roleName
                         + " queue = " + queueName + " queueId = " + queueId);
@@ -1067,14 +1053,7 @@ public class AndesAuthorizationHandler {
             //Giving permissions for the durable topic queue because this has to be persist in permission table.
             //We need to handle durable subscription even server shutdown and start again. We cannot maintain durable
             //subscription queue permission as above in memory.
-            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
-                    TreeNode.Permission.CONSUME.toString()
-                            .toLowerCase());
-            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
-                    TreeNode.Permission.PUBLISH.toString()
-                            .toLowerCase());
-            userRealm.getAuthorizationManager().authorizeRole(roleName, tempQueueId,
-                    PERMISSION_CHANGE_PERMISSION);
+            authorizeRoleToPublishConsume(userRealm, roleName, tempQueueId);
         }
         if (log.isDebugEnabled()) {
             log.debug("permission granted to user = " + username + " role = " + roleName
@@ -1135,11 +1114,11 @@ public class AndesAuthorizationHandler {
             //we want to give permission to any resource after event/topics/ in build resource path
             Matcher matcher = pattern.matcher(resourcePathBuilder.toString());
             if (matcher.find()) {
-                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                authorizeRole(userRealm, role, resourcePathBuilder.toString(),
                         TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
-                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                authorizeRole(userRealm, role, resourcePathBuilder.toString(),
                         TreeNode.Permission.PUBLISH.toString().toLowerCase());
-                userRealm.getAuthorizationManager().authorizeRole(role, resourcePathBuilder.toString(),
+                authorizeRole(userRealm, role, resourcePathBuilder.toString(),
                         PERMISSION_CHANGE_PERMISSION);
             }
             count++;
@@ -1211,6 +1190,44 @@ public class AndesAuthorizationHandler {
                     + " topicId = " + topicId + SPACE + userAuthorized);
         }
         return userAuthorized;
+    }
+
+    /**
+     * Assign permissions given the action, resource path and the role to which permission should be assigned.
+     *
+     * Upon the failure of authorization, the operation will be re-attempted once since the failure could have been
+     * caused by multiple authorizations that are happening concurrently.
+     *
+     * @param userRealm    the realm for to which the user belongs
+     * @param role         the role to assign the permission
+     * @param resourcePath resource to which the permission should be assigned
+     * @param action       the permission that should be assigned
+     * @throws UserStoreException if an exception occurs when adding permission
+     */
+    private static void authorizeRole(UserRealm userRealm, String role, String resourcePath, String action) throws
+            UserStoreException {
+        try {
+            userRealm.getAuthorizationManager().authorizeRole(role, resourcePath, action);
+        } catch (UserStoreException e) {
+            log.warn("Could not authorize role: " + role + " to resourceID: " + resourcePath
+                     + " for action: " + action + ". Hence, retrying authorization", e);
+            userRealm.getAuthorizationManager().authorizeRole(role, resourcePath, action);
+        }
+    }
+
+    /**
+     * Add permission for a given role to publish and consume.
+     *
+     * @param userRealm    the realm for to which the user belongs
+     * @param roleName     the role to assign the permission
+     * @param resourcePath resource to which the permission should be assigned
+     * @throws UserStoreException if an exception occurs when adding permission
+     */
+    private static void authorizeRoleToPublishConsume(UserRealm userRealm, String roleName, String resourcePath)
+            throws UserStoreException {
+        authorizeRole(userRealm, roleName, resourcePath, TreeNode.Permission.CONSUME.toString().toLowerCase());
+        authorizeRole(userRealm, roleName, resourcePath, TreeNode.Permission.PUBLISH.toString().toLowerCase());
+        authorizeRole(userRealm, roleName, resourcePath, PERMISSION_CHANGE_PERMISSION);
     }
 }
 
