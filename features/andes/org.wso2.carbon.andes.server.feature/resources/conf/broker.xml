@@ -43,7 +43,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
 
         <!-- Configurations related RDBMS based coordination algorithm -->
-        <rdbmsBasedCoordination enabled="false">
+        <rdbmsBasedCoordination enabled="true">
             <!-- Heartbeat interval used in the RDBMS base coordination algorithm in milliseconds -->
             <heartbeatInterval>5000</heartbeatInterval>
 
@@ -58,7 +58,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Enabling this will make the cluster notifications such as Queue changes(additions and deletions),
         Subscription changes, etc. sent within the cluster be synchronized using RDBMS. If set to false, Hazelcast
         will be used for this purpose.-->
-        <RDBMSBasedClusterEventSynchronization enabled="false">
+        <RDBMSBasedClusterEventSynchronization enabled="true">
 
             <!--Specifies the interval at which, the cluster events will be read from the database. Needs to be
             declared in milliseconds. Setting this to a very low value could downgrade the performance where as
