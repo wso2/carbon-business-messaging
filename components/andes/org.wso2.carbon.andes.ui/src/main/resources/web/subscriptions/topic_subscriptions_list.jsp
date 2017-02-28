@@ -210,7 +210,7 @@
     AndesAdminServiceStub andesAdminStub = UIUtils.getAndesAdminServiceStub(config, session, request);
     AndesEventAdminServiceStub andesEventAdminStub = UIUtils.getAndesEventAdminServiceStub(config, session, request);
     AndesManagerServiceStub managerServiceStub = UIUtils.getAndesManagerServiceStub(config, session);
-    long totalNormalTopicSubscriptionCount = 0;
+    long totalNonDurableTopicSubscriptionCount = 0;
     long totalActiveDurableTopicSubscriptionCount = 0;
     long totalInactiveDurableTopicSubscriptionCount = 0;
     Subscription[] filteredNormalTopicSubscriptionList = null;
@@ -263,12 +263,12 @@
 
         if (filteredNormalTopicSubscriptionList != null) {
 
-            totalNormalTopicSubscriptionCount = andesAdminStub.getTotalSubscriptionCountForSearchResult(false, true,
+            totalNonDurableTopicSubscriptionCount = andesAdminStub.getTotalSubscriptionCountForSearchResult(false, true,
                 ProtocolType.AMQP.name(), DestinationType.TOPIC.name(),filteredName, isFilteredNameByExactMatch,
                 identifierPattern, isIdentifierPatternByExactMatch, ownNodeId);
 
             numberOfNormalTopicSubscriptionPages =
-            (int) Math.ceil(((float) totalNormalTopicSubscriptionCount) / subscriptionCountPerPage);
+            (int) Math.ceil(((float) totalNonDurableTopicSubscriptionCount) / subscriptionCountPerPage);
         }
 
 
@@ -428,7 +428,7 @@ No subscriptions to show.
                   parameters="<%=concatenatedParams%>"
                   action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
-    <caption>Total temporary subscription count is <%=totalNormalTopicSubscriptionCount%></caption>
+    <caption>Total non-durable topic subscription count is <%=totalNonDurableTopicSubscriptionCount%></caption>
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
