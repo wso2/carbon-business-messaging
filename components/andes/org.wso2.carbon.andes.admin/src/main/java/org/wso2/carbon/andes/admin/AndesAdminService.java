@@ -115,6 +115,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public org.wso2.carbon.andes.admin.internal.Queue getQueueByName(String queueName)
             throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         org.wso2.carbon.andes.admin.internal.Queue queue = null;
         try {
 
@@ -221,6 +222,7 @@ public class AndesAdminService extends AbstractAdmin {
     @SuppressWarnings("UnusedDeclaration")
     public long getMessageCount(String destinationName, String msgPattern)
             throws BrokerManagerAdminException {
+        destinationName = setNameToLowerCase(destinationName);
         long messageCount;
         try {
             QueueManagerService queueManagerService =
@@ -241,6 +243,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void deleteQueue(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -259,6 +262,8 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws BrokerManagerAdminException {
+        topicName = setNameToLowerCase(topicName);
+        subscriptionId = setNameToLowerCase(subscriptionId);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -280,6 +285,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -304,6 +310,8 @@ public class AndesAdminService extends AbstractAdmin {
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws BrokerManagerAdminException {
+        newDestinationQueueName = setNameToLowerCase(newDestinationQueueName);
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -325,6 +333,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -343,6 +352,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void purgeMessagesOfQueue(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -367,7 +377,10 @@ public class AndesAdminService extends AbstractAdmin {
 	public void closeSubscription(boolean isDurable, String subscriptionID, String subscribedQueueOrTopicName,
                                   String protocolType, String destinationType, String subscriberQueueName)
             throws BrokerManagerAdminException {
-		try {
+        subscriptionID = setNameToLowerCase(subscriptionID);
+        subscribedQueueOrTopicName = setNameToLowerCase(subscribedQueueOrTopicName);
+        subscriberQueueName = setNameToLowerCase(subscriberQueueName);
+        try {
 			SubscriptionManagerService subscriptionManagerService =
 					AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             subscriptionManagerService.closeSubscription(subscriptionID, subscribedQueueOrTopicName, protocolType,
@@ -505,6 +518,8 @@ public class AndesAdminService extends AbstractAdmin {
         List<Subscription> allSubscriptions = new ArrayList<>();
         Subscription[] subscriptionsDTO;
 
+        filteredNamePattern = setNameToLowerCase(filteredNamePattern);
+        identifierPattern = setNameToLowerCase(identifierPattern);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -561,6 +576,8 @@ public class AndesAdminService extends AbstractAdmin {
                                                         isFilteredNameByExactMatch, String identifierPattern, boolean
                                                         isIdentifierPatternByExactMatch, String ownNodeId) throws
                                                         BrokerManagerAdminException {
+        filteredNamePattern = setNameToLowerCase(filteredNamePattern);
+        identifierPattern = setNameToLowerCase(identifierPattern);
         int subscriptionCountForSearchResult = 0;
         try {
             SubscriptionManagerService subscriptionManagerService =
@@ -590,6 +607,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService =
                 AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
             return queueManagerService.getNumberOfMessagesInDLCForQueue(queueName);
         } catch (QueueManagerException e) {
@@ -614,6 +632,7 @@ public class AndesAdminService extends AbstractAdmin {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         List<Message> messageDTOList = new ArrayList<>();
+        queueName = setNameToLowerCase(queueName);
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
                     queueManagerService.getMessageInDLCForQueue(queueName, nextMessageIdToRead, maxMsgCount);
@@ -647,8 +666,8 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissionsDTO)
-            throws
-            BrokerManagerAdminException {
+            throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
@@ -680,6 +699,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = queueName.toLowerCase();
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
         try {
             if (null != queueRolePermissionsDTO && queueRolePermissionsDTO.length > 0) {
@@ -733,6 +753,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         List<QueueRolePermission> queueRolePermissionDTOList = new ArrayList<QueueRolePermission>();
         try {
             org.wso2.carbon.andes.core.types.QueueRolePermission[] queueRolePermission = queueManagerService
@@ -767,6 +788,7 @@ public class AndesAdminService extends AbstractAdmin {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         List<Message> messageDTOList = new ArrayList<Message>();
+        queueName = setNameToLowerCase(queueName);
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
                     queueManagerService.browseQueue(queueName, nextMessageIdToRead, maxMsgCount);
@@ -804,6 +826,7 @@ public class AndesAdminService extends AbstractAdmin {
     public long getTotalMessagesInQueue(String queueName) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
             return queueManagerService.getTotalMessagesInQueue(queueName);
         } catch (QueueManagerException e) {
@@ -834,6 +857,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
             return queueManagerService.sendMessage(queueName, getCurrentLoggedInUser(), getAccessKey(), jmsType,
                     jmsCorrelationID, numberOfMessages, message, deliveryMode, priority, expireTime);
@@ -866,6 +890,7 @@ public class AndesAdminService extends AbstractAdmin {
     public int getMessageCountForSubscriber(String subscriptionID, boolean durable, String protocolType,
                                             String destinationType) throws BrokerManagerAdminException {
         int remainingMessages = 0;
+        subscriptionID = setNameToLowerCase(subscriptionID);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -901,6 +926,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public long getPendingMessageCount(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -941,6 +967,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("unused")
     public boolean checkCurrentUserHasPublishPermission(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         return checkUserHasPublishPermission(queueName, getCurrentLoggedInUser());
     }
 
@@ -954,6 +981,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public boolean checkUserHasPublishPermission(String queueName, String userName) throws BrokerManagerAdminException {
         boolean hasPermission = false;
+        queueName = setNameToLowerCase(queueName);
         String queueID = CommonsUtil.getQueueID(queueName);
         try {
             if (Utils.isAdmin(userName)) {
@@ -1352,5 +1380,15 @@ public class AndesAdminService extends AbstractAdmin {
         public int compare(Subscription sub1, Subscription sub2) {
             return sub1.getNumberOfMessagesRemainingForSubscriber() - sub2.getNumberOfMessagesRemainingForSubscriber();
         }
+    }
+
+    /**
+     * Given a queue name this method returns the lower case representation of the queue name.
+     *
+     * @param queue the queue name to change the case
+     * @return the lower case representation of the queue name
+     */
+    private String setNameToLowerCase(String queue) {
+        return queue.toLowerCase();
     }
 }
