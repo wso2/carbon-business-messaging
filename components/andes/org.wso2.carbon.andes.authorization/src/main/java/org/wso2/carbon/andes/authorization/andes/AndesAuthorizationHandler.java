@@ -156,7 +156,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleCreateQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties, Operation operation)
@@ -208,7 +208,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, TEMPORARY
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleConsumeQueue(String username, UserRealm userRealm,
                                             ObjectProperties properties, Operation operation)
@@ -223,29 +223,12 @@ public class AndesAuthorizationHandler {
             String queueID = CommonsUtil.getQueueID(routingKey);
 
             try {
-                // authorise if admin user
                 if (!isOwnDomain(properties.get(ObjectProperties.Property.NAME), userRealm, properties)) {
                     accessResult = Result.DENIED;
-                } else if (isAdmin(username, userRealm)) {
 
-                    //we have to check admin user who is in the same tenant domain has permission for durable topic
-                    //internal queue or non durable topic tmp queue as we grant in bind call. This is to restrict any
-                    //tenant admin to consume messages in durable topic or non durable topic
-                    if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
-                            Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
-                        if (userRealm.getAuthorizationManager().isUserAuthorized(username, queueID,
-                                TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                            accessResult = Result.ALLOWED;
-                        }
-                    } else if (isTopicSubscriberQueue(properties.get(ObjectProperties.Property.NAME)) &&
-                            !Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE))) {
-                        if (userRealm.getAuthorizationManager().isUserAuthorized(username, queueID,
-                                TreeNode.Permission.CONSUME.toString().toLowerCase())) {
-                            accessResult = Result.ALLOWED;
-                        }
-                    } else {
-                        accessResult = Result.ALLOWED;
-                    }
+                    // authorise if admin user
+                } else if (isAdmin(username, userRealm)) {
+                    accessResult = Result.ALLOWED;
 
                     // authorise consume
                 } else if (userRealm.getAuthorizationManager().isUserAuthorized(
@@ -266,9 +249,6 @@ public class AndesAuthorizationHandler {
                             accessResult = Result.ALLOWED;
                         }
                     }
-                } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
-                        Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
-                    accessResult = Result.ALLOWED;
                 }
             } catch (UserStoreException | RegistryClientException e) {
                 throw new AndesAuthorizationHandlerException("Error handling consume queue.", e);
@@ -295,7 +275,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, TEMPORARY
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store exception occurred
      */
     public static Result handleBrowseQueue(String username, UserRealm userRealm,
                                             ObjectProperties properties, Operation operation)
@@ -339,7 +319,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleBindQueue(String username, UserRealm userRealm,
                                          ObjectProperties properties, Operation operation)
@@ -406,17 +386,9 @@ public class AndesAuthorizationHandler {
                     case TOPIC_EXCHANGE:
 
                         String newRoutingKey = routingKey.replace("@", AT_REPLACE_CHAR);
-                        String roleName;
-                        if (newRoutingKey.contains(".")) {
-                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                    newRoutingKey.substring(0, newRoutingKey.indexOf(".")));
-                        } else if (newRoutingKey.contains("/")) {
-                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                    newRoutingKey.substring(0, newRoutingKey.indexOf("/")));
-                        } else {
-                            roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
-                                    newRoutingKey);
-                        }
+                        String roleName = UserCoreUtil.addInternalDomainName(TOPIC_ROLE_PREFIX +
+                                newRoutingKey.replace(".*", "").replace(".#", "")
+                                        .replace(".","-").replace("/", "-"));
                         UserStoreManager userStoreManager = userRealm.getUserStoreManager();
                         String newQName = queueName.replace("@", AT_REPLACE_CHAR);
                         // Authorize
@@ -439,10 +411,6 @@ public class AndesAuthorizationHandler {
                                 }
                             }
 
-                            // admin user who is in the same tenant domain get consume and publish permission for
-                            // durable topic internal queue or non durable topic tmp queue
-                            authorizeRole(userRealm, role, queueID,
-                                          TreeNode.Permission.CONSUME.toString().toLowerCase());
                             //grant permission to topic hierarchy
                             grantPermissionToHierarchyLevel(username, userRealm, topicId, role);
 
@@ -457,7 +425,8 @@ public class AndesAuthorizationHandler {
                             //given topic permission assigned to admin. If admin has permission, then we not allow to
                             //other user to authorize.
                             boolean isAdminAuthorized = false;
-                            if (RegistryClient.isResourceExist(CommonsUtil.getTopicID(newRoutingKey))) {
+                            if (RegistryClient.isResourceExist(CommonsUtil
+                                    .getTopicID(RegistryClient.getTenantBasedTopicName(newRoutingKey)))) {
                                 isAdminAuthorized = true;
                             }
 
@@ -529,7 +498,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY   @return
      *                   ALLOWED, DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handlePublishToExchange(String username, UserRealm userRealm,
                                                  ObjectProperties properties, Operation operation)
@@ -608,7 +577,7 @@ public class AndesAuthorizationHandler {
      *
      * @param properties NAME, QUEUE_NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleUnbindQueue(String username, UserRealm userRealm, ObjectProperties properties,
                                            Operation operation) throws AndesAuthorizationHandlerException {
@@ -673,7 +642,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleDeleteQueue(String username, UserRealm userRealm,
                                            ObjectProperties properties, Operation operation)
@@ -724,7 +693,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm User's Realm that represents the user store
      * @param properties NAME, OWNER, DURABLE
      * @return ALLOWED/DENIED
-     * @throws org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException
+     * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handlePurgeQueue(String username, UserRealm userRealm, ObjectProperties properties,
                                           Operation operation) throws AndesAuthorizationHandlerException {
@@ -771,8 +740,8 @@ public class AndesAuthorizationHandler {
      * @param username   username of logged user
      * @param userRealm  The {@link org.wso2.carbon.user.api.UserRealm}
      * @param properties {@link org.wso2.andes.server.security.access.ObjectProperties} of the queue
-     * @throws org.wso2.carbon.andes.commons.registry.RegistryClientException
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws RegistryClientException if registry exception occurred
+     * @throws UserStoreException if user store exception occurred
      */
     private static void registerAndAuthorizeQueue(String username, UserRealm userRealm,
                                                   ObjectProperties properties)
@@ -819,7 +788,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm
      *         User's Realm
      * @return True if the user is the admin user of the given domain
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws UserStoreException if user store exception occurred
      */
     private static boolean isAdmin(String username, UserRealm userRealm)
             throws UserStoreException {
@@ -841,8 +810,8 @@ public class AndesAuthorizationHandler {
      * Remove queue from registry and un-assign role from queue
      *
      * @param queueName queue name to unregister
-     * @throws org.wso2.carbon.andes.commons.registry.RegistryClientException
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws RegistryClientException if registry exception occurred
+     * @throws UserStoreException if user store exception occurred
      */
     private static void deleteQueueFromRegistry(String queueName)
             throws RegistryClientException, UserStoreException {
@@ -969,7 +938,7 @@ public class AndesAuthorizationHandler {
      * @param queueName queue name
      * @param queueId   ID given to the queue
      * @param userRealm User's Realm
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws UserStoreException if user store exception occurred
      */
     private static void authorizeQueuePermissionsToLoggedInUser(String username, String queueName,
                                                                 String queueId, UserRealm userRealm)
@@ -1013,7 +982,7 @@ public class AndesAuthorizationHandler {
      * @param topicId     Id given to the destination
      * @param queueName   temp queue name
      * @param userRealm   User's Realm
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws UserStoreException if user store exception occurred
      */
     private static void authorizeTopicPermissionsToLoggedInUser(String username, String topicName,
                                                                 String topicId, String queueName,
@@ -1067,7 +1036,7 @@ public class AndesAuthorizationHandler {
      * deleted when the queue/topic is deleted.
      *
      * @param queueName name of the queue or topic
-     * @throws org.wso2.carbon.user.api.UserStoreException
+     * @throws UserStoreException if user store exception occurred
      */
     private static void removeQueueRoleCreateForLoggedInUser(String queueName)
             throws UserStoreException {
@@ -1094,7 +1063,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm User's Realm
      * @param topicId topic id
      * @param role admin role
-     * @throws UserStoreException
+     * @throws UserStoreException if user store exception occrred
      */
     private static void grantPermissionToHierarchyLevel(String username, UserRealm userRealm, String topicId, String role)
             throws UserStoreException {
@@ -1145,7 +1114,7 @@ public class AndesAuthorizationHandler {
      * @param permission The permission type to check for
      *
      * @return is user authorize
-     * @throws UserStoreException
+     * @throws UserStoreException if user store exception occurred
      */
     private static boolean isAuthorizeToParentInHierarchy(String username, UserRealm userRealm, String topicId, TreeNode.Permission permission)
             throws UserStoreException, RegistryClientException {
