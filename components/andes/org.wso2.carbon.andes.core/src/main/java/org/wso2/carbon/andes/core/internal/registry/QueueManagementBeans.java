@@ -72,7 +72,6 @@ public class QueueManagementBeans {
     public void createQueue(String queueName, String userName) throws QueueManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
-
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
             String operationName = "createNewQueue";
