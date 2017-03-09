@@ -42,7 +42,6 @@
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
-            <version>${andes.dependency.version}</version>
         </dependency>
     </dependencies>
 

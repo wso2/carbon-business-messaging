@@ -81,7 +81,7 @@
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.andes.event.stub.*;version="${andes.export.version}",
+                            org.wso2.carbon.andes.event.stub.*
                         </Export-Package>
                     </instructions>
                 </configuration>

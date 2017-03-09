@@ -74,7 +74,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.andes.cluster.mgt.ui.*;version="${andes.export.version}"
+                            org.wso2.carbon.andes.cluster.mgt.ui.*
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.mb.cluster.mgt.stub.*;version="${carbon.platform.package.import.version.range}",
