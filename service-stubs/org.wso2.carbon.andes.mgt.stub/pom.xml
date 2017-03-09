@@ -94,7 +94,7 @@
 						<Private-Package>
 						</Private-Package>
 						<Export-Package>
-							org.wso2.carbon.andes.mgt.stub.*;version="${andes.export.version}"
+							org.wso2.carbon.andes.mgt.stub.*
 						</Export-Package>
 						<Import-Package>
 							!org.wso2.carbon.andes.mgt.*,
