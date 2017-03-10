@@ -535,7 +535,7 @@ No subscriptions to show.
         <%
             String identifierForActiveSub = sub.getSubscriptionIdentifier();
             if (allowSharedSubscribers) {
-                identifierForActiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
+                identifierForActiveSub =  sub.getSubscriptionIdentifier();
             }
         %>
         <td><%=identifierForActiveSub%>
@@ -642,7 +642,7 @@ No subscriptions to show.
         <%
             String identifierForInactiveSub = sub.getSubscriptionIdentifier();
             if (allowSharedSubscribers) {
-                identifierForInactiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
+                identifierForInactiveSub =  sub.getSubscriptionIdentifier();
             }
         %>
         <td><%=identifierForInactiveSub%>
