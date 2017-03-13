@@ -1,0 +1,704 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax27="http://internal.mqtt.admin.andes.carbon.wso2.org/xsd" xmlns:ns="http://wso2.org/carbon/andes/admin/mqtt/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax25="http://Exception.internal.mqtt.admin.andes.carbon.wso2.org/xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://wso2.org/carbon/andes/admin/mqtt" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://wso2.org/carbon/andes/admin/mqtt">
+    <wsdl:documentation>AndesMQTTAdminService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema xmlns:ax28="http://internal.mqtt.admin.andes.carbon.wso2.org/xsd" xmlns:ax26="http://Exception.internal.mqtt.admin.andes.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wso2.org/carbon/andes/admin/mqtt/xsd">
+            <xs:import namespace="http://Exception.internal.mqtt.admin.andes.carbon.wso2.org/xsd"/>
+            <xs:import namespace="http://internal.mqtt.admin.andes.carbon.wso2.org/xsd"/>
+            <xs:element name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="BrokerManagerAdminException" nillable="true" type="ax26:BrokerManagerAdminException"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="closeSubscription">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="subscriptionID" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllSubscriptions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax28:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getSubscriptions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="isDurable" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isActive" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax28:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFilteredSubscriptions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="isDurable" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="isActive" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="filteredNamePattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isFilteredNameByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="identifierPattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isIdentifierPatternByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="ownNodeId" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="pageNumber" type="xs:int"/>
+                        <xs:element minOccurs="0" name="subscriptionCountPerPage" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getFilteredSubscriptionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax28:Subscription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasRestoreMessagesInDLCPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasRestoreMessagesInDLCPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkUserHasRestoreMessagesInDLCPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasTopicSubscriptionClosePermission">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="checkCurrentUserHasTopicSubscriptionClosePermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTotalSubscriptionCountForSearchResult">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="isDurable" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="isActive" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="filteredNamePattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isFilteredNameByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="identifierPattern" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="isIdentifierPatternByExactMatch" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="ownNodeId" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getTotalSubscriptionCountForSearchResultResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRoles">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUserRolesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCount">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="destinationName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="msgPattern" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getMessageCountResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="deleteTopicFromRegistry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="topicName" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="subscriptionId" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://internal.mqtt.admin.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="Subscription">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="active" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="connectedNodeAddress" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="destinationType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="durable" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="numberOfMessagesRemainingForSubscriber" type="xs:int"/>
+                    <xs:element minOccurs="0" name="originHostAddress" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="protocolType" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="subscribedQueueOrTopicName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="subscriberQueueBoundExchange" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="subscriberQueueName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="subscriptionIdentifier" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://Exception.internal.mqtt.admin.andes.carbon.wso2.org/xsd">
+            <xs:complexType name="BrokerManagerAdminException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getFilteredSubscriptionsRequest">
+        <wsdl:part name="parameters" element="ns:getFilteredSubscriptions"/>
+    </wsdl:message>
+    <wsdl:message name="getFilteredSubscriptionsResponse">
+        <wsdl:part name="parameters" element="ns:getFilteredSubscriptionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="AndesMQTTAdminServiceBrokerManagerAdminException">
+        <wsdl:part name="parameters" element="ns:AndesMQTTAdminServiceBrokerManagerAdminException"/>
+    </wsdl:message>
+    <wsdl:message name="getMessageCountRequest">
+        <wsdl:part name="parameters" element="ns:getMessageCount"/>
+    </wsdl:message>
+    <wsdl:message name="getMessageCountResponse">
+        <wsdl:part name="parameters" element="ns:getMessageCountResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasRestoreMessagesInDLCPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasRestoreMessagesInDLCPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasRestoreMessagesInDLCPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getSubscriptionsRequest">
+        <wsdl:part name="parameters" element="ns:getSubscriptions"/>
+    </wsdl:message>
+    <wsdl:message name="getSubscriptionsResponse">
+        <wsdl:part name="parameters" element="ns:getSubscriptionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="closeSubscriptionRequest">
+        <wsdl:part name="parameters" element="ns:closeSubscription"/>
+    </wsdl:message>
+    <wsdl:message name="closeSubscriptionResponse"/>
+    <wsdl:message name="getAllSubscriptionsRequest">
+        <wsdl:part name="parameters" element="ns:getAllSubscriptions"/>
+    </wsdl:message>
+    <wsdl:message name="getAllSubscriptionsResponse">
+        <wsdl:part name="parameters" element="ns:getAllSubscriptionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasRestoreMessagesInDLCPermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkUserHasRestoreMessagesInDLCPermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkUserHasRestoreMessagesInDLCPermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkUserHasRestoreMessagesInDLCPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="deleteTopicFromRegistryRequest">
+        <wsdl:part name="parameters" element="ns:deleteTopicFromRegistry"/>
+    </wsdl:message>
+    <wsdl:message name="deleteTopicFromRegistryResponse"/>
+    <wsdl:message name="getUserRolesRequest">
+        <wsdl:part name="parameters" element="ns:getUserRoles"/>
+    </wsdl:message>
+    <wsdl:message name="getUserRolesResponse">
+        <wsdl:part name="parameters" element="ns:getUserRolesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getTotalSubscriptionCountForSearchResultRequest">
+        <wsdl:part name="parameters" element="ns:getTotalSubscriptionCountForSearchResult"/>
+    </wsdl:message>
+    <wsdl:message name="getTotalSubscriptionCountForSearchResultResponse">
+        <wsdl:part name="parameters" element="ns:getTotalSubscriptionCountForSearchResultResponse"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasTopicSubscriptionClosePermissionRequest">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasTopicSubscriptionClosePermission"/>
+    </wsdl:message>
+    <wsdl:message name="checkCurrentUserHasTopicSubscriptionClosePermissionResponse">
+        <wsdl:part name="parameters" element="ns:checkCurrentUserHasTopicSubscriptionClosePermissionResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="AndesMQTTAdminServicePortType">
+        <wsdl:operation name="getFilteredSubscriptions">
+            <wsdl:input message="tns:getFilteredSubscriptionsRequest" wsaw:Action="urn:getFilteredSubscriptions"/>
+            <wsdl:output message="tns:getFilteredSubscriptionsResponse" wsaw:Action="urn:getFilteredSubscriptionsResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getFilteredSubscriptionsAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <wsdl:input message="tns:getMessageCountRequest" wsaw:Action="urn:getMessageCount"/>
+            <wsdl:output message="tns:getMessageCountResponse" wsaw:Action="urn:getMessageCountResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getMessageCountAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+            <wsdl:input message="tns:checkCurrentUserHasRestoreMessagesInDLCPermissionRequest" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermissionResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasRestoreMessagesInDLCPermissionAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriptions">
+            <wsdl:input message="tns:getSubscriptionsRequest" wsaw:Action="urn:getSubscriptions"/>
+            <wsdl:output message="tns:getSubscriptionsResponse" wsaw:Action="urn:getSubscriptionsResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getSubscriptionsAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="closeSubscription">
+            <wsdl:input message="tns:closeSubscriptionRequest" wsaw:Action="urn:closeSubscription"/>
+            <wsdl:output message="tns:closeSubscriptionResponse" wsaw:Action="urn:closeSubscriptionResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:closeSubscriptionAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getAllSubscriptions">
+            <wsdl:input message="tns:getAllSubscriptionsRequest" wsaw:Action="urn:getAllSubscriptions"/>
+            <wsdl:output message="tns:getAllSubscriptionsResponse" wsaw:Action="urn:getAllSubscriptionsResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getAllSubscriptionsAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasRestoreMessagesInDLCPermission">
+            <wsdl:input message="tns:checkUserHasRestoreMessagesInDLCPermissionRequest" wsaw:Action="urn:checkUserHasRestoreMessagesInDLCPermission"/>
+            <wsdl:output message="tns:checkUserHasRestoreMessagesInDLCPermissionResponse" wsaw:Action="urn:checkUserHasRestoreMessagesInDLCPermissionResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkUserHasRestoreMessagesInDLCPermissionAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTopicFromRegistry">
+            <wsdl:input message="tns:deleteTopicFromRegistryRequest" wsaw:Action="urn:deleteTopicFromRegistry"/>
+            <wsdl:output message="tns:deleteTopicFromRegistryResponse" wsaw:Action="urn:deleteTopicFromRegistryResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:deleteTopicFromRegistryAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <wsdl:input message="tns:getUserRolesRequest" wsaw:Action="urn:getUserRoles"/>
+            <wsdl:output message="tns:getUserRolesResponse" wsaw:Action="urn:getUserRolesResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getUserRolesAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalSubscriptionCountForSearchResult">
+            <wsdl:input message="tns:getTotalSubscriptionCountForSearchResultRequest" wsaw:Action="urn:getTotalSubscriptionCountForSearchResult"/>
+            <wsdl:output message="tns:getTotalSubscriptionCountForSearchResultResponse" wsaw:Action="urn:getTotalSubscriptionCountForSearchResultResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:getTotalSubscriptionCountForSearchResultAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <wsdl:input message="tns:checkCurrentUserHasTopicSubscriptionClosePermissionRequest" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermission"/>
+            <wsdl:output message="tns:checkCurrentUserHasTopicSubscriptionClosePermissionResponse" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermissionResponse"/>
+            <wsdl:fault message="tns:AndesMQTTAdminServiceBrokerManagerAdminException" name="AndesMQTTAdminServiceBrokerManagerAdminException" wsaw:Action="urn:checkCurrentUserHasTopicSubscriptionClosePermissionAndesMQTTAdminServiceBrokerManagerAdminException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="AndesMQTTAdminServiceSoap11Binding" type="tns:AndesMQTTAdminServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getFilteredSubscriptions">
+            <soap:operation soapAction="urn:getFilteredSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap:operation soapAction="urn:getMessageCount" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasRestoreMessagesInDLCPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriptions">
+            <soap:operation soapAction="urn:getSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="closeSubscription">
+            <soap:operation soapAction="urn:closeSubscription" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllSubscriptions">
+            <soap:operation soapAction="urn:getAllSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasRestoreMessagesInDLCPermission">
+            <soap:operation soapAction="urn:checkUserHasRestoreMessagesInDLCPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTopicFromRegistry">
+            <soap:operation soapAction="urn:deleteTopicFromRegistry" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap:operation soapAction="urn:getUserRoles" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalSubscriptionCountForSearchResult">
+            <soap:operation soapAction="urn:getTotalSubscriptionCountForSearchResult" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <soap:operation soapAction="urn:checkCurrentUserHasTopicSubscriptionClosePermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AndesMQTTAdminServiceSoap12Binding" type="tns:AndesMQTTAdminServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getFilteredSubscriptions">
+            <soap12:operation soapAction="urn:getFilteredSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <soap12:operation soapAction="urn:getMessageCount" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasRestoreMessagesInDLCPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriptions">
+            <soap12:operation soapAction="urn:getSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="closeSubscription">
+            <soap12:operation soapAction="urn:closeSubscription" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getAllSubscriptions">
+            <soap12:operation soapAction="urn:getAllSubscriptions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasRestoreMessagesInDLCPermission">
+            <soap12:operation soapAction="urn:checkUserHasRestoreMessagesInDLCPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTopicFromRegistry">
+            <soap12:operation soapAction="urn:deleteTopicFromRegistry" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <soap12:operation soapAction="urn:getUserRoles" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalSubscriptionCountForSearchResult">
+            <soap12:operation soapAction="urn:getTotalSubscriptionCountForSearchResult" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <soap12:operation soapAction="urn:checkCurrentUserHasTopicSubscriptionClosePermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AndesMQTTAdminServiceBrokerManagerAdminException">
+                <soap12:fault use="literal" name="AndesMQTTAdminServiceBrokerManagerAdminException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AndesMQTTAdminServiceHttpBinding" type="tns:AndesMQTTAdminServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getFilteredSubscriptions">
+            <http:operation location="getFilteredSubscriptions"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getMessageCount">
+            <http:operation location="getMessageCount"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
+            <http:operation location="checkCurrentUserHasRestoreMessagesInDLCPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriptions">
+            <http:operation location="getSubscriptions"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="closeSubscription">
+            <http:operation location="closeSubscription"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllSubscriptions">
+            <http:operation location="getAllSubscriptions"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkUserHasRestoreMessagesInDLCPermission">
+            <http:operation location="checkUserHasRestoreMessagesInDLCPermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="deleteTopicFromRegistry">
+            <http:operation location="deleteTopicFromRegistry"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getUserRoles">
+            <http:operation location="getUserRoles"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getTotalSubscriptionCountForSearchResult">
+            <http:operation location="getTotalSubscriptionCountForSearchResult"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
+            <http:operation location="checkCurrentUserHasTopicSubscriptionClosePermission"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="AndesMQTTAdminService">
+        <wsdl:port name="AndesMQTTAdminServiceHttpsSoap11Endpoint" binding="tns:AndesMQTTAdminServiceSoap11Binding">
+            <soap:address location="https://10.100.4.111:9446/services/AndesMQTTAdminService.AndesMQTTAdminServiceHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AndesMQTTAdminServiceHttpsSoap12Endpoint" binding="tns:AndesMQTTAdminServiceSoap12Binding">
+            <soap12:address location="https://10.100.4.111:9446/services/AndesMQTTAdminService.AndesMQTTAdminServiceHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AndesMQTTAdminServiceHttpsEndpoint" binding="tns:AndesMQTTAdminServiceHttpBinding">
+            <http:address location="https://10.100.4.111:9446/services/AndesMQTTAdminService.AndesMQTTAdminServiceHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
