@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>3.1.x-SNAPSHOT</version>
+        <version>3.1.13</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
-    <version>3.1.x-SNAPSHOT</version>
+    <version>3.1.13</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes - Server</name>
     <url>http://wso2.org</url>
@@ -136,6 +136,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity</groupId>
+            <artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>
         </dependency>
     </dependencies>
 
@@ -267,6 +271,7 @@
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.rabbitmq.amqp.version}</bundleDef>
                                 <bundleDef>org.apache.commons:commons-pool2:${org.apache.commons.pool.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.identity:org.wso2.carbon.identity.oauth.stub:${carbon.identity.oauth.stub.version}</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
