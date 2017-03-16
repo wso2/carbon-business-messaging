@@ -525,11 +525,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <highLimit>1000</highLimit>
         </bufferBased>
     </flowControl>
-
-    <slotManagement>
-        <!--Set slot storage mode (RDBMS/HazelCast)-->
-        <storage>RDBMS</storage>
-    </slotManagement>
 	
     <!--
     Message broker keeps track of all messages it has received as groups. These groups are termed
