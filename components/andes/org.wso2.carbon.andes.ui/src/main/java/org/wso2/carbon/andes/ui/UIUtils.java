@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
@@ -28,6 +29,7 @@ import org.wso2.andes.configuration.modules.JKSStore;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceStub;
+import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub;
 import org.wso2.carbon.andes.stub.AndesAdminServiceStub;
 import org.wso2.carbon.andes.stub.admin.types.Queue;
@@ -35,7 +37,13 @@ import org.wso2.carbon.andes.stub.admin.types.QueueRolePermission;
 import org.wso2.carbon.andes.stub.admin.types.Subscription;
 import org.wso2.carbon.ui.CarbonUIUtil;
 import org.wso2.carbon.utils.ServerConstants;
+import org.wso2.carbon.utils.CarbonUtils;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import java.nio.file.Paths;
 
 /**
  * This class is used by the UI to connect to services and provides utilities. Used by JSP pages.
@@ -64,7 +73,7 @@ public class UIUtils {
     private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
     private static final String ANDES_ADMIN_SERVICE_NAME = "AndesAdminService";
     private static final String ANDES_ADMIN_EVENT_SERVICE_NAME = "AndesEventAdminService";
-	private static final String ANDES_MANAGER_SERVICE_NAME = "AndesManagerService";
+    private static final String ANDES_MANAGER_SERVICE_NAME = "AndesManagerService";
 
     /**
      * Gets html string value encoded. i.e < becomes &lt; and > becomes &gt;
@@ -134,7 +143,7 @@ public class UIUtils {
     /**
      * Get the AndesEventAdminService stub
      *
-     * @param config the servlet configuration
+     * @param config  the servlet configuration
      * @param session the http session
      * @param request the http servlet request
      * @return an AndesEventAdminServiceStub
@@ -269,17 +278,17 @@ public class UIUtils {
      */
     public static String getTCPConnectionURL(String userName, String accessKey)
             throws FileNotFoundException,
-                   XMLStreamException, AndesException {
+            XMLStreamException, AndesException {
         // amqp://{username}:{accesskey}@carbon/carbon?brokerlist='tcp://{hostname}:{port}'
 
         String CARBON_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT));
 
         // these are the properties which needs to be passed when ssl is enabled
         String CARBON_SSL_PORT = String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT));
-
         if (qpidPath != null) {
             andesConfDir = Paths.get(qpidPath).toString();
         }
+
         File confFile = new File(System.getProperty(ServerConstants.CARBON_HOME) + andesConfDir + ANDES_CONF_FILE);
         OMElement docRootNode = new StAXOMBuilder(new FileInputStream(confFile)).
                 getDocumentElement();
@@ -302,14 +311,14 @@ public class UIUtils {
             // }'&key_store_password='{key_store_pwd}''";
 
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                   ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + trustStore.getStoreLocation() +
-                   "'&trust_store_password='" + trustStore.getPassword() + "'&key_store='" +
-                   keyStore.getStoreLocation() + "'&key_store_password='" + trustStore.getPassword() + "''";
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_SSL_PORT + "?ssl='true'&trust_store='" + trustStore.getStoreLocation() +
+                    "'&trust_store_password='" + trustStore.getPassword() + "'&key_store='" +
+                    keyStore.getStoreLocation() + "'&key_store_password='" + trustStore.getPassword() + "''";
         } else {
             return "amqp://" + userName + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                   CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
-                   ":" + CARBON_PORT + "'";
+                    CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + CARBON_DEFAULT_HOSTNAME +
+                    ":" + CARBON_PORT + "'";
         }
     }
 
@@ -322,17 +331,17 @@ public class UIUtils {
      */
     public static boolean isSSLOnly() throws FileNotFoundException, XMLStreamException {
 
-        return (Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
-                !(Boolean)AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
+        return (Boolean) AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_ENABLED) &&
+                !(Boolean) AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_ENABLED);
     }
 
     /**
      * Filter the full user-roles list to suit the range.
      * Suppressing warning of unused declaration as it used by the UI (JSP pages)
      *
-     * @param allPermissions    full list of roles
-     * @param startingIndex     starting index to filter
-     * @param maxRolesCount     maximum number of roles that the filtered list can contain
+     * @param allPermissions full list of roles
+     * @param startingIndex  starting index to filter
+     * @param maxRolesCount  maximum number of roles that the filtered list can contain
      * @return ArrayList<QueueRolePermission>
      */
     @SuppressWarnings("UnusedDeclaration")
