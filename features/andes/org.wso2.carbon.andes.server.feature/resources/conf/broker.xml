@@ -44,8 +44,8 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
     </coordination>
 
-    <!-- You can enable/disable specific messaging transports in this section. By default all 
-    transports are enabled. This section also allows you to customize the messaging flows used 
+    <!-- You can enable/disable specific messaging transports in this section. By default all
+    transports are enabled. This section also allows you to customize the messaging flows used
     within WSO2 MB. NOT performance related, but logic related. -->
     <transports>
         <amqp enabled="true">
@@ -92,7 +92,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             and vise versa -->
             <inboundBufferSize>32768</inboundBufferSize>
 
-            <!-- Messages delivered to clients will be placed in this ring buffer. 
+            <!-- Messages delivered to clients will be placed in this ring buffer.
             Ring buffer size of MQTT delivery event disruptor. Default is set to 32768 (1024 * 32)
             Having a large ring buffer will have a increase memory usage and will improve performance
             and vise versa -->
@@ -100,38 +100,62 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             
 
             <security>
-                   <!--
-                       Instructs the MQTT server whether clients should always send credentials
-                       when establishing a connection.
-                       Possible values:
-                        OPTIONAL: This is the default value. MQTT clients may or may not send 
-                                  credentials. If a client sends credentials server will 
-                                  validates it. 
-                                  If client doesn't send credentials then server will not 
-                                  authenticate, but allows client to establish the connection. 
-                                  This behavior adheres to MQTT 3.1 specification.
-                        REQUIRED: Clients should always provide credentials when connecting. 
-                                  If client doesn't send credentials or they are invalid 
-                                  server rejects the connection.
-                   -->
-                   <authentication>OPTIONAL</authentication>
-                  
-                   <!--Class name of the authenticator to use. class should 
-                       inherit from org.dna.mqtt.moquette.server.IAuthenticator
-                       Note: default implementation authenticates against carbon user store
-                       based on supplied username/password
-                   --> 
-                   <authenticator>org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator</authenticator>
-            </security>
+                <!--
+                    Instructs the MQTT server whether clients should always send credentials
+                    when establishing a connection.
+                    Possible values:
+                     OPTIONAL: This is the default value. MQTT clients may or may not send
+                               credentials. If a client sends credentials server will
+                               validates it.
+                               If client doesn't send credentials then server will not
+                               authenticate, but allows client to establish the connection.
+                               This behavior adheres to MQTT 3.1 specification.
+                     REQUIRED: Clients should always provide credentials when connecting.
+                               If client doesn't send credentials or they are invalid
+                               server rejects the connection.
+                -->
+                <authentication>OPTIONAL</authentication>
 
+                <!--Class name of the authenticator to use. class should
+                    inherit from org.dna.mqtt.moquette.server.IAuthenticator
+                    Note: default implementation authenticates against carbon user store
+                    based on supplied username/password
+                -->
+                <authenticator class="org.wso2.carbon.andes.authentication.andes.CarbonBasedMQTTAuthenticator"/>
+                <!--authenticator class="org.wso2.carbon.andes.authentication.andes.OAuth2BasedMQTTAuthenticator">
+                    <property name="hostURL">https://localhost:9443/services/OAuth2TokenValidationService</property>
+                    <property name="username">admin</property>
+                    <property name="password">admin</property>
+                    <property name="maxConnectionsPerHost">10</property>
+                    <property name="maxTotalConnections">150</property>
+                </authenticator-->
+
+                <!--
+                   Instructs the MQTT server whether clients should be authorized before either publishing or subscribing
+                   Possible values:
+                    NOT_REQUIRED: This is the default value. MQTT clients will skip the authorization check
+                    REQUIRED: Clients will authorized before publishing. this will execute the class given in authorzier
+                    Note: authentication should be REQUIRED for authorization to be REQUIRED.
+               -->
+                <authorization>NOT_REQUIRED</authorization>
+
+                <!--Class name of the authorizer to use. class should
+                    inherit from org.dna.mqtt.moquette.server.IAutherizer
+                    Note: default implementation authorizes against carbon permission with the topic.
+                -->
+                <!--connectionPermission is required for a user to connect to broker-->
+                <authorizer class="org.wso2.carbon.andes.authorization.andes.CarbonPermissionBasedMQTTAuthorizer">
+                    <property name="connectionPermission">/permission/admin/mqtt/connect</property>
+                </authorizer>
+            </security>
         </mqtt>
 
     </transports>
 
     <!-- Depending on the database type selected in master-datasources.xml, you must enable the
-    relevant Data access classes here. Currently WSO2 MB Supports RDBMS(any RDBMS store). 
+    relevant Data access classes here. Currently WSO2 MB Supports RDBMS(any RDBMS store).
 	These stores are accessed for two purposes.
-	
+
     1. For message persistence ("messageStore")
     2. To persist and access other information relevant to messaging protocols.("contextStore").-->
 
@@ -170,21 +194,21 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <cache>
             <!-- Size of the messages cache in MBs. Setting '0' will disable the cache. -->
             <size>256</size>
-            <!-- Expected concurrency for the cache (4 is guava default) -->					
+            <!-- Expected concurrency for the cache (4 is guava default) -->
             <concurrencyLevel>4</concurrencyLevel>
-            <!--Number of seconds cache will keep messages after they are 
-                              added (unless they are consumed and deleted).-->					
+            <!--Number of seconds cache will keep messages after they are
+                              added (unless they are consumed and deleted).-->
             <expirySeconds>2</expirySeconds>
 
             <!--Reference type used to hold messages in memory.
                     weak   - Using java weak references ( - results higher cache misses)
-                    strong - ordinary references ( - higher cache hits, but not good if server 
+                    strong - ordinary references ( - higher cache hits, but not good if server
                              is going to run with limited heap size + under severe load).
             -->
             <valueReferenceType>strong</valueReferenceType>
 
-            <!--Prints cache statistics in 2 minute intervals 
-                                                   in carbon log ( and console)-->					
+            <!--Prints cache statistics in 2 minute intervals
+                                                   in carbon log ( and console)-->
             <printStats>false</printStats>
         </cache>
 
@@ -195,7 +219,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         NOTE: This is NOT used in MB to generate message IDs. -->
         <idGenerator>org.wso2.andes.server.cluster.coordination.TimeStampBasedMessageIdGenerator</idGenerator>
 
-        <!-- This is the Task interval (in SECONDS) to check whether communication 
+        <!-- This is the Task interval (in SECONDS) to check whether communication
         is healthy between message store (/Database) and this server instance. -->
         <storeHealthCheckInterval>10</storeHealthCheckInterval>
     </persistence>
@@ -217,7 +241,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <slots>
             <!--
                 If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
-                This will add an latency to messages. Therefore broker will mark the slot as 
+                This will add an latency to messages. Therefore broker will mark the slot as
                 ready to deliver before even the slot is entirely filled after specified time.
                 NOTE: specified in milliseconds.
             -->
@@ -226,7 +250,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <!--Rough estimate for size of a slot-->
             <windowSize>1000</windowSize>
 
-            <!-- Time interval which broker check for slots that can be marked as 'ready to deliver' 
+            <!-- Time interval which broker check for slots that can be marked as 'ready to deliver'
                  (- slots which have a aged more than 'messageAccumulationTimeout')
                  NOTE: specified in milliseconds.
             -->
@@ -263,23 +287,23 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             will increase. -->
             <parallelDeliveryHandlers>5</parallelDeliveryHandlers>
 
-            <!-- The size of the batch represents, at a given time the number of messages that could 
+            <!-- The size of the batch represents, at a given time the number of messages that could
             be retrieved from the database. -->
             <contentReadBatchSize>65000</contentReadBatchSize>
 
             <contentCache>
                 <!-- Specify the maximum number of entries the cache may contain. -->
                 <maximumSize>100</maximumSize>
-                <!-- Specify the time in seconds that each entry should be 
+                <!-- Specify the time in seconds that each entry should be
                      automatically removed from the cache after the entry's creation. -->
                 <expiryTime>120</expiryTime>
             </contentCache>
 
-            <!--When delivering topic messages to multiple topic 
+            <!--When delivering topic messages to multiple topic
                 subscribers one of following stratigies can be choosen.
-            
-               1. DISCARD_NONE     - Broker do not loose any message to any subscriber. 
-                                     When there are slow subscribers this can cause broker 
+
+               1. DISCARD_NONE     - Broker do not loose any message to any subscriber.
+                                     When there are slow subscribers this can cause broker
                                      go Out of Memory.
 
                2. SLOWEST_SUB_RATE - Broker deliver to the speed of the slowest
@@ -287,17 +311,17 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                                      to starve. But eliminate Out of Memory issue.
 
                3. DISCARD_ALLOWED  - Broker will try best to deliver. To eliminate Out
-                                     of Memory threat broker limits sent but not acked message 
-                                     count to <maxUnackedMessages>. 
-                                     If it is breached, and <deliveryTimeout> is also 
-                                     breached message can either be lost or actually 
+                                     of Memory threat broker limits sent but not acked message
+                                     count to <maxUnackedMessages>.
+                                     If it is breached, and <deliveryTimeout> is also
+                                     breached message can either be lost or actually
                                      sent but ack is not honoured.
             -->
             <topicMessageDeliveryStrategy>
                 <strategyName>DISCARD_NONE</strategyName>
-                <!-- If you choose DISCARD_ALLOWED topic message delivery strategy, 
+                <!-- If you choose DISCARD_ALLOWED topic message delivery strategy,
                      broker keep messages in memory until ack is done until this timeout.
-                     If an ack is not received under this timeout, ack will be simulated 
+                     If an ack is not received under this timeout, ack will be simulated
                      internally and real acknowledgement is discarded.
                      deliveryTimeout is in seconds -->
                 <deliveryTimeout>60</deliveryTimeout>
@@ -410,12 +434,12 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <!-- Memory and resource exhaustion is something we should prevent and recover from.
     This section allows you to specify the threshold at which to reduce/stop frequently intensive
     operations within MB temporarily. -->
-	<!--
-	highLimit - flow control is enabled when message chunk pending to be handled by inbound 
-	 disruptor reaches above this limit
+    <!--
+    highLimit - flow control is enabled when message chunk pending to be handled by inbound
+     disruptor reaches above this limit
     lowLimit - flow control is disabled (if enabled) when message chunk pending to be handled
-	 by inbound disruptor reaches below this limit	
-	-->	
+     by inbound disruptor reaches below this limit
+    -->
     <flowControl>
         <!-- This is the global buffer limits which enable/disable the flow control globally -->
         <global>
@@ -435,7 +459,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!--Set slot storage mode (RDBMS/HazelCast)-->
         <storage>RDBMS</storage>
     </slotManagement>
-	
+
     <!--
     Message broker keeps track of all messages it has received as groups. These groups are termed
     'Slots' (To know more information about Slots and message broker install please refer to online wiki).
@@ -443,7 +467,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     parallel publishers for specific topic/queue). Message broker cluster (or in single node) keeps
     track of slots which constitutes for a large part of operating state before the cluster went down.
 	When first message broker node of the cluster starts up, it will read the database to recreate
-    the internal state to previous state. 
+    the internal state to previous state.
     -->
     <recovery>
         <!--

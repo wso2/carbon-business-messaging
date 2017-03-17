@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- * 
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,6 +20,7 @@ package org.wso2.carbon.andes.authentication.andes;
 
 import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.server.IAuthenticator;
+import org.dna.mqtt.moquette.server.AuthenticationInfo;
 import org.wso2.carbon.andes.authentication.internal.AuthenticationServiceDataHolder;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.user.api.TenantManager;
@@ -43,12 +44,12 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
      * {@inheritDoc} Authenticates the user against carbon user store.
      */
     @Override
-    public boolean checkValid(String username, String password) {
+    public AuthenticationInfo checkValid(String username, String password) {
 
         boolean isAuthenticated = false;
         // Carbon kernel uses '@' to separate domain while MB uses '!'
         String carbonCompliantUsername = username.replace(DOMAIN_NAME_SEPARATOR, "@");
-
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
         try {
             PrivilegedCarbonContext.startTenantFlow();
 
@@ -60,19 +61,22 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
                     PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
                     PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId(true);
                 } else {
-                    PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants
-                                                                                                    .SUPER_TENANT_ID);
+                    PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(MultitenantConstants.SUPER_TENANT_ID);
                     PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(MultitenantConstants
-                                                                                            .SUPER_TENANT_DOMAIN_NAME);
+                            .SUPER_TENANT_DOMAIN_NAME);
                 }
 
                 UserRealm userRealm = AuthenticationServiceDataHolder.getInstance().getRealmService()
-                                                                                        .getTenantUserRealm(tenantId);
+                        .getTenantUserRealm(tenantId);
                 UserStoreManager userStoreManager = userRealm.getUserStoreManager();
-                isAuthenticated = userStoreManager.authenticate(
-                                         MultitenantUtils.getTenantAwareUsername(carbonCompliantUsername), password);
+                username = MultitenantUtils.getTenantAwareUsername(carbonCompliantUsername);
+                isAuthenticated = userStoreManager.authenticate(username, password);
+                authenticationInfo.setUsername(carbonCompliantUsername);
+                authenticationInfo.setTenantDomain(MultitenantUtils.getTenantDomain(carbonCompliantUsername));
+
             } else {
                 logger.error(String.format("Access denied, unable to find a tenant for user name : %s", username));
+
             }
 
         } catch (UserStoreException e) {
@@ -81,14 +85,14 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
         } finally {
             PrivilegedCarbonContext.endTenantFlow();
         }
-
-        return isAuthenticated;
+        authenticationInfo.setAuthenticated(isAuthenticated);
+        return authenticationInfo;
     }
 
     /**
      * Returns tenant Id given the user name or returns
      * {@link MultitenantConstants#INVALID_TENANT_ID} if none can be found.
-     * 
+     *
      * @param username The username of the user.
      * @return The tenant ID.
      * @throws UserStoreException
@@ -98,8 +102,8 @@ public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
         String domainName = MultitenantUtils.getTenantDomain(username);
         if (domainName != null) {
             TenantManager tenantManager =
-                                          AuthenticationServiceDataHolder.getInstance().getRealmService()
-                                                                         .getTenantManager();
+                    AuthenticationServiceDataHolder.getInstance().getRealmService()
+                            .getTenantManager();
             tenantId = tenantManager.getTenantId(domainName);
         }
         return tenantId;
