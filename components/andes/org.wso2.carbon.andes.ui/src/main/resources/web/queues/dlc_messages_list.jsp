@@ -267,7 +267,7 @@
              if (DLCQueueUtils.isDeadLetterQueue(nameOfQueue)) {
                  filteredMsgArray = stub.browseQueue(nameOfQueue, nextMessageIdToRead, msgCountPerPage);
              } else {
-                 filteredMsgArray = stub.getMessageInDLCForQueue(nameOfQueue, nextMessageIdToRead,
+                 filteredMsgArray = stub.getMessagesInDLCForQueue(nameOfQueue, nextMessageIdToRead,
                                                                  msgCountPerPage);
              }
              if (null != filteredMsgArray && filteredMsgArray.length > 0) {
