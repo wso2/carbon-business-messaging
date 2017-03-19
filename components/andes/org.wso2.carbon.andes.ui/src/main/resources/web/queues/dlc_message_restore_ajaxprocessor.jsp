@@ -17,7 +17,7 @@
         andesMessageIDs[i] = Long.parseLong(idArray[i]);
     }
     try {
-        unavailableMessageCount = stub.restoreMessagesFromDeadLetterQueue(andesMessageIDs, nameOfQueue);
+        unavailableMessageCount = stub.restoreSelectedMessagesFromDeadLetterChannel(andesMessageIDs, nameOfQueue);
 
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR,

@@ -269,20 +269,20 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+    public long restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException {
-        return QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
+        return QueueManagementBeans.getInstance().restoreSelectedMessagesFromDeadLetterChannel(messageIDs, destinationQueueName);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws QueueManagerException {
-        return QueueManagementBeans.getInstance().restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
+        return QueueManagementBeans.getInstance().rerouteSelectedMessagesFromDeadLetterChannel(messageIDs,
                 newDestinationQueueName, destinationQueueName);
     }
 
@@ -654,14 +654,14 @@ public class QueueManagerServiceImpl implements QueueManagerService {
      * {@inheritDoc}
      */
     @Override
-    public Message[] getMessageInDLCForQueue(String queueName, long nextMessageIdToRead,
-                                             int maxMessageCount) throws QueueManagerException {
+    public Message[] getMessagesInDLCForQueue(String queueName, long nextMessageIdToRead,
+                                              int maxMessageCount) throws QueueManagerException {
         List<Message> messageList = new ArrayList<>();
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-            String operationName = "getMessageInDLCForQueue";
+            String operationName = "getMessagesInDLCForQueue";
             Object[] parameters = new Object[]{queueName, nextMessageIdToRead, maxMessageCount};
             String[] signature = new String[]{String.class.getName(), long.class.getName(), int.class.getName()};
             Object result = mBeanServer.invoke(
@@ -785,6 +785,74 @@ public class QueueManagerServiceImpl implements QueueManagerService {
             }
         } catch (UserStoreException e) {
             throw new QueueManagerException("Error while deleting " + newQueueName, e);
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Message[] getMessageMetadataInDLC(String targetQueue, long startMessageId, int pageLimit)
+            throws QueueManagerException {
+        List<Message> messageList = new ArrayList<>();
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "getMessageMetadataInDeadLetterChannel";
+            Object[] parameters = new Object[] { targetQueue, startMessageId, pageLimit };
+            String[] signature = new String[] { String.class.getName(), long.class.getName(), int.class.getName() };
+            Object result = mBeanServer.invoke(objectName, operationName, parameters, signature);
+            if (result != null) {
+                CompositeData[] messageDataList = (CompositeData[]) result;
+                for (CompositeData messageData : messageDataList) {
+                    Message message = new Message();
+                    message.setMsgProperties((String) messageData.get(QueueManagementInformation.JMS_PROPERTIES));
+                    message.setContentType((String) messageData.get(QueueManagementInformation.CONTENT_TYPE));
+                    message.setMessageContent((String[]) messageData.get(QueueManagementInformation.CONTENT));
+                    message.setJMSMessageId((String) messageData.get(QueueManagementInformation.JMS_MESSAGE_ID));
+                    message.setJMSReDelivered((Boolean) messageData.get(QueueManagementInformation.JMS_REDELIVERED));
+                    message.setJMSTimeStamp((Long) messageData.get(QueueManagementInformation.TIME_STAMP));
+                    message.setDlcMsgDestination((String) messageData.get(QueueManagementInformation.MSG_DESTINATION));
+                    message.setAndesMsgMetadataId(
+                            (Long) messageData.get(QueueManagementInformation.ANDES_MSG_METADATA_ID));
+                    messageList.add(message);
+                }
+            }
+        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
+            throw new QueueManagerException("Cannot get message metadata in DLC for queue : " + targetQueue, e);
+        }
+
+        return messageList.toArray(new org.wso2.carbon.andes.core.types.Message[messageList.size()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int rerouteMessagesFromDeadLetterChannelForQueue(String sourceQueue, String targetQueue, int internalBatchSize) throws
+            QueueManagerException {
+
+        try {
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "rerouteAllMessagesInDeadLetterChannelForQueue";
+            Object[] parameters = new Object[] { sourceQueue, targetQueue, internalBatchSize };
+            String[] signature = new String[] { String.class.getName(), String.class.getName(), int.class.getName() };
+            Object result = mBeanServer.invoke(objectName, operationName, parameters, signature);
+
+            if (null != result) {
+                return (int) result;
+            }
+
+            return -1;
+
+        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
+            throw new QueueManagerException(
+                    "Could not move messages in DLC for queue : " + sourceQueue + " to target queue : " + targetQueue,
+                    e);
         }
     }
 }
