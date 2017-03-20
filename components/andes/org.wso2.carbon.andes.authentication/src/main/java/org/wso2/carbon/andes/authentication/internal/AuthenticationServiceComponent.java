@@ -33,25 +33,25 @@ import org.wso2.carbon.user.core.service.RealmService;
 import java.util.UUID;
 
 /**
- * @scr.component  name="org.wso2.carbon.andes.authentication.internal.AuthenticationServiceComponent"
- *                              immediate="true"
- * @scr.reference    name="registry.service"
- *                              interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRegistryService"
- *                              unbind="unsetRegistryService"
- * @scr.reference    name="realm.service"
- *                              interface="org.wso2.carbon.user.core.service.RealmService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRealmService"
- *                              unbind="unsetRealmService"
+ * @scr.component name="org.wso2.carbon.andes.authentication.internal.AuthenticationServiceComponent"
+ * immediate="true"
+ * @scr.reference name="registry.service"
+ * interface="org.wso2.carbon.registry.core.service.RegistryService"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setRegistryService"
+ * unbind="unsetRegistryService"
+ * @scr.reference name="realm.service"
+ * interface="org.wso2.carbon.user.core.service.RealmService"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setRealmService"
+ * unbind="unsetRealmService"
  * @scr.reference name="server.configuration" interface="org.wso2.carbon.base.api.ServerConfigurationService"
- *                  cardinality="1..1"
- *                  policy="dynamic"
- *                  bind="setServerConfiguration"
- *                  unbind="unsetServerConfiguration"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setServerConfiguration"
+ * unbind="unsetServerConfiguration"
  */
 public class AuthenticationServiceComponent {
 
@@ -59,7 +59,7 @@ public class AuthenticationServiceComponent {
     private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
 
-    protected void activate(ComponentContext ctx) throws AndesException{
+    protected void activate(ComponentContext ctx) throws AndesException {
         //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
         AndesConfigurationManager.initialize(getPortOffset());
         OAuthConfigurationManager.getInstance().initConfig();
@@ -112,9 +112,8 @@ public class AuthenticationServiceComponent {
         try {
             if ((portOffset != null)) {
                 return Integer.parseInt(portOffset.trim());
-            } else {
-                return CARBON_DEFAULT_PORT_OFFSET;
             }
+            return CARBON_DEFAULT_PORT_OFFSET;
         } catch (NumberFormatException e) {
             return CARBON_DEFAULT_PORT_OFFSET;
         }

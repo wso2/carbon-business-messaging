@@ -34,25 +34,25 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 
 /**
- * @scr.component  name="org.wso2.carbon.andes.authorization.internal.AuthorizationServiceComponent"
- *                              immediate="true"
- * @scr.reference    name="registry.service"
- *                              interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRegistryService"
- *                              unbind="unsetRegistryService"
- * @scr.reference    name="realm.service"
- *                              interface="org.wso2.carbon.user.core.service.RealmService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRealmService"
- *                              unbind="unsetRealmService"
+ * @scr.component name="org.wso2.carbon.andes.authorization.internal.AuthorizationServiceComponent"
+ * immediate="true"
+ * @scr.reference name="registry.service"
+ * interface="org.wso2.carbon.registry.core.service.RegistryService"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setRegistryService"
+ * unbind="unsetRegistryService"
+ * @scr.reference name="realm.service"
+ * interface="org.wso2.carbon.user.core.service.RealmService"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setRealmService"
+ * unbind="unsetRealmService"
  * @scr.reference name="server.configuration" interface="org.wso2.carbon.base.api.ServerConfigurationService"
- *                  cardinality="1..1"
- *                  policy="dynamic"
- *                  bind="setServerConfiguration"
- *                  unbind="unsetServerConfiguration"
+ * cardinality="1..1"
+ * policy="dynamic"
+ * bind="setServerConfiguration"
+ * unbind="unsetServerConfiguration"
  */
 public class AuthorizationServiceComponent {
 
@@ -123,9 +123,8 @@ public class AuthorizationServiceComponent {
         try {
             if ((portOffset != null)) {
                 return Integer.parseInt(portOffset.trim());
-            } else {
-                return CARBON_DEFAULT_PORT_OFFSET;
             }
+            return CARBON_DEFAULT_PORT_OFFSET;
         } catch (NumberFormatException e) {
             return CARBON_DEFAULT_PORT_OFFSET;
         }
