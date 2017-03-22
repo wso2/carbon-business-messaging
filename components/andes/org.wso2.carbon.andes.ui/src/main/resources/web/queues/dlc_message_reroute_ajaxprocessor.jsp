@@ -20,7 +20,7 @@
         }
 
         try {
-            unavailableMessageCount = stub.restoreMessagesFromDeadLetterQueueWithDifferentDestination(andesMessageIDs,
+            unavailableMessageCount = stub.rerouteSelectedMessagesFromDeadLetterChannel(andesMessageIDs,
             newQueueName, nameOfQueue);
 
         } catch (AndesAdminServiceBrokerManagerAdminException e) {

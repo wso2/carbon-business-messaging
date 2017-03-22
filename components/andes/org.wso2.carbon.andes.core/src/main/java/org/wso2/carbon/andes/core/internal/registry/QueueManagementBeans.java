@@ -274,7 +274,7 @@ public class QueueManagementBeans {
      * @return unavailable message count
      * @throws QueueManagerException
      */
-    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
+    public long restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName) throws
             QueueManagerException {
         long unavailableMessageCount = 0L;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -282,7 +282,7 @@ public class QueueManagementBeans {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
-            String operationName = "restoreMessagesFromDeadLetterQueue";
+            String operationName = "restoreSelectedMessagesFromDeadLetterChannel";
             Object[] parameters = new Object[]{messageIDs, destinationQueueName};
             String[] signature = new String[]{long[].class.getName(), String.class.getName()};
             Object result = mBeanServer.invoke(
@@ -309,7 +309,7 @@ public class QueueManagementBeans {
      * @return unavailable message count
      * @throws QueueManagerException
      */
-    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
             String newDestinationQueueName, String destinationQueueName) throws QueueManagerException {
         long unavailableMessageCount = 0L;
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -317,8 +317,8 @@ public class QueueManagementBeans {
             ObjectName objectName =
                     new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
 
-            String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, newDestinationQueueName, destinationQueueName};
+            String operationName = "rerouteSelectedMessagesFromDeadLetterChannel";
+            Object[] parameters = new Object[]{messageIDs, destinationQueueName, newDestinationQueueName };
             String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
             Object result = mBeanServer.invoke(
                     objectName,
