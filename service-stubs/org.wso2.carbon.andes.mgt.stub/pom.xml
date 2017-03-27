@@ -22,13 +22,13 @@
 	<parent>
 		<groupId>org.wso2.carbon.messaging</groupId>
 		<artifactId>carbon-service-stubs</artifactId>
-		<version>3.2.2-SNAPSHOT</version>
+		<version>3.2.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.wso2.carbon.andes.mgt.stub</artifactId>
-	<version>3.2.2-SNAPSHOT</version>
+	<version>3.2.2</version>
 	<packaging>bundle</packaging>
 	<name>WSO2 Carbon - Andes Management Stubs</name>
 	<url>http://wso2.org</url>
