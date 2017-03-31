@@ -23,6 +23,7 @@ import org.wso2.carbon.andes.event.core.EventBrokerFactory;
 import org.wso2.carbon.andes.event.core.exception.EventBrokerConfigurationException;
 import org.wso2.carbon.andes.event.core.util.EventBrokerConstants;
 import org.wso2.carbon.utils.ServerConstants;
+import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -78,7 +79,7 @@ public class EventBrokerBuilder {
     private static OMElement loadConfigXML() throws EventBrokerConfigurationException {
 
         String carbonHome = System.getProperty(ServerConstants.CARBON_HOME);
-        String path = carbonHome + File.separator + "repository" + File.separator + "conf" + File.separator + EventBrokerConstants.EB_CONF;
+        String path = CarbonUtils.getCarbonConfigDirPath() + File.separator + EventBrokerConstants.EB_CONF;
         BufferedInputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(new File(path)));

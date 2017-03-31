@@ -86,10 +86,7 @@ public final class MessageBrokerDBUtil {
         if (dSetupValue != null) {
 
             //load necessary configurations
-            final String brokerConfigFilePath  = CarbonUtils.getCarbonHome()
-                    + File.separator + "repository"
-                    + File.separator + "conf"
-                    + File.separator + "broker.xml";
+            final String brokerConfigFilePath  = CarbonUtils.getCarbonConfigDirPath() + File.separator + "broker.xml";
 
             MBDatabaseConfig mbDatabaseConfig = new MBDatabaseConfig(brokerConfigFilePath);
 

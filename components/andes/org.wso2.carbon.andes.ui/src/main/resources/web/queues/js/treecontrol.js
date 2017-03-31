@@ -248,134 +248,6 @@ function doPurge(queueName) {
 			 });
  }
 
-function doReRouteAllMessages(nameOfQueue) {
-    var sourceList;
-    var targetList;
-    // Getting the list of destination belonging to dlc messages
-    jQuery.ajax({
-        url: "../queues/dlc_message_destinations_list_retrieve_ajaxprocessor.jsp?nameOfQueue=" + nameOfQueue,
-        type: "POST",
-        async: false,
-        success: function (data) {
-            //Let's say data is something like the following string
-            // data = "queue1#queue2";
-            //data = data.split("#");
-            data = jQuery.trim(data);
-            data  = data.split("#");
-
-            sourceList = '<div id="source" style="margin: 0 auto; width: 50%;">From : <select id="sourceDestinations" style="margin-top: 10px;">';
-            for (var i = 0; i < data.length; i++) {
-                sourceList += '<option value="' + data[i] + '">' + data[i] + '</option>';
-            }
-            sourceList += '</select></div>';
-        },
-        failure: function(transport) {
-            CARBON.showErrorDialog(trim(transport.responseText),function(){
-                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                return;
-            });
-        }
-    });
-
-    // Getting the list of queues
-    jQuery.ajax({
-        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp",
-        type: "POST",
-        async: false,
-        success: function (data) {
-            //Let's say data is something like the following string
-            // data = "queue1#queue2";
-            //data = data.split("#");
-            data = jQuery.trim(data);
-            data  = data.split("#");
-
-            targetList = '<div id="target" style="margin: 0 auto; width: 50%;">Re-route To : <select id="targetDestinations" style="margin-top: 10px;">';
-            for (var i = 0; i < data.length; i++) {
-                targetList += '<option value="' + data[i] + '">' + data[i] + '</option>';
-            }
-            targetList += '</select></div>';
-
-
-        },
-        failure: function(transport) {
-            CARBON.showErrorDialog(trim(transport.responseText),function(){
-                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                return;
-            });
-        }
-    });
-
-    // Showing the pop up message
-    CARBON.showPopupDialog(sourceList + targetList, "Select a queue to route messages ", 130, true,
-        function () {
-            // Getting selected source destination and target destination
-            var sourceDestination = jQuery('#sourceDestinations').val();
-            var targetDestination = jQuery('#targetDestinations').val();
-            
-            // Getting message IDs belonging to the source destination in the DLC
-            var checkedValues;
-            jQuery.ajax({
-                url: "../queues/queue_messages_ids_ajaxprocessor.jsp?nameOfQueue=" + sourceDestination,
-                type: "GET",
-                async: false,
-                success: function (data) {
-                    checkedValues = data;
-                },
-                failure: function(transport) {
-                    CARBON.showErrorDialog(trim(transport.responseText),function(){
-                        location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                        return;
-                    });
-                }
-            });
-
-            // Showing confirmation box
-            CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.reRoute"], function () {
-                console.log(checkedValues);
-                $.ajax({
-                    url: '../queues/dlc_message_reroute_ajaxprocessor.jsp',
-                    async: true,
-                    dataType: "html",
-                    data: { msgList : checkedValues.trim(),
-                            nameOfQueue : sourceDestination,
-                            newQueueName : targetDestination },
-                    success: function (data) {
-                        data = data.trim();
-                        var unavailableMessageCount = parseFloat(data);
-                        if(unavailableMessageCount > 0) {
-                            if(unavailableMessageCount == checkedValues.split(",").length) {
-                                CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.fail.reRoute"],
-                                function(){
-                                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                                });
-                            }else {
-                                CARBON.showInfoDialog(unavailableMessageCount + " "
-                                + org_wso2_carbon_andes_ui_jsi18n["info.partial.successful.reRoute"],
-                                function(){
-                                    location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                                });
-                            }
-                        }else {
-                            CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.reRoute"],
-                            function(){
-                                location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                            });
-                        }
-                    },
-
-                    failure: function (transport) {
-                        CARBON.showErrorDialog(trim(transport.responseText), function () {
-                            location.href = "../queues/dlc_messages_list.jsp?nameOfQueue=" + nameOfQueue;
-                            return;
-                        });
-                    }
-                });
-            });
-
-        }, 500
-    );
-}
-
 function doReRouteMessages(nameOfQueue) {
     var checkedValues = getCheckedValues();
     if (checkedValues == null || checkedValues == "") {
@@ -400,7 +272,7 @@ function doReRouteMessages(nameOfQueue) {
             }
             selectElement += '</select>';
 
-            CARBON.showPopupDialog(selectElement, "Select a queue to route messages ", 100, true,
+            CARBON.showPopupDialog("", "Select a queue to route messages ", 100, true,
                 function () {
                     var selectedQueue = jQuery('#allQueues').val();
 
@@ -448,6 +320,7 @@ function doReRouteMessages(nameOfQueue) {
 
                 } , 300
             );
+            $("#popupDialog").after(selectElement);
         },
         failure: function(transport) {
             CARBON.showErrorDialog(trim(transport.responseText),function(){

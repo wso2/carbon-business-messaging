@@ -43,7 +43,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
 
         <!-- Configurations related RDBMS based coordination algorithm -->
-        <rdbmsBasedCoordination enabled="false">
+        <rdbmsBasedCoordination enabled="true">
             <!-- Heartbeat interval used in the RDBMS base coordination algorithm in milliseconds -->
             <heartbeatInterval>5000</heartbeatInterval>
 
@@ -58,7 +58,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <!-- Enabling this will make the cluster notifications such as Queue changes(additions and deletions),
         Subscription changes, etc. sent within the cluster be synchronized using RDBMS. If set to false, Hazelcast
         will be used for this purpose.-->
-        <RDBMSBasedClusterEventSynchronization enabled="false">
+        <RDBMSBasedClusterEventSynchronization enabled="true">
 
             <!--Specifies the interval at which, the cluster events will be read from the database. Needs to be
             declared in milliseconds. Setting this to a very low value could downgrade the performance where as
@@ -256,10 +256,14 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <!--Publisher transaction related configurations.-->
     <transaction>
 
-        <!--Maximum batch size (Messages) for a transaction. Exceeding this limit will result
-        in a failure in the subsequent commit request. Default is set to 10MB. Limit is
-        calculated considering the payload of messages-->
-        <maxBatchSizeInBytes>10000000</maxBatchSizeInBytes>
+        <!--Maximum batch size (Messages) in kilobytes for a transaction. Exceeding this limit will
+         result in a failure in the subsequent commit (or prepare) request. Default is set to 1MB.
+         Limit is calculated considering the payload of messages.-->
+        <maxBatchSizeInKB>10240</maxBatchSizeInKB>
+
+        <!-- Maximum number of parallel dtx enabled channel count. Distributed transaction
+         requests exceeding this limit will fail. -->
+        <maxParallelDtxChannels>10</maxParallelDtxChannels>
     </transaction>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
@@ -268,25 +272,37 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
     <performanceTuning>
 
         <slots>
+
+            <!--Rough estimate for size of a slot. What is meant by size is the number of messages
+            contained within bounties of a slot. -->
+            <windowSize>1000</windowSize>
+
             <!--
-                If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
-                This will add an latency to messages. Therefore broker will mark the slot as 
-                ready to deliver before even the slot is entirely filled after specified time.
-                NOTE: specified in milliseconds.
+            If message publishers are slow, time taken to fill the slot (up to <windowSize>) will be longer.
+            This will add an latency to messages. Therefore broker will mark the slot as
+            ready to deliver before even the slot is entirely filled after specified time.
+            NOTE: specified in milliseconds.
             -->
             <messageAccumulationTimeout>2000</messageAccumulationTimeout>
-
-            <!--Rough estimate for size of a slot-->
-            <windowSize>1000</windowSize>
 
             <!-- Time interval which broker check for slots that can be marked as 'ready to deliver' 
                  (- slots which have a aged more than 'messageAccumulationTimeout')
                  NOTE: specified in milliseconds.
             -->
-            <timerPeriod>1000</timerPeriod>
+            <maxSubmitDelay>1000</maxSubmitDelay>
 
-            <!--Number of SlotDeliveryWorker threads that should be started-->
-            <workerThreadCount>5</workerThreadCount>
+            <!--Number of MessageDeliveryWorker threads that should be started-->
+            <deliveryThreadCount>5</deliveryThreadCount>
+
+            <!-- Number of parallel threads to execute slot deletion task. Increasing this value will remove slots
+                 whose messages are read/delivered to consumers/acknowledged faster reducing heap memory used by
+                 server.-->
+            <deleteThreadCount>5</deleteThreadCount>
+
+            <!-- Max number of pending message count to delete per Slot Deleting Task. This config is used to raise
+             a WARN when pending scheduled number of slots exceeds this limit (indicate of an  issue that can lead to
+             message accumulation on server.-->
+            <SlotDeleteQueueDepthWarningThreshold>1000</SlotDeleteQueueDepthWarningThreshold>
 
             <!-- Maximum number of thrift client connections that should be created in the thrift connection pool -->
             <thriftClientPoolSize>10</thriftClientPoolSize>
@@ -509,11 +525,6 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             <highLimit>1000</highLimit>
         </bufferBased>
     </flowControl>
-
-    <slotManagement>
-        <!--Set slot storage mode (RDBMS/HazelCast)-->
-        <storage>RDBMS</storage>
-    </slotManagement>
 	
     <!--
     Message broker keeps track of all messages it has received as groups. These groups are termed

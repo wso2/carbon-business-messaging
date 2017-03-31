@@ -91,6 +91,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("UnusedDeclaration")
     public TopicRolePermission[] getTopicRolePermissions(String topic) throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return eventBroker.getTopicManagerService().getTopicRolePermission(topic);
@@ -108,6 +109,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      * @throws EventAdminException Thrown when accessing registry or when providing permissions.
      */
     public void addTopic(String topic) throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             if (!eventBroker.getTopicManagerService().isTopicExists(topic)) {
@@ -133,6 +135,7 @@ public class AndesEventAdminService extends AbstractAdmin {
     @SuppressWarnings("UnusedDeclaration")
     public void updatePermission(String topic, TopicRolePermission[] topicRolePermissions)
             throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             eventBroker.getTopicManagerService().updatePermissions(topic, topicRolePermissions);
@@ -157,6 +160,7 @@ public class AndesEventAdminService extends AbstractAdmin {
     public Subscription[] getAllWSSubscriptionsForTopic(String topic, int startingIndex,
                                                         int maxSubscriptionCount)
             throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             TopicManagerService topicManager = eventBroker.getTopicManagerService();
@@ -199,6 +203,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("UnusedDeclaration")
     public Subscription[] getWsSubscriptionsForTopic(String topic) throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return adaptSubscriptions(eventBroker.getTopicManagerService().getSubscriptions(topic, true));
@@ -219,6 +224,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("UnusedDeclaration")
     public int getAllWSSubscriptionCountForTopic(String topic) throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return eventBroker.getTopicManagerService().getSubscriptions(topic, true).length;
@@ -240,6 +246,7 @@ public class AndesEventAdminService extends AbstractAdmin {
     @SuppressWarnings("UnusedDeclaration")
     public Subscription[] getJMSSubscriptionsForTopic(String topic)
             throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return adaptSubscriptions(eventBroker.getTopicManagerService().getJMSSubscriptions(topic));
@@ -275,6 +282,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      * @throws EventAdminException
      */
     public void publishToTopic(String content, String topicName) throws EventAdminException {
+        topicName = setNameToLowerCase(topicName);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             if (checkCurrentUserHasPublishTopicPermission(topicName)) {
@@ -390,6 +398,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      * @throws EventAdminException
      */
     public boolean checkCurrentUserHasPublishTopicPermission(String topicName) throws EventAdminException {
+        topicName = setNameToLowerCase(topicName);
         return checkUserHasPublishTopicPermission(topicName, CarbonContext.getThreadLocalCarbonContext().getUsername());
     }
 
@@ -401,6 +410,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      * @throws EventAdminException
      */
     public boolean checkUserHasPublishTopicPermission(String topicName, String username) throws EventAdminException {
+        topicName = setNameToLowerCase(topicName);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return eventBroker.getTopicManagerService().checkUserHasPublishTopicPermission(topicName, username);
@@ -421,6 +431,7 @@ public class AndesEventAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("UnusedDeclaration")
     public boolean removeTopic(String topic) throws EventAdminException {
+        topic = setNameToLowerCase(topic);
         EventBroker eventBroker = EventAdminHolder.getInstance().getEventBroker();
         try {
             return eventBroker.getTopicManagerService().removeTopic(topic);
@@ -483,5 +494,15 @@ public class AndesEventAdminService extends AbstractAdmin {
         adminSubscription.setTopicName(coreSubscription.getTopicName());
         adminSubscription.setMode(coreSubscription.getMode());
         return adminSubscription;
+    }
+
+    /**
+     * Given a queue name this method returns the lower case representation of the queue name.
+     *
+     * @param queue the queue name to change the case
+     * @return the lower case representation of the queue name
+     */
+    private String setNameToLowerCase(String queue) {
+        return queue.toLowerCase();
     }
 }

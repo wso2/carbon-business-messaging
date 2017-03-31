@@ -5,13 +5,15 @@
 <%
     AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
 
+    boolean isDurable = Boolean.valueOf(request.getParameter("isDurable"));
     String subscriptionID = request.getParameter("subscriptionID");
-    String subscriptionDestination = request.getParameter("destination");
+    String subscribedQueueOrTopicName = request.getParameter("subscribedQueueOrTopicName");
     String protocolType = request.getParameter("protocolType");
     String destinationType = request.getParameter("destinationType");
+    String subscriberQueueName = request.getParameter("subscriberQueueName");
     String message = "";
     try {
-        stub.closeSubscription(subscriptionID, subscriptionDestination, protocolType, destinationType);
+        stub.closeSubscription(isDurable, subscriptionID, subscribedQueueOrTopicName, protocolType, destinationType, subscriberQueueName);
     } catch (AndesAdminServiceBrokerManagerAdminException e) {
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getFaultMessage().getBrokerManagerAdminException().getErrorMessage(), e);
         session.setAttribute(CarbonUIMessage.ID, uiMsg);

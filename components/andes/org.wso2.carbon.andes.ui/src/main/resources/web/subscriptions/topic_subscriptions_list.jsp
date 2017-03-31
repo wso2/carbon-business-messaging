@@ -96,17 +96,21 @@
 
     function closeSubscription(obj) {
         var aTag = jQuery(obj);
+        var isDurable = aTag.attr('isDurable');
         var subscriptionID = aTag.attr('subscription-id');
-        var subscriptionDestination = aTag.attr('subscription-destination');
+        var subscribedQueueOrTopicName = aTag.attr('subscribedQueueOrTopicName');
         var protocolType = aTag.attr('protocolType');
         var destinationType = aTag.attr('destinationType');
+        var subscriberQueueName = aTag.attr('subscriberQueueName');
+
         aTag.css('font-weight', 'bolder');
 
         CARBON.showConfirmationDialog("Are you sure you want to close this subscription?", function(){
             $.ajax({
-                url:'subscriptions_close_ajaxprocessor.jsp?subscriptionID=' + subscriptionID + "&destination="
-                + subscriptionDestination + "&protocolType=" + protocolType + "&destinationType="
-                                                             + destinationType,
+                url:'subscriptions_close_ajaxprocessor.jsp?isDurable=' + isDurable + '&subscriptionID=' + subscriptionID
+                                           + '&subscribedQueueOrTopicName=' + subscribedQueueOrTopicName
+                                           + '&protocolType=' + protocolType + '&destinationType=' + destinationType
+                                           + '&subscriberQueueName=' + subscriberQueueName,
                 async:true,
                 type:"POST",
                 beforeSend: function(xhr) {
@@ -206,7 +210,7 @@
     AndesAdminServiceStub andesAdminStub = UIUtils.getAndesAdminServiceStub(config, session, request);
     AndesEventAdminServiceStub andesEventAdminStub = UIUtils.getAndesEventAdminServiceStub(config, session, request);
     AndesManagerServiceStub managerServiceStub = UIUtils.getAndesManagerServiceStub(config, session);
-    long totalNormalTopicSubscriptionCount = 0;
+    long totalNonDurableTopicSubscriptionCount = 0;
     long totalActiveDurableTopicSubscriptionCount = 0;
     long totalInactiveDurableTopicSubscriptionCount = 0;
     Subscription[] filteredNormalTopicSubscriptionList = null;
@@ -259,12 +263,12 @@
 
         if (filteredNormalTopicSubscriptionList != null) {
 
-            totalNormalTopicSubscriptionCount = andesAdminStub.getTotalSubscriptionCountForSearchResult(false, true,
+            totalNonDurableTopicSubscriptionCount = andesAdminStub.getTotalSubscriptionCountForSearchResult(false, true,
                 ProtocolType.AMQP.name(), DestinationType.TOPIC.name(),filteredName, isFilteredNameByExactMatch,
                 identifierPattern, isIdentifierPatternByExactMatch, ownNodeId);
 
             numberOfNormalTopicSubscriptionPages =
-            (int) Math.ceil(((float) totalNormalTopicSubscriptionCount) / subscriptionCountPerPage);
+            (int) Math.ceil(((float) totalNonDurableTopicSubscriptionCount) / subscriptionCountPerPage);
         }
 
 
@@ -424,7 +428,7 @@ No subscriptions to show.
                   parameters="<%=concatenatedParams%>"
                   action="POST"/>
 <table class="styledLeft" style="width:100%;margin-bottom: 20px">
-    <caption>Total temporary subscription count is <%=totalNormalTopicSubscriptionCount%></caption>
+    <caption>Total non-durable topic subscription count is <%=totalNonDurableTopicSubscriptionCount%></caption>
     <thead>
     <tr>
         <th><fmt:message key="subscription.identifier"/></th>
@@ -456,10 +460,12 @@ No subscriptions to show.
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
+               isDurable="<%=sub.getDurable()%>"
                subscription-id="<%=sub.getSubscriptionIdentifier()%>"
-               subscription-destination="<%=sub.getSubscribedQueueOrTopicName()%>"
+               subscribedQueueOrTopicName="<%=sub.getSubscribedQueueOrTopicName()%>"
                protocolType="<%=sub.getProtocolType()%>"
                destinationType="<%=sub.getDestinationType()%>"
+               subscriberQueueName="<%=sub.getSubscriberQueueName()%>"
                onclick="closeSubscription(this)">Close
             </a>
         </td>
@@ -529,7 +535,7 @@ No subscriptions to show.
         <%
             String identifierForActiveSub = sub.getSubscriptionIdentifier();
             if (allowSharedSubscribers) {
-                identifierForActiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
+                identifierForActiveSub =  sub.getSubscriptionIdentifier();
             }
         %>
         <td><%=identifierForActiveSub%>
@@ -563,10 +569,12 @@ No subscriptions to show.
         <td>
             <a style="background-image: url(images/unsubscribe.png);"
                class="icon-link"
+               isDurable="<%=sub.getDurable()%>"
                subscription-id="<%=sub.getSubscriptionIdentifier()%>"
-               subscription-destination="<%=sub.getSubscriberQueueName()%>"
+               subscribedQueueOrTopicName="<%=sub.getSubscribedQueueOrTopicName()%>"
                protocolType="<%=sub.getProtocolType()%>"
                destinationType="<%=sub.getDestinationType()%>"
+               subscriberQueueName="<%=sub.getSubscriberQueueName()%>"
                onclick="closeSubscription(this)">Close
             </a>
         </td>
@@ -634,7 +642,7 @@ No subscriptions to show.
         <%
             String identifierForInactiveSub = sub.getSubscriptionIdentifier();
             if (allowSharedSubscribers) {
-                identifierForInactiveSub =  sub.getSubscriberQueueName() + "_" + sub.getSubscriptionIdentifier();
+                identifierForInactiveSub =  sub.getSubscriptionIdentifier();
             }
         %>
         <td><%=identifierForInactiveSub%>

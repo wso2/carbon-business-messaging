@@ -36,7 +36,6 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.authorization.TreeNode;
-import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,6 +114,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public org.wso2.carbon.andes.admin.internal.Queue getQueueByName(String queueName)
             throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         org.wso2.carbon.andes.admin.internal.Queue queue = null;
         try {
 
@@ -221,6 +221,7 @@ public class AndesAdminService extends AbstractAdmin {
     @SuppressWarnings("UnusedDeclaration")
     public long getMessageCount(String destinationName, String msgPattern)
             throws BrokerManagerAdminException {
+        destinationName = setNameToLowerCase(destinationName);
         long messageCount;
         try {
             QueueManagerService queueManagerService =
@@ -241,6 +242,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void deleteQueue(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -259,6 +261,8 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws BrokerManagerAdminException {
+        topicName = setNameToLowerCase(topicName);
+        subscriptionId = setNameToLowerCase(subscriptionId);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -278,12 +282,13 @@ public class AndesAdminService extends AbstractAdmin {
      * @return unavailable message count
      * @throws BrokerManagerAdminException
      */
-    public long restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+    public long restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            return queueManagerService.restoreMessagesFromDeadLetterQueue(messageIDs, destinationQueueName);
+            return queueManagerService.restoreSelectedMessagesFromDeadLetterChannel(messageIDs, destinationQueueName);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
             log.error(errorMessage, e);
@@ -300,14 +305,16 @@ public class AndesAdminService extends AbstractAdmin {
      * @return unavailable message count
      * @throws BrokerManagerAdminException
      */
-    public long restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
+    public long rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
                                                                            String newDestinationQueueName,
                                                                            String destinationQueueName)
             throws BrokerManagerAdminException {
+        newDestinationQueueName = setNameToLowerCase(newDestinationQueueName);
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
-            return queueManagerService.restoreMessagesFromDeadLetterQueueWithDifferentDestination(messageIDs,
+            return queueManagerService.rerouteSelectedMessagesFromDeadLetterChannel(messageIDs,
                     newDestinationQueueName, destinationQueueName);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
@@ -325,6 +332,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws BrokerManagerAdminException {
+        destinationQueueName = setNameToLowerCase(destinationQueueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -343,6 +351,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void purgeMessagesOfQueue(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
@@ -356,19 +365,32 @@ public class AndesAdminService extends AbstractAdmin {
 
 	/**
 	 * Close subscription defined by subscription ID forcibly
+     * @param isDurable is subscriber durable or not
 	 * @param subscriptionID ID of the subscription
-	 * @param destination queue / topic name of the subscribed destination
+	 * @param subscribedQueueOrTopicName queue / topic name of the subscribed destination
      * @param protocolType The protocol type of the subscriptions to close
      * @param destinationType The destination type of the subscriptions to close
+     * @param subscriberQueueName The bind queue of the subscriber
 	 * @throws BrokerManagerAdminException
 	 */
-	public void closeSubscription(String subscriptionID, String destination, String protocolType,
-                                  String destinationType) throws BrokerManagerAdminException {
-		try {
+	public void closeSubscription(boolean isDurable, String subscriptionID, String subscribedQueueOrTopicName,
+                                  String protocolType, String destinationType, String subscriberQueueName)
+            throws BrokerManagerAdminException {
+        subscriptionID = setNameToLowerCase(subscriptionID);
+        subscribedQueueOrTopicName = setNameToLowerCase(subscribedQueueOrTopicName);
+        subscriberQueueName = setNameToLowerCase(subscriberQueueName);
+        try {
 			SubscriptionManagerService subscriptionManagerService =
 					AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-			subscriptionManagerService.closeSubscription(subscriptionID, destination, protocolType, destinationType);
-		} catch (SubscriptionManagerException e) {
+            subscriptionManagerService.closeSubscription(subscriptionID, subscribedQueueOrTopicName, protocolType,
+                    destinationType);
+            //if non durable subscriber, then delete topic from registry after closing
+            if (!isDurable) {
+                QueueManagerService queueManagerService =
+                        AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+                queueManagerService.deleteTopicFromRegistry(subscribedQueueOrTopicName, subscriberQueueName);
+            }
+		} catch (SubscriptionManagerException | QueueManagerException e) {
 			String errorMessage = e.getMessage();
 			log.error(errorMessage, e);
 			throw new BrokerManagerAdminException(errorMessage, e);
@@ -495,6 +517,8 @@ public class AndesAdminService extends AbstractAdmin {
         List<Subscription> allSubscriptions = new ArrayList<>();
         Subscription[] subscriptionsDTO;
 
+        filteredNamePattern = setNameToLowerCase(filteredNamePattern);
+        identifierPattern = setNameToLowerCase(identifierPattern);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -551,6 +575,8 @@ public class AndesAdminService extends AbstractAdmin {
                                                         isFilteredNameByExactMatch, String identifierPattern, boolean
                                                         isIdentifierPatternByExactMatch, String ownNodeId) throws
                                                         BrokerManagerAdminException {
+        filteredNamePattern = setNameToLowerCase(filteredNamePattern);
+        identifierPattern = setNameToLowerCase(identifierPattern);
         int subscriptionCountForSearchResult = 0;
         try {
             SubscriptionManagerService subscriptionManagerService =
@@ -580,6 +606,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService =
                 AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
             return queueManagerService.getNumberOfMessagesInDLCForQueue(queueName);
         } catch (QueueManagerException e) {
@@ -599,14 +626,15 @@ public class AndesAdminService extends AbstractAdmin {
      * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
      * @throws BrokerManagerAdminException
      */
-    public Message[] getMessageInDLCForQueue(String queueName, long nextMessageIdToRead,
+    public Message[] getMessagesInDLCForQueue(String queueName, long nextMessageIdToRead,
                                              int maxMsgCount) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         List<Message> messageDTOList = new ArrayList<>();
+        queueName = setNameToLowerCase(queueName);
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
-                    queueManagerService.getMessageInDLCForQueue(queueName, nextMessageIdToRead, maxMsgCount);
+                    queueManagerService.getMessagesInDLCForQueue(queueName, nextMessageIdToRead, maxMsgCount);
             for (org.wso2.carbon.andes.core.types.Message message : messages) {
                 Message messageDTO = new Message();
                 messageDTO.setMsgProperties(message.getMsgProperties());
@@ -637,8 +665,8 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public void updatePermission(String queueName, QueueRolePermission[] queueRolePermissionsDTO)
-            throws
-            BrokerManagerAdminException {
+            throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
@@ -670,6 +698,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = queueName.toLowerCase();
         org.wso2.carbon.andes.core.types.QueueRolePermission[] rolePermissions;
         try {
             if (null != queueRolePermissionsDTO && queueRolePermissionsDTO.length > 0) {
@@ -723,6 +752,7 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         List<QueueRolePermission> queueRolePermissionDTOList = new ArrayList<QueueRolePermission>();
         try {
             org.wso2.carbon.andes.core.types.QueueRolePermission[] queueRolePermission = queueManagerService
@@ -757,6 +787,7 @@ public class AndesAdminService extends AbstractAdmin {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
         List<Message> messageDTOList = new ArrayList<Message>();
+        queueName = setNameToLowerCase(queueName);
         try {
             org.wso2.carbon.andes.core.types.Message[] messages =
                     queueManagerService.browseQueue(queueName, nextMessageIdToRead, maxMsgCount);
@@ -794,6 +825,7 @@ public class AndesAdminService extends AbstractAdmin {
     public long getTotalMessagesInQueue(String queueName) throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
             return queueManagerService.getTotalMessagesInQueue(queueName);
         } catch (QueueManagerException e) {
@@ -824,10 +856,10 @@ public class AndesAdminService extends AbstractAdmin {
             throws BrokerManagerAdminException {
         QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance()
                 .getQueueManagerService();
+        queueName = setNameToLowerCase(queueName);
         try {
-            return queueManagerService.sendMessage(queueName, getCurrentUser(), getAccessKey(), jmsType,
-                    jmsCorrelationID,
-                    numberOfMessages, message, deliveryMode, priority, expireTime);
+            return queueManagerService.sendMessage(queueName, getCurrentLoggedInUser(), getAccessKey(), jmsType,
+                    jmsCorrelationID, numberOfMessages, message, deliveryMode, priority, expireTime);
         } catch (QueueManagerException e) {
             String errorMessage = e.getMessage();
             log.error(errorMessage, e);
@@ -857,6 +889,7 @@ public class AndesAdminService extends AbstractAdmin {
     public int getMessageCountForSubscriber(String subscriptionID, boolean durable, String protocolType,
                                             String destinationType) throws BrokerManagerAdminException {
         int remainingMessages = 0;
+        subscriptionID = setNameToLowerCase(subscriptionID);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -892,6 +925,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public long getPendingMessageCount(String queueName) throws BrokerManagerAdminException {
+        queueName = setNameToLowerCase(queueName);
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
@@ -932,7 +966,8 @@ public class AndesAdminService extends AbstractAdmin {
      */
     @SuppressWarnings("unused")
     public boolean checkCurrentUserHasPublishPermission(String queueName) throws BrokerManagerAdminException {
-        return checkUserHasPublishPermission(queueName, CarbonContext.getThreadLocalCarbonContext().getUsername());
+        queueName = setNameToLowerCase(queueName);
+        return checkUserHasPublishPermission(queueName, getCurrentLoggedInUser());
     }
 
     /**
@@ -945,6 +980,7 @@ public class AndesAdminService extends AbstractAdmin {
      */
     public boolean checkUserHasPublishPermission(String queueName, String userName) throws BrokerManagerAdminException {
         boolean hasPermission = false;
+        queueName = setNameToLowerCase(queueName);
         String queueID = CommonsUtil.getQueueID(queueName);
         try {
             if (Utils.isAdmin(userName)) {
@@ -969,7 +1005,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasAddQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasAddQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasAddQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1005,7 +1041,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasBrowseQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasBrowseQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasBrowseQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1041,7 +1077,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasDeleteQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasDeleteQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasDeleteQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1077,7 +1113,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasPurgeQueuePermission() throws BrokerManagerAdminException {
-        return checkUserHasPurgeQueuePermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasPurgeQueuePermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1113,7 +1149,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasBrowseMessagesInDLCPermission() throws BrokerManagerAdminException {
-        return checkUserHasBrowseMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasBrowseMessagesInDLCPermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1149,7 +1185,7 @@ public class AndesAdminService extends AbstractAdmin {
      * @throws BrokerManagerAdminException
      */
     public boolean checkCurrentUserHasDeleteMessagesInDLCPermission() throws BrokerManagerAdminException {
-        return checkUserHasDeleteMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
+        return checkUserHasDeleteMessagesInDLCPermission(getCurrentLoggedInUser());
     }
 
     /**
@@ -1259,7 +1295,7 @@ public class AndesAdminService extends AbstractAdmin {
 	 */
 	public boolean checkCurrentUserHasQueueSubscriptionClosePermission() throws BrokerManagerAdminException {
 		boolean hasPermission = false;
-		String username = getCurrentUser();
+		String username = getCurrentLoggedInUser();
 		try {
 			if (Utils.isAdmin(username)) {
 				hasPermission = true;
@@ -1275,44 +1311,122 @@ public class AndesAdminService extends AbstractAdmin {
 		return hasPermission;
 	}
 
-	/**
-	 * Evaluate current logged in user has close subscription permission for topic subscriptions. This service mainly
-	 * used to restrict UI
-	 * control for un-authorize users
-	 * @return true/false based on permission
-	 * @throws BrokerManagerAdminException
-	 */
-	public boolean checkCurrentUserHasTopicSubscriptionClosePermission() throws BrokerManagerAdminException {
-		boolean hasPermission = false;
-		String username = getCurrentUser();
-		try {
-			if (Utils.isAdmin(username)) {
-				hasPermission = true;
-			} else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
-					.isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
-				hasPermission = true;
-			}
-		} catch (UserStoreException | QueueManagerException e) {
-			String errorMessage = e.getMessage();
-			log.error(errorMessage, e);
-			throw new BrokerManagerAdminException(errorMessage, e);
-		}
-		return hasPermission;
-	}
+    /**
+     * Evaluate current logged in user has close subscription permission for topic subscriptions. This service mainly
+     * used to restrict UI control for un-authorize users
+     *
+     * @return true/false based on permission
+     * @throws BrokerManagerAdminException on an issue checking permission
+     */
+    public boolean checkCurrentUserHasTopicSubscriptionClosePermission() throws BrokerManagerAdminException {
+        boolean hasPermission = false;
+        String username = getCurrentLoggedInUser();
+        try {
+            if (Utils.isAdmin(username)) {
+                hasPermission = true;
+            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
+                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE, UI_EXECUTE)) {
+                hasPermission = true;
+            }
+        } catch (UserStoreException | QueueManagerException e) {
+            String errorMessage = e.getMessage();
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+        return hasPermission;
+    }
 
     /**
-     * Get current user's username.
-     * @return The user name.
+     * Get username of current logged in user. For tenant users only username is returned
+     * without the domain
+     *
+     * @return user name of logged in user
      */
-    private String getCurrentUser() {
-        String userName;
-        if (CarbonContext.getThreadLocalCarbonContext().getTenantId() > MultitenantConstants.INVALID_TENANT_ID) {
-            userName = CarbonContext.getThreadLocalCarbonContext().getUsername() + "!"
-                    + CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        } else {
-            userName = CarbonContext.getThreadLocalCarbonContext().getUsername();
+    private String getCurrentLoggedInUser() {
+        return CarbonContext.getThreadLocalCarbonContext().getUsername();
+    }
+
+
+    /**
+     * Returns a paginated list of message metadata destined for the inputQueueName but currently living in the
+     * Dead Letter Channel.
+     *
+     * @param targetQueue    Name of the destination queue
+     * @param startMessageId Start point of the queue message id to start reading
+     * @param pageLimit      Maximum messages required in a single response
+     * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
+     * @throws BrokerManagerAdminException if an error occurs while invoking the MBean to fetch messages.
+     */
+    public Message[] getMessageMetadataInDeadLetterChannel(String targetQueue, long startMessageId, int pageLimit)
+            throws BrokerManagerAdminException {
+
+        targetQueue = setNameToLowerCase(targetQueue);
+
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+        List<Message> messageDTOList = new ArrayList<>();
+        try {
+            org.wso2.carbon.andes.core.types.Message[] messages = queueManagerService
+                    .getMessageMetadataInDLC(targetQueue, startMessageId, pageLimit);
+            for (org.wso2.carbon.andes.core.types.Message message : messages) {
+                Message messageDTO = new Message();
+                messageDTO.setMsgProperties(message.getMsgProperties());
+                messageDTO.setContentType(message.getContentType());
+                messageDTO.setMessageContent(message.getMessageContent());
+                messageDTO.setJMSMessageId(message.getJMSMessageId());
+                messageDTO.setJMSReDelivered(message.getJMSReDelivered());
+                // Delivery mode is received is not set when received from backend as its always persisted mode.
+                messageDTO.setJMSDeliveredMode("null");
+                messageDTO.setJMSTimeStamp(message.getJMSTimeStamp());
+                messageDTO.setDlcMsgDestination(message.getDlcMsgDestination());
+                messageDTO.setAndesMsgMetadataId(message.getAndesMsgMetadataId());
+                messageDTOList.add(messageDTO);
+            }
+        } catch (QueueManagerException e) {
+            String errorMessage = "Error occurred while listing messages in DLC for queue : " + targetQueue;
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
         }
-        return userName.trim();
+        return messageDTOList.toArray(new Message[messageDTOList.size()]);
+    }
+
+    /**
+     * Move messages destined for the input sourceQueue into a different targetQueue.
+     * If the sourceQueue is DLCQueue, all messages in the DLC will be restored to the targetQueue.
+     *
+     * @param sourceQueue       Name of the source queue
+     * @param targetQueue       Name of the target queue.
+     * @param internalBatchSize even with this method, the MB server will internally read messages in DLC in batches,
+     *                          and simulate each batch as a new message list to the targetQueue. internalBatchSize
+     *                          controls the number of messages processed in a single batch internally.
+     * @return String message containing the number of messages that were restored.
+     */
+    public String rerouteAllMessagesFromDeadLetterChannelForQueue(String sourceQueue, String targetQueue,
+                                                                  int internalBatchSize) throws BrokerManagerAdminException {
+
+        int movedMessageCount;
+
+        sourceQueue = setNameToLowerCase(sourceQueue);
+        targetQueue = setNameToLowerCase(targetQueue);
+
+        QueueManagerService queueManagerService = AndesBrokerManagerAdminServiceDSHolder.getInstance().getQueueManagerService();
+
+        try {
+            movedMessageCount = queueManagerService
+                    .rerouteMessagesFromDeadLetterChannelForQueue(sourceQueue, targetQueue, internalBatchSize);
+        } catch (QueueManagerException e) {
+            String errorMessage = "Error occurred while rerouting all messages from sourceQueue : " + sourceQueue + ""
+                    + " to targetQueue : " + targetQueue;
+            log.error(errorMessage, e);
+            throw new BrokerManagerAdminException(errorMessage, e);
+        }
+
+        if (-1 < movedMessageCount) {
+            return "Messages were successfully restored to the target queue : " + targetQueue + ". movedMessageCount : "
+                    + movedMessageCount;
+        } else {
+            return "An error occured while restoring messages to the target queue : " + targetQueue + ". "
+                    + "movedMessageCount : " + movedMessageCount;
+        }
     }
 
     /**
@@ -1348,5 +1462,15 @@ public class AndesAdminService extends AbstractAdmin {
         public int compare(Subscription sub1, Subscription sub2) {
             return sub1.getNumberOfMessagesRemainingForSubscriber() - sub2.getNumberOfMessagesRemainingForSubscriber();
         }
+    }
+
+    /**
+     * Given a queue name this method returns the lower case representation of the queue name.
+     *
+     * @param queue the queue name to change the case
+     * @return the lower case representation of the queue name
+     */
+    private String setNameToLowerCase(String queue) {
+        return queue.toLowerCase();
     }
 }

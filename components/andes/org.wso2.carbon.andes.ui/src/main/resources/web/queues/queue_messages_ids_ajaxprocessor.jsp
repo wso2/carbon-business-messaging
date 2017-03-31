@@ -15,9 +15,9 @@
         int numberOfMessagesInDLCForQueue = (int) stub.getNumberOfMessagesInDLCForQueue(queueName);
 
         // Getting the message IDs into a string with delimiter ","
-        Message[] messageInDLCForQueue = stub.getMessageInDLCForQueue(queueName, 0, numberOfMessagesInDLCForQueue);
+        Message[] messagesInDLCForQueue = stub.getMessagesInDLCForQueue(queueName, 0, numberOfMessagesInDLCForQueue);
         for (int i = 0; i < numberOfMessagesInDLCForQueue; i++) {
-            messageIDList += messageInDLCForQueue[i].getAndesMsgMetadataId() + ",";
+            messageIDList += messagesInDLCForQueue[i].getAndesMsgMetadataId() + ",";
         }
 
         // We can remove the "," tag only if the messageIDList is not empty
