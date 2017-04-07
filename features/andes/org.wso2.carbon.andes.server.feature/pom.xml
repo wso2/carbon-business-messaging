@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes-feature</artifactId>
-        <version>3.2.8</version>
+        <version>3.2.9-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.server.feature</artifactId>
-    <version>3.2.8</version>
+    <version>3.2.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Andes - Server</name>
     <url>http://wso2.org</url>
