@@ -389,7 +389,7 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity</groupId>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
                 <version>${carbon.identity.version}</version>
             </dependency>
@@ -672,10 +672,10 @@
         <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.5.4</carbon.commons.version>
-        <carbon.registry.version>4.6.0</carbon.registry.version>
+        <carbon.commons.version>4.5.9</carbon.commons.version>
+        <carbon.registry.version>4.6.6</carbon.registry.version>
         <carbon.messaging.version>3.2.8-SNAPSHOT</carbon.messaging.version>
-        <carbon.identity.version>5.2.0</carbon.identity.version>
+        <carbon.identity.version>5.7.11</carbon.identity.version>
         <carbon.identity.oauth.stub.version>5.0.8</carbon.identity.oauth.stub.version>
         <andes.dependency.version>3.2.10</andes.dependency.version>
         <andes.import.version>[3.2.0, 3.3.0)</andes.import.version>
