@@ -263,7 +263,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
 
         <!-- Maximum number of parallel dtx enabled channel count. Distributed transaction
          requests exceeding this limit will fail. -->
-        <maxParallelDtxChannels>10</maxParallelDtxChannels>
+        <maxParallelDtxChannels>20</maxParallelDtxChannels>
     </transaction>
 
     <!-- This section allows you to tweak memory and processor allocations used by WSO2 MB.
