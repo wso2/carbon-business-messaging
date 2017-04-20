@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.15-SNAPSHOT</version>
+        <version>3.2.15</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>3.2.15-SNAPSHOT</version>
+    <version>3.2.15</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.authorization</artifactId>
     <packaging>bundle</packaging>
