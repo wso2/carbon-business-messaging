@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.wso2</groupId>
+        <artifactId>wso2</artifactId>
+        <version>5</version>
+    </parent>
+
+    <groupId>org.wso2.carbon.business.messaging</groupId>
+    <artifactId>carbon-business-messaging</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>WSO2 Carbon - Business messaging aggregator POM</name>
+
+    <scm>
+        <url>https://github.com/wso2/carbon-business-messaging.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-business-messaging.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/carbon-business-messaging.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <modules>
+
+            </modules>
+        </profile>
+    </profiles>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>wso2-maven2-repository-1</id>
+            <url>http://dist.wso2.org/maven2</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>wso2-maven2-repository-2</id>
+            <url>http://dist.wso2.org/snapshots/maven2</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>wso2-maven2-repository-3</id>
+            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon.business.messaging</groupId>
+                <artifactId>org.wso2.carbon.business.messaging.core</artifactId>
+                <version>${carbon.business.messaging.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.wso2.eclipse.osgi</groupId>
+                <artifactId>org.eclipse.osgi</artifactId>
+                <version>${equinox.osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.eclipse.osgi</groupId>
+                <artifactId>org.eclipse.osgi.services</artifactId>
+                <version>${equinox.osgi.services.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${org.osgi.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.core</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin><!-- Overridden from parent pom to exclude generated sources -->
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <xmlOutput>true</xmlOutput>
+                        <findbugsXmlOutputDirectory>${project.build.directory}/findbugs
+                        </findbugsXmlOutputDirectory>
+                        <!--<excludeFilterFile>findbugs_exclude.xml</excludeFilterFile>-->
+                        <!--Exclude generated sources-->
+                    </configuration>
+                    <version>${maven.findbugsplugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>analyze-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin><!-- Overridden from parent pom to exclude generated sources -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>validate</id>
+                            <phase>validate</phase>
+                            <configuration>
+                                <configLocation>
+                                    https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/checkstyle.xml
+                                </configLocation>
+                                <suppressionsLocation>
+                                    https://raw.githubusercontent.com/wso2/code-quality-tools/master/checkstyle/suppressions.xml
+                                </suppressionsLocation>
+                                <encoding>UTF-8</encoding>
+                                <consoleOutput>true</consoleOutput>
+                                <failsOnError>true</failsOnError>
+                                <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                                <!--Exclude generated sources-->
+                                <excludes>**/generated/**/*</excludes>
+                            </configuration>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- ANTLR Plugin -->
+                <!--<plugin>-->
+                    <!--<groupId>org.antlr</groupId>-->
+                    <!--<artifactId>antlr4-maven-plugin</artifactId>-->
+                    <!--<version>4.5.1</version>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<goals>-->
+                                <!--<goal>antlr4</goal>-->
+                            <!--</goals>-->
+                            <!--<configuration>-->
+                                <!--<listener>true</listener>-->
+                                <!--<visitor>false</visitor>-->
+                                <!--<encoding>${file.encoding}</encoding>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>docs</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <carbon.business.messaging.version>4.0.0-SNAPSHOT</carbon.business.messaging.version>
+        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
+
+        <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
+        <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
+        <org.osgi.core.version>6.0.0</org.osgi.core.version>
+        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
+    </properties>
+
+  <modules>
+        <module>components</module>
+        <module>features</module>
+  </modules>
+
+</project>
