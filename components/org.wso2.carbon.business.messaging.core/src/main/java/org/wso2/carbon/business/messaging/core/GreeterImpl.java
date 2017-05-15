@@ -47,4 +47,12 @@ public class GreeterImpl implements Greeter {
     public void bye() {
         logger.info("Bye " + name);
     }
+
+    /**
+     * Get the name of the Greeter
+     * @return name
+     */
+    public String getName() {
+        return this.name;
+    }
 }

@@ -33,6 +33,7 @@
 
     <modules>
         <module>org.wso2.carbon.business.messaging.core.feature</module>
+        <module>org.wso2.carbon.business.messaging.admin.services.feature</module>
     </modules>
 
 </project>
