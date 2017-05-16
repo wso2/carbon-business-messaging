@@ -35,9 +35,13 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.business.messaging.admin.services.types.Hello;
+import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.carbon.business.messaging.core.Greeter;
 import org.wso2.msf4j.Microservice;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -110,21 +114,21 @@ public class MBRESTService implements Microservice {
      */
     @GET
     @Path("/hello")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @ApiOperation(
             value = "Say hello to WSO2 MB",
             notes = "Can be used to test the broker service",
             tags = "test broker service",
-            response = String.class,
+            response = Hello.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200,
                          message = "hello response")
     })
     public Response sayHello() {
-        String greeter = MBRESTServiceDataHolder.getInstance().getMessagingCore().getName();
-        String response = "{ \"Hello\" : \"" + greeter + "\" }";
-        return Response.status(Response.Status.OK).entity(response).build();
+        Hello hello = new Hello();
+        hello.setWelcome(MBRESTServiceDataHolder.getInstance().getMessagingCore().getName());
+        return Response.status(Response.Status.OK).entity(hello).build();
     }
 
     /**
@@ -143,20 +147,25 @@ public class MBRESTService implements Microservice {
      */
     @GET
     @Path("/protocol-types")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @ApiOperation(
             value = "Gets supported protocols.",
             notes = "Gets supported protocols by the broker.",
             tags = "Broker Details",
-            response = String.class)
+            response = Protocols.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200,
                          message = "List of protocols.")
     })
     public Response getProtocols() {
         //Hardcoded the response at the moment for testing purposes
-        String response = "{ protocols: [ amqp-v1.0, mqtt-v3.1.1 ] }";
-        return Response.status(Response.Status.OK).entity(response).build();
+        List<String> protocolsList = new ArrayList<>();
+        protocolsList.add("amqp-v1.0");
+        protocolsList.add("mqtt-v3.1.1");
+
+        Protocols protocols = new Protocols();
+        protocols.setProtocol(protocolsList);
+        return Response.status(Response.Status.OK).entity(protocols).build();
     }
 
     /**
