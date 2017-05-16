@@ -53,6 +53,41 @@
             <groupId>org.wso2.eclipse.osgi</groupId>
             <artifactId>org.eclipse.osgi.services</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.andes.wso2</groupId>
+            <artifactId>andes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.datasources</groupId>
+            <artifactId>org.wso2.carbon.datasource.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wso2.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.andes.wso2</groupId>
+            <artifactId>andes</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <properties>
@@ -62,8 +97,9 @@
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version}"
         </export.package>
         <import.package>
-            org.osgi.framework.*;version="[1.8.0, 2.0.0)",
-            org.wso2.carbon.kernel.*;version="[5.0.0, 6.0.0)"
+            org.wso2.andes.configuration.*,
+            org.apache.commons.*,
+            *;resolution:=optional
         </import.package>
     </properties>
 
