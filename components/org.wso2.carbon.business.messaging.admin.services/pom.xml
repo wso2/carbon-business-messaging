@@ -57,6 +57,19 @@
             <groupId>org.wso2.carbon.business.messaging</groupId>
             <artifactId>org.wso2.carbon.business.messaging.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -69,7 +82,8 @@
             org.slf4j.*;version="${slf4j.import.version.range}",
             io.swagger.annotations.*;version="${io.swagger.annotations.version.range}",
             org.wso2.carbon.messaging.*,
-            org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version.range}"
+            org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version.range}",
+            org.apache.commons.lang;version="${org.apache.commons.lang.package.import.version.range}"
         </import.package>
         <export.package>
             !org.wso2.carbon.business.messaging.admin.services.internal,
