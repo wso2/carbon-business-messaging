@@ -28,4 +28,6 @@ public interface Greeter {
     void hello();
 
     void bye();
+
+    String getName();
 }
