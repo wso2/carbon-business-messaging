@@ -35,13 +35,15 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
+import org.wso2.carbon.business.messaging.admin.services.managers.impl.BrokerManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.carbon.business.messaging.core.Greeter;
 import org.wso2.msf4j.Microservice;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -95,6 +97,11 @@ public class MBRESTService implements Microservice {
      */
     private ServiceRegistration serviceRegistration;
 
+    /**
+     * Service class for retrieving broker information
+     */
+    private BrokerManagerService brokerManagerService;
+
     public MBRESTService() {
 
     }
@@ -125,10 +132,13 @@ public class MBRESTService implements Microservice {
             @ApiResponse(code = 200,
                          message = "hello response")
     })
-    public Response sayHello() {
-        Hello hello = new Hello();
-        hello.setWelcome(MBRESTServiceDataHolder.getInstance().getMessagingCore().getName());
-        return Response.status(Response.Status.OK).entity(hello).build();
+    public Response sayHello() throws InternalServerException {
+        try {
+            Hello helloResponse = brokerManagerService.sayHello();
+            return Response.status(Response.Status.OK).entity(helloResponse).build();
+        } catch (BrokerManagerException ex) {
+            throw new InternalServerException(ex);
+        }
     }
 
     /**
@@ -157,15 +167,21 @@ public class MBRESTService implements Microservice {
             @ApiResponse(code = 200,
                          message = "List of protocols.")
     })
-    public Response getProtocols() {
-        //Hardcoded the response at the moment for testing purposes
-        List<String> protocolsList = new ArrayList<>();
-        protocolsList.add("amqp-v1.0");
-        protocolsList.add("mqtt-v3.1.1");
+    public Response getProtocols() throws InternalServerException {
+        try {
+            Protocols protocols = brokerManagerService.getSupportedProtocols();
+            return Response.status(Response.Status.OK).entity(protocols).build();
+        } catch (BrokerManagerException ex) {
+            throw new InternalServerException(ex);
+        }
+    }
 
-        Protocols protocols = new Protocols();
-        protocols.setProtocol(protocolsList);
-        return Response.status(Response.Status.OK).entity(protocols).build();
+    /**
+     * Setter method for brokerManagerService instance
+     * @param brokerManagerService
+     */
+    public void setBrokerManagerService(BrokerManagerService brokerManagerService) {
+        this.brokerManagerService = brokerManagerService;
     }
 
     /**
@@ -205,6 +221,7 @@ public class MBRESTService implements Microservice {
     protected void setMessagingCore(Greeter messagingCore) {
         log.info("Setting business messaging core service. ");
         MBRESTServiceDataHolder.getInstance().setMessagingCore(messagingCore);
+        brokerManagerService = new BrokerManagerServiceImpl();
     }
 
     /**

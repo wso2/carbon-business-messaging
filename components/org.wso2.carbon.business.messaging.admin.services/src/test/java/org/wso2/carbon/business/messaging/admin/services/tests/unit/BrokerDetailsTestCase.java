@@ -26,14 +26,22 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.business.messaging.admin.services.exception.mappers.InternalServerErrorMapper;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.mappers.InternalServerErrorMapper;
 import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTService;
+import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
+import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.msf4j.MicroservicesRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases related to broker information such as protocols, clustering, store health etc.
@@ -74,8 +82,22 @@ public class BrokerDetailsTestCase {
      * @throws InterruptedException
      */
     @Test(groups = { "wso2.mb", "rest" })
-    public void protocolTypesTestCase() throws IOException, InterruptedException {
-        // Test protocols returning null
+    public void protocolTypesTestCase()
+            throws IOException, InterruptedException, BrokerManagerException {
+        // Creation of mocking objects
+        BrokerManagerService brokerManagerService = mock(BrokerManagerService.class);
+        List<String> protocolsList = new ArrayList<>();
+        protocolsList.add("amqp-v1.0");
+        protocolsList.add("mqtt-v3.1.1");
+
+        Protocols protocols = new Protocols();
+        protocols.setProtocol(protocolsList);
+        when(brokerManagerService.getSupportedProtocols()).thenReturn(protocols);
+
+        // Setting BrokerManagerService to MBRESTService
+        mbRESTService.setBrokerManagerService(brokerManagerService);
+
+        // Invoking the microservice
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpGet getRequest = new HttpGet(Constants.BASE_URL + "/protocol-types");
         getRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);

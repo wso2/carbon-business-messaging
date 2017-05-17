@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.business.messaging.admin.services.exception;
+package org.wso2.carbon.business.messaging.admin.services.types;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Exception class for the rest service when an server error occurs.
+ * This class represent a store information object.
  */
-public class InternalServerException extends Exception {
-    private static final long serialVersionUID = 3803992383244407058L;
+@ApiModel(value = "Store Information",
+          description = "The structure for representing message/context store information")
+public class StoreInformation {
+    @ApiModelProperty(value = "Whether the store is healthy or not.")
+    private boolean healthy;
 
-    /**
-     * Creates an internal service exception with an exception. Exception would be server related error.
-     *
-     * @param cause The exception occurred in the server.
-     */
-    public InternalServerException(Throwable cause) {
-        super(cause);
+    public boolean isHealthy() {
+        return healthy;
+    }
+
+    public void setHealthy(boolean healthy) {
+        this.healthy = healthy;
     }
 }
