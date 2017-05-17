@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.business.messaging.admin.services;
+package org.wso2.carbon.business.messaging.admin.services.types;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,15 +25,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * * This class represent a message information object.
  */
-@ApiModel(value = "Message", description = "The structure that represents a single message.")
+@ApiModel(value = "Message",
+          description = "The structure that represents a single message.")
 @XmlRootElement
 public class Message {
     @ApiModelProperty(value = "The unique message ID used in the broker.")
     private Long andesMsgMetadataId;
     @ApiModelProperty(value = "The destination to which the message belongs to.")
     private String destination;
-    @ApiModelProperty(value = "Properties of the message. These properties should align with the protocol type of " +
-            "the message.")
+    @ApiModelProperty(value = "Properties of the message. These properties should align with the protocol type of "
+            + "the message.")
     private Map<String, String> messageProperties;
     @ApiModelProperty(value = "The content of the message.")
     private String messageContent;

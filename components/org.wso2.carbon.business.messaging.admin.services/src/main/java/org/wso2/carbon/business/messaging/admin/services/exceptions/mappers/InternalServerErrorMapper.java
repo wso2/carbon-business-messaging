@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.business.messaging.admin.services.exception.mappers;
+package org.wso2.carbon.business.messaging.admin.services.exceptions.mappers;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.wso2.carbon.business.messaging.admin.services.exception.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 
 import javax.ws.rs.Produces;
