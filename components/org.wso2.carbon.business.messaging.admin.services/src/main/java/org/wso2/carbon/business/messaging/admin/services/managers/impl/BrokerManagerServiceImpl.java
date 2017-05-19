@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.business.messaging.admin.services.managers.impl;
 
+import org.wso2.andes.kernel.Andes;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
 import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
@@ -34,12 +35,12 @@ import java.util.List;
  */
 public class BrokerManagerServiceImpl implements BrokerManagerService {
     /**
-     * Registered andes messaging core instance through OSGi.
+     * Registered andes core instance through OSGi.
      */
-    private Greeter messagingCore;
+    private Andes andesCore;
 
     public BrokerManagerServiceImpl() {
-        messagingCore = MBRESTServiceDataHolder.getInstance().getMessagingCore();
+        andesCore = MBRESTServiceDataHolder.getInstance().getAndesCore();
     }
 
     @Override
@@ -73,7 +74,7 @@ public class BrokerManagerServiceImpl implements BrokerManagerService {
     @Override
     public Hello sayHello() throws BrokerManagerException {
         Hello hello = new Hello();
-        hello.setWelcome(messagingCore.getName());
+        hello.setWelcome(andesCore.getName());
         return hello;
     }
 }
