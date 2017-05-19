@@ -35,6 +35,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.andes.kernel.Andes;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
@@ -221,7 +222,7 @@ public class MBRESTService implements Microservice {
     protected void setMessagingCore(Greeter messagingCore) {
         log.info("Setting business messaging core service. ");
         MBRESTServiceDataHolder.getInstance().setMessagingCore(messagingCore);
-        brokerManagerService = new BrokerManagerServiceImpl();
+        //brokerManagerService = new BrokerManagerServiceImpl();
     }
 
     /**
@@ -239,6 +240,29 @@ public class MBRESTService implements Microservice {
     @Override
     public String toString() {
         return "Andes-REST-Service-OSGi-Bundle";
+    }
+
+
+    @Reference(
+            name = "org.wso2.andes.kernel",
+            service = Andes.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetAndesCore"
+    )
+    protected void setAndesCore(Andes andesCore) {
+        log.info("Setting andes core service. ");
+        MBRESTServiceDataHolder.getInstance().setAndesCore(andesCore);
+        brokerManagerService = new BrokerManagerServiceImpl();
+    }
+
+    /**
+     * This is the unbind method which gets called at the un-registration of CarbonRuntime OSGi service.
+     *
+     * @param andesCore The MessagingCore instance registered by Carbon Kernel as an OSGi service
+     */
+    protected void unsetAndesCore(Andes andesCore) {
+        MBRESTServiceDataHolder.getInstance().setAndesCore(null);
     }
 
 }

@@ -561,6 +561,7 @@
         <io.swagger.annotations.version.range>[1.5.0, 1.6.0)</io.swagger.annotations.version.range>
         <slf4j.import.version.range>[1.7.1, 2.0.0)</slf4j.import.version.range>
         <org.apache.commons.lang.package.import.version.range>[2.6.0, 3.0.0)</org.apache.commons.lang.package.import.version.range>
+        <andes.dependency.version.range>[3.2.0, 4.0.0)</andes.dependency.version.range>
     </properties>
 
   <modules>

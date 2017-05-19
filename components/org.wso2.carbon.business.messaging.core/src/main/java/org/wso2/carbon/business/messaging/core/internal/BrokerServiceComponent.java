@@ -32,6 +32,7 @@ import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.models.BrokerConfiguration;
 import org.wso2.andes.configuration.models.deployment.DeploymentConfiguration;
 import org.wso2.andes.configuration.models.transport.TransportConfiguration;
+import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
@@ -413,6 +414,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
         // Publish Qpid properties
         services.push(context.registerService(BrokerService.class.getName(), brokerService, null));
+        context.registerService(Andes.class.getName(), Andes.getInstance(), null);
     }
 
     /**
