@@ -69,10 +69,9 @@ public interface DestinationManagerService {
      * @param protocol        The protocol type matching for the destination type.
      * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
-     * @return Newly created {@link Destination}.
      * @throws DestinationManagerException
      */
-    Destination createDestination(String protocol, String destinationType, String destinationName)
+    void createDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException;
 
     /**

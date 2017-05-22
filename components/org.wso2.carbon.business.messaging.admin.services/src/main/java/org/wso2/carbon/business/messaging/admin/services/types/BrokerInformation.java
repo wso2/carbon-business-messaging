@@ -21,12 +21,14 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This class represent a broker information object.
  */
 @ApiModel(value = "Broker Information",
           description = "Contains properties of the current node.")
+@XmlRootElement
 public class BrokerInformation {
     @ApiModelProperty(value = "A map that contains the properties of the current node.")
     private Map<String, String> properties = new HashMap<>();

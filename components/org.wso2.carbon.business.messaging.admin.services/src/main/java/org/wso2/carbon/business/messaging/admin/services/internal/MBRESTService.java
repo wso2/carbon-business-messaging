@@ -18,6 +18,7 @@ package org.wso2.carbon.business.messaging.admin.services.internal;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Contact;
@@ -36,19 +37,37 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.andes.kernel.Andes;
+import org.wso2.andes.kernel.DestinationType;
+import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
+import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
+import org.wso2.carbon.business.messaging.admin.services.managers.bean.impl.DestinationManagerServiceBeanImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.BrokerManagerServiceImpl;
+import org.wso2.carbon.business.messaging.admin.services.managers.impl.DestinationManagerServiceImpl;
+import org.wso2.carbon.business.messaging.admin.services.types.ClusterInformation;
+import org.wso2.carbon.business.messaging.admin.services.types.Destination;
+import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 import org.wso2.carbon.business.messaging.admin.services.types.Hello;
+import org.wso2.carbon.business.messaging.admin.services.types.NewDestination;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.carbon.business.messaging.core.Greeter;
 import org.wso2.msf4j.Microservice;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
@@ -103,6 +122,11 @@ public class MBRESTService implements Microservice {
      */
     private BrokerManagerService brokerManagerService;
 
+    /**
+     * Service class for processing destination related requests
+     */
+    private DestinationManagerService destinationManagerService;
+
     public MBRESTService() {
 
     }
@@ -112,7 +136,7 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/hello
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/hello
      * </pre>
      *
      * @return Return a response saying hello. <p>
@@ -147,7 +171,7 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/protocol-types
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/protocol-types
      * </pre>
      *
      * @return Return a collection of supported protocol. <p>
@@ -177,6 +201,144 @@ public class MBRESTService implements Microservice {
         }
     }
 
+
+    /**
+     * Gets Clustering information of the broker.
+     * <p>
+     * curl command :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/cluster-info
+     * </pre>
+     *
+     * @return Return information of the clustering . <p>
+     * <ul>
+     * <li>{@link Response.Status#OK} - Returns a whether the clustering is enabled of not,
+     * if do enabled further information regarding the cluster is returned.</li>
+     * </ul>
+     */
+    @GET
+    @Path("/cluster-info")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Get cluster information.",
+            notes = "Get cluster information of the broker.",
+            tags = "Broker Details",
+            response = ClusterInformation.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                         message = "Cluster information.")
+    })
+    public Response getClusterInfo() throws InternalServerException {
+        try {
+            ClusterInformation clusterInformation = brokerManagerService.getClusterInformation();
+            return Response.status(Response.Status.OK).entity(clusterInformation).build();
+        } catch (BrokerManagerException ex) {
+            throw new InternalServerException(ex);
+        }
+    }
+
+    /**
+     * Creates a new destination. A topic will be created even if "durable_topic" is requested as the destination type.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v POST http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue -H "Content-Type: application/json"
+     *  -d '{"destinationName": "Q12"}'
+     * </pre>
+     *
+     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
+     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     *                        "durable_topic" is considered as a topic.
+     * @param newDestination  A {@link NewDestination} object.
+     * @return A JSON representation of the newly created {@link Destination}. <p>
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error while creating new destination
+     *     .</li>
+     * </ul>
+     */
+    @POST
+    @Path("/{protocol}/destination-type/{destination-type}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Creates a destination.",
+            notes = "Creates a destination that belongs to a specific protocol and destination type.",
+            tags = "Destinations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "New destination successfully created."),
+            @ApiResponse(code = 500, message = "Server error on creating destination", response = ErrorResponse.class)})
+    public Response createDestination(
+            @ApiParam(value = "Protocol for the destination.")
+            @PathParam("protocol") String protocol,
+            @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
+            @PathParam("destination-type") String destinationType,
+            @ApiParam(value = "New destination object.") NewDestination newDestination) throws InternalServerException {
+        try {
+            destinationManagerService.createDestination(protocol, destinationType, newDestination.getDestinationName());
+            return Response.status(Response.Status.OK).build();
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
+
+    /**
+     * Deletes destination. A topic will be deleted even if "durable_topic" is requested as the destination type.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic/name/MyTopic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/MyDurable
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
+     * </pre>
+     *
+     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
+     * @param destinationType The destination type of the destination a {@link DestinationType}.
+     *                        "durable_topic" is considered as a topic.
+     * @param destinationName The name of the destination to delete.
+     * @return No response body. <p>
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Destination was successfully deleted.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred while deleting
+     *     destination from the broker.</li>
+     * </ul>
+     */
+    @DELETE
+    @Path("/{protocol}/destination-type/{destination-type}/name/{destination-name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+            value = "Deletes a destination.",
+            notes = "Deletes a destination that belongs to a specific protocol and destination type.",
+            tags = "Destinations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Destination deleted."),
+            @ApiResponse(code = 404, message = "Invalid protocol or destination type or Destination not found.",
+                         response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response deleteDestination(
+            @ApiParam(value = "Protocol for the destination.")
+            @PathParam("protocol") String protocol,
+            @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
+            @PathParam("destination-type") String destinationType,
+            @ApiParam(value = "The name of the destination")
+            @PathParam("destination-name") String destinationName)
+            throws InternalServerException, DestinationNotFoundException {
+        try {
+//            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+//                    destinationName);
+//            if (null != destination) {
+                destinationManagerService.deleteDestination(protocol, destinationType, destinationName);
+            return Response.status(Response.Status.NO_CONTENT).build();
+//            } else {
+//                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
+//            }
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
     /**
      * Setter method for brokerManagerService instance
      * @param brokerManagerService
@@ -184,6 +346,8 @@ public class MBRESTService implements Microservice {
     public void setBrokerManagerService(BrokerManagerService brokerManagerService) {
         this.brokerManagerService = brokerManagerService;
     }
+
+    /************** OSGi Methods ********************************************************************************/
 
     /**
      * Called when the bundle is activated.
@@ -207,32 +371,6 @@ public class MBRESTService implements Microservice {
         log.info("Andes REST Service has been deactivated.");
     }
 
-    /**
-     * This bind method will be called when CarbonRuntime OSGi service is registered.
-     *
-     * @param messagingCore The MessagingCore instance registered by Carbon Kernel as an OSGi service
-     */
-    @Reference(
-            name = "org.wso2.carbon.business.messaging.core.internal.ServiceComponent",
-            service = Greeter.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetMessagingCore"
-    )
-    protected void setMessagingCore(Greeter messagingCore) {
-        log.info("Setting business messaging core service. ");
-        MBRESTServiceDataHolder.getInstance().setMessagingCore(messagingCore);
-        //brokerManagerService = new BrokerManagerServiceImpl();
-    }
-
-    /**
-     * This is the unbind method which gets called at the un-registration of CarbonRuntime OSGi service.
-     *
-     * @param messagingCore The MessagingCore instance registered by Carbon Kernel as an OSGi service
-     */
-    protected void unsetMessagingCore(Greeter messagingCore) {
-        MBRESTServiceDataHolder.getInstance().setMessagingCore(null);
-    }
 
     /**
      * {@inheritDoc}
@@ -254,6 +392,8 @@ public class MBRESTService implements Microservice {
         log.info("Setting andes core service. ");
         MBRESTServiceDataHolder.getInstance().setAndesCore(andesCore);
         brokerManagerService = new BrokerManagerServiceImpl();
+//        destinationManagerService = new DestinationManagerServiceImpl();
+        destinationManagerService = new DestinationManagerServiceBeanImpl();
     }
 
     /**
