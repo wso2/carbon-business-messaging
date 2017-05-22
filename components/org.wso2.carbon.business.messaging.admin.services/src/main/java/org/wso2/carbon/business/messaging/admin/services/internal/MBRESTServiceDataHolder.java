@@ -32,7 +32,6 @@ public class MBRESTServiceDataHolder {
     Logger logger = Logger.getLogger(MBRESTServiceDataHolder.class.getName());
 
     private static MBRESTServiceDataHolder instance = new MBRESTServiceDataHolder();
-    private Greeter messagingCore;
     private Andes andesCore;
 
     private MBRESTServiceDataHolder() {
@@ -46,25 +45,6 @@ public class MBRESTServiceDataHolder {
      */
     public static MBRESTServiceDataHolder getInstance() {
         return instance;
-    }
-
-    /**
-     * Returns the business-messaging-core which gets set through a service component.
-     *
-     * @return business-messaging-core Service
-     */
-    public Greeter getMessagingCore() {
-        return messagingCore;
-    }
-
-    /**
-     * This method is for setting the business-messaging-core service. This method is used by
-     * ServiceComponent.
-     *
-     * @param messagingCore The reference being passed through ServiceComponent
-     */
-    public void setMessagingCore(Greeter messagingCore) {
-        this.messagingCore = messagingCore;
     }
 
     /**

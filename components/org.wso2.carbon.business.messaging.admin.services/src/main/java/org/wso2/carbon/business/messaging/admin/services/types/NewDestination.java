@@ -17,35 +17,26 @@
 package org.wso2.carbon.business.messaging.admin.services.types;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * This class represent a cluster information object.
+ * This class will be used when creating a new destination. Class {@link Destination} will not be used for creating a
+ * new destination as it contains information that is not relevant for creating a destination.
  */
-@ApiModel(value = "Cluster Information",
-          description = "Contains clustering related information and it's member " + "details.")
+@ApiModel(value = "New Destination.", description = "The structure for creating a new destination.")
 @XmlRootElement
-public class ClusterInformation {
+public class NewDestination {
+    @ApiModelProperty(value = "The name for the destination.")
+    public String destinationName = StringUtils.EMPTY;
 
-    /**
-     * This node belongs to a cluster or not
-     */
-    private boolean isClusteringEnabled;
-
-    /**
-     *
-     * @param isClusteringEnabled
-     */
-    public void setIsClusteringEnabled(Boolean isClusteringEnabled) {
-        this.isClusteringEnabled = isClusteringEnabled;
+    public String getDestinationName() {
+        return destinationName;
     }
 
-    /**
-     *
-     * @return isClusteringEnabled
-     */
-    public boolean isClusteringEnabled() {
-        return isClusteringEnabled;
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
     }
 }
