@@ -531,6 +531,7 @@
   <modules>
         <module>components</module>
         <module>features</module>
+      <module>test_artifacts</module>
   </modules>
 
 </project>
