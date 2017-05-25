@@ -79,6 +79,7 @@
         <private.package>org.wso2.carbon.business.messaging.admin.services.internal</private.package>
         <import.package>
             org.osgi.framework.*;version="${osgi.framework.import.version.range}",
+            org.apache.commons.lang.*;version="${org.apache.commons.lang.package.import.version.range}",
             org.wso2.msf4j.*;version="${msf4j.import.version.range}",
             javax.ws.rs.*,
             javax.xml.bind*,
@@ -86,7 +87,6 @@
             io.swagger.annotations.*;version="${io.swagger.annotations.version.range}",
             org.wso2.carbon.messaging.*,
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version.range}",
-            org.apache.commons.lang;version="${org.apache.commons.lang.package.import.version.range}",
             org.wso2.andes.kernel.*;version="${andes.dependency.version.range}"
         </import.package>
         <export.package>

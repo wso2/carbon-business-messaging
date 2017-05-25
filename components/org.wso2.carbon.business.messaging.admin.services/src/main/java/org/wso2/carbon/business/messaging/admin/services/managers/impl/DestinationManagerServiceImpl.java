@@ -20,9 +20,8 @@ import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.DestinationType;
 import org.wso2.andes.kernel.ProtocolType;
-import org.wso2.andes.kernel.disruptor.inbound.InboundBindingEvent;
 import org.wso2.andes.kernel.disruptor.inbound.InboundQueueEvent;
-import org.wso2.andes.kernel.disruptor.inbound.QueueInfo;
+import org.wso2.carbon.business.messaging.admin.services.beans.DestinationManagementBeans;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
 import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
@@ -32,8 +31,6 @@ import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePe
 import java.util.List;
 import java.util.Set;
 
-//import org.wso2.andes.kernel.AndesQueue;
-//import org.wso2.carbon.andes.core.resource.manager.AndesResourceManager;
 
 /**
  * Implementation for handling destination related resource through OSGi.
@@ -52,9 +49,15 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
      * {@inheritDoc}
      */
     @Override
-    public List<Destination> getDestinations(String protocol, String destinationType, String keyword, int offset,
-            int limit) throws DestinationManagerException {
-        return null;
+    public List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
+            throws DestinationManagerException {
+        try {
+            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+            return andesCore.getAllQueueNames(protocolType, destinationTypeEnum);
+        } catch (IllegalArgumentException e) {
+            throw new DestinationManagerException("Invalid protocol or destination type.", e);
+        }
     }
 
     /**
@@ -70,7 +73,20 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     @Override
     public Destination getDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
-        return null;
+        //TODO: Add other information to the Destination instance, use protocol and destinationType
+        Destination destination = null;
+        try {
+            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+            if (isDestinationExist(protocol, destinationType, destinationName)) {
+                destination = new Destination();
+                destination.setDestinationName(destinationName);
+                destination.setMessageCount(andesCore.getMessageCountOfQueue(destinationName));
+            }
+            return destination;
+        } catch (AndesException e) {
+            throw new DestinationManagerException("Error getting destination information.", e);
+        }
     }
 
     /**
@@ -79,21 +95,27 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     @Override
     public void createDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
-        try {
-            ProtocolType protocolType = ProtocolType.valueOf(protocol);
-            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType);
-            boolean isDurable = Boolean.TRUE;
-            boolean isShared = Boolean.FALSE;
-            String queueOwner = "admin";
-            boolean isExclusive = Boolean.FALSE;
-            andesCore.createQueue(
-                    new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
-            andesCore.addBinding(new InboundBindingEvent(
-                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), "amq.direct",
-                    destinationName));
-        } catch (AndesException e) {
-            throw new DestinationManagerException("Error creating the destination.", e);
-        }
+//        try {
+//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+//            boolean isDurable = Boolean.TRUE;
+//            boolean isShared = Boolean.FALSE;
+//            String queueOwner = "admin";
+//            boolean isExclusive = Boolean.FALSE;
+//            String exchange = (destinationTypeEnum.equals(DestinationType.QUEUE) ?
+//                    "amq.direct" :
+//                    "amq.topic");
+//
+//            andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
+//            andesCore.addBinding(new InboundBindingEvent(
+//                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), exchange,
+//                    destinationName));
+//        } catch (AndesException | IllegalArgumentException e) {
+//            throw new DestinationManagerException("Error creating the destination.", e);
+//        }
+        String currentUsername = "admin";
+        DestinationManagementBeans destinationManagementBeans = new DestinationManagementBeans();
+        destinationManagementBeans.createDestination(protocol, destinationType, destinationName, currentUsername);
     }
 
     /**
@@ -145,6 +167,12 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
         return null;
+    }
+
+    @Override
+    public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
+            throws DestinationManagerException {
+        return andesCore.isQueueExists(destinationName);
     }
 
 }

@@ -26,6 +26,8 @@ import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -43,13 +45,19 @@ import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManage
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InvalidLimitValueException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InvalidOffsetValueException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManagerException;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
+import org.wso2.carbon.business.messaging.admin.services.managers.MessageManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.bean.impl.DestinationManagerServiceBeanImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.BrokerManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.DestinationManagerServiceImpl;
+import org.wso2.carbon.business.messaging.admin.services.managers.impl.MessageManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.types.ClusterInformation;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
+import org.wso2.carbon.business.messaging.admin.services.types.DestinationNamesList;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.NewDestination;
@@ -57,13 +65,17 @@ import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.carbon.business.messaging.core.Greeter;
 import org.wso2.msf4j.Microservice;
 
+import java.net.URISyntaxException;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -121,6 +133,11 @@ public class MBRESTService implements Microservice {
      * Service class for retrieving broker information
      */
     private BrokerManagerService brokerManagerService;
+
+    /**
+     * Service class for retrieving messages related information
+     */
+    private MessageManagerService messageManagerService;
 
     /**
      * Service class for processing destination related requests
@@ -274,9 +291,17 @@ public class MBRESTService implements Microservice {
             @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
             @PathParam("destination-type") String destinationType,
             @ApiParam(value = "New destination object.") NewDestination newDestination) throws InternalServerException {
+        //TODO: Add other details on queue? durable, exclusive, username ?
         try {
-            destinationManagerService.createDestination(protocol, destinationType, newDestination.getDestinationName());
-            return Response.status(Response.Status.OK).build();
+            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                    newDestination.getDestinationName());
+            if (!destinationExist) {
+                destinationManagerService.createDestination(protocol, destinationType, newDestination.getDestinationName());
+                return Response.status(Response.Status.OK).build();
+            } else {
+                throw new DestinationManagerException("Destination '" + newDestination.getDestinationName()
+                        + "' already exists.");
+            }
         } catch (DestinationManagerException e) {
             throw new InternalServerException(e);
         }
@@ -288,9 +313,9 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/queue/name/MyQueue
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/topic/name/MyTopic
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp-0-91/destination-type/durable_topic/name/MyDurable
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/topic/name/MyTopic
+     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/durable_topic/name/MyDurable
      *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
@@ -307,7 +332,7 @@ public class MBRESTService implements Microservice {
      */
     @DELETE
     @Path("/{protocol}/destination-type/{destination-type}/name/{destination-name}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @ApiOperation(
             value = "Deletes a destination.",
             notes = "Deletes a destination that belongs to a specific protocol and destination type.",
@@ -326,14 +351,188 @@ public class MBRESTService implements Microservice {
             @PathParam("destination-name") String destinationName)
             throws InternalServerException, DestinationNotFoundException {
         try {
-//            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
-//                    destinationName);
-//            if (null != destination) {
+            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                    destinationName);
+            if (destinationExist) {
                 destinationManagerService.deleteDestination(protocol, destinationType, destinationName);
             return Response.status(Response.Status.NO_CONTENT).build();
-//            } else {
-//                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
-//            }
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
+            }
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
+    /**
+     * Gets destinations that belongs to a specific protocol and destination type.
+     * <p>
+     * curl command :
+     * <pre>
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/queue
+     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/topic
+     * </pre>
+     *
+     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
+     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     * @param destinationName The name of the destination. If "*", all destinations are returned, else destinations that
+     *                        <strong>contains</strong> the value will be returned.
+     * @param offset          The starting index of the return destination list for pagination. Default value is 0.
+     * @param limit           The number of destinations to return for pagination. Default value is 20.
+     * @return Return an instance of {@link DestinationNamesList}. <p>
+     */
+    @GET
+    @Path("/{protocol}/destination-type/{destination-type}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Gets destinations.",
+            notes = "Gets destinations that belongs to a specific protocol and destination type. Supports pagination.",
+            tags = "Destinations",
+            response = DestinationNamesList.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "A list of destinations.", response = DestinationNamesList.class),
+            @ApiResponse(code = 400, message = "Invalid values for offset or limit.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Invalid protocol or destination type.", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response getDestinations(
+            @ApiParam(value = "Protocol for the destination.")
+            @PathParam("protocol") String protocol,
+            @ApiParam(value = "Destination type for the destination.")
+            @PathParam("destination-type") String destinationType,
+            @ApiParam(value = "The name of the destination. If \"*\", all destinations are returned, else " +
+                    "destinations that contains the value will be returned.")
+            @DefaultValue("*") @QueryParam("name") String destinationName,
+            @ApiParam(value = "The starting index of the return destination list for pagination.",
+                      allowableValues = "range[0, infinity]")
+            @DefaultValue("0") @QueryParam("offset") int offset,
+            @ApiParam(value = "The number of destinations to return for pagination.",
+                      allowableValues = "range[1, infinity]")
+            @DefaultValue("20") @QueryParam("limit") int limit,
+            @Context org.wso2.msf4j.Request request)
+            throws InternalServerException, InvalidLimitValueException, InvalidOffsetValueException {
+        try {
+            //TODO: Add pagination support, Add search by part of the destination name
+            if (offset < 0) {
+                throw new InvalidOffsetValueException();
+            }
+            if (limit < 1) {
+                throw new InvalidLimitValueException();
+            }
+
+            List<String> destinationList = destinationManagerService
+                    .getDestinations(protocol, destinationType, destinationName, offset, limit);
+
+            DestinationNamesList destinationNamesList = new DestinationNamesList();
+            destinationNamesList.setDestinationNames(destinationList);
+            destinationNamesList.setDestinationType(destinationType);
+            destinationNamesList.setProtocol(protocol);
+
+            return Response.status(Response.Status.OK).entity(destinationNamesList).build();
+        } catch (DestinationManagerException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
+    /**
+     * Purge all messages belonging to a destination.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -X DELETE http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue/messages
+     * </pre>
+     *
+     * @param protocol        The protocol type matching for the message.
+     * @param destinationType The destination type matching for the message.
+     * @param destinationName The name of the destination to purge messages.
+     * @return No response body. <p>
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Messages were successfully deleted.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred while deleting
+     *     messages from the broker.</li>
+     * </ul>
+     */
+    @DELETE
+    @Path("/{protocol}/destination-type/{destination-type}/name/{destination-name}/messages")
+    @ApiOperation(
+            value = "Deletes/Purge message.",
+            notes = "Deletes/Purge message belonging to a specific destination.",
+            tags = "Messages")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Messages purged successfully."),
+            @ApiResponse(code = 404,
+                         message = "Invalid protocol, destination type or destination name, Message not found."),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response deleteMessages(
+            @ApiParam(value = "Protocol for the message.")
+            @PathParam("protocol") String protocol,
+            @ApiParam(value = "Destination type for the message.")
+            @PathParam("destination-type") String destinationType,
+            @ApiParam(value = "The name of the destination of the message.")
+            @PathParam("destination-name") String destinationName)
+            throws DestinationNotFoundException, InternalServerException {
+
+        try {
+            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                    destinationName);
+            if (destinationExist) {
+                messageManagerService.deleteMessages(protocol, destinationType, destinationName);
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to " +
+                        "delete/purge messages.");
+            }
+        } catch (DestinationManagerException | MessageManagerException e) {
+            throw new InternalServerException(e);
+        }
+    }
+
+    /**
+     * Gets a specific destination belonging to a specific protocol and destination type.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue
+     * </pre>
+     *
+     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
+     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     * @param destinationName The name of the destination.
+     * @return A JSON/XML representation of {@link Destination}. <p>
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such destination does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
+     *     destination from the broker.</li>
+     * </ul>
+     */
+    @GET
+    @Path("/{protocol}/destination-type/{destination-type}/name/{destination-name}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Gets a destination.",
+            notes = "Gets a destination that belongs to a specific protocol and destination type.",
+            tags = "Destinations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Destination returned.", response = Destination.class),
+            @ApiResponse(code = 404, message = "Invalid protocol or destination type or destination not found.",
+                         response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response getDestination(
+            @ApiParam(value = "Protocol for the destination.")
+            @PathParam("protocol") String protocol,
+            @ApiParam(value = "Destination type for the destination.")
+            @PathParam("destination-type") String destinationType,
+            @ApiParam(value = "The name of the destination.")
+            @PathParam("destination-name") String destinationName)
+            throws InternalServerException, DestinationNotFoundException {
+        try {
+            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
+                    destinationName);
+            if (null != destination) {
+                return Response.status(Response.Status.OK).entity(destination).build();
+            } else {
+                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
+            }
         } catch (DestinationManagerException e) {
             throw new InternalServerException(e);
         }
@@ -392,8 +591,9 @@ public class MBRESTService implements Microservice {
         log.info("Setting andes core service. ");
         MBRESTServiceDataHolder.getInstance().setAndesCore(andesCore);
         brokerManagerService = new BrokerManagerServiceImpl();
-//        destinationManagerService = new DestinationManagerServiceImpl();
-        destinationManagerService = new DestinationManagerServiceBeanImpl();
+        destinationManagerService = new DestinationManagerServiceImpl();
+        messageManagerService = new MessageManagerServiceImpl();
+//        destinationManagerService = new DestinationManagerServiceBeanImpl();
     }
 
     /**

@@ -18,7 +18,7 @@ package org.wso2.carbon.business.messaging.admin.services.exceptions.mappers;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 
 import javax.ws.rs.core.MediaType;
@@ -26,27 +26,26 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * Mapper class for {@link InternalServerException}.
+ * Mapper class for {@link DestinationNotFoundException}.
  */
 @Component(
-        name = "org.wso2.carbon.business.messaging.admin.services.exceptions.mappers.InternalServerErrorMapper",
+        name = "org.wso2.carbon.business.messaging.admin.services.exceptions.mappers.DestinationNotFoundErrorMapper",
         service = ExceptionMapper.class,
         immediate = true)
-public class InternalServerErrorMapper implements ExceptionMapper<InternalServerException> {
+public class DestinationNotFoundErrorMapper implements ExceptionMapper<DestinationNotFoundException> {
     /**
      * {@inheritDoc}
      */
     @Override
-    public Response toResponse(InternalServerException e) {
+    public Response toResponse(DestinationNotFoundException e) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTitle("Error occurred in the server while performing an operation.");
-        errorResponse.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        errorResponse.setTitle("Requested destination is not found.");
+        errorResponse.setCode(Response.Status.NOT_FOUND.getStatusCode());
         errorResponse.setMessage(e.getMessage());
-        errorResponse.setDescription("Error occurred in the server.");
+        errorResponse.setDescription("Requested destination is not available in the Message broker.");
         errorResponse.setMoreInfo(
                 "Please contact administrator." + System.lineSeparator() + ExceptionUtils.getFullStackTrace(e));
-
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse)
-                .type(MediaType.APPLICATION_JSON).build();
+        return Response.status(Response.Status.NOT_FOUND).entity(errorResponse).type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }

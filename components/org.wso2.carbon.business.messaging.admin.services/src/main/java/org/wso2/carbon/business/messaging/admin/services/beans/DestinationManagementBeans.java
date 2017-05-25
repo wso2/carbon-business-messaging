@@ -17,14 +17,14 @@
 package org.wso2.carbon.business.messaging.admin.services.beans;
 
 import org.wso2.andes.kernel.AndesException;
-import org.wso2.andes.kernel.DestinationType;
 import org.wso2.andes.kernel.CompositeDataHelper;
+import org.wso2.andes.kernel.DestinationType;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
-import org.wso2.carbon.business.messaging.admin.services.managers.bean.utils.DestinationManagementConstants;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -48,14 +48,29 @@ public class DestinationManagementBeans {
      *                        <strong>contains</strong> the keyword will be returned.
      * @param offset          The offset value for the collection of destination.
      * @param limit           The number of records to return from the collection of destinations.
-     * @return A list of {@link Destination}s.
+     * @return A list of destination names.
      * @throws DestinationManagerException
      */
-    public List<Destination> getDestinations(String protocol, String destinationType, String keyword,
+    public List<String> getDestinations(String protocol, String destinationType, String keyword,
                                              int offset, int limit) throws
             DestinationManagerException {
-        //ToDo: must have feature
-        throw new UnsupportedOperationException();
+        try {
+            List<String> destinationNames = new ArrayList<>();
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "getAllQueueNames";
+            Object[] parameters = new Object[]{};
+            String[] signature = new String[] { String.class.getName() };
+            Object result = mBeanServer.invoke(objectName, operationName, parameters, signature);
+            if (result != null) {
+                destinationNames = Arrays.asList((String[]) result);
+            }
+            return destinationNames;
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new DestinationManagerException("Error finding destination names for to '" + protocol +
+                    "' ,destination type '" + destinationType + "' ,keyword '" + keyword + "'", e);
+        }
     }
 
     /**
@@ -195,5 +210,35 @@ public class DestinationManagementBeans {
             throw new DestinationManagerException("Error occurred while converting data.", e);
         }
         return destination;
+    }
+
+    /**
+     * Check if the destination exists
+     *
+     * @param protocol          The protocol type matching for the destination type. Example : amqp, mqtt.
+     * @param destinationType   The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param destinationName   The name of the destination to be checked.
+     * @return true if the destination exists false otherwise
+     */
+    public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
+            throws DestinationManagerException {
+        try {
+            boolean status = false;
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
+            String operationName = "isQueueExists";
+            Object[] parameters = new Object[] { destinationName };
+            String[] signature = new String[] { String.class.getName() };
+            Object result = mBeanServer.invoke(objectName, operationName, parameters, signature);
+            if (result != null) {
+                status = (Boolean) result;
+            }
+
+            return status;
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new DestinationManagerException("Error deleting destination for to '" + protocol +
+                    "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
+        }
     }
 }
