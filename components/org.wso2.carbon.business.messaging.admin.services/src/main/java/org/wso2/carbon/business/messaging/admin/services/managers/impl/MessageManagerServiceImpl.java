@@ -18,8 +18,6 @@ package org.wso2.carbon.business.messaging.admin.services.managers.impl;
 
 import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesException;
-import org.wso2.andes.kernel.DestinationType;
-import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.andes.kernel.disruptor.inbound.InboundQueueEvent;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManagerException;
 import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
@@ -63,8 +61,8 @@ public class MessageManagerServiceImpl implements MessageManagerService {
     public void deleteMessages(String protocol, String destinationType, String destinationName)
             throws MessageManagerException {
         try {
-            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
             andesCore.purgeQueue(
                     new InboundQueueEvent(destinationName, Boolean.TRUE, Boolean.FALSE, "admin", Boolean.FALSE));
         } catch (AndesException e) {

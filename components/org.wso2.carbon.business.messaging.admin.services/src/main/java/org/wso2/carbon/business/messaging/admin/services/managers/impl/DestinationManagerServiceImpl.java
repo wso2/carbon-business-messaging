@@ -20,7 +20,6 @@ import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.DestinationType;
 import org.wso2.andes.kernel.ProtocolType;
-import org.wso2.andes.kernel.disruptor.inbound.InboundQueueEvent;
 import org.wso2.carbon.business.messaging.admin.services.beans.DestinationManagementBeans;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
@@ -29,6 +28,7 @@ import org.wso2.carbon.business.messaging.admin.services.types.Destination;
 import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePermission;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -51,8 +51,8 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     public List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
             throws DestinationManagerException {
         try {
-            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase(Locale.ENGLISH));
+            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase(Locale.ENGLISH));
             return andesCore.getAllQueueNames(protocolType, destinationTypeEnum);
         } catch (IllegalArgumentException e) {
             throw new DestinationManagerException("Invalid protocol or destination type.", e);
@@ -75,8 +75,8 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
         //TODO: Add other information to the Destination instance, use protocol and destinationType
         Destination destination = null;
         try {
-            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
             if (isDestinationExist(protocol, destinationType, destinationName)) {
                 destination = new Destination();
                 destination.setDestinationName(destinationName);
@@ -105,7 +105,7 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
         //                    "amq.direct" :
         //                    "amq.topic");
         //
-        //            andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
+        //    andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
         //            andesCore.addBinding(new InboundBindingEvent(
         //                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), exchange,
         //                    destinationName));
@@ -152,14 +152,16 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     @Override
     public void deleteDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
-        try {
-            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
-            andesCore.deleteQueue(
-                    new InboundQueueEvent(destinationName, Boolean.TRUE, Boolean.FALSE, "admin", Boolean.FALSE));
-        } catch (AndesException e) {
-            throw new DestinationManagerException("Error deleting the destination.", e);
-        }
+//        try {
+//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+//            andesCore.deleteQueue(
+//                    new InboundQueueEvent(destinationName, Boolean.TRUE, Boolean.FALSE, "admin", Boolean.FALSE));
+//        } catch (AndesException e) {
+//            throw new DestinationManagerException("Error deleting the destination.", e);
+//        }
+        DestinationManagementBeans destinationManagementBeans = new DestinationManagementBeans();
+        destinationManagementBeans.deleteDestination(protocol, destinationType, destinationName);
     }
 
     @Override

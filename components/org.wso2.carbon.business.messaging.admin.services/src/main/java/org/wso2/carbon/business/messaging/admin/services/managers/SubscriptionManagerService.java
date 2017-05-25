@@ -42,7 +42,7 @@ public interface SubscriptionManagerService {
      * @param offset           The starting index to return.
      * @param limit            The number of subscriptions to return.
      * @return A list of {@link Subscription}s.
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     List<Subscription> getSubscriptions(String protocol, String subscriptionType, String subscriptionName,
             String destinationName, String active, int offset, int limit) throws SubscriptionManagerException;
@@ -56,7 +56,7 @@ public interface SubscriptionManagerService {
      * @param destinationName  The name of the destination to close/unsubscribe. If "*", all destinations are included.
      *                         Else destinations that <strong>contains</strong> the value are included.
      * @param unsubscribeOnly  Whether only to unsubscribe only or remove the the subscription.
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     void closeSubscriptions(String protocol, String subscriptionType, String destinationName, boolean unsubscribeOnly)
             throws SubscriptionManagerException;
@@ -69,7 +69,7 @@ public interface SubscriptionManagerService {
      *                         durable_topic.
      * @param subscriptionID   The subscription ID.
      * @param unsubscribeOnly  Whether only to unsubscribe only or remove the the subscription.
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     void closeSubscription(String protocol, String subscriptionType, String subscriptionID, boolean unsubscribeOnly)
             throws SubscriptionManagerException;

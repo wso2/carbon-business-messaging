@@ -34,14 +34,14 @@ public class ClusterInformation {
     private boolean isClusteringEnabled;
 
     /**
-     * @param isClusteringEnabled
+     * @param isClusteringEnabled isClusteringEnabled
      */
     public void setIsClusteringEnabled(Boolean isClusteringEnabled) {
         this.isClusteringEnabled = isClusteringEnabled;
     }
 
     /**
-     * @return isClusteringEnabled
+     * @return isClusteringEnabled isClusteringEnabled
      */
     public boolean isClusteringEnabled() {
         return isClusteringEnabled;

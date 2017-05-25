@@ -24,6 +24,7 @@ import org.wso2.andes.kernel.DestinationType;
 import org.wso2.andes.kernel.ProtocolType;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class represent a destination information object.
@@ -94,7 +95,7 @@ public class Destination {
     }
 
     public void setProtocol(String protocolAsString) throws AndesException {
-        this.protocol = ProtocolType.valueOf(protocolAsString.toUpperCase());
+        this.protocol = ProtocolType.valueOf(protocolAsString.toUpperCase(Locale.ENGLISH));
     }
 
     public void setProtocol(ProtocolType protocol) {

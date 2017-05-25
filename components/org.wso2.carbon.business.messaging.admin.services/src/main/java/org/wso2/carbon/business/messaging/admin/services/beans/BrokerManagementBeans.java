@@ -29,7 +29,7 @@ public class BrokerManagementBeans {
      * Checks whether clustering is enabled.
      *
      * @return A boolean whether clustering is enabled.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     public boolean isClusteringEnabled() throws BrokerManagerException {
         throw new UnsupportedOperationException();
@@ -39,7 +39,7 @@ public class BrokerManagementBeans {
      * Gets the current node's ID.
      *
      * @return Current node's ID.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     public String getMyNodeID() throws BrokerManagerException {
         throw new UnsupportedOperationException();
@@ -49,7 +49,7 @@ public class BrokerManagementBeans {
      * Gets the coordinator node's host address and port in a cluster.
      *
      * @return The coordinator node's host address and port.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     public String getCoordinatorNodeAddress() throws BrokerManagerException {
         throw new UnsupportedOperationException();
@@ -59,7 +59,7 @@ public class BrokerManagementBeans {
      * Gets the IP addresses and ports of the nodes in a cluster.
      *
      * @return The list of addresses of the nodes in a cluster.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     public List<String> getAllClusterNodeAddresses() throws BrokerManagerException {
         throw new UnsupportedOperationException();
@@ -69,7 +69,7 @@ public class BrokerManagementBeans {
      * Gets the message store's health status.
      *
      * @return True if healthy, else false.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     public boolean getStoreHealth() throws BrokerManagerException {
         throw new UnsupportedOperationException();

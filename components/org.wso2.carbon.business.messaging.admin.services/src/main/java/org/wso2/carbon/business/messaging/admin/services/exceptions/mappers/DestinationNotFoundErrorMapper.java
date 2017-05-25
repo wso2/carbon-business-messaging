@@ -38,6 +38,7 @@ public class DestinationNotFoundErrorMapper implements ExceptionMapper<Destinati
      */
     @Override
     public Response toResponse(DestinationNotFoundException e) {
+        //TODO: handle xml format error responses
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTitle("Requested destination is not found.");
         errorResponse.setCode(Response.Status.NOT_FOUND.getStatusCode());

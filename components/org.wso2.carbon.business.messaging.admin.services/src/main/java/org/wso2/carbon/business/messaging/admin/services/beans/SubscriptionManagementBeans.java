@@ -42,7 +42,7 @@ public class SubscriptionManagementBeans {
      * @param offset           The starting index to return.
      * @param limit            The number of subscriptions to return.
      * @return A list of {@link Subscription}s.
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     public List<Subscription> getSubscriptions(String protocolType, String destinationType, String subscriptionName,
             String destinationName, String active, int offset, int limit) throws SubscriptionManagerException {
@@ -57,7 +57,7 @@ public class SubscriptionManagementBeans {
      *                         durable_topic.
      * @param destinationName  The name of the destination to close/unsubscribe. If "*", all destinations are included.
      *                         Else destinations that <strong>contains</strong> the value are included.
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     public void closeSubscriptions(String protocol, String subscriptionType, String destinationName)
             throws SubscriptionManagerException {
@@ -71,7 +71,7 @@ public class SubscriptionManagementBeans {
      * @param subscriptionType The subscription type matching for the subscription. Example : queue, topic,
      *                         durable_topic.
      * @param subscriptionID   Subscription ID
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Error in handling subscription related information
      */
     public void closeSubscription(String protocol, String subscriptionType, String subscriptionID)
             throws SubscriptionManagerException {

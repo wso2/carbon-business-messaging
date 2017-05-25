@@ -45,7 +45,7 @@ public class DestinationManagementBeans {
      * @param offset          The offset value for the collection of destination.
      * @param limit           The number of records to return from the collection of destinations.
      * @return A list of destination names.
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling destination information
      */
     public List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
             throws DestinationManagerException {
@@ -73,7 +73,7 @@ public class DestinationManagementBeans {
      *
      * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
      * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling destination information
      */
     public void deleteDestinations(String protocol, String destinationType) throws DestinationManagerException {
         throw new UnsupportedOperationException();
@@ -86,7 +86,7 @@ public class DestinationManagementBeans {
      * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
      * @param destinationName The name of the destination.
      * @return A {@link Destination}.
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling destination information
      */
     public Destination getDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
@@ -101,7 +101,7 @@ public class DestinationManagementBeans {
      * @param destinationName The name of the destination.
      * @param currentUsername The username of the user who creates the destination.
      * @return Newly created {@link Destination}.
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling destination information
      */
     public Destination createDestination(String protocol, String destinationType, String destinationName,
             String currentUsername) throws DestinationManagerException {
@@ -140,7 +140,7 @@ public class DestinationManagementBeans {
      * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
      * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
      * @param destinationName The name of the destination to be deleted.
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling destination information
      */
     public void deleteDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
@@ -168,6 +168,7 @@ public class DestinationManagementBeans {
      * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
      * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
      * @param destinationName The name of the destination to be checked.
+     * @throws DestinationManagerException Error in handling destination information
      * @return true if the destination exists false otherwise
      */
     public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
