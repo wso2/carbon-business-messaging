@@ -70,6 +70,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -218,7 +219,7 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/cluster-info
+     * curl -v http://127.0.0.1:8080/mb/v1.0.0/cluster-info
      * </pre>
      *
      * @return Return information of the clustering . <p>
@@ -279,14 +280,15 @@ public class MBRESTService implements Microservice {
             notes = "Creates a destination that belongs to a specific protocol and destination type.",
             tags = "Destinations")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "New destination successfully created."),
+            @ApiResponse(code = 202, message = "Destination creation event has been triggered."),
             @ApiResponse(code = 500, message = "Server error on creating destination", response = ErrorResponse.class)})
     public Response createDestination(
             @ApiParam(value = "Protocol for the destination.")
             @PathParam("protocol") String protocol,
             @ApiParam(value = "Destination type for the destination. \"durable_topic\" is considered as a topic.")
             @PathParam("destination-type") String destinationType,
-            @ApiParam(value = "New destination object.") NewDestination newDestination) throws InternalServerException {
+            @ApiParam(value = "New destination object.") NewDestination newDestination,
+            @Context org.wso2.msf4j.Request request) throws InternalServerException {
         //TODO: Add other details on queue? durable, exclusive, username ?
         try {
             boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
@@ -294,7 +296,9 @@ public class MBRESTService implements Microservice {
             if (!destinationExist) {
                 destinationManagerService
                         .createDestination(protocol, destinationType, newDestination.getDestinationName());
-                return Response.status(Response.Status.OK).build();
+                return Response.status(Response.Status.ACCEPTED)
+                        .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + newDestination.getDestinationName())
+                        .build();
             } else {
                 throw new DestinationManagerException("Destination '" + newDestination.getDestinationName()
                         + "' already exists.");
@@ -310,10 +314,10 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command example :
      * <pre>
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/topic/name/MyTopic
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/durable_topic/name/MyDurable
-     *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
+     *  curl -v -X DELETE http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue
+     *  curl -v -X DELETE http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/topic/name/MyTopic
+     *  curl -v -X DELETE http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/durable_topic/name/MyDurable
+     *  curl -v -X DELETE http://127.0.0.1:8080/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
      * @param protocol        The protocol type of the destination
@@ -368,8 +372,8 @@ public class MBRESTService implements Microservice {
      * <p>
      * curl command :
      * <pre>
-     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/queue
-     *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/topic
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/topic
      * </pre>
      *
      * @param protocol        The protocol type of the destination
