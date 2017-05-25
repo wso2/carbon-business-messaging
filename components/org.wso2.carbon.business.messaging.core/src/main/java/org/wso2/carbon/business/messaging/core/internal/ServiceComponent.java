@@ -38,10 +38,10 @@ import java.util.logging.Logger;
  *
  * @since 4.0.0-SNAPSHOT
  */
-//@Component(
-//        name = "org.wso2.carbon.business.messaging.core.internal.ServiceComponent",
-//        immediate = true
-//)
+@Component(
+        name = "org.wso2.carbon.business.messaging.core.internal.ServiceComponent",
+        immediate = true
+)
 public class ServiceComponent {
 
     Logger logger = Logger.getLogger(ServiceComponent.class.getName());
@@ -54,7 +54,7 @@ public class ServiceComponent {
      * @param bundleContext the bundle context instance of this bundle.
      * @throws Exception this will be thrown if an issue occurs while executing the activate method
      */
-//    @Activate
+    @Activate
     protected void start(BundleContext bundleContext) throws Exception {
         logger.info("Service Component is activated");
 
@@ -71,7 +71,7 @@ public class ServiceComponent {
      *
      * @throws Exception this will be thrown if an issue occurs while executing the de-activate method
      */
-//    @Deactivate
+    @Deactivate
     protected void stop() throws Exception {
         logger.info("Service Component is deactivated");
 
@@ -84,13 +84,13 @@ public class ServiceComponent {
      *
      * @param carbonRuntime The CarbonRuntime instance registered by Carbon Kernel as an OSGi service
      */
-//    @Reference(
-//            name = "carbon.runtime.service",
-//            service = CarbonRuntime.class,
-//            cardinality = ReferenceCardinality.MANDATORY,
-//            policy = ReferencePolicy.DYNAMIC,
-//            unbind = "unsetCarbonRuntime"
-//    )
+    @Reference(
+            name = "carbon.runtime.service",
+            service = CarbonRuntime.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetCarbonRuntime"
+    )
     protected void setCarbonRuntime(CarbonRuntime carbonRuntime) {
         logger.info("Setting carbon runtime service. ");
         DataHolder.getInstance().setCarbonRuntime(carbonRuntime);
