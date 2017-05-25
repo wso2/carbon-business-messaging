@@ -32,6 +32,7 @@ public interface BrokerManagerService {
      * Gets the supported protocol types by the broker.
      *
      * @return A Protocol instance.
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     Protocols getSupportedProtocols() throws BrokerManagerException;
 
@@ -39,7 +40,7 @@ public interface BrokerManagerService {
      * Gets information regarding clustering of the broker.
      *
      * @return Clustering related information.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     ClusterInformation getClusterInformation() throws BrokerManagerException;
 
@@ -47,7 +48,7 @@ public interface BrokerManagerService {
      * Gets information regarding message store of the broker.
      *
      * @return Message store related information.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     StoreInformation getStoreInformation() throws BrokerManagerException;
 
@@ -55,7 +56,7 @@ public interface BrokerManagerService {
      * Gets information regarding broker configuration of the broker.
      *
      * @return Broker configuration related information.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     BrokerInformation getBrokerInformation() throws BrokerManagerException;
 
@@ -64,7 +65,7 @@ public interface BrokerManagerService {
      * This is a temp implementation to test the messaging core functionality
      *
      * @return Broker configuration related information.
-     * @throws BrokerManagerException
+     * @throws BrokerManagerException Error in retrieving broker information
      */
     Hello sayHello() throws BrokerManagerException;
 }

@@ -19,7 +19,6 @@
 package org.wso2.carbon.business.messaging.admin.services.internal;
 
 import org.wso2.andes.kernel.Andes;
-import org.wso2.carbon.business.messaging.core.Greeter;
 
 import java.util.logging.Logger;
 
@@ -29,9 +28,8 @@ import java.util.logging.Logger;
  * @since 4.0.0-SNAPSHOT
  */
 public class MBRESTServiceDataHolder {
-    Logger logger = Logger.getLogger(MBRESTServiceDataHolder.class.getName());
-
     private static MBRESTServiceDataHolder instance = new MBRESTServiceDataHolder();
+    Logger logger = Logger.getLogger(MBRESTServiceDataHolder.class.getName());
     private Andes andesCore;
 
     private MBRESTServiceDataHolder() {

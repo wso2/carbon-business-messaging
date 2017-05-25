@@ -26,8 +26,6 @@ import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -39,8 +37,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.andes.kernel.Andes;
-import org.wso2.andes.kernel.DestinationType;
-import org.wso2.andes.kernel.ProtocolType;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
@@ -51,7 +47,6 @@ import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManag
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.MessageManagerService;
-import org.wso2.carbon.business.messaging.admin.services.managers.bean.impl.DestinationManagerServiceBeanImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.BrokerManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.DestinationManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.MessageManagerServiceImpl;
@@ -62,10 +57,8 @@ import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.NewDestination;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
-import org.wso2.carbon.business.messaging.core.Greeter;
 import org.wso2.msf4j.Microservice;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -77,9 +70,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
@@ -115,7 +106,8 @@ import javax.ws.rs.core.Response;
                 @Tag(name = "Subscriptions",
                       description = "Operations on handling subscription related resources."),
                 @Tag(name = "Broker Details",
-                     description = "Operations on getting broker details."), @Tag(name = "Dead Letter Channel",
+                     description = "Operations on getting broker details."),
+                @Tag(name = "Dead Letter Channel",
                      description = "Operations related to dead letter channel.")
         },
         schemes = SwaggerDefinition.Scheme.HTTP)
@@ -157,6 +149,7 @@ public class MBRESTService implements Microservice {
      * </pre>
      *
      * @return Return a response saying hello. <p>
+     * @throws InternalServerException Server error when processing the request
      * <ul>
      * <li>{@link Response.Status#OK} - Return a response saying hello.</li>
      * </ul>
@@ -192,6 +185,7 @@ public class MBRESTService implements Microservice {
      * </pre>
      *
      * @return Return a collection of supported protocol. <p>
+     * @throws InternalServerException Server error when processing the request
      * <ul>
      * <li>{@link Response.Status#OK} - Returns a collection of protocols as a
      * response.</li>
@@ -228,6 +222,7 @@ public class MBRESTService implements Microservice {
      * </pre>
      *
      * @return Return information of the clustering . <p>
+     * @throws InternalServerException Server error when processing the request
      * <ul>
      * <li>{@link Response.Status#OK} - Returns a whether the clustering is enabled of not,
      * if do enabled further information regarding the cluster is returned.</li>
@@ -263,11 +258,12 @@ public class MBRESTService implements Microservice {
      *  -d '{"destinationName": "Q12"}'
      * </pre>
      *
-     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
-     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     * @param protocol        The protocol type of the destination
+     * @param destinationType The destination type of the destination
      *                        "durable_topic" is considered as a topic.
      * @param newDestination  A {@link NewDestination} object.
      * @return A JSON representation of the newly created {@link Destination}. <p>
+     * @throws InternalServerException Server error when processing the request
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error while creating new destination
@@ -296,7 +292,8 @@ public class MBRESTService implements Microservice {
             boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
                     newDestination.getDestinationName());
             if (!destinationExist) {
-                destinationManagerService.createDestination(protocol, destinationType, newDestination.getDestinationName());
+                destinationManagerService
+                        .createDestination(protocol, destinationType, newDestination.getDestinationName());
                 return Response.status(Response.Status.OK).build();
             } else {
                 throw new DestinationManagerException("Destination '" + newDestination.getDestinationName()
@@ -319,11 +316,13 @@ public class MBRESTService implements Microservice {
      *  curl -v -X DELETE http://127.0.0.1:9090/mb/v1.0.0/mqtt-default/destination-type/topic/name/MyMQTTTopic
      * </pre>
      *
-     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
-     * @param destinationType The destination type of the destination a {@link DestinationType}.
+     * @param protocol        The protocol type of the destination
+     * @param destinationType The destination type of the destination
      *                        "durable_topic" is considered as a topic.
      * @param destinationName The name of the destination to delete.
      * @return No response body. <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws DestinationNotFoundException Request destination is not found
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Destination was successfully deleted.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred while deleting
@@ -373,13 +372,16 @@ public class MBRESTService implements Microservice {
      *  curl -v http://127.0.0.1:9090/mb/v1.0.0/amqp/destination-type/topic
      * </pre>
      *
-     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
-     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     * @param protocol        The protocol type of the destination
+     * @param destinationType The destination type of the destination
      * @param destinationName The name of the destination. If "*", all destinations are returned, else destinations that
      *                        <strong>contains</strong> the value will be returned.
      * @param offset          The starting index of the return destination list for pagination. Default value is 0.
      * @param limit           The number of destinations to return for pagination. Default value is 20.
-     * @return Return an instance of {@link DestinationNamesList}. <p>
+     * @return Return an instance of {@link DestinationNamesList}.  <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws InvalidLimitValueException Invalid Limit
+     * @throws InvalidOffsetValueException Invalid offset
      */
     @GET
     @Path("/{protocol}/destination-type/{destination-type}")
@@ -445,6 +447,8 @@ public class MBRESTService implements Microservice {
      * @param destinationType The destination type matching for the message.
      * @param destinationName The name of the destination to purge messages.
      * @return No response body. <p>
+     * @throws DestinationNotFoundException Request destination is not found
+     * @throws InternalServerException Server error when processing the request
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Messages were successfully deleted.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred while deleting
@@ -494,10 +498,12 @@ public class MBRESTService implements Microservice {
      *  curl -v http://127.0.0.1:8080/mb/v1.0.0/amqp/destination-type/queue/name/MyQueue
      * </pre>
      *
-     * @param protocol        The protocol type of the destination as {@link ProtocolType}.
-     * @param destinationType The destination type of the destination as {@link DestinationType}.
+     * @param protocol        The protocol type of the destination
+     * @param destinationType The destination type of the destination
      * @param destinationName The name of the destination.
      * @return A JSON/XML representation of {@link Destination}. <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws DestinationNotFoundException Request destination is not found
      * <ul>
      *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Destination} as a JSON response.</li>
      *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Such destination does not exists.</li>
@@ -593,7 +599,6 @@ public class MBRESTService implements Microservice {
         brokerManagerService = new BrokerManagerServiceImpl();
         destinationManagerService = new DestinationManagerServiceImpl();
         messageManagerService = new MessageManagerServiceImpl();
-//        destinationManagerService = new DestinationManagerServiceBeanImpl();
     }
 
     /**

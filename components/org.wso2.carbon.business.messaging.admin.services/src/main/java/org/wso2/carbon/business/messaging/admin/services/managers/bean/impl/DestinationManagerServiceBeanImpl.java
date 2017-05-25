@@ -22,7 +22,6 @@ import org.wso2.carbon.business.messaging.admin.services.managers.DestinationMan
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
 import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePermission;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

@@ -82,8 +82,7 @@ public class BrokerDetailsTestCase {
      * @throws InterruptedException
      */
     @Test(groups = { "wso2.mb", "rest" })
-    public void protocolTypesTestCase()
-            throws IOException, InterruptedException, BrokerManagerException {
+    public void protocolTypesTestCase() throws IOException, InterruptedException, BrokerManagerException {
         // Creation of mocking objects
         BrokerManagerService brokerManagerService = mock(BrokerManagerService.class);
         List<String> protocolsList = new ArrayList<>();

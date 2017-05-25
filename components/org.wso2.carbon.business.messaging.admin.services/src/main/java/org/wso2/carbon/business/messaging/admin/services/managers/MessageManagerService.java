@@ -39,7 +39,7 @@ public interface MessageManagerService {
      * @param nextMessageID   The starting message ID to return from.
      * @param limit           The number of messages to return.
      * @return A list of {@link Message}s.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType, String destinationName,
             boolean content, long nextMessageID, int limit) throws MessageManagerException;
@@ -57,7 +57,7 @@ public interface MessageManagerService {
      * @param offset          Starting index of the messages to return.
      * @param limit           The number of messages to return.
      * @return A list of {@link Message}s.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType, String destinationName,
             boolean content, int offset, int limit) throws MessageManagerException;
@@ -71,7 +71,7 @@ public interface MessageManagerService {
      * @param andesMessageID  The message ID. This message is the andes metadata message ID.
      * @param content         Whether to return content or not.
      * @return A {@link Message}.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     Message getMessage(String protocol, String destinationType, String destinationName, long andesMessageID,
             boolean content) throws MessageManagerException;
@@ -82,7 +82,7 @@ public interface MessageManagerService {
      * @param protocol        The protocol type matching for the message. Example : amqp, mqtt.
      * @param destinationType The destination type matching for the message. Example : queue, topic, durable_topic.
      * @param destinationName The name of the destination to purge messages.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     void deleteMessages(String protocol, String destinationType, String destinationName) throws MessageManagerException;
 }

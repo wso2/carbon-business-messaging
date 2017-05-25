@@ -40,7 +40,7 @@ public class MessageManagementBeans {
      * @param nextMessageID   The starting message ID to return from.
      * @param limit           The number of messages to return.
      * @return A list of {@link Message}s.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     public List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType,
             String destinationName, boolean content, long nextMessageID, int limit) throws MessageManagerException {
@@ -60,7 +60,7 @@ public class MessageManagementBeans {
      * @param offset          Starting index of the messages to return.
      * @param limit           The number of messages to return.
      * @return A list of {@link Message}s.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     public List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType,
             String destinationName, boolean content, int offset, int limit) throws MessageManagerException {
@@ -76,7 +76,7 @@ public class MessageManagementBeans {
      * @param andesMessageID  The message ID. This message is the andes metadata message ID.
      * @param content         Whether to return content or not.
      * @return A {@link Message}.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     public Message getMessage(String protocol, String destinationType, String destinationName, long andesMessageID,
             boolean content) throws MessageManagerException {
@@ -89,7 +89,7 @@ public class MessageManagementBeans {
      * @param protocol        The protocol type matching for the message. Example : amqp, mqtt.
      * @param destinationType The destination type matching for the message. Example : queue, topic, durable_topic.
      * @param destinationName The name of the destination to purge messages.
-     * @throws MessageManagerException
+     * @throws MessageManagerException Error in handling messages related information
      */
     public void deleteMessages(String protocol, String destinationType, String destinationName)
             throws MessageManagerException {
@@ -101,7 +101,7 @@ public class MessageManagementBeans {
      *
      * @param messageIDs           Browser message Id / External message Id list to be deleted
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling messages related information
      */
     public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws DestinationManagerException {
@@ -113,7 +113,7 @@ public class MessageManagementBeans {
      *
      * @param messageIDs           Browser message Id / External message Id list to be deleted
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling messages related information
      */
     public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws DestinationManagerException {
@@ -126,7 +126,7 @@ public class MessageManagementBeans {
      * @param messageIDs              Browser message Id / External message Id list to be deleted
      * @param newDestinationQueueName The new destination for the messages in the same tenant
      * @param destinationQueueName    Dead Letter Queue name for the respective tenant
-     * @throws DestinationManagerException
+     * @throws DestinationManagerException Error in handling messages related information
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
             String newDestinationQueueName, String destinationQueueName) throws DestinationManagerException {
