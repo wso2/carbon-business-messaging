@@ -25,9 +25,12 @@ import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
@@ -38,22 +41,21 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * This is Queue Receiver Jmeter Sampler class for local transactions.
+ * This is Queue Sender Jmeter Sampler class for local transactions.
  */
-public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
+public class TransactedQueueSender extends AbstractJavaSamplerClient {
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private String userName;
     private String password;
     private String queueName;
+    private String message;
     private int msgCount;
     private String cfName;
     private Properties properties;
 
     private QueueConnection queueConnection;
     private QueueSession queueSession;
-    private MessageConsumer consumer;
-
 
     // set up default arguments for the JMeter GUI
     @Override
@@ -63,24 +65,31 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
         defaultParameters.addArgument("CF_NAME_PREFIX", "connectionfactory.");
         defaultParameters.addArgument("QUEUE_NAME_PREFIX", "queue.");
         defaultParameters.addArgument("CF_NAME", "qpidConnectionfactory");
-        defaultParameters.addArgument("userName", "admin");
-        defaultParameters.addArgument("password", "admin");
-        defaultParameters.addArgument("queueName", "testQueue");
+        defaultParameters.addArgument("USER_NAME", "admin");
+        defaultParameters.addArgument("PASSWORD", "admin");
+        defaultParameters.addArgument("QUEUE_NAME", "testQueue");
         defaultParameters.addArgument("CARBON_CLIENT_ID", "carbon");
         defaultParameters.addArgument("CARBON_VIRTUAL_HOST_NAME", "carbon");
         defaultParameters.addArgument("CARBON_DEFAULT_HOSTNAME", "localhost");
         defaultParameters.addArgument("CARBON_DEFAULT_PORT", "5672");
-        defaultParameters.addArgument("Message count per commit", "1");
+        defaultParameters.addArgument("FILE_PATH", " ");
+        defaultParameters.addArgument("MESSAGE_COUNT_PER_COMMIT", "1");
 
         return defaultParameters;
     }
 
     @Override
     public void setupTest(JavaSamplerContext context) {
-        userName = context.getParameter("userName");
-        password = context.getParameter("password");
-        queueName = context.getParameter("queueName");
-        msgCount = context.getIntParameter("Message count per commit");
+        userName = context.getParameter("USER_NAME");
+        password = context.getParameter("PASSWORD");
+        queueName = context.getParameter("QUEUE_NAME");
+        String filepath = context.getParameter("FILE_PATH");
+        try {
+            message = new String(Files.readAllBytes(Paths.get(filepath)), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        msgCount = context.getIntParameter("MESSAGE_COUNT_PER_COMMIT");
         cfName = context.getParameter("CF_NAME");
         properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, context.getParameter("QPID_ICF"));
@@ -93,7 +102,7 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
     public SampleResult runTest(JavaSamplerContext context) {
         SampleResult result = new SampleResult();
         result.sampleStart();
-        result.setSampleLabel("Transacted Queue Receiver");
+        result.setSampleLabel("Transacted Queue Sender");
         try {
             JMeterVariables vars = JMeterContextService.getContext().getVariables();
             InitialContext ctx = new InitialContext(properties);
@@ -111,31 +120,32 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
                 queueSession = (QueueSession) vars.getObject("queueSession");
             }
 
-            //Receive message
-            Queue queue =  (Queue) ctx.lookup(queueName);
-            consumer = queueSession.createConsumer(queue);
-
+            // Send message
+            Queue queue = (Queue) ctx.lookup(queueName);
+            // create the message to send
+            TextMessage textMessage = queueSession.createTextMessage(message);
+            javax.jms.QueueSender queueSender = queueSession.createSender(queue);
             for (int i = 0; i < msgCount; i++) {
-                TextMessage message = (TextMessage) consumer.receive();
+                queueSender.send(textMessage);
             }
 
             queueSession.commit();
 
-            consumer.close();
+            queueSender.close();
 
             result.sampleEnd();
             result.setSuccessful(true);
-            result.setResponseMessage("Successfully consumed messages");
+            result.setResponseMessage("Successfully published messages");
             result.setResponseCodeOK();
 
-        } catch (JMSException | NamingException ex) {
+        } catch (JMSException | NamingException e) {
             result.sampleEnd();
             result.setSuccessful(false);
             // get stack trace as a String to return as document data
             java.io.StringWriter stringWriter = new java.io.StringWriter();
-            ex.printStackTrace(new java.io.PrintWriter(stringWriter));
+            e.printStackTrace(new java.io.PrintWriter(stringWriter));
             result.setResponseData(stringWriter.toString(), null);
-            result.setResponseMessage("Unable to consume messages from queue." + "-" + "Exception: " + ex.toString());
+            result.setResponseMessage("Unable to publish messages to queue." + "-" + "Exception: " + e.toString());
             result.setDataType(org.apache.jmeter.samplers.SampleResult.TEXT);
             result.setResponseCode("FAILED");
         }
@@ -158,9 +168,6 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
         try {
             if (null != queueSession) {
                 queueSession.close();
-            }
-            if (null != queueConnection) {
-                queueConnection.stop();
             }
             if (null != queueConnection) {
                 queueConnection.close();

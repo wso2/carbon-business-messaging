@@ -12,7 +12,7 @@
     <artifactId>test_artifacts</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>javasamplers</module>
+        <module>jmeter-samplers</module>
     </modules>
 
 
