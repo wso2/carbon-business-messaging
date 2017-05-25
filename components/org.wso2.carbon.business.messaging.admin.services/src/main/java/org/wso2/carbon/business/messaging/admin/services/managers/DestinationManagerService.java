@@ -36,10 +36,10 @@ public interface DestinationManagerService {
      *                        <strong>contains</strong> the keyword will be returned.
      * @param offset          The offset value for the collection of destination.
      * @param limit           The number of records to return from the collection of destinations.
-     * @return A list of {@link Destination}s.
+     * @return A list of destination names
      * @throws DestinationManagerException
      */
-    List<Destination> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
+    List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
             throws DestinationManagerException;
 
     /**
@@ -134,5 +134,17 @@ public interface DestinationManagerService {
      * @throws DestinationManagerException
      */
     List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
+            throws DestinationManagerException;
+
+    /**
+     * Check if the given destination exits in the system
+     *
+     * @param protocol          The protocol type matching for the destination type.
+     * @param destinationType   The destination type matching for the destination.
+     * @param destinationName   The name of the destination to be checked.
+     * @return  true if the destination exists false otherwise
+     * @throws DestinationManagerException
+     */
+    boolean isDestinationExist(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException;
 }

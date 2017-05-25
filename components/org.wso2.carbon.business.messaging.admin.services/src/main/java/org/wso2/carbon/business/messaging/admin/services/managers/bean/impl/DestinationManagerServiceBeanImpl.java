@@ -50,7 +50,7 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
      * {@inheritDoc}
      */
     @Override
-    public List<Destination> getDestinations(String protocol, String destinationType, String keyword,
+    public List<String> getDestinations(String protocol, String destinationType, String keyword,
                                              int offset, int limit) throws DestinationManagerException {
         return destinationManagementBeans.getDestinations(protocol, destinationType, keyword, offset, limit);
     }
@@ -128,5 +128,11 @@ public class DestinationManagerServiceBeanImpl implements DestinationManagerServ
     public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
                                                                                     throws DestinationManagerException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
+            throws DestinationManagerException {
+        return destinationManagementBeans.isDestinationExist(protocol, destinationType, destinationName);
     }
 }

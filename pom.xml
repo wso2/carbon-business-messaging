@@ -532,7 +532,7 @@
         <testng.version>6.3.1</testng.version>
         <carbon.config.version>2.0.0</carbon.config.version>
 
-        <msf4j.version>2.2.2</msf4j.version>
+        <msf4j.version>2.3.0-m2</msf4j.version>
         <msf4j.import.version.range>[2.0.0, 3.0.0)</msf4j.import.version.range>
         <mockito.version>1.10.19</mockito.version>
         <testng.version>6.9.4</testng.version>
