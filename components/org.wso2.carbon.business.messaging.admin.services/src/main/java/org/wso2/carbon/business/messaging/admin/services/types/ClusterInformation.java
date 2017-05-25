@@ -34,7 +34,6 @@ public class ClusterInformation {
     private boolean isClusteringEnabled;
 
     /**
-     *
      * @param isClusteringEnabled
      */
     public void setIsClusteringEnabled(Boolean isClusteringEnabled) {
@@ -42,7 +41,6 @@ public class ClusterInformation {
     }
 
     /**
-     *
      * @return isClusteringEnabled
      */
     public boolean isClusteringEnabled() {

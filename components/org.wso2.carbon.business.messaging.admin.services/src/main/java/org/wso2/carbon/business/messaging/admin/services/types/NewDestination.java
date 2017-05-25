@@ -26,7 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * This class will be used when creating a new destination. Class {@link Destination} will not be used for creating a
  * new destination as it contains information that is not relevant for creating a destination.
  */
-@ApiModel(value = "New Destination.", description = "The structure for creating a new destination.")
+@ApiModel(value = "New Destination.",
+          description = "The structure for creating a new destination.")
 @XmlRootElement
 public class NewDestination {
     @ApiModelProperty(value = "The name for the destination.")

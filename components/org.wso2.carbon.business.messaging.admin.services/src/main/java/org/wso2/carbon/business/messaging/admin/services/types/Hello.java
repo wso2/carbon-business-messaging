@@ -24,17 +24,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * * This class represent a message information object.
  */
-@ApiModel(value = "Hello", description = "The structure represents a hello message.")
+@ApiModel(value = "Hello",
+          description = "The structure represents a hello message.")
 @XmlRootElement
 public class Hello {
     @ApiModelProperty(value = "Welcoming party.")
     private String welcome;
 
-    public void setWelcome(String welcome) {
-        this.welcome = welcome;
-    }
-
     public String getWelcome() {
         return welcome;
+    }
+
+    public void setWelcome(String welcome) {
+        this.welcome = welcome;
     }
 }

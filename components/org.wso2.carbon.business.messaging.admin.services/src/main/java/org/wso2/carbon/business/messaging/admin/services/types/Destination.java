@@ -33,13 +33,16 @@ import java.util.Date;
 public class Destination {
     @ApiModelProperty(value = "ID of the destination.")
     private long id = 0;
-    @ApiModelProperty(value = "Name of the destination.", required = true)
+    @ApiModelProperty(value = "Name of the destination.",
+                      required = true)
     private String destinationName = null;
     @ApiModelProperty(value = "The created date of the destination.")
     private long createdDate = System.currentTimeMillis();
-    @ApiModelProperty(value = "The type of the destination.", required = true)
+    @ApiModelProperty(value = "The type of the destination.",
+                      required = true)
     private DestinationType destinationType = null;
-    @ApiModelProperty(value = "The type of the protocol.", required = true)
+    @ApiModelProperty(value = "The type of the protocol.",
+                      required = true)
     private ProtocolType protocol = null;
     @ApiModelProperty(value = "The message count for the destination.")
     private long messageCount = 0;
@@ -70,12 +73,12 @@ public class Destination {
         return new Date(createdDate);
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate.getTime();
-    }
-
     public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate.getTime();
     }
 
     public DestinationType getDestinationType() {
@@ -90,12 +93,12 @@ public class Destination {
         return protocol;
     }
 
-    public void setProtocol(ProtocolType protocol) {
-        this.protocol = protocol;
-    }
-
     public void setProtocol(String protocolAsString) throws AndesException {
         this.protocol = ProtocolType.valueOf(protocolAsString.toUpperCase());
+    }
+
+    public void setProtocol(ProtocolType protocol) {
+        this.protocol = protocol;
     }
 
     public long getMessageCount() {

@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.business.messaging.admin.services.types;
 
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -27,14 +26,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This class represent a error object.
  */
-@ApiModel(value = "Error", description = "Represents an error response.")
+@ApiModel(value = "Error",
+          description = "Represents an error response.")
 @XmlRootElement
 public class ErrorResponse {
-    @ApiModelProperty(value = "Title of the error.", required = true)
+    @ApiModelProperty(value = "Title of the error.",
+                      required = true)
     private String title;
-    @ApiModelProperty(value = "Error code.", required = true)
+    @ApiModelProperty(value = "Error code.",
+                      required = true)
     private int code;
-    @ApiModelProperty(value = "Error message.", required = true)
+    @ApiModelProperty(value = "Error message.",
+                      required = true)
     private String message;
     @ApiModelProperty(value = "Short description about the error.")
     private String description;

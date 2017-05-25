@@ -29,9 +29,9 @@ import org.wso2.carbon.business.messaging.admin.services.types.StoreInformation;
  * This implementation provides the base for managing all messages related services through JMX.
  */
 public class BrokerManagerServiceBeanImpl implements BrokerManagerService {
-    
+
     private BrokerManagementBeans brokerManagementBeans;
-    
+
     public BrokerManagerServiceBeanImpl() {
         brokerManagementBeans = new BrokerManagementBeans();
     }

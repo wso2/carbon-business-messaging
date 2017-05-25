@@ -16,9 +16,6 @@
 
 package org.wso2.carbon.business.messaging.admin.services.beans;
 
-import org.wso2.andes.kernel.AndesException;
-import org.wso2.andes.kernel.CompositeDataHelper;
-import org.wso2.andes.kernel.DestinationType;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
 
@@ -32,7 +29,6 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.management.openmbean.CompositeData;
 
 /**
  * The following class contains the MBeans invoking services related to queue resources.
@@ -51,16 +47,15 @@ public class DestinationManagementBeans {
      * @return A list of destination names.
      * @throws DestinationManagerException
      */
-    public List<String> getDestinations(String protocol, String destinationType, String keyword,
-                                             int offset, int limit) throws
-            DestinationManagerException {
+    public List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
+            throws DestinationManagerException {
         try {
             List<String> destinationNames = new ArrayList<>();
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
             ObjectName objectName = new ObjectName(
                     "org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
             String operationName = "getAllQueueNames";
-            Object[] parameters = new Object[]{};
+            Object[] parameters = new Object[] {};
             String[] signature = new String[] { String.class.getName() };
             Object result = mBeanServer.invoke(objectName, operationName, parameters, signature);
             if (result != null) {
@@ -80,8 +75,7 @@ public class DestinationManagementBeans {
      * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
      * @throws DestinationManagerException
      */
-    public void deleteDestinations(String protocol, String destinationType) throws
-            DestinationManagerException {
+    public void deleteDestinations(String protocol, String destinationType) throws DestinationManagerException {
         throw new UnsupportedOperationException();
     }
 
@@ -95,7 +89,7 @@ public class DestinationManagementBeans {
      * @throws DestinationManagerException
      */
     public Destination getDestination(String protocol, String destinationType, String destinationName)
-                                                                                    throws DestinationManagerException {
+            throws DestinationManagerException {
         throw new UnsupportedOperationException();
     }
 
@@ -110,40 +104,33 @@ public class DestinationManagementBeans {
      * @throws DestinationManagerException
      */
     public Destination createDestination(String protocol, String destinationType, String destinationName,
-                                         String currentUsername) throws DestinationManagerException {
+            String currentUsername) throws DestinationManagerException {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
             String operationName = "createNewQueue";
 
-            Object[] parameters = new Object[]{destinationName, currentUsername, true};
-            String[] signature = new String[]{String.class.getName(), String.class.getName(),
-                                              boolean.class.getName()};
+            Object[] parameters = new Object[] { destinationName, currentUsername, true };
+            String[] signature = new String[] {
+                    String.class.getName(), String.class.getName(), boolean.class.getName()
+            };
 
-            mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
+            mBeanServer.invoke(objectName, operationName, parameters, signature);
 
-            ObjectName bindingMBeanObjectName =
-                    new ObjectName("org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
+            ObjectName bindingMBeanObjectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
                             "amq.direct" + "\",ExchangeType=direct");
             String bindingOperationName = "createNewBinding";
 
-            Object[] bindingParams = new Object[]{destinationName, destinationName};
-            String[] bpSignatures = new String[]{String.class.getName(), String.class.getName()};
+            Object[] bindingParams = new Object[] { destinationName, destinationName };
+            String[] bpSignatures = new String[] { String.class.getName(), String.class.getName() };
 
-            mBeanServer.invoke(
-                    bindingMBeanObjectName,
-                    bindingOperationName,
-                    bindingParams,
-                    bpSignatures);
+            mBeanServer.invoke(bindingMBeanObjectName, bindingOperationName, bindingParams, bpSignatures);
             return null;
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new DestinationManagerException("Error creating destination for to '" + protocol +
-                      "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
+                    "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
         }
     }
 
@@ -155,69 +142,32 @@ public class DestinationManagementBeans {
      * @param destinationName The name of the destination to be deleted.
      * @throws DestinationManagerException
      */
-    public void deleteDestination(String protocol, String destinationType, String destinationName) throws
-            DestinationManagerException {
+    public void deleteDestination(String protocol, String destinationType, String destinationName)
+            throws DestinationManagerException {
         // Todo: make use of protocol and destinationType params
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
             String operationName = "deleteQueue";
 
-            Object[] parameters = new Object[]{destinationName};
-            String[] signature = new String[]{String.class.getName()};
+            Object[] parameters = new Object[] { destinationName };
+            String[] signature = new String[] { String.class.getName() };
 
-            mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
+            mBeanServer.invoke(objectName, operationName, parameters, signature);
 
         } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
             throw new DestinationManagerException("Error deleting destination for to '" + protocol +
-                                                  "' and destination type '" + destinationType + "' with name '"
-                                                  + destinationName + "'", e);
+                    "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
         }
-    }
-
-    /**
-     * Converts a {@link CompositeData} to a {@link Destination}. The {@link CompositeData} should match the {@link
-     * Destination} in attribute wise.
-     *
-     * @param compositeDestination The composite data object.
-     * @return A {@link Destination}.
-     * @throws DestinationManagerException
-     */
-    private Destination getDestinationInfo(CompositeData compositeDestination) throws DestinationManagerException {
-        Destination destination;
-        try {
-            destination = new Destination();
-            destination.setDestinationName((String) compositeDestination.get(CompositeDataHelper
-                    .DestinationCompositeDataHelper.DESTINATION_NAME));
-            destination.setOwner((String) compositeDestination.get(CompositeDataHelper.DestinationCompositeDataHelper
-                    .DESTINATION_OWNER));
-            destination.setDurable((Boolean) compositeDestination.get(CompositeDataHelper.DestinationCompositeDataHelper
-                    .IS_DURABLE));
-            destination.setSubscriptionCount((Integer) compositeDestination.get(CompositeDataHelper
-                    .DestinationCompositeDataHelper.SUBSCRIPTION_COUNT));
-            destination.setMessageCount((Long) compositeDestination.get(CompositeDataHelper
-                    .DestinationCompositeDataHelper.MESSAGE_COUNT));
-            destination.setProtocol((String) compositeDestination.get(CompositeDataHelper
-                        .DestinationCompositeDataHelper.PROTOCOL_TYPE));
-            destination.setDestinationType(DestinationType.valueOf((String) compositeDestination.get(CompositeDataHelper
-                    .DestinationCompositeDataHelper.DESTINATION_TYPE)));
-        } catch (AndesException e) {
-            throw new DestinationManagerException("Error occurred while converting data.", e);
-        }
-        return destination;
     }
 
     /**
      * Check if the destination exists
      *
-     * @param protocol          The protocol type matching for the destination type. Example : amqp, mqtt.
-     * @param destinationType   The destination type matching for the destination. Example : queue, topic, durable_topic.
-     * @param destinationName   The name of the destination to be checked.
+     * @param protocol        The protocol type matching for the destination type. Example : amqp, mqtt.
+     * @param destinationType The destination type matching for the destination. Example : queue, topic, durable_topic.
+     * @param destinationName The name of the destination to be checked.
      * @return true if the destination exists false otherwise
      */
     public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
