@@ -16,21 +16,10 @@
 
 package org.wso2.carbon.business.messaging.admin.services.beans;
 
-import org.wso2.andes.kernel.CompositeDataHelper;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.SubscriptionManagerException;
-import org.wso2.carbon.business.messaging.admin.services.managers.bean.utils.SubscriptionManagementConstants;
 import org.wso2.carbon.business.messaging.admin.services.types.Subscription;
 
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.List;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.management.openmbean.CompositeData;
 
 /**
  * The following class contains the MBeans invoking services related to subscription resources.
@@ -56,9 +45,8 @@ public class SubscriptionManagementBeans {
      * @throws SubscriptionManagerException
      */
     public List<Subscription> getSubscriptions(String protocolType, String destinationType, String subscriptionName,
-                                               String destinationName, String active, int offset, int limit)
-                                                throws SubscriptionManagerException {
-       throw new UnsupportedOperationException();
+            String destinationName, String active, int offset, int limit) throws SubscriptionManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -72,7 +60,7 @@ public class SubscriptionManagementBeans {
      * @throws SubscriptionManagerException
      */
     public void closeSubscriptions(String protocol, String subscriptionType, String destinationName)
-                                                                                throws SubscriptionManagerException {
+            throws SubscriptionManagerException {
         throw new UnsupportedOperationException();
     }
 
@@ -82,44 +70,12 @@ public class SubscriptionManagementBeans {
      * @param protocol         The protocol type matching for the subscription. Example : amqp, mqtt.
      * @param subscriptionType The subscription type matching for the subscription. Example : queue, topic,
      *                         durable_topic.
-     * @param subscriptionID  Subscription ID
+     * @param subscriptionID   Subscription ID
      * @throws SubscriptionManagerException
      */
     public void closeSubscription(String protocol, String subscriptionType, String subscriptionID)
-                                                                                throws SubscriptionManagerException {
+            throws SubscriptionManagerException {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Converts a {@link CompositeData} to a {@link Subscription}. The {@link CompositeData} should match the {@link
-     * Subscription} in attribute wise.
-     *
-     * @param compositeSubscription The composite data object.
-     * @return A {@link Subscription}.
-     */
-    private Subscription getSubscriptionInfo(CompositeData compositeSubscription) {
-        Subscription subscription = new Subscription();
-        subscription.setSubscriptionIdentifier((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.SUBSCRIPTION_ID));
-        subscription.setSubscribedQueueOrTopicName((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.DESTINATION_NAME));
-        subscription.setSubscriberQueueBoundExchange((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.TARGET_QUEUE_BOUND_EXCHANGE_NAME));
-        subscription.setSubscriberQueueName((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.TARGET_QUEUE));
-        subscription.setDurable((Boolean) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.IS_DURABLE));
-        subscription.setActive((Boolean) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.HAS_EXTERNAL_SUBSCRIPTIONS));
-        subscription.setNumberOfMessagesRemainingForSubscriber((Integer) compositeSubscription.get
-                (CompositeDataHelper.SubscriptionCompositeDataHelper.PENDING_MESSAGE_COUNT));
-        subscription.setSubscriberNodeAddress((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.SUBSCRIBED_NODE));
-        subscription.setProtocolType((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.PROTOCOL_TYPE));
-        subscription.setDestinationType((String) compositeSubscription.get(CompositeDataHelper
-                .SubscriptionCompositeDataHelper.DESTINATION_TYPE));
-
-        return subscription;
-    }
 }

@@ -139,10 +139,10 @@ public interface DestinationManagerService {
     /**
      * Check if the given destination exits in the system
      *
-     * @param protocol          The protocol type matching for the destination type.
-     * @param destinationType   The destination type matching for the destination.
-     * @param destinationName   The name of the destination to be checked.
-     * @return  true if the destination exists false otherwise
+     * @param protocol        The protocol type matching for the destination type.
+     * @param destinationType The destination type matching for the destination.
+     * @param destinationName The name of the destination to be checked.
+     * @return true if the destination exists false otherwise
      * @throws DestinationManagerException
      */
     boolean isDestinationExist(String protocol, String destinationType, String destinationName)

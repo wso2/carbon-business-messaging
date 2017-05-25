@@ -16,23 +16,11 @@
 
 package org.wso2.carbon.business.messaging.admin.services.beans;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.wso2.andes.kernel.CompositeDataHelper;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManagerException;
-import org.wso2.carbon.business.messaging.admin.services.managers.bean.utils.MessageManagementConstants;
 import org.wso2.carbon.business.messaging.admin.services.types.Message;
 
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.List;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.management.openmbean.CompositeData;
 
 /**
  * The following class contains the MBeans invoking services related to message resources.
@@ -55,34 +43,8 @@ public class MessageManagementBeans {
      * @throws MessageManagerException
      */
     public List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType,
-                                                             String destinationName, boolean content,
-                                                             long nextMessageID, int limit)
-                                                            throws MessageManagerException {
-        List<Message> browseMessageList = new ArrayList<>();
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            ObjectName objectName =
-                    new ObjectName(MessageManagementConstants.MESSAGE_OBJECT_NAME);
-            String operationName = MessageManagementConstants.BROWSE_DESTINATIONS_WITH_MESSAGE_ID_MBEAN_ATTRIBUTE;
-            Object[] parameters = new Object[]{protocol, destinationType, destinationName, content, nextMessageID,
-                                                                                                                limit};
-            String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(),
-                                              boolean.class.getName(), long.class.getName(), int.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (null != result) {
-                CompositeData[] messageDataList = (CompositeData[]) result;
-                for (CompositeData messageData : messageDataList) {
-                    browseMessageList.add(getMessageInfo(messageData));
-                }
-            }
-        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
-            throw new MessageManagerException("Cannot browse queue : " + destinationName, e);
-        }
-        return browseMessageList;
+            String destinationName, boolean content, long nextMessageID, int limit) throws MessageManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -101,32 +63,8 @@ public class MessageManagementBeans {
      * @throws MessageManagerException
      */
     public List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType,
-                                                          String destinationName, boolean content, int offset,
-                                                          int limit) throws MessageManagerException {
-        List<Message> browseMessageList = new ArrayList<>();
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            ObjectName objectName =
-                    new ObjectName(MessageManagementConstants.MESSAGE_OBJECT_NAME);
-            String operationName = MessageManagementConstants.BROWSE_DESTINATIONS_WITH_OFFSET_MBEAN_ATTRIBUTE;
-            Object[] parameters = new Object[]{protocol, destinationType, destinationName, content, offset, limit};
-            String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(),
-                                              boolean.class.getName(), int.class.getName(), int.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (null != result) {
-                CompositeData[] messageDataList = (CompositeData[]) result;
-                for (CompositeData messageData : messageDataList) {
-                    browseMessageList.add(getMessageInfo(messageData));
-                }
-            }
-        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
-            throw new MessageManagerException("Cannot browse queue : " + destinationName, e);
-        }
-        return browseMessageList;
+            String destinationName, boolean content, int offset, int limit) throws MessageManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -141,29 +79,8 @@ public class MessageManagementBeans {
      * @throws MessageManagerException
      */
     public Message getMessage(String protocol, String destinationType, String destinationName, long andesMessageID,
-                              boolean content) throws MessageManagerException {
-        Message message = new Message();
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            ObjectName objectName =
-                    new ObjectName(MessageManagementConstants.MESSAGE_OBJECT_NAME);
-            String operationName = MessageManagementConstants.GET_MESSAGE_MBEAN_ATTRIBUTE;
-            Object[] parameters = new Object[]{protocol, destinationType, destinationName, andesMessageID, content};
-            String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(),
-                                              long.class.getName(), boolean.class.getName()};
-            Object result = mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-            if (result != null) {
-                CompositeData messageData = (CompositeData) result;
-                message = getMessageInfo(messageData);
-            }
-        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
-            throw new MessageManagerException("Cannot browse queue : " + destinationName, e);
-        }
-        return message;
+            boolean content) throws MessageManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -175,26 +92,8 @@ public class MessageManagementBeans {
      * @throws MessageManagerException
      */
     public void deleteMessages(String protocol, String destinationType, String destinationName)
-                                                                                        throws MessageManagerException {
-        //Todo: make use of protocol and destinationType
-        try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-
-            ObjectName bindingMBeanObjectName =
-                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-            String bindingOperationName = "deleteAllMessagesInQueue";
-
-            Object[] bindingParams = new Object[]{destinationName,"admin"};
-            String[] bpSignatures = new String[]{String.class.getName(),String.class.getName()};
-
-            mBeanServer.invoke(
-                    bindingMBeanObjectName,
-                    bindingOperationName,
-                    bindingParams,
-                    bpSignatures);
-        } catch (InstanceNotFoundException | MBeanException | ReflectionException | MalformedObjectNameException e) {
-            throw new MessageManagerException("Cannot browse queue : " + destinationName, e);
-        }
+            throws MessageManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -204,26 +103,9 @@ public class MessageManagementBeans {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws DestinationManagerException
      */
-    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
-            DestinationManagerException {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-
-            String operationName = "deleteMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, destinationQueueName};
-            String[] signature = new String[]{long[].class.getName(), String.class.getName()};
-            mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
-            throw new DestinationManagerException("Error deleting messages from Dead Letter Queue : " +
-                                                  destinationQueueName, e);
-        }
+    public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+            throws DestinationManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -233,25 +115,9 @@ public class MessageManagementBeans {
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @throws DestinationManagerException
      */
-    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName) throws
-            DestinationManagerException {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-
-            String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, destinationQueueName};
-            String[] signature = new String[]{long[].class.getName(), String.class.getName()};
-            mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
-            throw new DestinationManagerException("Error restoring messages from Dead Letter Queue : " +
-                                                  destinationQueueName, e);
-        }
+    public void restoreMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
+            throws DestinationManagerException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -263,45 +129,8 @@ public class MessageManagementBeans {
      * @throws DestinationManagerException
      */
     public void restoreMessagesFromDeadLetterQueueWithDifferentDestination(long[] messageIDs,
-                                                                           String newDestinationQueueName, String
-                                                                                   destinationQueueName) throws
-            DestinationManagerException {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName objectName =
-                    new ObjectName("org.wso2.andes:type=QueueManagementInformation,name=QueueManagementInformation");
-
-            String operationName = "restoreMessagesFromDeadLetterQueue";
-            Object[] parameters = new Object[]{messageIDs, newDestinationQueueName, destinationQueueName};
-            String[] signature = new String[]{long[].class.getName(), String.class.getName(), String.class.getName()};
-            mBeanServer.invoke(
-                    objectName,
-                    operationName,
-                    parameters,
-                    signature);
-        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
-            throw new DestinationManagerException("Error restoring messages from Dead Letter Queue : " +
-                                                  destinationQueueName + " to " + newDestinationQueueName, e);
-        }
+            String newDestinationQueueName, String destinationQueueName) throws DestinationManagerException {
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * Converts a {@link CompositeData} to a {@link Message}. The {@link CompositeData} should match the {@link
-     * Message} in attribute wise.
-     *
-     * @param compositeMessage The composite data object.
-     * @return A {@link Message}.
-     */
-    private Message getMessageInfo(CompositeData compositeMessage) {
-        Message message = new Message();
-        message.setAndesMsgMetadataId((Long) compositeMessage.get(CompositeDataHelper.MessagesCompositeDataHelper
-                .ANDES_METADATA_MESSAGE_ID));
-        message.setDestination((String) compositeMessage.get(CompositeDataHelper.MessagesCompositeDataHelper
-                .DESTINATION_NAME));
-        message.setMessageProperties(ArrayUtils.toMap((String[][]) compositeMessage.get(CompositeDataHelper
-                .MessagesCompositeDataHelper.MESSAGE_PROPERTIES)));
-        message.setMessageContent((String) compositeMessage.get(CompositeDataHelper.MessagesCompositeDataHelper
-                .MESSAGE_CONTENT));
-        return message;
-    }
 }

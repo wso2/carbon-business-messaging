@@ -25,7 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * * This class represent List of destination names
  */
-@ApiModel(value = "destination list", description = "The structure represents list of destination names.")
+@ApiModel(value = "destination list",
+          description = "The structure represents list of destination names.")
 @XmlRootElement
 public class DestinationNamesList {
     @ApiModelProperty(value = "Protocol of the destinations set")
@@ -35,27 +36,27 @@ public class DestinationNamesList {
     @ApiModelProperty(value = "Destination Names.")
     private List<String> destinationNames;
 
-    public void setDestinationType(String destinationType) {
-        this.destinationType = destinationType;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
     public String getDestinationType() {
         return destinationType;
+    }
+
+    public void setDestinationType(String destinationType) {
+        this.destinationType = destinationType;
     }
 
     public String getProtocol() {
         return protocol;
     }
 
-    public void setDestinationNames(List<String> destinationNames) {
-        this.destinationNames = destinationNames;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public List<String> getDestinationNames() {
         return destinationNames;
+    }
+
+    public void setDestinationNames(List<String> destinationNames) {
+        this.destinationNames = destinationNames;
     }
 }

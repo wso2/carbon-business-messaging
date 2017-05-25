@@ -29,29 +29,30 @@ import java.util.List;
 public class MessageManagerServiceBeanImpl implements MessageManagerService {
 
     private MessageManagementBeans messageManagementBeans;
-    
+
     public MessageManagerServiceBeanImpl() {
         messageManagementBeans = new MessageManagementBeans();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType, String
-            destinationName, boolean content, long nextMessageID, int limit) throws MessageManagerException {
-        return messageManagementBeans.getMessagesOfDestinationByMessageID(protocol, destinationType,
-                                                                        destinationName, content, nextMessageID, limit);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType, String
-            destinationName, boolean content, int offset, int limit) throws MessageManagerException {
-        return messageManagementBeans.getMessagesOfDestinationByOffset(protocol, destinationType,
-                                                                            destinationType, content, offset, limit);
+    public List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType,
+            String destinationName, boolean content, long nextMessageID, int limit) throws MessageManagerException {
+        return messageManagementBeans
+                .getMessagesOfDestinationByMessageID(protocol, destinationType, destinationName, content, nextMessageID,
+                        limit);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType,
+            String destinationName, boolean content, int offset, int limit) throws MessageManagerException {
+        return messageManagementBeans
+                .getMessagesOfDestinationByOffset(protocol, destinationType, destinationType, content, offset, limit);
     }
 
     /**
@@ -59,7 +60,7 @@ public class MessageManagerServiceBeanImpl implements MessageManagerService {
      */
     @Override
     public Message getMessage(String protocol, String destinationType, String destinationName, long andesMessageID,
-                              boolean content) throws MessageManagerException {
+            boolean content) throws MessageManagerException {
         return messageManagementBeans.getMessage(protocol, destinationType, destinationName, andesMessageID, content);
     }
 
@@ -68,7 +69,7 @@ public class MessageManagerServiceBeanImpl implements MessageManagerService {
      */
     @Override
     public void deleteMessages(String protocol, String destinationType, String destinationName)
-                                                                                        throws MessageManagerException {
+            throws MessageManagerException {
         messageManagementBeans.deleteMessages(protocol, destinationType, destinationName);
     }
 }

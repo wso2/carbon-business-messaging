@@ -25,17 +25,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * * This class represent a Protocols information object.
  */
-@ApiModel(value = "Protocols", description = "The structure represents protocols supported by the Message Broker.")
+@ApiModel(value = "Protocols",
+          description = "The structure represents protocols supported by the Message Broker.")
 @XmlRootElement
 public class Protocols {
     @ApiModelProperty(value = "Protocols list.")
     private List<String> protocol;
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
-    }
-
     public List<String> getProtocol() {
         return protocol;
+    }
+
+    public void setProtocol(List<String> protocol) {
+        this.protocol = protocol;
     }
 }

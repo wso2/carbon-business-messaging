@@ -38,7 +38,7 @@ public class DLCManagerServiceBeanImpl implements DLCManagerService {
      */
     @Override
     public void restoreMessagesFromDeadLetterQueue(List<Long> andesMetadataIDs, String newDestinationQueueName,
-                                                   String dlcQueueName) {
+            String dlcQueueName) {
 
     }
 

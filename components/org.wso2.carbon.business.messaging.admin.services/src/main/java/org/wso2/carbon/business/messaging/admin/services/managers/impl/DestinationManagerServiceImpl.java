@@ -31,7 +31,6 @@ import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePe
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * Implementation for handling destination related resource through OSGi.
  */
@@ -95,24 +94,24 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     @Override
     public void createDestination(String protocol, String destinationType, String destinationName)
             throws DestinationManagerException {
-//        try {
-//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
-//            boolean isDurable = Boolean.TRUE;
-//            boolean isShared = Boolean.FALSE;
-//            String queueOwner = "admin";
-//            boolean isExclusive = Boolean.FALSE;
-//            String exchange = (destinationTypeEnum.equals(DestinationType.QUEUE) ?
-//                    "amq.direct" :
-//                    "amq.topic");
-//
-//            andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
-//            andesCore.addBinding(new InboundBindingEvent(
-//                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), exchange,
-//                    destinationName));
-//        } catch (AndesException | IllegalArgumentException e) {
-//            throw new DestinationManagerException("Error creating the destination.", e);
-//        }
+        //        try {
+        //            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
+        //            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
+        //            boolean isDurable = Boolean.TRUE;
+        //            boolean isShared = Boolean.FALSE;
+        //            String queueOwner = "admin";
+        //            boolean isExclusive = Boolean.FALSE;
+        //            String exchange = (destinationTypeEnum.equals(DestinationType.QUEUE) ?
+        //                    "amq.direct" :
+        //                    "amq.topic");
+        //
+        //            andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
+        //            andesCore.addBinding(new InboundBindingEvent(
+        //                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), exchange,
+        //                    destinationName));
+        //        } catch (AndesException | IllegalArgumentException e) {
+        //            throw new DestinationManagerException("Error creating the destination.", e);
+        //        }
         String currentUsername = "admin";
         DestinationManagementBeans destinationManagementBeans = new DestinationManagementBeans();
         destinationManagementBeans.createDestination(protocol, destinationType, destinationName, currentUsername);
