@@ -390,6 +390,11 @@
                 <artifactId>msf4j-swagger</artifactId>
                 <version>${msf4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${org.snakeyaml.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -475,6 +480,7 @@
         <org.osgi.core.version>6.0.0</org.osgi.core.version>
         <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
         <carbon.datasources.version>1.1.0</carbon.datasources.version>
+        <org.snakeyaml.version>1.17</org.snakeyaml.version>
         <!-- ******************************** -->
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
