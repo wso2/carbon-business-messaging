@@ -167,7 +167,9 @@ public class BrokerServiceComponent {
             }
 
         } catch (ConfigurationException e) {
-            log.error("Invalid configuration found in a configuration file", e);
+            //We do not propagate the exception further, to avoid the bundle to be attempted to be made active in cycle
+            String error = "Invalid configuration found in a configuration file";
+            log.error(error, e);
         }
 
     }
@@ -204,7 +206,9 @@ public class BrokerServiceComponent {
             DataSource dataSource = (HikariDataSource) dataSourceService.getDataSource(BrokerConstants.MB_DS_NAME);
             ClusterResourceHolder.getInstance().setDatasource(dataSource);
         } catch (DataSourceException e) {
-            log.error("Error occurred while registering data service ", e);
+            //We do not propagate the exception further since the framework would re attempt to activate the bundle
+            String error = "Error occurred while registering data service ";
+            log.error(error, e);
         }
     }
 
@@ -234,7 +238,9 @@ public class BrokerServiceComponent {
                 response = true;
             }
         } catch (MalformedObjectNameException e) {
-            log.error("Error checking if broker is running.", e);
+            //We do not propagate the exception further since the framework would re attempt to activate the bundle
+            String error = "Error checking if broker is running.";
+            log.error(error, e);
         }
 
         return response;
@@ -253,6 +259,10 @@ public class BrokerServiceComponent {
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
+            String error = "Non-numeric value provided in the configuration as port offset, using the default " +
+                    CARBON_DEFAULT_PORT_OFFSET;
+            log.error(error, e);
+            //We do not propagate the exception further
             return CARBON_DEFAULT_PORT_OFFSET;
         }
     }
@@ -351,6 +361,8 @@ public class BrokerServiceComponent {
                                 + "on port " + port);
                     }
                 } catch (IOException e) {
+                    //There will be a continuous retry effort to start the qpid server, if an error occurs the
+                    // exception will not be propagated further
                     log.error("Wait until Qpid server starts on port " + port, e);
                     try {
                         Thread.sleep(500);
@@ -363,6 +375,8 @@ public class BrokerServiceComponent {
                             socket.close();
                         }
                     } catch (IOException e) {
+                        //There will be a continuous retry effort to close the socket, if an error occurs the
+                        // exception will not be propagated further
                         log.error("Can not close the socket which is used to check the server "
                                 + "status ", e);
                     }
