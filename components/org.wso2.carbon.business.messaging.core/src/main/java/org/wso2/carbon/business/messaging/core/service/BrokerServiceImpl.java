@@ -18,46 +18,47 @@
 
 package org.wso2.carbon.business.messaging.core.service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.file.Paths;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.server.registry.ApplicationRegistry;
-import org.wso2.carbon.business.messaging.core.internal.QpidServiceDataHolder;
+import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
+import org.wso2.carbon.business.messaging.core.internal.BrokerServiceDataHolder;
 import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
 import org.wso2.carbon.kernel.utils.StringUtils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.Paths;
+
 /**
  * The following class contains mutator methods for configuration values the broker.
  */
-public class QpidServiceImpl implements QpidService {
+public class BrokerServiceImpl implements BrokerService {
 
-    private static final Log log = LogFactory.getLog(QpidServiceImpl.class);
+    private static final Log log = LogFactory.getLog(BrokerServiceImpl.class);
 
     /**
      * The client ID for AMQP URL.
      */
-    private static String CARBON_CLIENT_ID = "carbon";
+    private static final String CARBON_CLIENT_ID = "carbon";
 
     /**
      * The Virtual host name for AMQL URL.
      */
-    private static String CARBON_VIRTUAL_HOST_NAME = "carbon";
+    private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
 
     /**
      * The default host name for connections.
      */
-    private static String CARBON_DEFAULT_HOSTNAME = "localhost";
+    private static final String CARBON_DEFAULT_HOSTNAME = "localhost";
 
     /**
-     * The location for the qpid configuration file directory.
+     * The directory location of the qpid configuration file
      */
-    public static final String QPID_CONF = "qpid.conf";
-    private static String QPID_CONF_DIR = "/conf/advanced/";
+    private String qpidConfigurationDirectoryPath = "/conf/advanced/";
 
     /**
      * Default domain separator.
@@ -104,7 +105,7 @@ public class QpidServiceImpl implements QpidService {
      *
      * @param accessKey The access key for in VM connection string.
      */
-    public QpidServiceImpl(String accessKey) {
+    public BrokerServiceImpl(String accessKey) {
         this.accessKey = accessKey;
     }
 
@@ -294,46 +295,13 @@ public class QpidServiceImpl implements QpidService {
      */
     @Override
     public String getQpidHome() {
-        //get system property value for qpid-config.xml if exists
-        String qpidPath = System.getProperty(QPID_CONF);
+        String qpidPath = System.getProperty(BrokerConstants.QPID_CONF);
 
         if (qpidPath != null) {
-            QPID_CONF_DIR = Paths.get(qpidPath).toString();
+            qpidConfigurationDirectoryPath = Paths.get(qpidPath).toString();
         }
-        return System.getProperty("carbon.home") + QPID_CONF_DIR;
+        return System.getProperty("carbon.home") + qpidConfigurationDirectoryPath;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-//    @Override
-//    public QueueDetails[] getQueues(boolean isDurable) {
-//        QueueDetails[] queueDetails = null;
-//
-//        try {
-//            queueDetails = RegistryClient.getQueues();
-//        } catch (RegistryClientException e) {
-//            log.error("Error while retrieving queue details.", e);
-//        }
-//
-//        return queueDetails;
-//    }
-
-    /**
-     * {@inheritDoc}
-     */
-//    @Override
-//    public SubscriptionDetails[] getSubscriptions(String topic, boolean isDurable) {
-//        SubscriptionDetails[] subsDetails = null;
-//
-//        try {
-//            subsDetails = RegistryClient.getSubscriptions(topic);
-//        } catch (RegistryClientException e) {
-//            log.error("Error while retrieving subscription details", e);
-//        }
-//
-//        return subsDetails;
-//    }
 
     /**
      * Reads the AMQP amqpPort from configuration and calculates the offset amqpPort that should be used in the pack.
@@ -386,17 +354,6 @@ public class QpidServiceImpl implements QpidService {
     }
 
     /**
-     * Returns true if SSL port enabled and default port disabled.
-     *
-     * @return if only port enabled is SSL port
-     * @throws ConfigurationException
-     */
-    public boolean getMQTTSSLOnly() throws ConfigurationException {
-        return ApplicationRegistry.getInstance().getConfiguration().getMQTTSSLOnly();
-    }
-
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -409,7 +366,7 @@ public class QpidServiceImpl implements QpidService {
      */
     @Override
     public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener) {
-        QpidServiceDataHolder.getInstance().getBrokerLifecycleListeners()
+        BrokerServiceDataHolder.getInstance().getBrokerLifecycleListeners()
                 .add(brokerLifecycleListener);
 
     }

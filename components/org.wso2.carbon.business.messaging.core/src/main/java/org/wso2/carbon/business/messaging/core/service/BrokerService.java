@@ -24,7 +24,7 @@ import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener
  * This is an interface that declares access methods for properties
  * exposed from the qpid component to other Carbon components.
  */
-public interface QpidService {
+public interface BrokerService {
     /**
      * Get the access key that should be used for internal authentication.
      * <p>
@@ -127,28 +127,7 @@ public interface QpidService {
     public String getQpidHome();
 
     /**
-     * Get details about all queues (durable/non-durable) created in the broker
-     *
-     * @param isDurable
-     *               Durable queues?
-     * @return
-     *           An array of QueueDetails objects
-     */
-//    public QueueDetails[] getQueues(boolean isDurable);
-
-    /**
-     * Get details about all subscriptions (durable/non-durable) created in the broker
-     *
-     * @param topic
-     *                Name of the topic that subscriptions bound to
-     * @param isDurable
-     *               Durable subscriptions?
-     * @return
-     */
-//    public SubscriptionDetails[] getSubscriptions(String topic, boolean isDurable);
-
-    /**
-     * Return if <sslOnly> option is enabled for embedded-qpid
+     * Return if "sslOnly" option is enabled for embedded-qpid
      *
      * @return
      */
@@ -157,7 +136,7 @@ public interface QpidService {
     /**
      * Register broker lifecycle listener.
      *
-     * @param brokerLifecycleListener
+     * @param brokerLifecycleListener set of listeners which will be triggered when the broker shuts down
      */
     public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener);
 
