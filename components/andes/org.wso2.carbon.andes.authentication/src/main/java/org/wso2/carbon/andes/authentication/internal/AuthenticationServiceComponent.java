@@ -22,7 +22,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.kernel.AndesException;
-import org.wso2.carbon.andes.authentication.andes.oauth.config.OAuthConfigurationManager;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationServiceImpl;
 import org.wso2.carbon.base.ServerConfiguration;
@@ -62,7 +61,6 @@ public class AuthenticationServiceComponent {
     protected void activate(ComponentContext ctx) throws AndesException{
         //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
         AndesConfigurationManager.initialize(getPortOffset());
-        OAuthConfigurationManager.getInstance().initConfig();
 
         // Generate access key
         String accessKey = UUID.randomUUID().toString();

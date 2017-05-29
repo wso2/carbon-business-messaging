@@ -352,15 +352,6 @@ public class QpidServiceComponent {
     }
 
     /***
-     * This applies the MQTTbindAddress from broker.xml instead of the hostname from carbon.xml within MB.
-     * @return host name as derived from broker.xml
-     */
-    private String getMQTTTransportBindAddress() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_BIND_ADDRESS);
-
-    }
-
-    /***
      * This applies the AMQPbindAddress from broker.xml instead of the hostname from carbon.xml within MB.
      * @return host name as derived from broker.xml
      */
@@ -388,8 +379,7 @@ public class QpidServiceComponent {
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, qpidServiceImpl.getQpidHome());
-        String[] args = {"-p" + qpidServiceImpl.getAMQPPort(), "-s" + qpidServiceImpl.getAMQPSSLPort(),
-                "-q" + qpidServiceImpl.getMqttPort()};
+        String[] args = {"-p" + qpidServiceImpl.getAMQPPort(), "-s" + qpidServiceImpl.getAMQPSSLPort()};
 
         //TODO: Change the functionality in andes main method to an API
         //Main.setStandaloneMode(false);
@@ -413,9 +403,6 @@ public class QpidServiceComponent {
 
         // Start AMQP server with given configurations
         startAMQPServer();
-
-        // Start MQTT Server with given configurations
-        startMQTTServer();
 
         // Message broker is started with both AMQP and MQTT
         log.info("WSO2 Message Broker is started.");
@@ -491,57 +478,6 @@ public class QpidServiceComponent {
         }
     }
 
-    /**
-     * check whether the tcp port has started. some times the server started thread may return
-     * before MQTT server actually bind to the tcp port. in that case there are some connection
-     * time out issues.
-     *
-     * @throws ConfigurationException
-     */
-    private void startMQTTServer() throws ConfigurationException {
-
-        boolean isServerStarted = false;
-        int port;
-
-        if (qpidServiceImpl.getMQTTSSLOnly()) {
-            port = qpidServiceImpl.getMqttSSLPort();
-        } else {
-            port = qpidServiceImpl.getMqttPort();
-        }
-
-        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_MQTT_ENABLED)) {
-            while (!isServerStarted) {
-                Socket socket = null;
-                try {
-                    InetAddress address = InetAddress.getByName(getMQTTTransportBindAddress());
-                    socket = new Socket(address, port);
-                    log.info("MQTT Host Address : " + address.getHostAddress() + " Port : " + port);
-                    isServerStarted = socket.isConnected();
-                    if (isServerStarted) {
-                        log.info("Successfully connected to MQTT server on port " + port);
-                    }
-                } catch (IOException e) {
-                    log.error("Wait until server starts on port " + port, e);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ignore) {
-                        // Ignore
-                    }
-                } finally {
-                    try {
-                        if ((socket != null) && (socket.isConnected())) {
-                            socket.close();
-                        }
-                    } catch (IOException e) {
-                        log.error("Can not close the socket which is used to check the server "
-                                  + "status ", e);
-                    }
-                }
-            }
-        } else {
-            log.warn("MQTT Transport is disabled as per configuration.");
-        }
-    }
 
     /**
      * Private class containing the tasks that need to be done at server shut down

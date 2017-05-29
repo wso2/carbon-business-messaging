@@ -45,18 +45,6 @@ public class AuthorizationConfigurationManager {
 	private AuthorizationConfigurationManager() {
 	}
 
-	/**
-	 * Initialize the configuration properties that required for OAuth based authentication.
-	 */
-	public synchronized void initConfig() throws AndesException {
-		List<String> mqttTranportProperties = AndesConfigurationManager.readValueList
-				(AndesConfiguration.LIST_TRANSPORT_MQTT_AUTHORIZATION_PROPERTIES);
-		for (String property : mqttTranportProperties) {
-			String propertyValue = AndesConfigurationManager.readValueOfChildByKey(
-					AndesConfiguration.TRANSPORT_MQTT_AUTHORIZATION_PROPERTIES, property);
-			propertyMap.put(property, propertyValue);
-		}
-	}
 
 	public String getProperty(String propertyKey) {
 		return propertyMap.get(propertyKey);
