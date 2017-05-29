@@ -127,6 +127,23 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             and vise versa -->
             <deliveryBufferSize>32768</deliveryBufferSize>
             
+            <!-- Class name of the connector to use. Connectors allow how the message should be 
+            handled once its accepted through the mqtt protocol, definition of message handling 
+            semantics. All connectors should inherit from org.wso2.andes.mqtt.connectors.MQTTConnector
+
+            By defaut there're two types of connectors packaged :
+
+            org.wso2.andes.mqtt.connectors.DistributedStoreConnector : 
+                                                 Default connector which will interface with the core
+                                                 this will support all three levels of QoS and will be
+                                                 recommended for clustered deployments.
+
+            org.wso2.andes.mqtt.connectors.InMemoryConnector         : 
+                                                 The connector will support only QoS 0 and recommended
+                                                 only for stand alone deployments. This connector is a
+                                                 performance oriented. 
+            -->
+            <connector>org.wso2.andes.mqtt.connectors.DistributedStoreConnector</connector>
 
             <security>
                    <!--
