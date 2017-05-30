@@ -22,6 +22,9 @@ package configuration;
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 
+/**
+ * MB Basic Configurations
+ */
 @Configuration(namespace = "wso2.carbon.mb", description = "MB Configuration Parameters")
 public class MBConfigurations {
 
