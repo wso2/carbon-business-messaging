@@ -52,7 +52,7 @@ public class ServiceComponent {
      * satisfied.
      *
      * @param bundleContext the bundle context instance of this bundle.
-     * @throws Exception this will be thrown if an issue occurs while executing the activate method
+     * @throws Exception this will be thrown if an issue occurs while executing the start method
      */
     @Activate
     protected void start(BundleContext bundleContext) throws Exception {
@@ -69,7 +69,7 @@ public class ServiceComponent {
      * This is the deactivation method of ServiceComponent. This will be called when this component
      * is being stopped or references are satisfied during runtime.
      *
-     * @throws Exception this will be thrown if an issue occurs while executing the de-activate method
+     * @throws Exception this will be thrown if an issue occurs while executing the de-start method
      */
     @Deactivate
     protected void stop() throws Exception {

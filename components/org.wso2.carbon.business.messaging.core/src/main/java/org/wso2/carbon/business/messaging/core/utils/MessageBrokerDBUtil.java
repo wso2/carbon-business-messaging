@@ -18,14 +18,16 @@
 
 package org.wso2.carbon.business.messaging.core.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
+
+import java.io.File;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.io.File;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
 
 /**
  * <h1>Initialize MB RDBMS store database</h1>
@@ -44,14 +46,9 @@ public final class MessageBrokerDBUtil {
     private static final Log log = LogFactory.getLog(MessageBrokerDBUtil.class);
 
     /**
-     * sql query to be execute to verify database tables.
-     */
-    private static final String DB_CHECK_SQL = "SELECT * FROM MB_QUEUE_COUNTER";
-
-    /**
      * keep data source configurations.
      */
-    private static volatile DataSource messageStoreDataSource = null;
+    private  volatile DataSource messageStoreDataSource = null;
 
     /**
      * keep context store data source configurations.
@@ -89,17 +86,10 @@ public final class MessageBrokerDBUtil {
 
             setMessageStoreDataSource(mbDatabaseConfig);
 
-            if (isMessageStoreDataSourceSet) {
-                setupMBStoreRdbmsDatabase(messageStoreDataSource);
-            }
             // message store and context store schemas can source to same database. In that case
             // context store data source won't set.
 
             setContextStoreDataSource(mbDatabaseConfig);
-
-            if (isContextStoreDataSourceSet) {
-                setupMBStoreRdbmsDatabase(contextStoreDataSource);
-            }
         }
     }
 
@@ -143,54 +133,5 @@ public final class MessageBrokerDBUtil {
                     + ". It is optional to use this");
 
         }
-    }
-
-    /**
-     * Based on database configurations create database tables, if tables dose not
-     * exist in given database.
-     *
-     * @param dataSource holds configuration data source
-     * @throws ConfigurationException
-     */
-    private void setupMBStoreRdbmsDatabase(DataSource dataSource) throws ConfigurationException {
-
-        LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
-
-//        try {
-//
-//            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-//                databaseCreator.createRegistryDatabase();
-//            } else {
-//                log.info("Message Broker database store already exists." +
-//                        " Not creating a new database.");
-//            }
-//
-//        } catch (ConfigurationException e) {
-//            log.error("Unexpected error occurred while creating database: ", e);
-//            throw new ConfigurationException("Unexpected error occurred while " +
-//                    " creating database. ", e);
-//        }
-//
-//        verifyRdbmsDatabase(databaseCreator);
-
-    }
-
-    /**
-     * This method verifies if tables exist in database by executing
-     * DB_CHECK_SQL query.
-     *
-     * @param databaseCreator local database creator instance
-     * @throws RuntimeException
-     */
-    private void verifyRdbmsDatabase(LocalDatabaseCreator databaseCreator) throws RuntimeException {
-
-//        if (databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-//            log.info("Successfully sourced relevant sql files to database.");
-//        } else {
-//            log.error("Unable to read sourced database tables. Database not " +
-//                    " successfully created.");
-//            throw new RuntimeException("Unable to read sourced database tables. Database not " +
-//                    " successfully created.");
-//        }
     }
 }
