@@ -85,6 +85,7 @@
             javax.xml.bind*,
             org.slf4j.*;version="${slf4j.import.version.range}",
             io.swagger.annotations.*;version="${io.swagger.annotations.version.range}",
+            org.wso2.andes.configuration.*,
             org.wso2.carbon.messaging.*,
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version.range}",
             org.wso2.andes.kernel.*;version="${andes.dependency.version.range}"

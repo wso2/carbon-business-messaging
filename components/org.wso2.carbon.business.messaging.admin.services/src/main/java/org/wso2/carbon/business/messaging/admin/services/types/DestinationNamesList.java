@@ -23,7 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * * This class represent List of destination names
+ * * This class represent List of destination names.
  */
 @ApiModel(value = "destination list",
           description = "The structure represents list of destination names.")

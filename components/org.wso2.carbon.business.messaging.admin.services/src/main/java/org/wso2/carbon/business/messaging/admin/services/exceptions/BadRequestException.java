@@ -16,8 +16,29 @@
 
 package org.wso2.carbon.business.messaging.admin.services.exceptions;
 
+
 /**
- * The exception that is thrown when an invalid value is entered to a the offset query param.
+ * Exception class for the rest server when a request  is not valid.
  */
-public class InvalidOffsetValueException extends Exception {
+public class BadRequestException extends Exception {
+    private static final long serialVersionUID = 4377416787928752102L;
+
+    /**
+     * Creates an exception with given string.
+     *
+     * @param message The exception message content.
+     */
+    public BadRequestException(String message) {
+        super(message);
+    }
+
+    /**
+     * Creates an exception with given string.
+     *
+     * @param message The exception message content.
+     * @param cause The exception cause.
+     */
+    public BadRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

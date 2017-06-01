@@ -20,9 +20,29 @@ package org.wso2.carbon.business.messaging.admin.services.tests.unit;
  * Common constants use through out the testing in rest service.
  */
 public class Constants {
+
+    /**
+     * Constant to set hostname.
+     */
     public static final String HOSTNAME = "localhost";
+
+    /**
+     * Constant to set port.
+     */
     public static final int PORT = 7777;
+
+    /**
+     * Constant to set version.
+     */
     public static final String VERSION = "v1.0.0";
+
+    /**
+     * Constant to set root path.
+     */
     public static final String ROOT_PATH = "/mb/" + VERSION;
+
+    /**
+     * Constant to set base url.
+     */
     public static final String BASE_URL = "http://" + HOSTNAME + ":" + PORT + ROOT_PATH;
 }

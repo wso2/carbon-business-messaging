@@ -21,6 +21,8 @@ package org.wso2.carbon.business.messaging.admin.services.exceptions;
  */
 public class InternalServerException extends Exception {
     private static final long serialVersionUID = 3803992383244407058L;
+    private String faultCode;
+    private String faultString;
 
     /**
      * Creates an internal service exceptions with an exceptions. Exception would be server related error.
@@ -29,5 +31,42 @@ public class InternalServerException extends Exception {
      */
     public InternalServerException(Throwable cause) {
         super(cause);
+    }
+
+    /**
+     * Creates an exception with given string and cause.
+     *
+     * @param message The exception message content.
+     * @param cause The exception cause.
+     */
+    public InternalServerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Creates an exception with given string.
+     *
+     * @param message The exception message content.
+     */
+    public InternalServerException(String message) {
+        super(message);
+    }
+
+    /**
+     * Creates an exception with given string and code.
+     *
+     * @param faultString The fault message content.
+     * @param faultCode The fault code.
+     */
+    public InternalServerException(String faultString, String faultCode) {
+        this.faultCode = faultCode;
+        this.faultString = faultString;
+    }
+    public String getFaultCode() {
+        return faultCode;
+    }
+
+    public String getFaultString() {
+        return faultString;
     }
 }

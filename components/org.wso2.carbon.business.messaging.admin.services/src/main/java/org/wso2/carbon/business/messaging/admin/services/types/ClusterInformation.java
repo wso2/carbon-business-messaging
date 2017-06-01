@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ClusterInformation {
 
     /**
-     * This node belongs to a cluster or not
+     * This node belongs to a cluster or not.
      */
     private boolean isClusteringEnabled;
 

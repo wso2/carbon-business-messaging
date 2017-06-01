@@ -16,19 +16,16 @@
 
 package org.wso2.carbon.business.messaging.admin.services.managers;
 
-import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
-import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePermission;
-
 import java.util.List;
-import java.util.Set;
 
 /**
  * This interface provides the base for managing all messages related services.
  */
 public interface DestinationManagerService {
     /**
-     * Gets the collection of destinations(queues/topics)
+     * Gets the collection of destinations(queues/topics).
      *
      * @param protocol        The protocol type matching for the destination type.
      * @param destinationType The destination type matching for the destination.
@@ -37,19 +34,10 @@ public interface DestinationManagerService {
      * @param offset          The offset value for the collection of destination.
      * @param limit           The number of records to return from the collection of destinations.
      * @return A list of destination names
-     * @throws DestinationManagerException Error in handling destination information
+     * @throws InternalServerException Error in handling destination information
      */
     List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
-            throws DestinationManagerException;
-
-    /**
-     * Deletes all the destinations.
-     *
-     * @param protocol        The protocol type matching for the destination type.
-     * @param destinationType The destination type matching for the destination.
-     * @throws DestinationManagerException Error in handling destination information
-     */
-    void deleteDestinations(String protocol, String destinationType) throws DestinationManagerException;
+            throws InternalServerException;
 
     /**
      * Gets a destination.
@@ -58,10 +46,10 @@ public interface DestinationManagerService {
      * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
      * @return A {@link Destination}.
-     * @throws DestinationManagerException Error in handling destination information
+     * @throws InternalServerException Error in handling destination information
      */
     Destination getDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException;
+            throws InternalServerException;
 
     /**
      * Creates a new destination.
@@ -69,50 +57,10 @@ public interface DestinationManagerService {
      * @param protocol        The protocol type matching for the destination type.
      * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination.
-     * @throws DestinationManagerException Error in handling destination information
+     * @throws InternalServerException Error in handling destination information
      */
     void createDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException;
-
-    /**
-     * Gets permission assigned to specific destination.
-     *
-     * @param protocol        The protocol type matching for the destination type.
-     * @param destinationType The destination type matching for the destination.
-     * @param destinationName The name of the destination.
-     * @return A set of {@link DestinationRolePermission}s. Null if invalid destination.
-     * @throws DestinationManagerException Error in handling destination information
-     */
-    Set<DestinationRolePermission> getDestinationPermissions(String protocol, String destinationType,
-            String destinationName) throws DestinationManagerException;
-
-    /**
-     * Create permissions on a destination.
-     *
-     * @param protocol                  The protocol type matching for the destination type.
-     * @param destinationType           The destination type matching for the destination.
-     * @param destinationName           The name of the destination.
-     * @param destinationRolePermission New permission.
-     * @return Newly created permission.
-     * @throws DestinationManagerException Error in handling destination information
-     */
-    DestinationRolePermission createDestinationPermission(String protocol, String destinationType,
-            String destinationName, DestinationRolePermission destinationRolePermission)
-            throws DestinationManagerException;
-
-    /**
-     * Updates permissions on a destination.
-     *
-     * @param protocol                  The protocol type matching for the destination type.
-     * @param destinationType           The destination type matching for the destination.
-     * @param destinationName           The name of the destination.
-     * @param destinationRolePermission Updated permission.
-     * @return Updated permission.
-     * @throws DestinationManagerException Error in handling destination information
-     */
-    DestinationRolePermission updateDestinationPermission(String protocol, String destinationType,
-            String destinationName, DestinationRolePermission destinationRolePermission)
-            throws DestinationManagerException;
+            throws InternalServerException;
 
     /**
      * Deletes a destination.
@@ -120,32 +68,20 @@ public interface DestinationManagerService {
      * @param protocol        The protocol type matching for the destination type.
      * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination to be deleted.
-     * @throws DestinationManagerException Error in handling destination information
+     * @throws InternalServerException Error in handling destination information
      */
     void deleteDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException;
+            throws InternalServerException;
 
     /**
-     * Gets names of destinations as strings.
-     *
-     * @param protocol        The protocol type matching for the destination type.
-     * @param destinationType The destination type matching for the destination.
-     * @param destinationName The name of the destination to be deleted.
-     * @return List of destination names
-     * @throws DestinationManagerException Error in handling destination information
-     */
-    List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException;
-
-    /**
-     * Check if the given destination exits in the system
+     * Check if the given destination exits in the system.
      *
      * @param protocol        The protocol type matching for the destination type.
      * @param destinationType The destination type matching for the destination.
      * @param destinationName The name of the destination to be checked.
      * @return true if the destination exists false otherwise
-     * @throws DestinationManagerException Error in handling destination information
+     * @throws InternalServerException Error in handling destination information
      */
     boolean isDestinationExist(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException;
+            throws InternalServerException;
 }

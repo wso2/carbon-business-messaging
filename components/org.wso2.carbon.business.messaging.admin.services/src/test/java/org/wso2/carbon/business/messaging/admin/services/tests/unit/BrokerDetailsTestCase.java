@@ -26,9 +26,9 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.mappers.InternalServerErrorMapper;
-import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTService;
+import org.wso2.carbon.business.messaging.admin.services.internal.MbRestService;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
 import org.wso2.msf4j.MicroservicesRunner;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
  */
 public class BrokerDetailsTestCase {
     private MicroservicesRunner microservicesRunner;
-    private MBRESTService mbRESTService;
+    private MbRestService mbRESTService;
 
     private InternalServerErrorMapper internalServerErrorMapper = new InternalServerErrorMapper();
 
@@ -58,7 +58,7 @@ public class BrokerDetailsTestCase {
     @BeforeClass
     public void setupService() {
         microservicesRunner = new MicroservicesRunner(Constants.PORT);
-        mbRESTService = new MBRESTService();
+        mbRESTService = new MbRestService();
         microservicesRunner.addExceptionMapper(internalServerErrorMapper).deploy(mbRESTService).start();
     }
 
@@ -82,21 +82,18 @@ public class BrokerDetailsTestCase {
      * @throws InterruptedException
      */
     @Test(groups = { "wso2.mb", "rest" })
-    public void protocolTypesTestCase() throws IOException, InterruptedException, BrokerManagerException {
+    public void protocolTypesTestCase() throws IOException, InterruptedException, InternalServerException {
         // Creation of mocking objects
         BrokerManagerService brokerManagerService = mock(BrokerManagerService.class);
         List<String> protocolsList = new ArrayList<>();
-        protocolsList.add("amqp-v1.0");
-        protocolsList.add("mqtt-v3.1.1");
+        protocolsList.add("amqp-v0.91");
 
         Protocols protocols = new Protocols();
         protocols.setProtocol(protocolsList);
         when(brokerManagerService.getSupportedProtocols()).thenReturn(protocols);
 
-        // Setting BrokerManagerService to MBRESTService
         mbRESTService.setBrokerManagerService(brokerManagerService);
 
-        // Invoking the microservice
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpGet getRequest = new HttpGet(Constants.BASE_URL + "/protocol-types");
         getRequest.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
@@ -107,7 +104,7 @@ public class BrokerDetailsTestCase {
         if (responseEntity != null) {
             content = EntityUtils.toString(responseEntity);
         }
-        Assert.assertTrue(content != null && content.contains("amqp-v1.0") && content.contains("mqtt-v3.1.1"),
+        Assert.assertTrue(content != null && content.contains("amqp-v0.91"),
                 "Unexpected protocols");
         Assert.assertEquals(response.getStatusLine().getStatusCode(), Response.Status.OK.getStatusCode(),
                 "200 not received");

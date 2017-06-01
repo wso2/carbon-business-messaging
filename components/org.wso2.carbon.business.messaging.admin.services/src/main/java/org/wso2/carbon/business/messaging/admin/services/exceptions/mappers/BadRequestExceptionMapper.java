@@ -17,7 +17,7 @@
 package org.wso2.carbon.business.messaging.admin.services.exceptions.mappers;
 
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.BadRequestException;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
 
 import javax.ws.rs.core.MediaType;
@@ -25,26 +25,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * Mapper class for {@link DestinationNotFoundException}.
+ * Mapper class for {@link BadRequestExceptionMapper}.
  */
 @Component(
-        name = "org.wso2.carbon.business.messaging.admin.services.exceptions.mappers.DestinationNotFoundErrorMapper",
+        name = "org.wso2.carbon.business.messaging.admin.services.exceptions.BadRequestException",
         service = ExceptionMapper.class,
         immediate = true)
-public class DestinationNotFoundErrorMapper implements ExceptionMapper<DestinationNotFoundException> {
+
+public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
     /**
      * {@inheritDoc}
      */
     @Override
-    public Response toResponse(DestinationNotFoundException e) {
-        //TODO: handle xml format error responses
+    public Response toResponse(BadRequestException e) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTitle("Requested destination is not found.");
-        errorResponse.setCode(Response.Status.NOT_FOUND.getStatusCode());
+        errorResponse.setTitle("Request is malformed.");
+        errorResponse.setCode(Response.Status.BAD_REQUEST.getStatusCode());
         errorResponse.setMessage(e.getMessage());
-        errorResponse.setDescription("Requested destination is not available in the Message broker.");
+        errorResponse.setDescription("The request is error prone.");
         errorResponse.setMoreInfo("Please contact administrator.");
-        return Response.status(Response.Status.NOT_FOUND).entity(errorResponse).type(MediaType.APPLICATION_JSON)
-                .build();
-    }
+        return Response.status(Response.Status.BAD_REQUEST).entity(errorResponse).type(MediaType.APPLICATION_JSON)
+                .build();    }
 }

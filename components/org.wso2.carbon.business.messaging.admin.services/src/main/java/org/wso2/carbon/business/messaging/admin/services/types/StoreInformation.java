@@ -22,8 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * This class represent a store information object.
  */
-@ApiModel(value = "Store Information",
-          description = "The structure for representing message/context store information")
+@ApiModel(value = "Store Information", description = "The structure for representing message/context store information")
 public class StoreInformation {
     @ApiModelProperty(value = "Whether the store is healthy or not.")
     private boolean healthy;

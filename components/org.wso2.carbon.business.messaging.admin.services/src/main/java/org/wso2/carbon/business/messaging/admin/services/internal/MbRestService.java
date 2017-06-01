@@ -36,29 +36,34 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.kernel.Andes;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
+import org.wso2.andes.kernel.AndesConstants;
+import org.wso2.andes.kernel.AndesMessage;
+import org.wso2.andes.kernel.AndesMessageMetadata;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.BadRequestException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationNotFoundException;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.InvalidLimitValueException;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.InvalidOffsetValueException;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManagerException;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
+import org.wso2.carbon.business.messaging.admin.services.managers.DlcManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.MessageManagerService;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.BrokerManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.DestinationManagerServiceImpl;
+import org.wso2.carbon.business.messaging.admin.services.managers.impl.DlcManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.managers.impl.MessageManagerServiceImpl;
 import org.wso2.carbon.business.messaging.admin.services.types.ClusterInformation;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
 import org.wso2.carbon.business.messaging.admin.services.types.DestinationNamesList;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
-import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.NewDestination;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
+import org.wso2.carbon.business.messaging.admin.services.types.RerouteDetails;
 import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.Request;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -74,12 +79,13 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
 /**
  * Andes REST service is a microservice built on top of WSO2 msf4j. The REST service provides the capability of managing
- * resources of the WSO2 message broker. Resources being destinations, subscriptions and messages.
+ * resources of the WSO2 message broker. Resources being destinations, dlc, subscriptions and messages.
  */
 @Component(
-        name = "org.wso2.mb.admin.services.MBRESTService",
+        name = "org.wso2.mb.admin.services.MbRestService",
         service = Microservice.class,
         immediate = true,
         property = {
@@ -112,69 +118,42 @@ import javax.ws.rs.core.Response;
                      description = "Operations related to dead letter channel.")
         },
         schemes = SwaggerDefinition.Scheme.HTTP)
-@Api(value = "mb/v1.0.0",
-     description = "Endpoint to WSO2 message broker REST service.")
+@Api(value = "mb/v1.0.0", description = "Endpoint to WSO2 message broker REST service.")
 @Path("/mb/v1.0.0")
-public class MBRESTService implements Microservice {
-    private static final Logger log = LoggerFactory.getLogger(MBRESTService.class);
+public class MbRestService implements Microservice {
+    private static final Logger log = LoggerFactory.getLogger(MbRestService.class);
     /**
      * Bundle registration service for andes REST service.
      */
     private ServiceRegistration serviceRegistration;
 
     /**
-     * Service class for retrieving broker information
+     * Service class for retrieving broker information.
      */
     private BrokerManagerService brokerManagerService;
 
     /**
-     * Service class for retrieving messages related information
+     * Service class for retrieving messages related information.
      */
     private MessageManagerService messageManagerService;
 
     /**
-     * Service class for processing destination related requests
+     * Service class for processing destination related requests.
      */
     private DestinationManagerService destinationManagerService;
 
-    public MBRESTService() {
-
-    }
+    /**
+     * Service class for processing dlc queue related requests.
+     */
+    private DlcManagerService dlcManagerService;
 
     /**
-     * Say hello to the admin service.
-     * <p>
-     * curl command :
-     * <pre>
-     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/hello
-     * </pre>
-     *
-     * @return Return a response saying hello. <p>
-     * @throws InternalServerException Server error when processing the request
-     * <ul>
-     * <li>{@link Response.Status#OK} - Return a response saying hello.</li>
-     * </ul>
+     * DLC queue name of the node.
      */
-    @GET
-    @Path("/hello")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @ApiOperation(
-            value = "Say hello to WSO2 MB",
-            notes = "Can be used to test the broker service",
-            tags = "test broker service",
-            response = Hello.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                         message = "hello response")
-    })
-    public Response sayHello() throws InternalServerException {
-        try {
-            Hello helloResponse = brokerManagerService.sayHello();
-            return Response.status(Response.Status.OK).entity(helloResponse).build();
-        } catch (BrokerManagerException ex) {
-            throw new InternalServerException(ex);
-        }
+    private static final String DLC_QUEUE_NAME = AndesConstants.DEAD_LETTER_QUEUE_SUFFIX;
+
+    public MbRestService() {
+
     }
 
     /**
@@ -205,12 +184,10 @@ public class MBRESTService implements Microservice {
                          message = "List of protocols.")
     })
     public Response getProtocols() throws InternalServerException {
-        try {
-            Protocols protocols = brokerManagerService.getSupportedProtocols();
-            return Response.status(Response.Status.OK).entity(protocols).build();
-        } catch (BrokerManagerException ex) {
-            throw new InternalServerException(ex);
-        }
+
+        Protocols protocols = brokerManagerService.getSupportedProtocols();
+        return Response.status(Response.Status.OK).entity(protocols).build();
+
     }
 
 
@@ -242,12 +219,9 @@ public class MBRESTService implements Microservice {
                          message = "Cluster information.")
     })
     public Response getClusterInfo() throws InternalServerException {
-        try {
-            ClusterInformation clusterInformation = brokerManagerService.getClusterInformation();
-            return Response.status(Response.Status.OK).entity(clusterInformation).build();
-        } catch (BrokerManagerException ex) {
-            throw new InternalServerException(ex);
-        }
+
+        ClusterInformation clusterInformation = brokerManagerService.getClusterInformation();
+        return Response.status(Response.Status.OK).entity(clusterInformation).build();
     }
 
     /**
@@ -289,22 +263,15 @@ public class MBRESTService implements Microservice {
             @PathParam("destination-type") String destinationType,
             @ApiParam(value = "New destination object.") NewDestination newDestination,
             @Context org.wso2.msf4j.Request request) throws InternalServerException {
-        //TODO: Add other details on queue? durable, exclusive, username ?
-        try {
-            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
-                    newDestination.getDestinationName());
-            if (!destinationExist) {
-                destinationManagerService
-                        .createDestination(protocol, destinationType, newDestination.getDestinationName());
-                return Response.status(Response.Status.ACCEPTED)
-                        .header(HttpHeaders.LOCATION, request.getUri() + "/name/" + newDestination.getDestinationName())
-                        .build();
-            } else {
-                throw new DestinationManagerException("Destination '" + newDestination.getDestinationName()
-                        + "' already exists.");
-            }
-        } catch (DestinationManagerException e) {
-            throw new InternalServerException(e);
+        boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                newDestination.getDestinationName());
+        if (!destinationExist) {
+            destinationManagerService.createDestination(protocol, destinationType, newDestination.getDestinationName());
+            return Response.status(Response.Status.ACCEPTED).header(HttpHeaders.LOCATION, request.getUri() + "/name/"
+                    + newDestination.getDestinationName()).build();
+        } else {
+            throw new InternalServerException("Destination '" + newDestination.getDestinationName() + "' already "
+                    + "exists.");
         }
     }
 
@@ -353,17 +320,14 @@ public class MBRESTService implements Microservice {
             @ApiParam(value = "The name of the destination")
             @PathParam("destination-name") String destinationName)
             throws InternalServerException, DestinationNotFoundException {
-        try {
-            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
-                    destinationName);
-            if (destinationExist) {
-                destinationManagerService.deleteDestination(protocol, destinationType, destinationName);
+
+        boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                destinationName);
+        if (destinationExist) {
+            destinationManagerService.deleteDestination(protocol, destinationType, destinationName);
             return Response.status(Response.Status.NO_CONTENT).build();
-            } else {
-                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
-            }
-        } catch (DestinationManagerException e) {
-            throw new InternalServerException(e);
+        } else {
+            throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
         }
     }
 
@@ -384,8 +348,8 @@ public class MBRESTService implements Microservice {
      * @param limit           The number of destinations to return for pagination. Default value is 20.
      * @return Return an instance of {@link DestinationNamesList}.  <p>
      * @throws InternalServerException Server error when processing the request
-     * @throws InvalidLimitValueException Invalid Limit
-     * @throws InvalidOffsetValueException Invalid offset
+     * @throws BadRequestException Invalid Limit
+     * @throws BadRequestException Invalid offset
      */
     @GET
     @Path("/{protocol}/destination-type/{destination-type}")
@@ -414,29 +378,24 @@ public class MBRESTService implements Microservice {
             @ApiParam(value = "The number of destinations to return for pagination.",
                       allowableValues = "range[1, infinity]")
             @DefaultValue("20") @QueryParam("limit") int limit,
-            @Context org.wso2.msf4j.Request request)
-            throws InternalServerException, InvalidLimitValueException, InvalidOffsetValueException {
-        try {
-            //TODO: Add pagination support, Add search by part of the destination name
-            if (offset < 0) {
-                throw new InvalidOffsetValueException();
-            }
-            if (limit < 1) {
-                throw new InvalidLimitValueException();
-            }
+            @Context org.wso2.msf4j.Request request) throws InternalServerException, BadRequestException {
 
-            List<String> destinationList = destinationManagerService
-                    .getDestinations(protocol, destinationType, destinationName, offset, limit);
-
-            DestinationNamesList destinationNamesList = new DestinationNamesList();
-            destinationNamesList.setDestinationNames(destinationList);
-            destinationNamesList.setDestinationType(destinationType);
-            destinationNamesList.setProtocol(protocol);
-
-            return Response.status(Response.Status.OK).entity(destinationNamesList).build();
-        } catch (DestinationManagerException e) {
-            throw new InternalServerException(e);
+        if (offset < 0) {
+            throw new BadRequestException("offset is less than 0");
         }
+        if (limit < 1) {
+            throw new BadRequestException("limit is less than 1");
+        }
+
+        List<String> destinationList = destinationManagerService.getDestinations(protocol, destinationType,
+                destinationName, offset, limit);
+
+        DestinationNamesList destinationNamesList = new DestinationNamesList();
+        destinationNamesList.setDestinationNames(destinationList);
+        destinationNamesList.setDestinationType(destinationType);
+        destinationNamesList.setProtocol(protocol);
+
+        return Response.status(Response.Status.OK).entity(destinationNamesList).build();
     }
 
     /**
@@ -479,18 +438,14 @@ public class MBRESTService implements Microservice {
             @PathParam("destination-name") String destinationName)
             throws DestinationNotFoundException, InternalServerException {
 
-        try {
-            boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
-                    destinationName);
-            if (destinationExist) {
-                messageManagerService.deleteMessages(protocol, destinationType, destinationName);
-                return Response.status(Response.Status.NO_CONTENT).build();
-            } else {
-                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to " +
-                        "delete/purge messages.");
-            }
-        } catch (DestinationManagerException | MessageManagerException e) {
-            throw new InternalServerException(e);
+        boolean destinationExist = destinationManagerService.isDestinationExist(protocol, destinationType,
+                destinationName);
+        if (destinationExist) {
+            messageManagerService.deleteMessages(protocol, destinationType, destinationName);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } else {
+            throw new DestinationNotFoundException("Destination '" + destinationName + "' not found to "
+                    + "delete/purge messages.");
         }
     }
 
@@ -535,21 +490,309 @@ public class MBRESTService implements Microservice {
             @ApiParam(value = "The name of the destination.")
             @PathParam("destination-name") String destinationName)
             throws InternalServerException, DestinationNotFoundException {
-        try {
-            Destination destination = destinationManagerService.getDestination(protocol, destinationType,
-                    destinationName);
-            if (null != destination) {
-                return Response.status(Response.Status.OK).entity(destination).build();
-            } else {
-                throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
-            }
-        } catch (DestinationManagerException e) {
-            throw new InternalServerException(e);
+
+        Destination destination = destinationManagerService.getDestination(protocol, destinationType, destinationName);
+        if (null != destination) {
+            return Response.status(Response.Status.OK).entity(destination).build();
+        } else {
+            throw new DestinationNotFoundException("Destination '" + destinationName + "' not found.");
         }
     }
 
     /**
-     * Setter method for brokerManagerService instance
+     * Gets the number of messages in the dlc.
+     * <p>
+     * curl command :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/dlc/messagecount
+     * </pre>
+     *
+     * @return Return an instance of {@link Long}.  <p>
+     * @throws InternalServerException Server error when processing the request
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Long} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
+     *     destination from the broker.</li>
+     * </ul>
+     */
+    @GET
+    @Path("/dlc/messagecount")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Get message count in DLC",
+            notes = "Can be used to get the total message count in DLC",
+            tags = "DLC")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Message count returned.", response = long.class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response getMessagCountInDLC() throws InternalServerException {
+
+        long numberOfMessages = dlcManagerService.getMessagCountInDLC(DLC_QUEUE_NAME);
+        return Response.status(Response.Status.OK).entity(numberOfMessages).build();
+    }
+
+
+    /**
+     * Gets the number of messages in a specific dlc queue.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/dlc/queue-name/queue1/messagecount
+     * </pre>
+     *
+     * @param queueName The name of the dlc queue.
+     * @return A JSON/XML representation of {@link Long}. <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws DestinationNotFoundException Request destination is not found
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Long} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Queue does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting the
+     *     number of messages from the dlc queue.</li>
+     * </ul>
+     */
+    @GET
+    @Path("/dlc/queue-name/{queue-name}/messagecount")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Get message count in DLC for specific queue",
+            notes = "Can be used to get the total message count in DLC",
+            tags = "DLC")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Message count returned.", response = long.class),
+            @ApiResponse(code = 404, message = "Queue does not exists in message broker.", response = ErrorResponse
+                    .class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response getMessagCountInDLCForQueue(
+            @PathParam("queue-name") String queueName)
+            throws InternalServerException, DestinationNotFoundException {
+
+        boolean isQueueExists = dlcManagerService.isQueueExists(queueName);
+        if (isQueueExists) {
+            long numberOfMessages = dlcManagerService.getMessageCountInDLCForQueue(queueName, DLC_QUEUE_NAME);
+            return Response.status(Response.Status.OK).entity(numberOfMessages).build();
+        } else {
+            throw new DestinationNotFoundException("Destination '" + queueName + "' not found to " + "get message "
+                    + "count" + ".");
+        }
+    }
+
+    /**
+     * Gets messages in a specific dlc queue.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/dlc/queue-name/queue1/messages
+     * </pre>
+     *
+     * @param queueName The name of the dlc queue.
+     * @return A JSON/XML representation of {@link List}. <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws DestinationNotFoundException Request destination is not found
+     * @throws BadRequestException starttingId is invalid
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link List} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Queue does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred when getting
+     *     messages from the dlc queue.</li>
+     * </ul>
+     */
+    @GET
+    @Path("/dlc/queue-name/{queue-name}/messages")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Get message metadata list in DLC for specific queue",
+            notes = "Can be used to get message metadata in DLC for specific queue",
+            tags = "DLC")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Message count returned.", response = List.class),
+            @ApiResponse(code = 400, message = "Query parameters are not valid.", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Queue does not exists in broker.", response = ErrorResponse.class),
+            @ApiResponse(code = 500, message = "Server Error.", response = ErrorResponse.class)})
+    public Response getMessagesInDLCForQueue(
+            @PathParam("queue-name") String queueName,
+            @QueryParam("startingId") String firstMessageIdValue,
+            @QueryParam("limit") String countValue,
+            @QueryParam("include-content") boolean isContent)
+            throws InternalServerException, DestinationNotFoundException, BadRequestException {
+
+        boolean isQueueExists = dlcManagerService.isQueueExists(queueName);
+        int count;
+        long firstMessageId;
+        try {
+            count = Integer.parseInt(countValue);
+            firstMessageId = Long.parseLong(firstMessageIdValue);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Query parameter limit/starttingId is invalid", e);
+        }
+        if (isQueueExists) {
+            if (isContent) {
+                List<AndesMessage> andesMessageList = dlcManagerService.getMessageContentInDLCForQueue
+                        (queueName, DLC_QUEUE_NAME, firstMessageId, count);
+                return Response.status(Response.Status.OK).entity(andesMessageList).build();
+
+            } else {
+                List<AndesMessageMetadata> andesMessageMetadataList = dlcManagerService.getMessageMetadataInDLCForQueue
+                        (queueName, DLC_QUEUE_NAME, firstMessageId, count);
+                return Response.status(Response.Status.OK).entity(andesMessageMetadataList).build();
+            }
+        } else {
+            throw new DestinationNotFoundException("Destination '" + queueName + "' not found to " + "get messages.");
+        }
+    }
+
+    /**
+     * Delete messages from DLC.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v http://127.0.0.1:8080/mb/v1.0.0/dlc/messages
+     * </pre>
+     * @return No response body. <p>
+     * @throws InternalServerException Server error when processing the request
+     * @throws DestinationNotFoundException Request destination is not found
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Destination was successfully deleted.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error occurred while deleting
+     *     destination from the broker.</li>
+     * </ul>
+     */
+    @DELETE
+    @Path("/dlc/messages")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Deletes/Purge message.",
+            notes = "Deletes/Purge message belonging to DLC.",
+            tags = "Messages")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Messages purged successfully.")})
+    public Response deleteMessagesFromDeadLetterQueue(
+            @ApiParam(value = "RerouteDetails.") RerouteDetails rerouteDetails,
+            @Context Request request) {
+
+        long[] andesMetadataIDs = rerouteDetails.getAndesMetadataIDs();
+        this.dlcManagerService.deleteMessagesFromDeadLetterQueue(andesMetadataIDs, DLC_QUEUE_NAME);
+        return Response.status(Response.Status.NO_CONTENT).build();
+
+    }
+
+    /**
+     * Reroute all messages specific to a queue in dlc.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v POST http://127.0.0.1:8080/mb/v1.0.0/dlc/queue-name/q/rerouteall -H "Content-Type: application/json"
+     *  -d '{
+              "andesMetadataIDs": [ ],
+              "destination": "testqueue"
+            }
+     * </pre>
+
+     * @param sourceQueueName Name of the original queue in which the messages needed to be rerouted.
+     * @return A JSON representation of the newly created {@link Integer}. <p>
+     * @throws InternalServerException Server error when processing the request
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Integer} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Queue does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error while creating new destination
+     *     .</li>
+     * </ul>
+     */
+    @POST
+    @Path("/dlc/queue-name/{queue-name}/rerouteall")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Reroute messages in dlc.",
+            notes = "Reroute all messages specific to a queue in dlc.",
+            tags = "DLC")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Rerouted messages successfully."),
+            @ApiResponse(code = 500, message = "Server error on rerouting messages.", response = ErrorResponse.class)})
+    public Response rerouteAllMessagesInDeadLetterChannelForQueue(
+            @ApiParam(value = "Source queue name.")
+            @PathParam("queue-name") String sourceQueueName,
+            @ApiParam(value = "RerouteDetails.") RerouteDetails rerouteDetails
+            ) throws InternalServerException, DestinationNotFoundException {
+
+        String targetQueueName = rerouteDetails.getDestinationName();
+        boolean isSourceQueueExists = dlcManagerService.isQueueExists(sourceQueueName);
+        boolean isTargetQueueExists = dlcManagerService.isQueueExists(targetQueueName);
+        boolean restoreToOriginalQueue = sourceQueueName.equals(targetQueueName);
+        int internalBatchSize = AndesConfigurationManager.readValue(AndesConfiguration.RDBMS_INTERNAL_BATCH_SIZE);
+
+        if (isSourceQueueExists && isTargetQueueExists) {
+            int numberOfReroutedMessages = this.dlcManagerService.rerouteAllMessagesInDeadLetterChannelForQueue
+                    (DLC_QUEUE_NAME, sourceQueueName, targetQueueName, internalBatchSize, restoreToOriginalQueue);
+            return Response.status(Response.Status.OK).entity(numberOfReroutedMessages).build();
+        } else {
+            throw new DestinationNotFoundException("Destination '" + sourceQueueName + "' or" + targetQueueName
+                    + "not found to reroute messages.");
+        }
+    }
+
+    /**
+     * Reroute set of selected messages in dlc.
+     * <p>
+     * curl command example :
+     * <pre>
+     *  curl -v POST http://127.0.0.1:8080/mb/v1.0.0/dlc/queue-name/q1/reroute -H
+     *  "Content-Type: application/json"
+     *  -d '{
+     *         "andesMetadataIDs": [1234 ]
+            }'
+     * </pre>
+
+     * @param sourceQueueName Name of the original queue in which the messages needed to be rerouted.
+     * @return A JSON representation of the newly created {@link Integer}. <p>
+     * @throws InternalServerException Server error when processing the request
+     * <ul>
+     *     <li>{@link javax.ws.rs.core.Response.Status#OK} - Returns a {@link Integer} as a JSON response.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#NOT_FOUND} - Queue does not exists.</li>
+     *     <li>{@link javax.ws.rs.core.Response.Status#INTERNAL_SERVER_ERROR} - Error while creating new destination
+     *     .</li>
+     * </ul>
+     */
+    @POST
+    @Path("/dlc/queue-name/{queue-name}/reroute")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @ApiOperation(
+            value = "Reroute set of selected messages in dlc.",
+            notes = "Reroute selected messages specific to a queue in dlc.",
+            tags = "DLC")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Rerouted messages successfully."),
+            @ApiResponse(code = 500, message = "Server error on rerouting messages", response = ErrorResponse.class)})
+    public Response rerouteSelectedMessagesInDeadLetterChannelForQueue(
+            @ApiParam(value = "Specific queue in which the messages will be rerouted.")
+            @PathParam("queue-name") String sourceQueueName,
+            @ApiParam(value = "RerouteDetails.") RerouteDetails rerouteDetails,
+            @Context org.wso2.msf4j.Request request) throws InternalServerException, DestinationNotFoundException {
+
+        long[] andesMetadataIDs = rerouteDetails.getAndesMetadataIDs();
+        String targetQueueName = rerouteDetails.getDestinationName();
+        boolean isSourceQueueExists = dlcManagerService.isQueueExists(sourceQueueName);
+        boolean isTargetQueueExists = dlcManagerService.isQueueExists(targetQueueName);
+        List<Long> messageIdCollection = new ArrayList<>();
+        if (isSourceQueueExists && isTargetQueueExists && andesMetadataIDs != null) {
+            for (Long messageId : andesMetadataIDs) {
+                messageIdCollection.add(messageId);
+            }
+            boolean restoreToOriginalQueue = sourceQueueName.equals(targetQueueName);
+            int numberOfReroutedMessages = this.dlcManagerService.moveMessagesFromDLCToNewDestination
+                    (messageIdCollection, sourceQueueName, targetQueueName, restoreToOriginalQueue);
+
+            return Response.status(Response.Status.OK).entity(numberOfReroutedMessages).build();
+
+        } else {
+            throw new DestinationNotFoundException("Destination '" + sourceQueueName + "' or" + targetQueueName
+                    + "not found to reroute messages.");
+        }
+    }
+
+    /**
+     * Setter method for brokerManagerService instance.
      * @param brokerManagerService
      */
     public void setBrokerManagerService(BrokerManagerService brokerManagerService) {
@@ -565,7 +808,7 @@ public class MBRESTService implements Microservice {
      */
     @Activate
     protected void start(BundleContext bundleContext) {
-        serviceRegistration = bundleContext.registerService(MBRESTService.class.getName(), this, null);
+        serviceRegistration = bundleContext.registerService(MbRestService.class.getName(), this, null);
         log.info("Andes REST Service has started successfully.");
     }
 
@@ -599,10 +842,11 @@ public class MBRESTService implements Microservice {
     )
     protected void setAndesCore(Andes andesCore) {
         log.info("Setting andes core service. ");
-        MBRESTServiceDataHolder.getInstance().setAndesCore(andesCore);
+        MbRestServiceDataHolder.getInstance().setAndesCore(andesCore);
         brokerManagerService = new BrokerManagerServiceImpl();
         destinationManagerService = new DestinationManagerServiceImpl();
         messageManagerService = new MessageManagerServiceImpl();
+        dlcManagerService = new DlcManagerServiceImpl();
     }
 
     /**
@@ -611,7 +855,8 @@ public class MBRESTService implements Microservice {
      * @param andesCore The MessagingCore instance registered by Carbon Kernel as an OSGi service
      */
     protected void unsetAndesCore(Andes andesCore) {
-        MBRESTServiceDataHolder.getInstance().setAndesCore(null);
+        MbRestServiceDataHolder.getInstance().setAndesCore(null);
     }
+
 
 }

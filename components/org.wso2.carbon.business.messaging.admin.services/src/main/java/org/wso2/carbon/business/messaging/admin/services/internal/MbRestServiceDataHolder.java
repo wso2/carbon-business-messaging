@@ -23,25 +23,25 @@ import org.wso2.andes.kernel.Andes;
 import java.util.logging.Logger;
 
 /**
- * MBRESTServiceDataHolder to hold object instances related to MB admin service
+ * MbRestServiceDataHolder to hold object instances related to MB admin service.
  *
  * @since 4.0.0-SNAPSHOT
  */
-public class MBRESTServiceDataHolder {
-    private static MBRESTServiceDataHolder instance = new MBRESTServiceDataHolder();
-    Logger logger = Logger.getLogger(MBRESTServiceDataHolder.class.getName());
+public class MbRestServiceDataHolder {
+    private static MbRestServiceDataHolder instance = new MbRestServiceDataHolder();
+    Logger logger = Logger.getLogger(MbRestServiceDataHolder.class.getName());
     private Andes andesCore;
 
-    private MBRESTServiceDataHolder() {
+    private MbRestServiceDataHolder() {
 
     }
 
     /**
-     * This returns the MBRESTServiceDataHolder instance.
+     * This returns the MbRestServiceDataHolder instance.
      *
-     * @return The MBRESTServiceDataHolder instance of this singleton class
+     * @return The MbRestServiceDataHolder instance of this singleton class
      */
-    public static MBRESTServiceDataHolder getInstance() {
+    public static MbRestServiceDataHolder getInstance() {
         return instance;
     }
 

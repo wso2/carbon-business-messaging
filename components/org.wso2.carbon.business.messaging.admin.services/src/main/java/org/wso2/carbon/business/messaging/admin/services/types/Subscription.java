@@ -22,8 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Representation class a subscription.
  */
-@ApiModel(value = "Subscription",
-          description = "The structure for a subscription.")
+@ApiModel(value = "Subscription", description = "The structure for a subscription.")
 public class Subscription {
     @ApiModelProperty(value = "The unique identifier for a subscription.")
     private String subscriptionIdentifier;

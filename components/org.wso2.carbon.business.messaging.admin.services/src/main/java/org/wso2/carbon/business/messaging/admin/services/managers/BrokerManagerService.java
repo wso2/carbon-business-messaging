@@ -16,12 +16,10 @@
 
 package org.wso2.carbon.business.messaging.admin.services.managers;
 
-import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.types.BrokerInformation;
 import org.wso2.carbon.business.messaging.admin.services.types.ClusterInformation;
-import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
-import org.wso2.carbon.business.messaging.admin.services.types.StoreInformation;
 
 /**
  * This interface provides the base for managing all broker information related services.
@@ -32,40 +30,23 @@ public interface BrokerManagerService {
      * Gets the supported protocol types by the broker.
      *
      * @return A Protocol instance.
-     * @throws BrokerManagerException Error in retrieving broker information
+     * @throws InternalServerException Error in retrieving broker information
      */
-    Protocols getSupportedProtocols() throws BrokerManagerException;
+    Protocols getSupportedProtocols() throws InternalServerException;
 
     /**
      * Gets information regarding clustering of the broker.
      *
      * @return Clustering related information.
-     * @throws BrokerManagerException Error in retrieving broker information
+     * @throws InternalServerException Error in retrieving broker information
      */
-    ClusterInformation getClusterInformation() throws BrokerManagerException;
-
-    /**
-     * Gets information regarding message store of the broker.
-     *
-     * @return Message store related information.
-     * @throws BrokerManagerException Error in retrieving broker information
-     */
-    StoreInformation getStoreInformation() throws BrokerManagerException;
+    ClusterInformation getClusterInformation() throws InternalServerException;
 
     /**
      * Gets information regarding broker configuration of the broker.
      *
      * @return Broker configuration related information.
-     * @throws BrokerManagerException Error in retrieving broker information
+     * @throws InternalServerException Error in retrieving broker information
      */
-    BrokerInformation getBrokerInformation() throws BrokerManagerException;
-
-    /**
-     * Say hello to the broker
-     * This is a temp implementation to test the messaging core functionality
-     *
-     * @return Broker configuration related information.
-     * @throws BrokerManagerException Error in retrieving broker information
-     */
-    Hello sayHello() throws BrokerManagerException;
+    BrokerInformation getBrokerInformation() throws InternalServerException;
 }

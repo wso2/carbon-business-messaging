@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.business.messaging.admin.services.exceptions.mappers;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
 import org.wso2.carbon.business.messaging.admin.services.types.ErrorResponse;
@@ -43,9 +42,7 @@ public class InternalServerErrorMapper implements ExceptionMapper<InternalServer
         errorResponse.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         errorResponse.setMessage(e.getMessage());
         errorResponse.setDescription("Error occurred in the server.");
-        errorResponse.setMoreInfo(
-                "Please contact administrator." + System.lineSeparator() + ExceptionUtils.getFullStackTrace(e));
-
+        errorResponse.setMoreInfo("Please contact administrator.");
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse)
                 .type(MediaType.APPLICATION_JSON).build();
     }

@@ -20,16 +20,20 @@ import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.DestinationType;
 import org.wso2.andes.kernel.ProtocolType;
-import org.wso2.carbon.business.messaging.admin.services.beans.DestinationManagementBeans;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.DestinationManagerException;
-import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.internal.MbRestServiceDataHolder;
 import org.wso2.carbon.business.messaging.admin.services.managers.DestinationManagerService;
 import org.wso2.carbon.business.messaging.admin.services.types.Destination;
-import org.wso2.carbon.business.messaging.admin.services.types.DestinationRolePermission;
 
+import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 /**
  * Implementation for handling destination related resource through OSGi.
@@ -41,7 +45,7 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
     private Andes andesCore;
 
     public DestinationManagerServiceImpl() {
-        andesCore = MBRESTServiceDataHolder.getInstance().getAndesCore();
+        andesCore = MbRestServiceDataHolder.getInstance().getAndesCore();
     }
 
     /**
@@ -49,13 +53,13 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
      */
     @Override
     public List<String> getDestinations(String protocol, String destinationType, String keyword, int offset, int limit)
-            throws DestinationManagerException {
+            throws InternalServerException {
         try {
             ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase(Locale.ENGLISH));
             DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase(Locale.ENGLISH));
             return andesCore.getAllQueueNames(protocolType, destinationTypeEnum);
         } catch (IllegalArgumentException e) {
-            throw new DestinationManagerException("Invalid protocol or destination type.", e);
+            throw new InternalServerException("Invalid protocol or destination type.", e);
         }
     }
 
@@ -63,20 +67,10 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
      * {@inheritDoc}
      */
     @Override
-    public void deleteDestinations(String protocol, String destinationType) throws DestinationManagerException {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Destination getDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException {
-        //TODO: Add other information to the Destination instance, use protocol and destinationType
+            throws InternalServerException {
         Destination destination = null;
         try {
-//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
             if (isDestinationExist(protocol, destinationType, destinationName)) {
                 destination = new Destination();
                 destination.setDestinationName(destinationName);
@@ -84,7 +78,7 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
             }
             return destination;
         } catch (AndesException e) {
-            throw new DestinationManagerException("Error getting destination information.", e);
+            throw new InternalServerException("Error getting destination information.", e);
         }
     }
 
@@ -93,57 +87,34 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
      */
     @Override
     public void createDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException {
-        //        try {
-        //            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-        //            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
-        //            boolean isDurable = Boolean.TRUE;
-        //            boolean isShared = Boolean.FALSE;
-        //            String queueOwner = "admin";
-        //            boolean isExclusive = Boolean.FALSE;
-        //            String exchange = (destinationTypeEnum.equals(DestinationType.QUEUE) ?
-        //                    "amq.direct" :
-        //                    "amq.topic");
-        //
-        //    andesCore.createQueue(new InboundQueueEvent(destinationName, isDurable, isShared, "admin", isExclusive));
-        //            andesCore.addBinding(new InboundBindingEvent(
-        //                    new QueueInfo(destinationName, isDurable, isShared, queueOwner, isExclusive), exchange,
-        //                    destinationName));
-        //        } catch (AndesException | IllegalArgumentException e) {
-        //            throw new DestinationManagerException("Error creating the destination.", e);
-        //        }
+            throws InternalServerException {
         String currentUsername = "admin";
-        DestinationManagementBeans destinationManagementBeans = new DestinationManagementBeans();
-        destinationManagementBeans.createDestination(protocol, destinationType, destinationName, currentUsername);
-    }
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
+            String operationName = "createNewQueue";
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<DestinationRolePermission> getDestinationPermissions(String protocol, String destinationType,
-            String destinationName) throws DestinationManagerException {
-        throw new UnsupportedOperationException();
-    }
+            Object[] parameters = new Object[] { destinationName, currentUsername, true };
+            String[] signature = new String[] {
+                    String.class.getName(), String.class.getName(), boolean.class.getName()
+            };
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DestinationRolePermission createDestinationPermission(String protocol, String destinationType,
-            String destinationName, DestinationRolePermission destinationRolePermission)
-            throws DestinationManagerException {
-        throw new UnsupportedOperationException();
-    }
+            mBeanServer.invoke(objectName, operationName, parameters, signature);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DestinationRolePermission updateDestinationPermission(String protocol, String destinationType,
-            String destinationName, DestinationRolePermission destinationRolePermission)
-            throws DestinationManagerException {
-        throw new UnsupportedOperationException();
+            ObjectName bindingMBeanObjectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.Exchange,VirtualHost=\"carbon\",name=\"" +
+                            "amq.direct" + "\",ExchangeType=direct");
+            String bindingOperationName = "createNewBinding";
+
+            Object[] bindingParams = new Object[] { destinationName, destinationName };
+            String[] bpSignatures = new String[] { String.class.getName(), String.class.getName() };
+
+            mBeanServer.invoke(bindingMBeanObjectName, bindingOperationName, bindingParams, bpSignatures);
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new InternalServerException("Error creating destination for to '" + protocol
+                    + "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
+        }
     }
 
     /**
@@ -151,28 +122,30 @@ public class DestinationManagerServiceImpl implements DestinationManagerService 
      */
     @Override
     public void deleteDestination(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException {
-//        try {
-//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
-//            andesCore.deleteQueue(
-//                    new InboundQueueEvent(destinationName, Boolean.TRUE, Boolean.FALSE, "admin", Boolean.FALSE));
-//        } catch (AndesException e) {
-//            throw new DestinationManagerException("Error deleting the destination.", e);
-//        }
-        DestinationManagementBeans destinationManagementBeans = new DestinationManagementBeans();
-        destinationManagementBeans.deleteDestination(protocol, destinationType, destinationName);
+            throws InternalServerException {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName objectName = new ObjectName(
+                    "org.wso2.andes:type=VirtualHost.VirtualHostManager,VirtualHost=\"carbon\"");
+            String operationName = "deleteQueue";
+
+            Object[] parameters = new Object[] { destinationName };
+            String[] signature = new String[] { String.class.getName() };
+
+            mBeanServer.invoke(objectName, operationName, parameters, signature);
+
+        } catch (MalformedObjectNameException | ReflectionException | MBeanException | InstanceNotFoundException e) {
+            throw new InternalServerException("Error deleting destination for to '" + protocol
+                    + "' and destination type '" + destinationType + "' with name '" + destinationName + "'", e);
+        }
     }
 
-    @Override
-    public List<String> getDestinationNames(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException {
-        return null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDestinationExist(String protocol, String destinationType, String destinationName)
-            throws DestinationManagerException {
+            throws InternalServerException {
         return andesCore.isQueueExists(destinationName);
     }
 

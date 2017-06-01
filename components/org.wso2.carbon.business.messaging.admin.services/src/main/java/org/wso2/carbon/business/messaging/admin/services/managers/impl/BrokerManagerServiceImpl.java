@@ -18,20 +18,18 @@ package org.wso2.carbon.business.messaging.admin.services.managers.impl;
 
 import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.ProtocolType;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.BrokerManagerException;
-import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.internal.MbRestServiceDataHolder;
 import org.wso2.carbon.business.messaging.admin.services.managers.BrokerManagerService;
 import org.wso2.carbon.business.messaging.admin.services.types.BrokerInformation;
 import org.wso2.carbon.business.messaging.admin.services.types.ClusterInformation;
-import org.wso2.carbon.business.messaging.admin.services.types.Hello;
 import org.wso2.carbon.business.messaging.admin.services.types.Protocols;
-import org.wso2.carbon.business.messaging.admin.services.types.StoreInformation;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Class to handle all the broker related information queries using APIs of Andes messaging core
+ * Class to handle all the broker related information queries using APIs of Andes messaging core.
  */
 public class BrokerManagerServiceImpl implements BrokerManagerService {
     /**
@@ -40,11 +38,14 @@ public class BrokerManagerServiceImpl implements BrokerManagerService {
     private Andes andesCore;
 
     public BrokerManagerServiceImpl() {
-        andesCore = MBRESTServiceDataHolder.getInstance().getAndesCore();
+        andesCore = MbRestServiceDataHolder.getInstance().getAndesCore();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Protocols getSupportedProtocols() throws BrokerManagerException {
+    public Protocols getSupportedProtocols() throws InternalServerException {
         Set<ProtocolType> protocolTypeSet = andesCore.getSupportedProtocols();
         Protocols protocols = new Protocols();
         protocols.setProtocol(
@@ -52,29 +53,23 @@ public class BrokerManagerServiceImpl implements BrokerManagerService {
         return protocols;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ClusterInformation getClusterInformation() throws BrokerManagerException {
+    public ClusterInformation getClusterInformation() throws InternalServerException {
         ClusterInformation clusterInformation = new ClusterInformation();
         clusterInformation.setIsClusteringEnabled(andesCore.isClusteringEnabled());
         return clusterInformation;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StoreInformation getStoreInformation() throws BrokerManagerException {
-        return null;
-    }
-
-    @Override
-    public BrokerInformation getBrokerInformation() throws BrokerManagerException {
+    public BrokerInformation getBrokerInformation() throws InternalServerException {
         BrokerInformation brokerInformation = new BrokerInformation();
         brokerInformation.setProperties(andesCore.getBrokerDetails());
         return brokerInformation;
-    }
-
-    @Override
-    public Hello sayHello() throws BrokerManagerException {
-        Hello hello = new Hello();
-        hello.setWelcome(andesCore.getName());
-        return hello;
     }
 }

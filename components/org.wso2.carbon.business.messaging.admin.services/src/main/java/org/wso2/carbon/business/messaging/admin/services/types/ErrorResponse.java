@@ -30,14 +30,11 @@ import javax.xml.bind.annotation.XmlRootElement;
           description = "Represents an error response.")
 @XmlRootElement
 public class ErrorResponse {
-    @ApiModelProperty(value = "Title of the error.",
-                      required = true)
+    @ApiModelProperty(value = "Title of the error.", required = true)
     private String title;
-    @ApiModelProperty(value = "Error code.",
-                      required = true)
+    @ApiModelProperty(value = "Error code.", required = true)
     private int code;
-    @ApiModelProperty(value = "Error message.",
-                      required = true)
+    @ApiModelProperty(value = "Error message.", required = true)
     private String message;
     @ApiModelProperty(value = "Short description about the error.")
     private String description;

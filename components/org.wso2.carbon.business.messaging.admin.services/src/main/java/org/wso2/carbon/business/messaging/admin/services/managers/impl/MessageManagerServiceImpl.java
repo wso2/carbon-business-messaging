@@ -19,15 +19,12 @@ package org.wso2.carbon.business.messaging.admin.services.managers.impl;
 import org.wso2.andes.kernel.Andes;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.disruptor.inbound.InboundQueueEvent;
-import org.wso2.carbon.business.messaging.admin.services.exceptions.MessageManagerException;
-import org.wso2.carbon.business.messaging.admin.services.internal.MBRESTServiceDataHolder;
+import org.wso2.carbon.business.messaging.admin.services.exceptions.InternalServerException;
+import org.wso2.carbon.business.messaging.admin.services.internal.MbRestServiceDataHolder;
 import org.wso2.carbon.business.messaging.admin.services.managers.MessageManagerService;
-import org.wso2.carbon.business.messaging.admin.services.types.Message;
-
-import java.util.List;
 
 /**
- * Implementation for handling messages related queries
+ * Implementation for handling messages related queries.
  */
 public class MessageManagerServiceImpl implements MessageManagerService {
     /**
@@ -36,37 +33,20 @@ public class MessageManagerServiceImpl implements MessageManagerService {
     private Andes andesCore;
 
     public MessageManagerServiceImpl() {
-        andesCore = MBRESTServiceDataHolder.getInstance().getAndesCore();
+        andesCore = MbRestServiceDataHolder.getInstance().getAndesCore();
     }
 
-    @Override
-    public List<Message> getMessagesOfDestinationByMessageID(String protocol, String destinationType,
-            String destinationName, boolean content, long nextMessageID, int limit) throws MessageManagerException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Message> getMessagesOfDestinationByOffset(String protocol, String destinationType,
-            String destinationName, boolean content, int offset, int limit) throws MessageManagerException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Message getMessage(String protocol, String destinationType, String destinationName, long andesMessageID,
-            boolean content) throws MessageManagerException {
-        throw new UnsupportedOperationException();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteMessages(String protocol, String destinationType, String destinationName)
-            throws MessageManagerException {
+            throws InternalServerException {
         try {
-//            ProtocolType protocolType = ProtocolType.valueOf(protocol.toUpperCase());
-//            DestinationType destinationTypeEnum = DestinationType.valueOf(destinationType.toUpperCase());
             andesCore.purgeQueue(
                     new InboundQueueEvent(destinationName, Boolean.TRUE, Boolean.FALSE, "admin", Boolean.FALSE));
         } catch (AndesException e) {
-            throw new MessageManagerException("Error while purging the destination.", e);
+            throw new InternalServerException("Error while purging the destination.", e);
         }
     }
 }
