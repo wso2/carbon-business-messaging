@@ -101,6 +101,16 @@
                 <version>${carbon.datasources.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.mgt</groupId>
+                <artifactId>org.wso2.carbon.identity.mgt</artifactId>
+                <version>${carbon.identity.mgt.version}</version>
+            </dependency>
+            <!--<dependency>
+                <groupId>org.wso2.carbon.security.userstore</groupId>
+                <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
+                <version>${carbon.security.version}</version>
+            </dependency>-->
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>${org.apache.commons.pool.version}</version>
@@ -480,6 +490,8 @@
         <org.osgi.core.version>6.0.0</org.osgi.core.version>
         <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
         <carbon.datasources.version>1.1.0</carbon.datasources.version>
+        <carbon.identity.mgt.version>0.1.39</carbon.identity.mgt.version>
+        <!--<carbon.security.version>0.1.4-SNAPSHOT</carbon.security.version>-->
         <!-- ******************************** -->
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>

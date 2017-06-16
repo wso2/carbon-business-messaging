@@ -43,6 +43,8 @@ import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationEx
 import org.wso2.carbon.business.messaging.core.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
+import org.wso2.carbon.identity.mgt.IdentityStore;
+import org.wso2.carbon.identity.mgt.RealmService;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -219,6 +221,38 @@ public class BrokerServiceComponent {
      */
     protected void unregisterDataSourceService(DataSourceService dataSourceService) {
         ClusterResourceHolder.getInstance().setDatasource(null);
+    }
+
+    /**
+     * This method will be called to add/register the identity service with the broker
+     *
+     * @param realmService the declarative service which allows access the Identity Store
+     */
+    @Reference(
+            name = "org.wso2.carbon.identity.mgt.RealmService",
+            service = RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterIdentityService"
+    )
+    protected void registerIdentityService(RealmService realmService) {
+        try {
+            IdentityStore identityStore = realmService.getIdentityStore();
+            BrokerServiceDataHolder.getInstance().setIdentityStore(identityStore);
+        } catch (Exception e) {
+            //We do not propagate the exception further since the framework would re attempt to activate the bundle
+            String error = "Error occurred while registering data service ";
+            log.error(error, e);
+        }
+    }
+
+    /**
+     * Unregister realmService
+     *
+     * @param realmService the declarative service which allows access the Identity Store
+     */
+    protected void unregisterIdentityService(RealmService realmService) {
+        BrokerServiceDataHolder.getInstance().setIdentityStore(null);
     }
 
     /**

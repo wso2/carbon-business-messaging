@@ -19,6 +19,7 @@
 package org.wso2.carbon.business.messaging.core.internal;
 
 import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener;
+import org.wso2.carbon.identity.mgt.IdentityStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class BrokerServiceDataHolder {
      * Allows accessing the
      */
     private String accessKey = null;
+
+    private IdentityStore identityStore;
 
     /**
      * List of external services which will be called when the broker shuts down
@@ -84,5 +87,8 @@ public class BrokerServiceDataHolder {
      */
     public void setBrokerLifecycleListeners(List<BrokerLifecycleListener> brokerLifecycleListeners) {
         this.brokerLifecycleListeners = brokerLifecycleListeners;
+    }
+    public void setIdentityStore(IdentityStore identityStore) {
+        this.identityStore = identityStore;
     }
 }
