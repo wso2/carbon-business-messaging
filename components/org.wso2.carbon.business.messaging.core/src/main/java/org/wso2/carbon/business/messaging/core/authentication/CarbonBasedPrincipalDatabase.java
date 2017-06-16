@@ -23,7 +23,12 @@ import org.wso2.andes.server.security.auth.database.PrincipalDatabase;
 import org.wso2.andes.server.security.auth.sasl.AuthenticationProviderInitialiser;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainInitialiser;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainPasswordCallback;
+import org.wso2.carbon.business.messaging.core.internal.BrokerServiceDataHolder;
+import org.wso2.carbon.identity.mgt.claim.Claim;
+import org.wso2.carbon.identity.mgt.exception.AuthenticationFailure;
+import org.wso2.carbon.identity.mgt.exception.IdentityStoreException;
 
+import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
@@ -39,7 +44,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
-    private static final Logger logger = Logger.getLogger(org.wso2.andes.server.security.auth.manager.CarbonBasedPrincipalDatabase.class);
+    private static final Logger logger = Logger.getLogger(CarbonBasedPrincipalDatabase.class);
     private Map<String, AuthenticationProviderInitialiser> saslServers;
 
     public CarbonBasedPrincipalDatabase() {
@@ -131,6 +136,9 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
             boolean isAuthenticated = false;
 
+            Callback[] callbacks = new Callback[1];
+            callbacks[0] = passwordCallback;
+
             // Authenticate internal call from another Carbon component
 //            if (password.equals(AuthenticationServiceDataHolder.getInstance().getAccessKey())) {
 //                isAuthenticated = true;
@@ -166,6 +174,14 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 //                    cc.setTenantId(tenantID);
 //                }
 //            }
+            Claim claim = new Claim("http://wso2.org/claims/", "http://wso2.org/claims/username", username);
+            try {
+                isAuthenticated = BrokerServiceDataHolder.getInstance().getIdentityStore().authenticate(claim,callbacks,null).isAuthenticated();
+            } catch (AuthenticationFailure authenticationFailure) {
+                authenticationFailure.printStackTrace();
+            } catch (IdentityStoreException e) {
+                e.printStackTrace();
+            }
 //
 //            // Let the engine know if the user is authenticated or not
 //            ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);

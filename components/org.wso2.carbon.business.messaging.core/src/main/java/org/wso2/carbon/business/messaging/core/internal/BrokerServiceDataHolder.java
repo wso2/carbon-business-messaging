@@ -91,4 +91,8 @@ public class BrokerServiceDataHolder {
     public void setIdentityStore(IdentityStore identityStore) {
         this.identityStore = identityStore;
     }
+
+    public IdentityStore getIdentityStore() {
+        return identityStore;
+    }
 }
