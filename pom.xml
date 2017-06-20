@@ -160,6 +160,30 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq</artifactId>
+                <version>${jooq.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>${dbunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>${xlan.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
@@ -523,8 +547,12 @@
         <junit.version>3.8.2</junit.version>
         <commons-codec.version>1.3.0.wso2v1</commons-codec.version>
         <gson.version>2.2.4</gson.version>
-        <testng.version>6.3.1</testng.version>
+        <testng.version>6.9.13.5</testng.version>
         <carbon.config.version>2.0.0</carbon.config.version>
+        <jooq.version>3.9.2</jooq.version>
+        <dbunit.version>2.4.3</dbunit.version>
+        <xlan.version>2.7.1</xlan.version>
+        <h2.version>1.0.60</h2.version>
 
         <msf4j.version>2.2.2</msf4j.version>
         <msf4j.import.version.range>[2.0.0, 3.0.0)</msf4j.import.version.range>

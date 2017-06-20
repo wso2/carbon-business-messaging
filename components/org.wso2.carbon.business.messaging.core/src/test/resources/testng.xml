@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2017, WSO2 Inc. All Rights Reserved.
+-->
+
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="BusinessMessagingTestSuite">
+    <test name="RDBMS-Test-Case">
+        <classes>
+            <class name="org.wso2.broker.test.RDBMSMessageStoreImplTest" />
+        </classes>
+    </test>
+</suite>
