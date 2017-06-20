@@ -20,7 +20,7 @@
     <parent>
         <artifactId>carbon-business-messaging-components</artifactId>
         <groupId>org.wso2.carbon.business.messaging</groupId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>4.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
