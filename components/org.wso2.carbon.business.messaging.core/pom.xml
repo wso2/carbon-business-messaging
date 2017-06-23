@@ -63,10 +63,6 @@
             <groupId>org.wso2.carbon.identity.mgt</groupId>
             <artifactId>org.wso2.carbon.identity.mgt</artifactId>
         </dependency>
-        <!--<dependency>
-            <groupId>org.wso2.carbon.security.userstore</groupId>
-            <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -103,7 +99,7 @@
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version}"
         </export.package>
         <import.package>
-            org.wso2.andes.configuration.*,
+            org.wso2.andes.*,
             org.apache.commons.*,
             *;resolution:=optional
         </import.package>

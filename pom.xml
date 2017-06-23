@@ -105,11 +105,6 @@
                 <artifactId>org.wso2.carbon.identity.mgt</artifactId>
                 <version>${carbon.identity.mgt.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>org.wso2.carbon.security.userstore</groupId>
-                <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
-                <version>${carbon.security.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
@@ -491,12 +486,12 @@
         <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
         <carbon.datasources.version>1.1.0</carbon.datasources.version>
         <carbon.identity.mgt.version>0.1.39</carbon.identity.mgt.version>
-        <!--<carbon.security.version>0.1.4-SNAPSHOT</carbon.security.version>-->
+
         <!-- ******************************** -->
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
 
-        <andes.dependency.version>3.2.21</andes.dependency.version>
+        <andes.dependency.version>3.2.22-SNAPSHOT</andes.dependency.version>
         <orbit.version.commons.collection>3.2.0.wso2v1</orbit.version.commons.collection>
         <commons-lang.version>2.6</commons-lang.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>

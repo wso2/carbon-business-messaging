@@ -36,6 +36,8 @@ import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.registry.ApplicationRegistry;
+import org.wso2.andes.server.security.auth.database.PrincipalDatabase;
+import org.wso2.carbon.business.messaging.core.authentication.CarbonBasedPrincipalDatabase;
 import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.service.BrokerService;
 import org.wso2.carbon.business.messaging.core.service.BrokerServiceImpl;
@@ -128,7 +130,6 @@ public class BrokerServiceComponent {
         try {
             //Initialize AndesConfigurationManager, this will inform broker on the relevant port offset
             AndesConfigurationManager.initialize(readPortOffset());
-
             //Load qpid specific configurations
             brokerService = new BrokerServiceImpl(BrokerServiceDataHolder.getInstance().getAccessKey());
             brokerService.loadConfigurations();
