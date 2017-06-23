@@ -28,7 +28,7 @@
 
     <groupId>org.wso2.carbon.business.messaging</groupId>
     <artifactId>carbon-business-messaging</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon - Business messaging aggregator POM</name>
@@ -481,7 +481,7 @@
     </build>
 
     <properties>
-        <carbon.business.messaging.version>4.0.0-SNAPSHOT</carbon.business.messaging.version>
+        <carbon.business.messaging.version>4.0.2-SNAPSHOT</carbon.business.messaging.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
 
         <!-- C5 specific dependency versions -->
@@ -496,7 +496,7 @@
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
 
-        <andes.dependency.version>3.2.21-SNAPSHOT</andes.dependency.version>
+        <andes.dependency.version>3.2.21</andes.dependency.version>
         <orbit.version.commons.collection>3.2.0.wso2v1</orbit.version.commons.collection>
         <commons-lang.version>2.6</commons-lang.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
@@ -550,6 +550,7 @@
   <modules>
         <module>components</module>
         <module>features</module>
+      <module>test_artifacts</module>
   </modules>
 
 </project>
