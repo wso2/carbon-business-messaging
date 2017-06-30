@@ -38,9 +38,6 @@
         </parameter>
         <parameter name="adminService" locked="true">true</parameter>
         <parameter name="hiddenService" locked="true">true</parameter>
-        <operation name="getUserRoles">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add</parameter>
-        </operation>
         <operation name="getMessageCount">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/queue/add,/permission/admin/manage/queue/browse,/permission/admin/manage/queue/purge,/permission/admin/manage/queue/delete,/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute,/permission/admin/manage/subscriptions/queue</parameter>
         </operation>
@@ -50,17 +47,8 @@
         <operation name="deleteTopicFromRegistry">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/topic/delete</parameter>
         </operation>
-        <operation name="checkCurrentUserHasRestoreMessagesInDLCPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
-        </operation>
-        <operation name="checkUserHasRestoreMessagesInDLCPermission">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/dlc/browse,/permission/admin/manage/dlc/delete,/permission/admin/manage/dlc/restore,/permission/admin/manage/dlc/reroute</parameter>
-        </operation>
         <operation name="checkCurrentUserHasTopicSubscriptionClosePermission">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/topic-close</parameter>
-        </operation>
-        <operation name="getAllSubscriptions">
-            <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse,/permission/admin/manage/subscriptions/topic-browse</parameter>
         </operation>
         <operation name="getSubscriptions">
             <parameter name="AuthorizationAction" locked="false">/permission/admin/manage/subscriptions/queue-browse</parameter>

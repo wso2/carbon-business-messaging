@@ -94,24 +94,23 @@ public class MQTTUtils {
      * @return filtered list of {@link org.wso2.carbon.andes.core.types.Subscription}
      */
     public static List<Subscription> filterDomainSpecificSubscribers(
-            List<Subscription> allSubscriptions) {
-        String domainName = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+            List<Subscription> allSubscriptions, String tenantDomain) {
         ArrayList<Subscription> tenantFilteredSubscriptions = new ArrayList<>();
 
         //filter subscriptions belonging to the tenant domain
-        if (domainName != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+        if (tenantDomain != null && !CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
 
                 //for queues filter by queue name queueName=<tenantDomain>/queueName
                 //for temp topics filter by topic name topicName=<tenantDomain>/topicName
                 //for durable topic subs filter by topic name topicName=<tenantDomain>/topicName
-                if (subscription.getSubscribedQueueOrTopicName().startsWith(domainName + AndesConstants.TENANT_SEPARATOR)) {
+                if (subscription.getSubscribedQueueOrTopicName().startsWith(tenantDomain + AndesConstants.TENANT_SEPARATOR)) {
                     tenantFilteredSubscriptions.add(subscription);
                 }
             }
             //super tenant domain queue should have '/'
-        } else if (domainName != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
+        } else if (tenantDomain != null && CarbonContext.getThreadLocalCarbonContext().getTenantDomain().
                 equals(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             for (Subscription subscription : allSubscriptions) {
                 if (subscription.getSubscribedQueueOrTopicName().contains(AndesConstants.TENANT_SEPARATOR)) {

@@ -19,15 +19,17 @@ package org.wso2.carbon.andes.admin.mqtt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.admin.mqtt.util.AndesBrokerManagerMQTTAdminServiceDSHolder;
 import org.wso2.carbon.andes.admin.mqtt.internal.Exception.BrokerManagerAdminException;
-import org.wso2.carbon.andes.admin.mqtt.internal.Subscription;
+import org.wso2.carbon.andes.admin.mqtt.util.AndesBrokerManagerMQTTAdminServiceDSHolder;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
 import org.wso2.carbon.andes.core.internal.util.Utils;
+import org.wso2.carbon.andes.core.types.MQTTSubscription;
+import org.wso2.carbon.andes.core.types.Subscription;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
@@ -46,11 +48,6 @@ public class AndesMQTTAdminService extends AbstractAdmin {
      * Permission value for changing permissions through UI.
      */
     private static final String UI_EXECUTE = "ui.execute";
-
-    /**
-     * Permission path for restore message in dlc
-     */
-    private static final String PERMISSION_ADMIN_MANAGE_DLC_RESTORE_MESSAGE = "/permission/admin/manage/dlc/restore";
 
     /**
      * Permission path for forcibly close subscriptions for topics
@@ -115,58 +112,13 @@ public class AndesMQTTAdminService extends AbstractAdmin {
     }
 
     /**
-     * Gets all subscriptions.
-     * Suppressing 'MismatchedQueryAndUpdateOfCollection' as 'allSubscriptions' is used to convert
-     * to an array.
-     *
-     * @return An array of {@link Subscription}.
-     * @throws BrokerManagerAdminException
-     */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Subscription[] getAllSubscriptions() throws BrokerManagerAdminException {
-        List<Subscription> allSubscriptions = new ArrayList<Subscription>();
-        Subscription[] subscriptionsDTO;
-        try {
-            SubscriptionManagerService subscriptionManagerService =
-                    AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
-            List<org.wso2.carbon.andes.core.types.Subscription> subscriptions =
-                    subscriptionManagerService.getAllSubscriptions();
-            subscriptionsDTO = new Subscription[subscriptions.size()];
-            for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
-                Subscription subscriptionDTO = new Subscription();
-                subscriptionDTO.setSubscriptionIdentifier(sub.getSubscriptionIdentifier());
-                subscriptionDTO.setSubscribedQueueOrTopicName(sub.getSubscribedQueueOrTopicName());
-                subscriptionDTO.setSubscriberQueueBoundExchange(sub.getSubscriberQueueBoundExchange());
-                subscriptionDTO.setSubscriberQueueName(sub.getSubscriberQueueName());
-                subscriptionDTO.setDurable(sub.isDurable());
-                subscriptionDTO.setActive(sub.isActive());
-                subscriptionDTO.setNumberOfMessagesRemainingForSubscriber(
-                        sub.getNumberOfMessagesRemainingForSubscriber());
-                subscriptionDTO.setConnectedNodeAddress(sub.getConnectedNodeAddress());
-                subscriptionDTO.setProtocolType(sub.getProtocolType());
-                subscriptionDTO.setDestinationType(sub.getDestinationType());
-                subscriptionDTO.setOriginHostAddress(sub.getOriginHostAddress());
-
-                allSubscriptions.add(subscriptionDTO);
-            }
-            CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
-            Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
-            allSubscriptions.toArray(subscriptionsDTO);
-        } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return subscriptionsDTO;
-    }
-
-    /**
      * Retrieve subscriptions matching the given criteria.
      *
      * @param isDurable Are the subscriptions to be retrieved durable (true/false)
      * @param isActive Are the subscriptions to be retrieved active (true/false/*, * meaning any)
      * @param protocolType The protocol type of the subscriptions to be retrieved
-     * @param destinationType The destination type of the subscriptions to be retrieved
+     * @param d
+     * estinationType The destination type of the subscriptions to be retrieved
      *
      * @return The list of subscriptions matching the given criteria
      * @throws BrokerManagerAdminException
@@ -212,35 +164,23 @@ public class AndesMQTTAdminService extends AbstractAdmin {
     /**
      * Retrieve subscriptions matching to the given search criteria.
      *
-     * @param isDurable  are the subscriptions to be retrieve durable (true/ false)
-     * @param isActive   are the subscriptions to be retrieved active (true/false)
-     * @param protocolType  the protocol type of the subscriptions to be retrieved
-     * @param destinationType the destination type of the subscriptions to be retrieved
-     * @param filteredNamePattern queue or topic name pattern to search the subscriptions ("" for all)
-     * @param isFilteredNameByExactMatch exactly match the name or not
-     * @param identifierPattern  identifier pattern to search the subscriptions ("" for all)
-     * @param isIdentifierPatternByExactMatch  exactly match the identifier or not
-     * @param ownNodeId node Id of the node which own the subscriptions
-     * @param pageNumber  page number in the pagination table
-     * @param subscriptionCountPerPage  number of subscriptions to be shown in the UI per page
+     * @param subscription  is the the details of subscription object
+     * @param tenantDomain  is the Domain of a particular tenant
      * @return a list of subscriptions which match to the search criteria
      * @throws BrokerManagerAdminException throws when an error occurs
      */
-    public Subscription[] getFilteredSubscriptions(boolean isDurable, boolean isActive, String protocolType,
-                                                   String destinationType, String filteredNamePattern, boolean
-                                                           isFilteredNameByExactMatch, String identifierPattern, boolean
-                                                           isIdentifierPatternByExactMatch, String ownNodeId, int pageNumber,
-                                                   int subscriptionCountPerPage) throws BrokerManagerAdminException {
+    public Subscription[] getFilteredSubscriptions(MQTTSubscription subscription, String tenantDomain) throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<>();
         Subscription[] subscriptionsDTO;
 
         try {
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext privilegedCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+            privilegedCarbonContext.setTenantDomain(tenantDomain);
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             List<org.wso2.carbon.andes.core.types.Subscription> subscriptions = subscriptionManagerService
-                    .getFilteredSubscriptions(isDurable, isActive, protocolType, destinationType,
-                            filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
-                            isIdentifierPatternByExactMatch, ownNodeId, pageNumber, subscriptionCountPerPage);
+                    .getFilteredMQTTSubscriptions(subscription, tenantDomain);
             subscriptionsDTO = new Subscription[subscriptions.size()];
             for (org.wso2.carbon.andes.core.types.Subscription sub : subscriptions) {
                 Subscription subscriptionDTO = new Subscription();
@@ -274,7 +214,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
      * Returns the total subscription count relevant to a particular search criteria.
      *
      * @param isDurable are the subscriptions to be retrieve durable (true/ false)
-     * @param isActive are the subscriptions to be retrieved active (true/false)
+     * @param isActive are the subscriptions to be retrieved active  (true/false)
      * @param protocolType the protocol type of the subscriptions to be retrieved
      * @param destinationType the destination type of the subscriptions to be retrieved
      * @param filteredNamePattern queue or topic name pattern to search the subscriptions ("" for all)
@@ -305,63 +245,6 @@ public class AndesMQTTAdminService extends AbstractAdmin {
             throw new BrokerManagerAdminException(errorMessage, e);
         }
         return subscriptionCountForSearchResult;
-    }
-
-    /**
-     * Get roles of the current logged user
-     * If user has admin role, then all available roles will be return
-     *
-     * @return Array of user roles.
-     * @throws BrokerManagerAdminException
-     */
-    public String[] getUserRoles() throws BrokerManagerAdminException {
-        String[] roles;
-        QueueManagerService queueManagerService = AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance()
-                .getQueueManagerService();
-        try {
-            roles = queueManagerService.getBackendRoles();
-        } catch (QueueManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return roles;
-    }
-
-    /**
-     * Check if current user has restore messages in dlc permission. This is global level permission. Usage of service
-     * is to control UI action.
-     *
-     * @return true/false based on permission
-     * @throws BrokerManagerAdminException
-     */
-    public boolean checkCurrentUserHasRestoreMessagesInDLCPermission() throws BrokerManagerAdminException {
-        return checkUserHasRestoreMessagesInDLCPermission(CarbonContext.getThreadLocalCarbonContext().getUsername());
-    }
-
-    /**
-     * Check if given user has restore messages in dlc permission. This is global level permission. Usage of service
-     * is to control UI action.
-     *
-     * @param username username
-     * @return true/false based on permission
-     * @throws BrokerManagerAdminException
-     */
-    public boolean checkUserHasRestoreMessagesInDLCPermission(String username) throws  BrokerManagerAdminException {
-        boolean hasPermission = false;
-        try {
-            if (Utils.isAdmin(username)) {
-                hasPermission = true;
-            } else if (CarbonContext.getThreadLocalCarbonContext().getUserRealm().getAuthorizationManager()
-                    .isUserAuthorized(username, PERMISSION_ADMIN_MANAGE_DLC_RESTORE_MESSAGE, UI_EXECUTE)) {
-                hasPermission = true;
-            }
-        } catch (UserStoreException | QueueManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
-        }
-        return hasPermission;
     }
 
     /**
