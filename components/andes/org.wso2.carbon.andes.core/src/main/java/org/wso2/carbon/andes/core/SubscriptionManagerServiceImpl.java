@@ -21,6 +21,7 @@ package org.wso2.carbon.andes.core;
 import org.wso2.carbon.andes.core.internal.registry.SubscriptionManagementBeans;
 import org.wso2.carbon.andes.core.internal.util.MQTTUtils;
 import org.wso2.carbon.andes.core.internal.util.Utils;
+import org.wso2.carbon.andes.core.types.MQTTSubscription;
 import org.wso2.carbon.andes.core.types.Subscription;
 
 import java.util.List;
@@ -45,11 +46,7 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getSubscriptions
                 (isDurable, isActive, protocolType, destinationType);
 
-        if (protocolType.equalsIgnoreCase("mqtt")) {
-            return MQTTUtils.filterDomainSpecificSubscribers(subscriptions);
-        } else {
             return Utils.filterDomainSpecificSubscribers(subscriptions);
-        }
     }
 
     /**
@@ -71,9 +68,20 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
         List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getFilteredSubscriptions
                 (isDurable, isActive, protocolType, destinationType, filteredNamePattern, isFilteredNameByExactMatch,
                         identifierPattern, isIdentifierPatternByExactMatch, ownNodeId, pageNumber, subscriptionCountPerPage);
+            return Utils.filterDomainSpecificSubscribers(subscriptions);
+    }
 
-        if (protocolType.equalsIgnoreCase("mqtt")) {
-            return MQTTUtils.filterDomainSpecificSubscribers(subscriptions);
+    /**
+     * {@inheritDoc}
+     */
+    public List<Subscription> getFilteredMQTTSubscriptions(MQTTSubscription subscription, String tenantDomain) throws SubscriptionManagerException {
+
+        List<Subscription> subscriptions = SubscriptionManagementBeans.getInstance().getFilteredSubscriptions
+                (subscription.isDurable(), subscription.isActive(), subscription.getProtocolType(), subscription.getDestinationType(), subscription.getFilteredNamePattern(), subscription.isFilteredNameByExactMatch(),
+                        subscription.getIdentifierPattern(), subscription.isIdentifierPatternByExactMatch(), subscription.getOwnNodeId(), subscription.getPageNumber(), subscription.getSubscriptionCountPerPage());
+
+        if (subscription.getProtocolType().equalsIgnoreCase("mqtt")) {
+            return MQTTUtils.filterDomainSpecificSubscribers(subscriptions, tenantDomain);
         } else {
             return Utils.filterDomainSpecificSubscribers(subscriptions);
         }
