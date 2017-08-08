@@ -466,6 +466,7 @@
                         <%=StringEscapeUtils.escapeHtml(messageContent[0])%>
                         <!-- This is converted to a POST to avoid message length eating up the URI request length. -->
                         <form name="msgViewForm<%=contentDisplayID%>" method="POST" action="message_content.jsp">
+                            <input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>" />
                             <input type="hidden" name="message" value="<%=StringEscapeUtils.escapeHtml(messageContent[1])%>" />
                             <a href="javascript:document.msgViewForm<%=contentDisplayID%>.submit()">&nbsp;&nbsp;&nbsp;more..</a>
                         </form>
