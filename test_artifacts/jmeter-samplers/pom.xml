@@ -3,7 +3,7 @@
     <parent>
         <artifactId>test_artifacts</artifactId>
         <groupId>org.wso2.carbon.business.messaging</groupId>
-        <version>4.0.3-SNAPSHOT</version>
+        <version>4.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
