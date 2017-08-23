@@ -274,8 +274,6 @@ CREATE TABLE MB_NODE_HEARTBEAT (
                         NODE_ID VARCHAR(512) NOT NULL,
                         LAST_HEARTBEAT BIGINT NOT NULL,
                         IS_NEW_NODE TINYINT NOT NULL,
-                        CLUSTER_AGENT_HOST VARCHAR(512) NOT NULL,
-                        CLUSTER_AGENT_PORT INT NOT NULL,
                         PRIMARY KEY (NODE_ID)
 );
 

@@ -50,7 +50,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Set;
 import java.util.Stack;
-
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -80,14 +79,6 @@ public class BrokerServiceComponent {
      * Holds the list of services registered with the broker
      */
     private static Stack<ServiceRegistration> services = new Stack<>();
-
-    /**
-     * This is used in the situations where the Hazelcast instance is not registered but the activate method of the
-     * BrokerServiceComponent is called when clustering is enabled.
-     * This property is used to block the process of starting the broker until the hazelcast instance getting
-     * registered.
-     */
-    private boolean brokerShouldBeStarted = false;
 
     /**
      * This flag true if HazelcastInstance has been registered.
@@ -144,24 +135,11 @@ public class BrokerServiceComponent {
                 AndesContext.getInstance().setClusteringEnabled(false);
                 this.startAndesBroker(context);
             } else if (mode.equalsIgnoreCase(Modes.DEFAULT.name())) {
+                //TODO this flow would change once clustering would be introduced
+                //TODO using RequiredCapabilityListener would be an option
                 // Start broker in HA mode
-                if (!AndesContext.getInstance().isClusteringEnabled()) {
-                    // If clustering is disabled, broker starts without waiting for hazelcastInstance
-                    this.startAndesBroker(context);
-                } else {
-                    //TODO this flow would change once clustering would be introduced
-                    //TODO using RequiredCapabilityListener would be an option
-                    // Start broker in distributed mode
-                    if (registeredHazelcast) {
-                        // When clustering is enabled, starts broker only if the hazelcastInstance has also been
-                        // registered.
-                        this.startAndesBroker(context);
-                    } else {
-                        // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to
-                        // true and wait for hazelcastInstance to be registered.
-                        this.brokerShouldBeStarted = true;
-                    }
-                }
+                AndesContext.getInstance().setClusteringEnabled(true);
+                this.startAndesBroker(context);
             } else {
                 throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
             }
@@ -284,8 +262,6 @@ public class BrokerServiceComponent {
      * @throws AndesException
      */
     private void startAndesBroker(BundleContext context) throws ConfigurationException, AndesException {
-        brokerShouldBeStarted = false;
-
         String dSetupValue = System.getProperty(BrokerConstants.SYS_PROP_DATABASE_SETUP);
         if (dSetupValue != null) {
             // Source MB rdbms database if data source configurations and supported sql exist

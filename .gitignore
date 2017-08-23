@@ -9,3 +9,6 @@ target
 *.ipr
 *.iws
 *.db
+
+# Maven generated resource files
+features/org.wso2.carbon.business.messaging.core.feature/src/main/resources
