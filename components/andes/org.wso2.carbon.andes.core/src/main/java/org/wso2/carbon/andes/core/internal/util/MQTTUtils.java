@@ -58,35 +58,6 @@ import java.util.Set;
  * Provides common utilities for UI related functions and services.
  */
 public class MQTTUtils {
-
-    private static final String DIRECT_EXCHANGE = "amq.direct";
-    private static final String TOPIC_EXCHANGE = "amq.topic";
-    private static final String ANDES_CONF_DIR = "/repository/conf/advanced/";
-    private static final String ANDES_CONF_FILE = "qpid-config.xml";
-    private static final String ANDES_CONF_CONNECTOR_NODE = "connector";
-    private static final String ANDES_CONF_SSL_NODE = "ssl";
-    private static final String CARBON_CLIENT_ID = "carbon";
-    private static final String CARBON_VIRTUAL_HOST_NAME = "carbon";
-    private static final int CHARACTERS_TO_SHOW = 15;
-
-    /**
-     * Maximum size a message will be displayed on UI
-     */
-    public static final Integer MESSAGE_DISPLAY_LENGTH_MAX =
-            AndesConfigurationManager.readValue(AndesConfiguration.MANAGEMENT_CONSOLE_MAX_DISPLAY_LENGTH_FOR_MESSAGE_CONTENT);
-
-    /**
-     * Shown to user has a indication that the particular message has more content than shown in UI
-     */
-    public static final String DISPLAY_CONTINUATION = "...";
-
-    /**
-     * Message shown in UI if message content exceed the limit - Further enhancement,
-     * these needs to read from a resource bundle
-     */
-    public static final String DISPLAY_LENGTH_EXCEEDED = "Message Content is too large to display.";
-
-
     /**
      * Filters the domain specific subscriptions from a list of subscriptions
      *
@@ -120,5 +91,4 @@ public class MQTTUtils {
         }
         return tenantFilteredSubscriptions;
     }
-
 }
