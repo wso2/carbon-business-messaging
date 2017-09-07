@@ -310,6 +310,11 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.admin.mqtt</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
                 <artifactId>org.wso2.carbon.andes.event.core</artifactId>
                 <version>${carbon.messaging.version}</version>
             </dependency>

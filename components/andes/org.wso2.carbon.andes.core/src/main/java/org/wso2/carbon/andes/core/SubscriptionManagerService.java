@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.andes.core;
 
+import org.wso2.carbon.andes.core.types.MQTTSubscription;
 import org.wso2.carbon.andes.core.types.Subscription;
 
 import java.util.List;
@@ -70,6 +71,18 @@ public interface SubscriptionManagerService {
 			String destinationType, String filteredNamePattern, boolean isFilteredNameByExactMatch,
 			String identifierPattern, boolean isIdentifierPatternByExactMatch, String ownNodeId, int pageNumber,
 			int subscriptionCountPerPage) throws SubscriptionManagerException;
+
+	/**
+	 * Retrieve all matching subscriptions from andes for the given search criteria.
+	 *
+	 * @param subscription  are the subscriptions to be retrieve durable (true/ false)
+	 * @param tenantDomain  are the subscriptions to be retrieve durable (true/ false)
+	 * @return list of subscriptions matching to the search criteria
+	 * @throws SubscriptionManagerException throws when an error occurs
+	 */
+	public List<Subscription> getFilteredMQTTSubscriptions(MQTTSubscription subscription, String tenantDomain)
+			throws SubscriptionManagerException;
+
 
 	/**
 	 * Returns the total subscription count matching to a particular search criteria.
