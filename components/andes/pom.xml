@@ -45,6 +45,7 @@
         <module>org.wso2.carbon.andes.cluster.mgt.ui</module>
         <module>org.wso2.carbon.andes.core</module>
         <module>org.wso2.carbon.andes.admin</module>
+        <module>org.wso2.carbon.andes.admin.mqtt</module>
         <module>org.wso2.carbon.andes.ui</module>
         <module>org.wso2.carbon.andes.event.core</module>
         <module>org.wso2.carbon.andes.event.admin</module>
