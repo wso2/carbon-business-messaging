@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *   WSO2 Inc. licenses this file to you under the Apache License,
- *   Version 2.0 (the "License"); you may not use this file except
- *   in compliance with the License.
- *   You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing,
- *   software distributed under the License is distributed on an
- *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *   KIND, either express or implied.  See the License for the
- *   specific language governing permissions and limitations
- *   under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package org.wso2.carbon.andes.admin.mqtt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.andes.admin.mqtt.internal.Exception.BrokerManagerAdminException;
-import org.wso2.carbon.andes.admin.mqtt.util.AndesBrokerManagerMQTTAdminServiceDSHolder;
+import org.wso2.carbon.andes.admin.mqtt.internal.AndesBrokerManagerMQTTAdminServiceDSHolder;
 import org.wso2.carbon.andes.core.QueueManagerException;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerException;
@@ -43,7 +43,9 @@ import java.util.List;
  * Provides all the andes MQTT admin services.
  */
 public class AndesMQTTAdminService extends AbstractAdmin {
-    private static Log log = LogFactory.getLog(org.wso2.carbon.andes.admin.mqtt.AndesMQTTAdminService.class);
+
+    private static Log log = LogFactory.getLog(AndesMQTTAdminService.class);
+
     /**
      * Permission value for changing permissions through UI.
      */
@@ -55,18 +57,23 @@ public class AndesMQTTAdminService extends AbstractAdmin {
     private static final String PERMISSION_ADMIN_MANAGE_TOPIC_SUBSCRIPTION_CLOSE =
             "/permission/admin/manage/subscriptions/topic-close";
 
+    /**
+     * Gets the message count for a queue
+     * @param destinationName the destination name. the name of the queue or topic.
+     * @param msgPattern The exchange type used to transfer messages with the given destinationName.
+     *                   e.g. "queue" or "topic"
+     * @return the number of messages for a queue
+     * @throws BrokerManagerAdminException
+     */
+    public long getMessageCount(String destinationName, String msgPattern) throws BrokerManagerAdminException {
 
-    @SuppressWarnings("UnusedDeclaration")
-    public long getMessageCount(String destinationName, String msgPattern)
-            throws BrokerManagerAdminException {
         long messageCount;
         try {
             QueueManagerService queueManagerService =
                     AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getQueueManagerService();
             messageCount = queueManagerService.getMessageCount(destinationName, msgPattern);
             return messageCount;
-        } catch (Exception e) {
-            log.error("Error while retrieving message count by queue manager service", e);
+        } catch (QueueManagerException e) {
             throw new BrokerManagerAdminException("Error while retrieving message count "
                     + "by queue manager service", e);
         }
@@ -84,9 +91,8 @@ public class AndesMQTTAdminService extends AbstractAdmin {
                     AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getQueueManagerService();
             queueManagerService.deleteTopicFromRegistry(topicName, subscriptionId);
         } catch (QueueManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            throw new BrokerManagerAdminException("Error occurred while deleting topic '" + topicName + "' from the " +
+                    "registry", e);
         }
     }
 
@@ -105,9 +111,8 @@ public class AndesMQTTAdminService extends AbstractAdmin {
                     AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             subscriptionManagerService.closeSubscription(subscriptionID, destination, protocolType, destinationType);
         } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            throw new BrokerManagerAdminException("Error occurred while closing the subscription '" + destination +"'",
+                    e);
         }
     }
 
@@ -117,8 +122,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
      * @param isDurable Are the subscriptions to be retrieved durable (true/false)
      * @param isActive Are the subscriptions to be retrieved active (true/false/*, * meaning any)
      * @param protocolType The protocol type of the subscriptions to be retrieved
-     * @param d
-     * estinationType The destination type of the subscriptions to be retrieved
+     * @param destinationType The destination type of the subscriptions to be retrieved
      *
      * @return The list of subscriptions matching the given criteria
      * @throws BrokerManagerAdminException
@@ -154,9 +158,7 @@ public class AndesMQTTAdminService extends AbstractAdmin {
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            String errorMessage = e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            throw new BrokerManagerAdminException("Error occurred while retrieving subscriptions", e);
         }
         return subscriptionsDTO;
     }
@@ -166,10 +168,11 @@ public class AndesMQTTAdminService extends AbstractAdmin {
      *
      * @param subscription  is the the details of subscription object
      * @param tenantDomain  is the Domain of a particular tenant
-     * @return a list of subscriptions which match to the search criteria
+     * @return retruns if a list of subscriptions which match to the search criteria, else returns null
      * @throws BrokerManagerAdminException throws when an error occurs
      */
-    public Subscription[] getFilteredSubscriptions(MQTTSubscription subscription, String tenantDomain) throws BrokerManagerAdminException {
+    public Subscription[] getFilteredSubscriptions(MQTTSubscription subscription, String tenantDomain)
+            throws BrokerManagerAdminException {
         List<Subscription> allSubscriptions = new ArrayList<>();
         Subscription[] subscriptionsDTO;
 
@@ -196,16 +199,14 @@ public class AndesMQTTAdminService extends AbstractAdmin {
                 subscriptionDTO.setProtocolType(sub.getProtocolType());
                 subscriptionDTO.setDestinationType(sub.getDestinationType());
                 subscriptionDTO.setOriginHostAddress(sub.getOriginHostAddress());
-
                 allSubscriptions.add(subscriptionDTO);
             }
             CustomSubscriptionComparator comparator = new CustomSubscriptionComparator();
             Collections.sort(allSubscriptions, Collections.reverseOrder(comparator));
             allSubscriptions.toArray(subscriptionsDTO);
         } catch (SubscriptionManagerException e) {
-            String errorMessage = "An error occurred while retrieving subscriptions from backend " + e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            throw new BrokerManagerAdminException("Error occurred while retrieving subscriptions for the tenant '" +
+                    tenantDomain + "'", e);
         }
         return subscriptionsDTO;
     }
@@ -213,36 +214,30 @@ public class AndesMQTTAdminService extends AbstractAdmin {
     /**
      * Returns the total subscription count relevant to a particular search criteria.
      *
-     * @param isDurable are the subscriptions to be retrieve durable (true/ false)
-     * @param isActive are the subscriptions to be retrieved active  (true/false)
-     * @param protocolType the protocol type of the subscriptions to be retrieved
-     * @param destinationType the destination type of the subscriptions to be retrieved
-     * @param filteredNamePattern queue or topic name pattern to search the subscriptions ("" for all)
-     * @param isFilteredNameByExactMatch exactly match the name or not
-     * @param identifierPattern identifier pattern to search the subscriptions ("" for all)
-     * @param isIdentifierPatternByExactMatch exactly match the identifier or not
-     * @param ownNodeId node Id of the node which own the subscriptions
+     * @param subscription is the the details of subscription object
      * @return total subscription count matching to the given criteria
      * @throws BrokerManagerAdminException hrows when an error occurs
      */
-    public int getTotalSubscriptionCountForSearchResult(boolean isDurable, boolean isActive, String protocolType,
-                                                        String destinationType, String filteredNamePattern, boolean
-                                                                isFilteredNameByExactMatch, String identifierPattern, boolean
-                                                                isIdentifierPatternByExactMatch, String ownNodeId) throws
+    public int getTotalSubscriptionCountForSearchResult(MQTTSubscription subscription) throws
             BrokerManagerAdminException {
         int subscriptionCountForSearchResult = 0;
         try {
             SubscriptionManagerService subscriptionManagerService =
                     AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().getSubscriptionManagerService();
             subscriptionCountForSearchResult = subscriptionManagerService
-                    .getTotalSubscriptionCountForSearchResult(isDurable, isActive, protocolType, destinationType,
-                            filteredNamePattern, isFilteredNameByExactMatch, identifierPattern,
-                            isIdentifierPatternByExactMatch, ownNodeId);
+                    .getTotalSubscriptionCountForSearchResult(
+                            subscription.isDurable(),
+                            subscription.isActive(),
+                            subscription.getProtocolType(),
+                            subscription.getDestinationType(),
+                            subscription.getFilteredNamePattern(),
+                            subscription.isFilteredNameByExactMatch(),
+                            subscription.getIdentifierPattern(),
+                            subscription.isIdentifierPatternByExactMatch(),
+                            subscription.getOwnNodeId());
 
         } catch (SubscriptionManagerException e) {
-            String errorMessage = "An error occurred while getting subscription count from backend " + e.getMessage();
-            log.error(errorMessage, e);
-            throw new BrokerManagerAdminException(errorMessage, e);
+            throw new BrokerManagerAdminException("Error occurred while retrieving total count of subscriptions", e);
         }
         return subscriptionCountForSearchResult;
     }
