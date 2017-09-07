@@ -80,7 +80,8 @@ public interface SubscriptionManagerService {
 	 * @return list of subscriptions matching to the search criteria
 	 * @throws SubscriptionManagerException throws when an error occurs
 	 */
-	public List<Subscription> getFilteredMQTTSubscriptions(MQTTSubscription subscription, String tenantDomain) throws SubscriptionManagerException;
+	public List<Subscription> getFilteredMQTTSubscriptions(MQTTSubscription subscription, String tenantDomain)
+			throws SubscriptionManagerException;
 
 
 	/**

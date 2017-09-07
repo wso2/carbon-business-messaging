@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.andes.core.types;
 
+/**
+ * This bean class represents the required attributes that are needed for the MQTT subscription
+ */
 public class MQTTSubscription {
 
     private boolean isDurable;
