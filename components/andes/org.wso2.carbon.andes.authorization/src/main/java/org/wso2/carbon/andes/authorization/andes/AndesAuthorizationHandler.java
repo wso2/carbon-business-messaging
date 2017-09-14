@@ -155,6 +155,7 @@ public class AndesAuthorizationHandler {
      * @param username   User who is trying to create the queue
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
+     * @param operation The operation
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
@@ -199,7 +200,7 @@ public class AndesAuthorizationHandler {
 
     /**
      * Evaluates whether the user has consuming permissions for a queue, topic or durable topic.
-     * <p/>
+     * <p>
      * IMPORTANT : Consuming an AMQP queue is not as same as consuming a JMS queue. The former is an
      * atomic operation that is allowed for the user who created the queue where as the latter is
      * the binding to an exchange based on permission granted.
@@ -207,6 +208,7 @@ public class AndesAuthorizationHandler {
      * @param username   User who is trying to consume the queue
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, TEMPORARY
+     * @param operation The operation
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
@@ -274,6 +276,7 @@ public class AndesAuthorizationHandler {
      * @param username   User who is trying to consume the queue
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, TEMPORARY
+     * @param operation The operation
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException if user store exception occurred
      */
@@ -319,6 +322,7 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY
      * @return ALLOWED/DENIED
+     * @param operation The operation
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleBindQueue(String username, UserRealm userRealm,
@@ -498,6 +502,8 @@ public class AndesAuthorizationHandler {
      * @param userRealm  User's Realm
      * @param properties NAME, ROUTING_KEY   @return
      *                   ALLOWED, DENIED
+     * @param operation The operation
+     * @return Result
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handlePublishToExchange(String username, UserRealm userRealm,
@@ -575,8 +581,11 @@ public class AndesAuthorizationHandler {
     /**
      * Evaluates whether the user has unbind permissions for an exchange.
      *
+     * @param username The user name
+     * @param userRealm The user realm
      * @param properties NAME, QUEUE_NAME, ROUTING_KEY
-     * @return ALLOWED/DENIED
+     * @param operation The operation
+     * @return
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
     public static Result handleUnbindQueue(String username, UserRealm userRealm, ObjectProperties properties,
@@ -641,6 +650,7 @@ public class AndesAuthorizationHandler {
      * @param username   User who is trying to publish
      * @param userRealm  User's Realm
      * @param properties NAME, OWNER, DURABLE
+     * @param operation The operation
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */
@@ -692,6 +702,7 @@ public class AndesAuthorizationHandler {
      * @param username  User who is trying to publish
      * @param userRealm User's Realm that represents the user store
      * @param properties NAME, OWNER, DURABLE
+     * @param operation The operation
      * @return ALLOWED/DENIED
      * @throws AndesAuthorizationHandlerException if user store or registry exception occurred
      */

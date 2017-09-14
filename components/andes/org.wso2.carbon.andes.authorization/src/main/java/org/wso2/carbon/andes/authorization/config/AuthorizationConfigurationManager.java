@@ -47,6 +47,8 @@ public class AuthorizationConfigurationManager {
 
 	/**
 	 * Initialize the configuration properties that required for OAuth based authentication.
+	 *
+	 * @throws AndesException Thrown when an error occurs.
 	 */
 	public synchronized void initConfig() throws AndesException {
 		List<String> mqttTranportProperties = AndesConfigurationManager.readValueList

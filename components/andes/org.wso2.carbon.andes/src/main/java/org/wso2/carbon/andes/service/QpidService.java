@@ -169,20 +169,22 @@ public interface QpidService {
         *                Name of the topic that subscriptions bound to
         * @param isDurable
         *               Durable subscriptions?  
-        * @return
+        * @return An array of SubscriptionDetails objects.
         */
     public SubscriptionDetails[] getSubscriptions(String topic, boolean isDurable);
 
     /**
-     * Return if <sslOnly> option is enabled for embedded-qpid
-     * @return
+     * Return if {@code<sslOnly>} option is enabled for embedded-qpid
+     *
+     * @return boolean representing whether sslOnly option is enabled.
+     * @throws Exception Thrown when an error occurs while figuring out whether {@code<sslOnly>} option is enabled
      */
     public boolean getIfSSLOnly() throws Exception;
 
     /**
      * Register broker lifecycle listener.
      *
-     * @param brokerLifecycleListener
+     * @param brokerLifecycleListener The brokerLifecycleListener to be registered.
      */
     public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener);
 

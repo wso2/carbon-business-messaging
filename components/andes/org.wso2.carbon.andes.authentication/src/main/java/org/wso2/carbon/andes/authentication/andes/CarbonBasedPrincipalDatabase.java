@@ -121,8 +121,8 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      *
      * @param principal        Principal to be authenticated
      * @param passwordCallback Callback to set if the user is authenticated or not. This also holds user's password.
-     * @throws IOException
-     * @throws AccountNotFoundException
+     * @throws IOException If there was an error looking up the principal
+     * @throws AccountNotFoundException  If the account for specified principal could not be found
      */
     public void setPassword(Principal principal, PasswordCallback passwordCallback)
             throws IOException, AccountNotFoundException {

@@ -113,7 +113,7 @@ public class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
      * @param destination     queue/topic name of subscribed destination
      * @param protocolType    The protocol type of the subscriptions to close
      * @param destinationType The destination type of the subscriptions to close
-     * @throws SubscriptionManagerException
+     * @throws SubscriptionManagerException Thrown when an error occurs while closing the subscription
      */
     public void closeSubscription(String subscriptionID, String destination, String protocolType,
                                   String destinationType) throws SubscriptionManagerException {

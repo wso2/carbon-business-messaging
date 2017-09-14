@@ -37,7 +37,7 @@ public class AndesServerShutDownListener implements ServerShutdownHandler {
 
     /**
      * Need to keep reference of QpidService so that we can unregister it.
-     * @param qpidService
+     * @param qpidService OSGi ServiceRegistration object for the qpidService.
      */
     public AndesServerShutDownListener(ServiceRegistration qpidService) {
         this.qpidService = qpidService;

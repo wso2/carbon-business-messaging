@@ -56,7 +56,7 @@ public class RegistryClient {
      *
      * @param queueName Name of the queue
      * @param owner     Who creates the queue
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static void createQueue(String queueName, String owner)
             throws RegistryClientException {
@@ -111,7 +111,7 @@ public class RegistryClient {
      * Delete the entry for a queue from the Registry
      *
      * @param queueName Name of the queue to be deleted
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static void deleteQueue(String queueName)
             throws RegistryClientException {
@@ -153,7 +153,7 @@ public class RegistryClient {
      * Get queues saved in the Registry
      *
      * @return Array of queues
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static QueueDetails[] getQueues()
             throws RegistryClientException {
@@ -198,7 +198,7 @@ public class RegistryClient {
      * @param topic            Topic name
      * @param subscriptionName Queue name used for the subscription
      * @param owner            Who creates the subscription
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static void createSubscription(
             String topic, String subscriptionName, String owner)
@@ -263,7 +263,7 @@ public class RegistryClient {
      *
      * @param topic            Name of the topic that the subscription is made to
      * @param subscriptionName Name of the queue used for the subscription
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static void deleteSubscription(String topic, String subscriptionName)
             throws RegistryClientException {
@@ -294,7 +294,7 @@ public class RegistryClient {
      *
      * @param topic Name of the topic
      * @return Array of subscriptions
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static SubscriptionDetails[] getSubscriptions(String topic)
             throws RegistryClientException {
@@ -340,7 +340,7 @@ public class RegistryClient {
      *
      * @param resourceId resource path to check
      * @return is exist
-     * @throws RegistryClientException
+     * @throws RegistryClientException Thrown when an issue occurs during a registry operation
      */
     public static boolean isResourceExist(String resourceId) throws RegistryClientException {
         RegistryService registryService = CommonsDataHolder.getInstance().getRegistryService();
