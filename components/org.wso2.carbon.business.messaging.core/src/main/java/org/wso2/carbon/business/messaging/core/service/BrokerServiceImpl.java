@@ -27,7 +27,7 @@ import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.internal.BrokerServiceDataHolder;
 import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
-import org.wso2.carbon.kernel.utils.StringUtils;
+import org.wso2.carbon.utils.StringUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
