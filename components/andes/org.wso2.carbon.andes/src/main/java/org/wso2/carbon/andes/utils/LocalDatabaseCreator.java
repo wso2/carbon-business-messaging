@@ -39,7 +39,7 @@ public class LocalDatabaseCreator extends DatabaseCreator {
 
     /**
      * DataSource will set in super class.
-     * @param dataSource
+     * @param dataSource The datasource to be set.
      */
     public LocalDatabaseCreator(DataSource dataSource) {
         super(dataSource);
@@ -49,7 +49,8 @@ public class LocalDatabaseCreator extends DatabaseCreator {
     /**
      * Creates database if the script exists, otherwise returns with exception.
      *
-     * @throws org.wso2.carbon.andes.service.exception.ConfigurationException
+     * @throws org.wso2.carbon.andes.service.exception.ConfigurationException Thrown when an error occurs while
+     * connecting to database.
      */
     public void createRegistryDatabase() throws ConfigurationException {
 

@@ -32,7 +32,7 @@ public interface QueueManagerService {
      * Creates a new queue
      *
      * @param queueName new queue name
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while creating a queue
      */
     public void createQueue(String queueName) throws QueueManagerException;
 
@@ -41,6 +41,7 @@ public interface QueueManagerService {
      *
      * @param queueName the name of the queue to be retrieved
      * @return {@link org.wso2.carbon.andes.core.types.Queue} the queue
+     * @throws QueueManagerException Thrown when an error occurs while retrieving the queue by name
      */
     public org.wso2.carbon.andes.core.types.Queue getQueueByName(String queueName) throws QueueManagerException;
 
@@ -57,6 +58,7 @@ public interface QueueManagerService {
      *
      * @param tenantDomain The name of the tenant domain
      * @return {@link org.wso2.carbon.andes.core.types.Queue} the dlc queue
+     * @throws QueueManagerException Thrown when an error occurs while retrieving the dlc queue
      */
     public org.wso2.carbon.andes.core.types.Queue getDLCQueue(String tenantDomain) throws QueueManagerException;
 
@@ -64,7 +66,7 @@ public interface QueueManagerService {
      * Gets all the queues
      *
      * @return a list of {@link org.wso2.carbon.andes.core.types.Queue} queues
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retriving all queues
      */
     public List<org.wso2.carbon.andes.core.types.Queue> getAllQueues() throws QueueManagerException;
 
@@ -72,7 +74,7 @@ public interface QueueManagerService {
      * This method is triggered when deleting a queue through management console.
      *
      * @param queueName name of the queue
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while deleting a queue
      */
     public void deleteQueue(String queueName) throws QueueManagerException;
 
@@ -81,7 +83,7 @@ public interface QueueManagerService {
      * entries from registry
      * @param topicName Topic name
      * @param subscriptionId  Subscription ID
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while deleting topic from registry
      */
     public void deleteTopicFromRegistry(String topicName, String subscriptionId) throws QueueManagerException;
 
@@ -91,7 +93,7 @@ public interface QueueManagerService {
      * @param messageIDs          Browser Message Id / External Message Id list
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @return unavailable message count
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while Restore messages from the Dead Letter Queue
      */
     public long restoreSelectedMessagesFromDeadLetterChannel(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException;
@@ -103,7 +105,7 @@ public interface QueueManagerService {
      * @param newDestinationQueueName         The new destination queue for the messages in the same tenant
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
      * @return unavailable message count
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while restoring messages from the Dead Letter Queue
      */
     public long rerouteSelectedMessagesFromDeadLetterChannel(long[] messageIDs,
                                                                            String newDestinationQueueName,
@@ -115,7 +117,7 @@ public interface QueueManagerService {
      *
      * @param messageIDs          Browser Message Id / External Message Id list to be deleted
      * @param destinationQueueName Dead Letter Queue name for the respective tenant
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while deleting messages from DLC queue
      */
     public void deleteMessagesFromDeadLetterQueue(long[] messageIDs, String destinationQueueName)
             throws QueueManagerException;
@@ -124,7 +126,7 @@ public interface QueueManagerService {
      * Request broker to clean all messages not awaiting acknowledgement from the given queue.
      *
      * @param queueName the queue name
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while purging all messages
      */
     public void purgeMessagesOfQueue(String queueName) throws QueueManagerException;
 
@@ -134,7 +136,7 @@ public interface QueueManagerService {
      * @param destinationName the destination name. the name of the queue or topic
      * @param msgPattern      The exchange type used to transfer messages with the given destinationName. e.g. "queue" or "topic"
      * @return the number of messages for a queue
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while getting message count
      */
     public long getMessageCount(String destinationName, String msgPattern)
             throws QueueManagerException;
@@ -144,7 +146,7 @@ public interface QueueManagerService {
      *
      * @param queueName            the queue name
      * @param queueRolePermissions the new permissions for the queue
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while updating permission
      */
     public void updatePermission(String queueName,
                                  org.wso2.carbon.andes.core.types.QueueRolePermission[]
@@ -156,7 +158,7 @@ public interface QueueManagerService {
      *
      * @param queueName            the queue name
      * @param queueRolePermissions the new permissions for the queue
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while creating a queue and assigning permissions
      */
     public void addQueueAndAssignPermission(String queueName,
             org.wso2.carbon.andes.core.types.QueueRolePermission[] queueRolePermissions) throws QueueManagerException;
@@ -165,7 +167,7 @@ public interface QueueManagerService {
      * Gets roles except for admin
      *
      * @return an array of roles
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retrieving roles
      */
     public String[] getBackendRoles() throws QueueManagerException;
 
@@ -174,7 +176,7 @@ public interface QueueManagerService {
      *
      * @param queueName the queue name
      * @return an array of queue role permissions
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retrieving role permissions assigned to a queue
      */
     public org.wso2.carbon.andes.core.types.QueueRolePermission[] getQueueRolePermission(
             String queueName) throws QueueManagerException;
@@ -186,7 +188,7 @@ public interface QueueManagerService {
      * @param nextMessageIdToRead next start message id to get message list
      * @param maxMsgCount   the maximum messages to return
      * @return an array of messages
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retrieving the messages of a queue
      */
     public org.wso2.carbon.andes.core.types.Message[] browseQueue(String nameOfQueue,
                                                                   long nextMessageIdToRead,
@@ -198,7 +200,7 @@ public interface QueueManagerService {
      *
      * @param queueName the queue name
      * @return the number messages in a queue
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retrieving total message count in a queue
      */
     public long getTotalMessagesInQueue(String queueName) throws QueueManagerException;
 
@@ -216,7 +218,7 @@ public interface QueueManagerService {
      * @param priority         priority of the message
      * @param expireTime       message expire time
      * @return true if message sent successfully, false otherwise.
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while sending a message to the queue
      */
     public boolean sendMessage(String nameOfQueue, String userName, String accessKey,
                                String jmsType,
@@ -229,7 +231,7 @@ public interface QueueManagerService {
      *
      * @param queueName The name of the queue.
      * @return The number of messages.
-     * @throws QueueManagerException
+     * @throws QueueManagerException Thrown when an error occurs while retrieving the no of messages in DLC
      */
     long getNumberOfMessagesInDLCForQueue(String queueName) throws QueueManagerException;
 
@@ -248,6 +250,8 @@ public interface QueueManagerService {
 
     /**
      * Dump message status to a default file. This is used for troubleshooting
+     *
+     * @throws AndesException Thrown when an error occurs while dumping message status
      */
     void dumpMessageStatus() throws AndesException;
 
@@ -258,7 +262,7 @@ public interface QueueManagerService {
      * @param targetQueue    Name of the destination queue
      * @param startMessageId Start point of the queue message id to start reading
      * @param pageLimit      Maximum messages required in a single response
-     * @return Array of {@link org.wso2.carbon.andes.admin.internal.Message}
+     * @return Array of {@link org.wso2.carbon.andes.core.types.Message}
      * @throws QueueManagerException if an error occurs while invoking the MBean to fetch messages.
      */
     Message[] getMessageMetadataInDLC(String targetQueue, long startMessageId, int pageLimit)
@@ -274,6 +278,7 @@ public interface QueueManagerService {
      *                          and simulate each batch as a new message list to the targetQueue. internalBatchSize
      *                          controls the number of messages processed in a single batch internally.
      * @throws QueueManagerException if an exception occurs while invoking the MBean service.
+     * @return An int representing the status of the operation
      */
     int rerouteMessagesFromDeadLetterChannelForQueue(String sourceQueue, String targetQueue, int internalBatchSize) throws
             QueueManagerException;

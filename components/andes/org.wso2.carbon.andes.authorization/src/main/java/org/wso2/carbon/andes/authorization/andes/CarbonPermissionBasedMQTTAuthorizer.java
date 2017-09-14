@@ -32,7 +32,7 @@ import org.wso2.carbon.user.core.authorization.TreeNode;
 /**
  * Authorize the connecting users against Carbon Permission Model. Intended usage is
  * via providing fully qualified class name in broker.xml
- * <p/>
+ * <p>
  * This is just a simple authorization model. For dynamic topics use an implementation based on IAuthorizer
  */
 public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {

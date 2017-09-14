@@ -32,7 +32,8 @@ import java.util.List;
  * This class acts as a access point for config parameters used within the oauth based mqtt authenticator.
  * this configuration is read from broker.xml
  * configuration:
- * <p/>
+ * <p>
+ * {@code
  * <authenticator class="org.wso2.carbon.andes.authentication.andes.OAuth2BasedMQTTAuthenticator">
  * <property name="hostURL">https://localhost:9443/services/OAuth2TokenValidationService</property>
  * <property name="username">admin</property>
@@ -40,7 +41,7 @@ import java.util.List;
  * <property name="scopes">device_scope</property>
  * <property name="maxConnectionsPerHost">10</property>
  * <property name="maxTotalConnections">150</property>
- * </authenticator>
+ * </authenticator>}
  */
 public class OAuthConfigurationManager {
 	private static final Log log = LogFactory.getLog(OAuthConfigurationManager.class);
@@ -72,6 +73,8 @@ public class OAuthConfigurationManager {
 
 	/**
 	 * Initialize the configuration properties that required for OAuth based authentication.
+	 *
+	 * @throws AndesException Thrown when an issue occurs config initialization
 	 */
 	public synchronized void initConfig() throws AndesException {
 		jksKeyStore = AndesConfigurationManager.readValue(
