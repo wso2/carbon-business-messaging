@@ -22,11 +22,10 @@ import org.wso2.carbon.business.messaging.core.exceptions.AuthenticationExceptio
 /**
  * Interface to expose operations related to user authentication.
  */
-public interface AuthenticationService  {
+public interface AuthenticationService {
     /**
-     *
      * @param userName username of user
-     * @param password  password of user
+     * @param password password of user
      * @return if the user credentials are valid or not
      * @throws AuthenticationException can be thrown.
      */

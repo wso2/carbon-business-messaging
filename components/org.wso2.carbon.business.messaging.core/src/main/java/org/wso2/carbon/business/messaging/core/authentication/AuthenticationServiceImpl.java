@@ -22,14 +22,13 @@ package org.wso2.carbon.business.messaging.core.authentication;
  */
 public class AuthenticationServiceImpl implements AuthenticationService {
     /**
-     *
      * @param userName username of user
-     * @param password  password of user
+     * @param password password of user
      * @return if the user credentials are valid or not.
      */
     @Override
     //TODO: Integrate with shared JAAS component implementation
     public boolean isValidUser(String userName, String password) {
-       return true;
+        return true;
     }
 }
