@@ -93,6 +93,16 @@
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.runtime</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.utils</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <version>${carbon.utils.version}</version>
+            </dependency>
             <!-- ****************************************************************** -->
 
             <dependency>
@@ -395,6 +405,11 @@
                 <artifactId>org.wso2.carbon.config</artifactId>
                 <version>${carbon.config.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.jndi</groupId>
+                <artifactId>org.wso2.carbon.jndi</artifactId>
+                <version>${carbon.jndi.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -472,14 +487,17 @@
 
     <properties>
         <carbon.business.messaging.version>4.0.3-SNAPSHOT</carbon.business.messaging.version>
-        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
+        <carbon.feature.plugin.version>3.1.1</carbon.feature.plugin.version>
 
         <!-- C5 specific dependency versions -->
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
         <org.osgi.core.version>6.0.0</org.osgi.core.version>
-        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
-        <carbon.datasources.version>1.1.0</carbon.datasources.version>
+        <carbon.kernel.version>5.2.0-beta</carbon.kernel.version>
+        <carbon.datasources.version>1.1.2</carbon.datasources.version>
+        <carbon.utils.version>2.0.2</carbon.utils.version>
+        <carbon.utils.package.import.version.range>[2.0.0,3.0.0)</carbon.utils.package.import.version.range>
+        <carbon.jndi.version>1.0.3</carbon.jndi.version>
         <!-- ******************************** -->
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
