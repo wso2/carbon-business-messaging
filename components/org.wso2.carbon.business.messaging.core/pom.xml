@@ -95,7 +95,7 @@
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version}"
         </export.package>
         <import.package>
-            org.wso2.andes.configuration.*,
+            org.wso2.andes.*,
             org.apache.commons.*,
             *;resolution:=optional
         </import.package>
