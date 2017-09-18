@@ -106,28 +106,28 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
     public void setPassword(Principal principal, PasswordCallback passwordCallback)
             throws IOException, AccountNotFoundException {
 
-            if (principal == null) {
-                throw new IllegalArgumentException("Principal should never be null");
-            }
+        if (principal == null) {
+            throw new IllegalArgumentException("Principal should never be null");
+        }
 
-            // Given username/password
-            String userName = principal.getName();
-            String password = "";
-            if (passwordCallback instanceof PlainPasswordCallback) {
-                password = ((PlainPasswordCallback) passwordCallback).getPlainPassword();
-            }
+        // Given username/password
+        String userName = principal.getName();
+        String password = "";
+        if (passwordCallback instanceof PlainPasswordCallback) {
+            password = ((PlainPasswordCallback) passwordCallback).getPlainPassword();
+        }
 
-            boolean isAuthenticated = false;
-            try {
-                //Use authenticationService interface based implementation
-                isAuthenticated = authenticationService.isValidUser(userName, password);
-            } catch (AuthenticationException e) {
-                logger.error("Error while validating user" + userName, e);
-            }
-            if (passwordCallback instanceof PlainPasswordCallback) {
-                // Let the engine know if the user is authenticated or not
-                ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);
-            }
+        boolean isAuthenticated = false;
+        try {
+            //Use authenticationService interface based implementation
+            isAuthenticated = authenticationService.isValidUser(userName, password);
+        } catch (AuthenticationException e) {
+            logger.error("Error while validating user" + userName, e);
+        }
+        if (passwordCallback instanceof PlainPasswordCallback) {
+            // Let the engine know if the user is authenticated or not
+            ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);
+        }
 
     }
 
