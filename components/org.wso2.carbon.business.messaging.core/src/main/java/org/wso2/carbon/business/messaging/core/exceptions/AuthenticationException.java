@@ -15,21 +15,14 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.carbon.business.messaging.core.authentication;
+package org.wso2.carbon.business.messaging.core.exceptions;
 
 /**
- * This class implements AuthenticationService interface to provide user authentication.
+ * AuthenticationException to handle user authentication errors.
  */
-public class AuthenticationServiceImpl implements AuthenticationService {
-    /**
-     *
-     * @param userName username of user
-     * @param password  password of user
-     * @return if the user credentials are valid or not.
-     */
-    @Override
-    //TODO: Integrate with shared JAAS component implementation
-    public boolean isValidUser(String userName, String password) {
-       return true;
+public class AuthenticationException extends Exception {
+
+    public AuthenticationException(String message) {
+        super(message);
     }
 }

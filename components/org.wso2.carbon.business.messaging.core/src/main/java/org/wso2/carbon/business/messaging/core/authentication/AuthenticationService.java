@@ -17,6 +17,8 @@
  */
 package org.wso2.carbon.business.messaging.core.authentication;
 
+import org.wso2.carbon.business.messaging.core.exceptions.AuthenticationException;
+
 /**
  * Interface to expose operations related to user authentication.
  */
@@ -26,6 +28,7 @@ public interface AuthenticationService  {
      * @param userName username of user
      * @param password  password of user
      * @return if the user credentials are valid or not
+     * @throws AuthenticationException can be thrown.
      */
-    boolean isValidUser(String userName, String password);
+    boolean isValidUser(String userName, String password) throws AuthenticationException;
 }

@@ -22,6 +22,7 @@ import org.wso2.andes.server.security.auth.database.PrincipalDatabase;
 import org.wso2.andes.server.security.auth.sasl.AuthenticationProviderInitialiser;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainInitialiser;
 import org.wso2.andes.server.security.auth.sasl.plain.PlainPasswordCallback;
+import org.wso2.carbon.business.messaging.core.exceptions.AuthenticationException;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -104,7 +105,6 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      */
     public void setPassword(Principal principal, PasswordCallback passwordCallback)
             throws IOException, AccountNotFoundException {
-        try {
 
             if (principal == null) {
                 throw new IllegalArgumentException("Principal should never be null");
@@ -121,16 +121,14 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
             try {
                 //Use authenticationService interface based implementation
                 isAuthenticated = authenticationService.isValidUser(userName, password);
-            } catch (Exception e) {
+            } catch (AuthenticationException e) {
                 logger.error("Error while validating user" + userName, e);
             }
             if (passwordCallback instanceof PlainPasswordCallback) {
                 // Let the engine know if the user is authenticated or not
                 ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);
             }
-        } catch (NullPointerException e) {
-            logger.error("Error while authenticating.", e);
-        }
+
     }
 
     //TODO: Once auth JAAS component is available
