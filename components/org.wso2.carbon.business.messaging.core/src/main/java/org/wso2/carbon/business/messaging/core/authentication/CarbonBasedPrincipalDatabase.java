@@ -57,14 +57,17 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      *
      * @return List of mechanism objects
      */
+    @Override
     public Map<String, AuthenticationProviderInitialiser> getMechanisms() {
         return saslServers;
     }
 
+    @Override
     public List<Principal> getUsers() {
         return null;
     }
 
+    @Override
     public boolean deletePrincipal(Principal principal) throws AccountNotFoundException {
         return true;
     }
@@ -75,24 +78,29 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      * @param username Principal username
      * @return Principal instance
      */
+    @Override
     //TODO: Once auth JAAS component is available
     public Principal getUser(String username) {
         Principal user = null;
         return user;
     }
 
+    @Override
     public boolean verifyPassword(String principal, char[] password) throws AccountNotFoundException {
         return true;
     }
 
+    @Override
     public boolean updatePassword(Principal principal, char[] password) throws AccountNotFoundException {
         return true;
     }
 
+    @Override
     public boolean createPrincipal(Principal principal, char[] password) {
         return true;
     }
 
+    @Override
     public void reload() throws IOException {
     }
 
@@ -103,6 +111,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      * @param passwordCallback Callback to set if the user is authenticated or not. This also holds user's password.
      * @throws IOException IOException can be thrown
      */
+    @Override
     public void setPassword(Principal principal, PasswordCallback passwordCallback)
             throws IOException, AccountNotFoundException {
 
