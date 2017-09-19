@@ -102,7 +102,7 @@ public class BrokerServiceComponent {
         /**
          * Starts the server in default mode
          */
-        DEFAULT;
+        CLUSTERED;
 
     }
 
@@ -134,7 +134,7 @@ public class BrokerServiceComponent {
                 // going to consider it in standalone mode
                 AndesContext.getInstance().setClusteringEnabled(false);
                 this.startAndesBroker(context);
-            } else if (mode.equalsIgnoreCase(Modes.DEFAULT.name())) {
+            } else if (mode.equalsIgnoreCase(Modes.CLUSTERED.name())) {
                 //TODO this flow would change once clustering would be introduced
                 //TODO using RequiredCapabilityListener would be an option
                 // Start broker in HA mode
