@@ -580,7 +580,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                      provide HA or clustering.
     -->
     <deployment>
-        <mode>default</mode>
+        <mode>standalone</mode>
     </deployment>
 
 </broker>
