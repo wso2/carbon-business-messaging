@@ -36,6 +36,8 @@ import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.registry.ApplicationRegistry;
+import org.wso2.carbon.business.messaging.core.authentication.AuthenticationService;
+import org.wso2.carbon.business.messaging.core.authentication.AuthenticationServiceImpl;
 import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.service.BrokerService;
 import org.wso2.carbon.business.messaging.core.service.BrokerServiceImpl;
@@ -303,6 +305,8 @@ public class BrokerServiceComponent {
 
         // Publish Qpid properties
         services.push(context.registerService(BrokerService.class.getName(), brokerService, null));
+        services.push(context.registerService(AuthenticationService.class.getName(), new AuthenticationServiceImpl(),
+                null));
     }
 
     /**
