@@ -191,10 +191,11 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
                 if (authenticatorName.equals(service.getClass().getName())) {
                     authService = service;
                     BrokerServiceDataHolder.getInstance().setAuthenticationService(authService);
-                } else {
-                    log.error("No matching authentication implementation was found for:" + authenticatorName);
                 }
             });
+            if (BrokerServiceDataHolder.getInstance().getAuthenticationService() == null) {
+                log.error("No matching authentication implementation was found for:" + authenticatorName);
+            }
 
             // Start broker in standalone mode
             if (Modes.STANDALONE.name().equalsIgnoreCase(mode)) {

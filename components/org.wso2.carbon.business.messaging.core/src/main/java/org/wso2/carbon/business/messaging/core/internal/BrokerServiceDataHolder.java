@@ -93,7 +93,6 @@ public class BrokerServiceDataHolder {
 
     /**
      * Set the authenticationService implementation
-     *
      * @param authenticationService service implementation of AuthenticationService interface
      */
     public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -102,8 +101,7 @@ public class BrokerServiceDataHolder {
 
     /**
      * Get the registered authenticationService implementation
-     *
-     * @return
+     * @return authenticationService service implementation of AuthenticationService interface
      */
     public AuthenticationService getAuthenticationService() {
         return authenticationService;
