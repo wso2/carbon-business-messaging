@@ -61,10 +61,8 @@ import javax.management.ObjectName;
 import javax.sql.DataSource;
 
 /**
- * Service responsible for initializing  broker and registering data-sources and the relevant listeners
  * Service responsible for initializing  broker and registering data-sources and the relevant listeners.
  * This also acts as a capabilityListener for AuthenticationService where multiple implementations can be registered.
- *
  * @since 5.0.0
  */
 @Component(name = "org.wso2.carbon.andes.internal.BrokerServiceComponent",
@@ -132,7 +130,6 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
     /**
      * This will store all the auth implementations of AuthenticationService class
-     *
      * @param service implementation of Authentication Service interface.
      */
     @Reference(name = "auth.service.reference",
@@ -163,7 +160,6 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
     @Activate
     public void start(BundleContext context) {
         this.bundleContext = context;
-
     }
 
     /**
@@ -243,7 +239,6 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
     /**
      * This method will be called to add/register the data-sources with the broker
-     *
      * @param dataSourceService the declarative service which allows access to db instance
      */
     @Reference(name = "org.wso2.carbon.datasource.DataSourceService",
