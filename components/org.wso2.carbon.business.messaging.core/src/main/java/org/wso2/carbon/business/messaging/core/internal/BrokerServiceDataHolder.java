@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.business.messaging.core.internal;
 
+import org.wso2.carbon.business.messaging.core.authentication.AuthenticationService;
 import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener;
 
 import java.util.ArrayList;
@@ -42,6 +43,10 @@ public class BrokerServiceDataHolder {
      * List of external services which will be called when the broker shuts down
      */
     private List<BrokerLifecycleListener> brokerLifecycleListeners = new ArrayList<>();
+    /**
+     * Holds the implementation of authenticationService interface
+     */
+    private AuthenticationService authenticationService;
 
     private BrokerServiceDataHolder() {
     }
@@ -84,5 +89,23 @@ public class BrokerServiceDataHolder {
      */
     public void setBrokerLifecycleListeners(List<BrokerLifecycleListener> brokerLifecycleListeners) {
         this.brokerLifecycleListeners = brokerLifecycleListeners;
+    }
+
+    /**
+     * Set the authenticationService implementation
+     *
+     * @param authenticationService service implementation of AuthenticationService interface
+     */
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
+    /**
+     * Get the registered authenticationService implementation
+     *
+     * @return
+     */
+    public AuthenticationService getAuthenticationService() {
+        return authenticationService;
     }
 }
