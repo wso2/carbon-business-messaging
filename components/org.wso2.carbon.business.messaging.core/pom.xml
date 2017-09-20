@@ -95,17 +95,22 @@
     </dependencies>
 
     <properties>
+        <bundle.activator>org.wso2.carbon.business.messaging.core.internal.BrokerCoreBundleActivator</bundle.activator>
         <private.package>org.wso2.carbon.business.messaging.core.internal</private.package>
         <export.package>
             !org.wso2.carbon.business.messaging.core.internal,
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version}"
         </export.package>
         <import.package>
-            org.wso2.andes.configuration.*,
+            org.wso2.andes.*,
             org.apache.commons.*,
             org.wso2.carbon.utils.*;version="${carbon.utils.package.import.version.range}",
             *;resolution:=optional
         </import.package>
+        <carbon.component>
+            startup.listener;componentName="business-messaging-auth-mgt";requiredService="org.wso2.carbon.business.messaging.core.authentication.AuthenticationService",
+            osgi.service;objectClass="org.wso2.carbon.business.messaging.core.authentication.AuthenticationService";requiredByComponentName="business-messaging-auth-mgt"
+        </carbon.component>
     </properties>
 
 </project>

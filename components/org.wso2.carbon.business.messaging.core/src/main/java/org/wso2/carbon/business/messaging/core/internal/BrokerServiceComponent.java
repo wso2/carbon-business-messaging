@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -36,6 +36,7 @@ import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.ClusterResourceHolder;
 import org.wso2.andes.server.Main;
 import org.wso2.andes.server.registry.ApplicationRegistry;
+import org.wso2.carbon.business.messaging.core.authentication.AuthenticationService;
 import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.service.BrokerService;
 import org.wso2.carbon.business.messaging.core.service.BrokerServiceImpl;
@@ -43,11 +44,15 @@ import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationEx
 import org.wso2.carbon.business.messaging.core.utils.MessageBrokerDBUtil;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
+import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.kernel.startupresolver.StartupServiceUtils;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import javax.management.MBeanServer;
@@ -55,21 +60,28 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
 
-
 /**
  * Service responsible for initializing  broker and registering data-sources and the relevant listeners
+ * Service responsible for initializing  broker and registering data-sources and the relevant listeners.
+ * This also acts as a capabilityListener for AuthenticationService where multiple implementations can be registered.
  *
  * @since 5.0.0
  */
-@Component(
-        name = "org.wso2.carbon.andes.internal.BrokerServiceComponent",
-        immediate = true
-)
+@Component(name = "org.wso2.carbon.andes.internal.BrokerServiceComponent",
+           immediate = true,
+           service = RequiredCapabilityListener.class,
+           property = {
+                   "componentName=" + BrokerServiceComponent.COMPONENT_NAME
+           })
 @SuppressWarnings("unused")
-public class BrokerServiceComponent {
+public class BrokerServiceComponent implements RequiredCapabilityListener {
 
     private static final Log log = LogFactory.getLog(BrokerServiceComponent.class);
-
+    /**
+     * Unique component-name to act as the capability-listener.Any matching capability-provider
+     * should use this component-name.
+     */
+    public static final String COMPONENT_NAME = "business-messaging-auth-mgt";
     /**
      * Defines the default offset of carbon
      */
@@ -89,6 +101,18 @@ public class BrokerServiceComponent {
      * This holds the configuration values
      */
     private BrokerServiceImpl brokerService;
+    /**
+     * This holds authenticationServiceInstance that has been registered.
+     */
+    private AuthenticationService authService;
+    /**
+     * Holds the bundleContext acquired at start() method
+     */
+    private BundleContext bundleContext;
+    /**
+     * Holds the authentication service based implementations
+     */
+    private static List<AuthenticationService> authList = new ArrayList<>();
 
     /**
      * Server startup modes
@@ -107,13 +131,49 @@ public class BrokerServiceComponent {
     }
 
     /**
-     * This method will start the broker once all it's dependencies/references are satisfied
+     * This will store all the auth implementations of AuthenticationService class
+     *
+     * @param service implementation of Authentication Service interface.
+     */
+    @Reference(name = "auth.service.reference",
+               service = AuthenticationService.class,
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unregisterAuthService")
+    public void registerAuthService(AuthenticationService service) {
+        authList.add(service);
+        //This is required to sync the list of OSGI services known by OSGI framework and OSGI components.
+        StartupServiceUtils.updateServiceCache("business-messaging-auth-mgt", AuthenticationService.class);
+    }
+
+    /**
+     * Clear auth List when unbinding AuthenticationService
+     *
+     * @param service
+     */
+    public void unregisterAuthService(AuthenticationService service) {
+        authList.remove(service);
+    }
+
+    /**
+     * This method will store the bundlecontext at component start-up
      *
      * @param context the carbon core bundle instance used for service registration
-     * @throws AndesException this will be thrown if an error is encountered while the service is being active
      */
     @Activate
-    public void start(BundleContext context) throws AndesException {
+    public void start(BundleContext context) {
+        this.bundleContext = context;
+
+    }
+
+    /**
+     * This method will wait till all the registered implementations of AuthenticationService interface are available.
+     * It will map the registered list of auth implementations with the class name mapped in broker.xml,
+     * and set the matching implementation for further user.Finally it will start the broker once,
+     * all it's dependencies/references are satisfied.
+     */
+    @Override
+    public void onAllRequiredCapabilitiesAvailable() {
         try {
             //Initialize AndesConfigurationManager, this will inform broker on the relevant port offset
             AndesConfigurationManager.initialize(readPortOffset());
@@ -127,19 +187,31 @@ public class BrokerServiceComponent {
 
             // Read deployment mode
             String mode = AndesConfigurationManager.readValue(AndesConfiguration.DEPLOYMENT_MODE);
+            // Read authentication service implementation class name from broker.xml
+            String authenticatorName = AndesConfigurationManager.readValue(AndesConfiguration.AUTHENTICATOR_CLASS);
+            // All auth implementations that are registered , are available.
+            //Get relevant authentication service implementation the user has specified.
+            authList.forEach(service -> {
+                if (authenticatorName.equals(service.getClass().getName())) {
+                    authService = service;
+                    BrokerServiceDataHolder.getInstance().setAuthenticationService(authService);
+                } else {
+                    log.error("No matching authentication implementation was found for:" + authenticatorName);
+                }
+            });
 
             // Start broker in standalone mode
             if (Modes.STANDALONE.name().equalsIgnoreCase(mode)) {
                 // set clustering enabled to false because even though clustering enabled in axis2.xml, we are not
                 // going to consider it in standalone mode
                 AndesContext.getInstance().setClusteringEnabled(false);
-                this.startAndesBroker(context);
+                this.startAndesBroker(bundleContext);
             } else if (mode.equalsIgnoreCase(Modes.CLUSTERED.name())) {
                 //TODO this flow would change once clustering would be introduced
                 //TODO using RequiredCapabilityListener would be an option
                 // Start broker in HA mode
                 AndesContext.getInstance().setClusteringEnabled(true);
-                this.startAndesBroker(context);
+                this.startAndesBroker(bundleContext);
             } else {
                 throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
             }
@@ -148,8 +220,10 @@ public class BrokerServiceComponent {
             //We do not propagate the exception further, to avoid the bundle to be attempted to be made active in cycle
             String error = "Invalid configuration found in a configuration file";
             log.error(error, e);
+        } catch (AndesException e) {
+            String error = "An error occurred while broker startup.";
+            log.error(error, e);
         }
-
     }
 
     /**
@@ -172,13 +246,11 @@ public class BrokerServiceComponent {
      *
      * @param dataSourceService the declarative service which allows access to db instance
      */
-    @Reference(
-            name = "org.wso2.carbon.datasource.DataSourceService",
-            service = DataSourceService.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unregisterDataSourceService"
-    )
+    @Reference(name = "org.wso2.carbon.datasource.DataSourceService",
+               service = DataSourceService.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unregisterDataSourceService")
     protected void registerDataService(DataSourceService dataSourceService) {
         try {
             DataSource dataSource = (HikariDataSource) dataSourceService.getDataSource(BrokerConstants.MB_DS_NAME);
@@ -209,8 +281,7 @@ public class BrokerServiceComponent {
 
         try {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(BrokerConstants.VIRTUAL_HOST_MBEAN),
-                    null);
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(BrokerConstants.VIRTUAL_HOST_MBEAN), null);
 
             if (set.size() > 0) { // Virtual hosts created, hence broker running.
                 response = true;
@@ -237,8 +308,8 @@ public class BrokerServiceComponent {
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
-            String error = "Non-numeric value provided in the configuration as port offset, using the default " +
-                    CARBON_DEFAULT_PORT_OFFSET;
+            String error = "Non-numeric value provided in the configuration as port offset, using the default "
+                    + CARBON_DEFAULT_PORT_OFFSET;
             log.error(error, e);
             //We do not propagate the exception further
             return CARBON_DEFAULT_PORT_OFFSET;
@@ -272,8 +343,10 @@ public class BrokerServiceComponent {
 
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, brokerService.getQpidHome());
-        String[] args = {"-p" + brokerService.getAMQPPort(), "-s" + brokerService.getAMQPSSLPort(),
-                "-q" + brokerService.getMqttPort()};
+        String[] args = {
+                "-p" + brokerService.getAMQPPort(), "-s" + brokerService.getAMQPSSLPort(),
+                "-q" + brokerService.getMqttPort()
+        };
 
         //TODO: Change the functionality in andes main method to an API
         //Main.setStandaloneMode(false);
@@ -333,8 +406,7 @@ public class BrokerServiceComponent {
                     log.info("AMQP Host Address : " + address.getHostAddress() + " Port : " + port);
                     isServerStarted = socket.isConnected();
                     if (isServerStarted) {
-                        log.info("Successfully connected to AMQP server "
-                                + "on port " + port);
+                        log.info("Successfully connected to AMQP server " + "on port " + port);
                     }
                 } catch (IOException e) {
                     //There will be a continuous retry effort to start the qpid server, if an error occurs the
@@ -353,8 +425,7 @@ public class BrokerServiceComponent {
                     } catch (IOException e) {
                         //There will be a continuous retry effort to close the socket, if an error occurs the
                         // exception will not be propagated further
-                        log.error("Can not close the socket which is used to check the server "
-                                + "status ", e);
+                        log.error("Can not close the socket which is used to check the server " + "status ", e);
                     }
                 }
             }

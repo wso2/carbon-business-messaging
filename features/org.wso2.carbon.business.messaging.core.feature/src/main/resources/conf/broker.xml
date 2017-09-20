@@ -26,7 +26,9 @@ expression of the property.
 
 This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/cipher-text.properties for examples.-->
 <broker>
-
+    <!-- Add the relevant implementation class name of Authentication Service.By default authentication implementation
+    of broker will be used-->
+    <authenticator class="org.wso2.carbon.business.messaging.core.internal.AuthenticationServiceImpl"/>
     <coordination>
         <!-- You can override the cluster node identifier of this MB node using the nodeID. 
         If it is left as "default", the default node ID will be generated for it. (Using IP + UUID).
