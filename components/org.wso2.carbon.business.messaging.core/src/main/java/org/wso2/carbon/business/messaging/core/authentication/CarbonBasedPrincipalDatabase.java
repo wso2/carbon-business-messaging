@@ -80,7 +80,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
      * @return Principal instance
      */
     @Override
-    //TODO: Once auth JAAS component is available
+    //TODO: Once authentication component is available
     public Principal getUser(String username) {
         Principal user = null;
         return user;
@@ -136,17 +136,13 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
                 logger.error("No AuthenticationService implementation is available");
             }
         } catch (AuthenticationException e) {
-            logger.error("Error while validating user" + userName, e);
+            logger.error("Error while validating user: " + userName, e);
         }
         if (passwordCallback instanceof PlainPasswordCallback) {
             // Let the engine know if the user is authenticated or not
             ((PlainPasswordCallback) passwordCallback).setAuthenticated(isAuthenticated);
         }
 
-    }
-
-    //TODO: Once auth JAAS component is available
-    public void setPasswordFile(String passwordFile) {
     }
 
 }

@@ -218,8 +218,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
             String error = "Invalid configuration found in a configuration file";
             log.error(error, e);
         } catch (AndesException e) {
-            String error = "An error occurred while broker startup.";
-            log.error(error, e);
+            log.error("An error occurred while broker startup", e);
         }
     }
 

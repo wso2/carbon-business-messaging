@@ -29,7 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return if the user credentials are valid or not.
      */
     @Override
-    //TODO: Integrate with shared JAAS component implementation
+    //TODO: Integrate with user authentication implementation when available
     public boolean isValidUser(String userName, String password) {
 
         if (userName.equals("admin") && password.equals("admin")) {
