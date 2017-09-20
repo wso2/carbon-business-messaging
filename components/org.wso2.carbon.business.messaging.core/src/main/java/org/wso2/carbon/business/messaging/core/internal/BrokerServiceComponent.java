@@ -140,7 +140,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
     public void registerAuthService(AuthenticationService service) {
         authList.add(service);
         //This is required to sync the list of OSGI services known by OSGI framework and OSGI components.
-        StartupServiceUtils.updateServiceCache("business-messaging-auth-mgt", AuthenticationService.class);
+        StartupServiceUtils.updateServiceCache(COMPONENT_NAME, AuthenticationService.class);
     }
 
     /**
