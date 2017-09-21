@@ -17,12 +17,12 @@
  */
 package org.wso2.carbon.business.messaging.core.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.wso2.carbon.business.messaging.core.authentication.AuthenticationService;
-
-import java.util.logging.Logger;
 
 /**
  * BrokerCore Bundle Activator to register default implementation of Authentication service.This bundleActivator will be
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class BrokerCoreBundleActivator implements BundleActivator {
     private ServiceRegistration serviceRegistration;
-    Logger logger = Logger.getLogger(BrokerCoreBundleActivator.class.getName());
+    private static final Log logger = LogFactory.getLog(BrokerCoreBundleActivator.class);
 
     /**
      * Register the default authentication impl provided by broker component before BrokerServiceComponent is activated.
