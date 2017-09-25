@@ -420,7 +420,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
                     } catch (IOException e) {
                         //There will be a continuous retry effort to close the socket, if an error occurs the
                         // exception will not be propagated further
-                        log.error("Can not close the socket which is used to check the server " + "status ", e);
+                        log.error("Can not close the socket which is used to check the server status ", e);
                     }
                 }
             }
