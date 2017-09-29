@@ -28,7 +28,7 @@
     <groupId>org.wso2.carbon.messaging</groupId>
     <artifactId>business-messaging</artifactId>
     <packaging>pom</packaging>
-    <version>3.2.15</version>
+    <version>3.2.17-SNAPSHOT</version>
     <name>WSO2 Carbon - Business Messaging Parent Pom</name>
     <description>Business Messaging Parent pom hold the properties, plugins which are required to
         build carbon component, carbon feature and product
@@ -42,6 +42,13 @@
         <module>features/andes</module>
         <module>features/metrics</module>
     </modules>
+
+    <scm>
+        <url>https://github.com/wso2/carbon-business-messaging.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-business-messaging.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/carbon-business-messaging.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <!-- Before adding ANYTHING in here, please start a discussion on the dev list.
@@ -127,6 +134,18 @@
             </extension>
         </extensions>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <preparationGoals>clean install</preparationGoals>
+                    <autoVersionSubmodules>false</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.jvnet.maven.incrementalbuild</groupId>
                 <artifactId>incremental-build-plugin</artifactId>
@@ -375,7 +394,7 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <groupId>org.wso2.carbon.identity</groupId>
                 <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
                 <version>${carbon.identity.version}</version>
             </dependency>
@@ -655,16 +674,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.5.9</carbon.commons.version>
-        <carbon.registry.version>4.6.6</carbon.registry.version>
-        <carbon.messaging.version>3.2.15</carbon.messaging.version>
-        <carbon.identity.version>5.7.11</carbon.identity.version>
+        <carbon.commons.version>4.5.4</carbon.commons.version>
+        <carbon.registry.version>4.6.0</carbon.registry.version>
+        <carbon.messaging.version>3.2.17-SNAPSHOT</carbon.messaging.version>
+        <carbon.identity.version>5.2.0</carbon.identity.version>
         <carbon.identity.oauth.stub.version>5.0.8</carbon.identity.oauth.stub.version>
-        <andes.dependency.version>3.2.19</andes.dependency.version>
-        <andes.import.version>[3.2.0, 3.3.0)</andes.import.version>
-        <carbon.kernel.version>4.4.16</carbon.kernel.version>
+        <andes.dependency.version>3.2.25</andes.dependency.version>
+        <andes.export.version>3.2.6</andes.export.version>
+        <andes.import.version>3.2.6</andes.import.version>
+        <carbon.kernel.version>4.4.18</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
         </carbon.platform.package.import.version.range>
@@ -760,7 +781,7 @@
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
         <axis2.transport.jms.version>1.1.1-wso2v2</axis2.transport.jms.version>
         <axis2.transport.rabbitmq.amqp.version>1.1.1-wso2v2</axis2.transport.rabbitmq.amqp.version>
-        <carbon.metrics.version>1.2.3</carbon.metrics.version>
+        <carbon.metrics.version>1.2.2</carbon.metrics.version>
         <gson.version>2.3.1</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
         <carbon.identity.oauth2.version.range>[5.0.8,6.0.0]</carbon.identity.oauth2.version.range>
