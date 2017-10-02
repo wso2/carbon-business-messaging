@@ -677,7 +677,7 @@
         <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.5.4</carbon.commons.version>
+        <carbon.commons.version>4.6.3</carbon.commons.version>
         <carbon.registry.version>4.6.0</carbon.registry.version>
         <carbon.messaging.version>3.2.17-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.2.0</carbon.identity.version>
@@ -685,7 +685,7 @@
         <andes.dependency.version>3.2.25</andes.dependency.version>
         <andes.export.version>3.2.6</andes.export.version>
         <andes.import.version>3.2.6</andes.import.version>
-        <carbon.kernel.version>4.4.15</carbon.kernel.version>
+        <carbon.kernel.version>4.4.18</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
         </carbon.platform.package.import.version.range>
