@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.15</version>
+        <version>3.2.17</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
-    <version>3.2.15</version>
+    <version>3.2.17</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Component - MB Cluster Management - UI</name>
     <description>org.wso2.carbon.mb.cluster.mgt.ui represent the UI aspects of
@@ -57,7 +57,7 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
         </dependency>
     </dependencies>
@@ -74,7 +74,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.andes.cluster.mgt.ui.*
+                            org.wso2.carbon.andes.cluster.mgt.ui.*;version="${andes.export.version}"
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.mb.cluster.mgt.stub.*;version="${carbon.platform.package.import.version.range}",
