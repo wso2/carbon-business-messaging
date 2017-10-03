@@ -30,9 +30,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     //TODO: Integrate with user authentication implementation when available
-    public boolean isValidUser(String userName, String password) {
+    public boolean isValidUser(String userName, char[] password) {
 
-        if (userName.equals("admin") && password.equals("admin")) {
+        if (userName.equals("admin") && new String(password).equals("admin")) {
             return true;
         }
         return false;

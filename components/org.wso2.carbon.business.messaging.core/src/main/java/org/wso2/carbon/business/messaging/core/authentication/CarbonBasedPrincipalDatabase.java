@@ -122,9 +122,9 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
         // Given username/password
         String userName = principal.getName();
-        String password = "";
+        char[] password = new char[10];
         if (passwordCallback instanceof PlainPasswordCallback) {
-            password = ((PlainPasswordCallback) passwordCallback).getPlainPassword();
+            password = ((PlainPasswordCallback) passwordCallback).getPlainPassword().toCharArray();
         }
 
         boolean isAuthenticated = false;

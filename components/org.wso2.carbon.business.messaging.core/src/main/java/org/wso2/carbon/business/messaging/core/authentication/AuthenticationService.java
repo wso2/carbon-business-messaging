@@ -29,5 +29,5 @@ public interface AuthenticationService {
      * @return if the user credentials are valid or not
      * @throws AuthenticationException can be thrown.
      */
-    boolean isValidUser(String userName, String password) throws AuthenticationException;
+    boolean isValidUser(String userName, char[] password) throws AuthenticationException;
 }
