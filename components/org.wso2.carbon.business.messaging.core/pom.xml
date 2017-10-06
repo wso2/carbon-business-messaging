@@ -17,7 +17,8 @@
   ~  under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.business.messaging</groupId>
@@ -95,17 +96,22 @@
     </dependencies>
 
     <properties>
+        <bundle.activator>org.wso2.carbon.business.messaging.core.internal.BrokerCoreBundleActivator</bundle.activator>
         <private.package>org.wso2.carbon.business.messaging.core.internal</private.package>
         <export.package>
             !org.wso2.carbon.business.messaging.core.internal,
             org.wso2.carbon.business.messaging.core.*;version="${carbon.business.messaging.version}"
         </export.package>
         <import.package>
-            org.wso2.andes.configuration.*,
+            org.wso2.andes.*,
             org.apache.commons.*,
             org.wso2.carbon.utils.*;version="${carbon.utils.package.import.version.range}",
             *;resolution:=optional
         </import.package>
+        <carbon.component>
+            startup.listener;componentName="business-messaging-auth-mgt";requiredService="org.wso2.carbon.business.messaging.core.authentication.AuthenticationService",
+            osgi.service;objectClass="org.wso2.carbon.business.messaging.core.authentication.AuthenticationService";requiredByComponentName="business-messaging-auth-mgt"
+        </carbon.component>
     </properties>
 
 </project>
