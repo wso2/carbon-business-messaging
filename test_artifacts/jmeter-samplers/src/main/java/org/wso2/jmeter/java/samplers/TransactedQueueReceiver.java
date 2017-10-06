@@ -32,7 +32,6 @@ import javax.jms.Queue;
 import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSession;
-import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -46,7 +45,6 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
     private String userName;
     private String password;
     private String queueName;
-    private int msgCount;
     private String cfName;
     private Properties properties;
 
@@ -80,7 +78,6 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
         userName = context.getParameter("USER_NAME");
         password = context.getParameter("PASSWORD");
         queueName = context.getParameter("QUEUE_NAME");
-        msgCount = context.getIntParameter("MESSAGE_COUNT_PER_COMMIT");
         cfName = context.getParameter("CF_NAME");
         properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, context.getParameter("QPID_ICF"));
@@ -114,10 +111,6 @@ public class TransactedQueueReceiver extends AbstractJavaSamplerClient {
             //Receive message
             Queue queue =  (Queue) ctx.lookup(queueName);
             consumer = queueSession.createConsumer(queue);
-
-            for (int i = 0; i < msgCount; i++) {
-                TextMessage message = (TextMessage) consumer.receive();
-            }
 
             queueSession.commit();
 
