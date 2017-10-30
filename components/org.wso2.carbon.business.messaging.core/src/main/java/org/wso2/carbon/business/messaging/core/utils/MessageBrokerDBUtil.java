@@ -20,7 +20,7 @@ package org.wso2.carbon.business.messaging.core.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
+import org.wso2.carbon.business.messaging.core.service.exception.ServiceConfigurationException;
 
 import java.io.File;
 
@@ -71,9 +71,9 @@ public final class MessageBrokerDBUtil {
      * by Carbon (these data sources are formed reading /repository/conf/masterdatasource.xml
      * file)
      *
-     * @throws ConfigurationException throws exception if error occurs while creating DB schema
+     * @throws ServiceConfigurationException throws exception if error occurs while creating DB schema
      */
-    public void initialize() throws ConfigurationException {
+    public void initialize() throws ServiceConfigurationException {
 
         String dSetupValue = System.getProperty("setup");
 
