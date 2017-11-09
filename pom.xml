@@ -310,11 +310,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.messaging</groupId>
-                <artifactId>org.wso2.carbon.andes.admin.mqtt</artifactId>
-                <version>${carbon.messaging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.messaging</groupId>
                 <artifactId>org.wso2.carbon.andes.event.core</artifactId>
                 <version>${carbon.messaging.version}</version>
             </dependency>
@@ -394,7 +389,7 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity</groupId>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.user.mgt.ui</artifactId>
                 <version>${carbon.identity.version}</version>
             </dependency>
@@ -669,6 +664,11 @@
                 <artifactId>commons-pool2</artifactId>
                 <version>${org.apache.commons.pool.version}</version>
             </dependency>
+	    <dependency>
+                <groupId>org.wso2.carbon.messaging</groupId>
+                <artifactId>org.wso2.carbon.andes.admin.mqtt</artifactId>
+                <version>${carbon.messaging.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -677,15 +677,15 @@
         <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.6.3</carbon.commons.version>
-        <carbon.registry.version>4.6.0</carbon.registry.version>
+        <carbon.commons.version>4.6.5</carbon.commons.version>
+        <carbon.registry.version>4.6.16</carbon.registry.version>
         <carbon.messaging.version>3.2.19-SNAPSHOT</carbon.messaging.version>
-        <carbon.identity.version>5.2.0</carbon.identity.version>
+        <carbon.identity.version>5.10.11</carbon.identity.version>
         <carbon.identity.oauth.stub.version>5.0.8</carbon.identity.oauth.stub.version>
-        <andes.dependency.version>3.2.29</andes.dependency.version>
+	<andes.dependency.version>3.2.29</andes.dependency.version>
         <andes.export.version>3.2.29</andes.export.version>
-        <andes.import.version>3.2.29</andes.import.version>
-        <carbon.kernel.version>4.4.18</carbon.kernel.version>
+        <andes.import.version>3.2.29</andes.import.version>        
+	<carbon.kernel.version>4.4.18</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
         </carbon.platform.package.import.version.range>
@@ -779,9 +779,9 @@
         <codahale.metrics.version>3.0.2</codahale.metrics.version>
         <metrics-core.version>2.0.3.wso2v1</metrics-core.version>
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
-        <axis2.transport.jms.version>1.1.1-wso2v2</axis2.transport.jms.version>
-        <axis2.transport.rabbitmq.amqp.version>1.1.1-wso2v2</axis2.transport.rabbitmq.amqp.version>
-        <carbon.metrics.version>1.2.2</carbon.metrics.version>
+        <axis2.transport.jms.version>2.0.0-wso2v8</axis2.transport.jms.version>
+        <axis2.transport.rabbitmq.amqp.version>2.0.0-wso2v8</axis2.transport.rabbitmq.amqp.version>
+        <carbon.metrics.version>1.2.3</carbon.metrics.version>
         <gson.version>2.3.1</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
         <carbon.identity.oauth2.version.range>[5.0.8,6.0.0]</carbon.identity.oauth2.version.range>
