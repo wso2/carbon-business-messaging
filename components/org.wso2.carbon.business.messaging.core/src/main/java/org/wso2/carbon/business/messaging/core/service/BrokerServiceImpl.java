@@ -20,13 +20,14 @@ package org.wso2.carbon.business.messaging.core.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.andes.configuration.AndesConfigurationManager;
-import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.configuration.models.transport.TransportConfiguration;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.internal.BrokerServiceDataHolder;
+import org.wso2.carbon.business.messaging.core.internal.DataHolder;
 import org.wso2.carbon.business.messaging.core.listeners.BrokerLifecycleListener;
-import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
+import org.wso2.carbon.business.messaging.core.service.exception.ServiceConfigurationException;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.utils.StringUtils;
 
 import java.net.InetAddress;
@@ -112,10 +113,11 @@ public class BrokerServiceImpl implements BrokerService {
     /**
      * Read configuration files and set ports and host names
      */
-    public void loadConfigurations() {
+    public void loadConfigurations() throws ConfigurationException {
         // Get the hostname that Carbon runs on
-        String andesConfigHostAddress =
-                AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
+        String andesConfigHostAddress = DataHolder.getInstance().getConfigProvider()
+                .getConfigurationObject(TransportConfiguration.class).getAmqpConfiguration().getBindAddress();
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
         if (StringUtils.isNullOrEmpty(andesConfigHostAddress)) {
             try {
                 hostname = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
@@ -217,7 +219,6 @@ public class BrokerServiceImpl implements BrokerService {
         this.mqttPort = mqttPort;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -242,8 +243,8 @@ public class BrokerServiceImpl implements BrokerService {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{accessKey}@carbon/carbon?brokerlist='vm://:1'
-        return "amqp://" + username + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" +
-                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='vm://:1'";
+        return "amqp://" + username + ":" + accessKey + "@" + CARBON_CLIENT_ID + "/" + CARBON_VIRTUAL_HOST_NAME
+                + "?brokerlist='vm://:1'";
     }
 
     /**
@@ -252,8 +253,8 @@ public class BrokerServiceImpl implements BrokerService {
     @Override
     public String getTCPConnectionURL(String username, String password) {
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
-        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
-                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" + CARBON_VIRTUAL_HOST_NAME
+                + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -262,8 +263,8 @@ public class BrokerServiceImpl implements BrokerService {
     @Override
     public String getTCPConnectionURL(String username, String password, String clientID) {
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
-        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
-                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" + CARBON_VIRTUAL_HOST_NAME
+                + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -274,8 +275,8 @@ public class BrokerServiceImpl implements BrokerService {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{password}@carbon/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
-        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" +
-                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+        return "amqp://" + username + ":" + password + "@" + CARBON_CLIENT_ID + "/" + CARBON_VIRTUAL_HOST_NAME
+                + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -286,8 +287,8 @@ public class BrokerServiceImpl implements BrokerService {
         username = getInternalTenantUsername(username);
 
         // amqp://{username}:{password}@{cliendID}/carbon?brokerlist='tcp://{hostname}:{amqpPort}'
-        return "amqp://" + username + ":" + password + "@" + clientID + "/" +
-                CARBON_VIRTUAL_HOST_NAME + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
+        return "amqp://" + username + ":" + password + "@" + clientID + "/" + CARBON_VIRTUAL_HOST_NAME
+                + "?brokerlist='tcp://" + hostname + ":" + amqpPort + "'";
     }
 
     /**
@@ -308,8 +309,10 @@ public class BrokerServiceImpl implements BrokerService {
      *
      * @return Port used for AMQP transports with offset if specified.
      */
-    private Integer readPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT);
+    private Integer readPortFromConfig() throws ConfigurationException {
+        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
+                .getAmqpConfiguration().getDefaultConnection().getPort();
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_DEFAULT_CONNECTION_PORT);
     }
 
     /**
@@ -317,8 +320,10 @@ public class BrokerServiceImpl implements BrokerService {
      *
      * @return The port value
      */
-    private Integer readSSLPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT);
+    private Integer readSSLPortFromConfig() throws ConfigurationException {
+        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
+                .getAmqpConfiguration().getSslConnection().getPort();
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT);
     }
 
     /**
@@ -326,8 +331,10 @@ public class BrokerServiceImpl implements BrokerService {
      *
      * @return The port value
      */
-    private Integer readMQTTPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_DEFAULT_CONNECTION_PORT);
+    private Integer readMQTTPortFromConfig() throws ConfigurationException {
+        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
+                .getMqttConfiguration().getDefaultConnection().getPort();
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_DEFAULT_CONNECTION_PORT);
 
     }
 
@@ -336,8 +343,10 @@ public class BrokerServiceImpl implements BrokerService {
      *
      * @return The port value
      */
-    private Integer readMQTTSSLPortFromConfig() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_PORT);
+    private Integer readMQTTSSLPortFromConfig() throws ConfigurationException {
+        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
+                .getMqttConfiguration().getSslConnection().getPort();
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_PORT);
     }
 
     /**
@@ -357,7 +366,7 @@ public class BrokerServiceImpl implements BrokerService {
      * {@inheritDoc}
      */
     @Override
-    public boolean getIfSSLOnly() throws ConfigurationException {
+    public boolean getIfSSLOnly() throws ServiceConfigurationException {
         return ApplicationRegistry.getInstance().getConfiguration().getSSLOnly();
     }
 
@@ -366,8 +375,7 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public void registerBrokerLifecycleListener(BrokerLifecycleListener brokerLifecycleListener) {
-        BrokerServiceDataHolder.getInstance().getBrokerLifecycleListeners()
-                .add(brokerLifecycleListener);
+        BrokerServiceDataHolder.getInstance().getBrokerLifecycleListeners().add(brokerLifecycleListener);
 
     }
 }

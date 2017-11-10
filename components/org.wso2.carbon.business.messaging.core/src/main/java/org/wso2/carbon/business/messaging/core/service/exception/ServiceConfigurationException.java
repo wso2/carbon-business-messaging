@@ -21,20 +21,20 @@ package org.wso2.carbon.business.messaging.core.service.exception;
 /**
  * Configuration exception will be thrown when there is an error in configuration files
  */
-public class ConfigurationException extends Exception {
+public class ServiceConfigurationException extends Exception {
 
-    public ConfigurationException() {
+    public ServiceConfigurationException() {
     }
 
-    public ConfigurationException(String message) {
+    public ServiceConfigurationException(String message) {
         super(message);
     }
 
-    public ConfigurationException(String message, Throwable cause) {
+    public ServiceConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ConfigurationException(Throwable cause) {
+    public ServiceConfigurationException(Throwable cause) {
         super(cause);
     }
 

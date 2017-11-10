@@ -29,7 +29,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.andes.configuration.AndesConfigurationManager;
-import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.configuration.models.BrokerConfiguration;
+import org.wso2.andes.configuration.models.deployment.DeploymentConfiguration;
+import org.wso2.andes.configuration.models.transport.TransportConfiguration;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.BrokerOptions;
@@ -40,8 +42,10 @@ import org.wso2.carbon.business.messaging.core.authentication.AuthenticationServ
 import org.wso2.carbon.business.messaging.core.constants.BrokerConstants;
 import org.wso2.carbon.business.messaging.core.service.BrokerService;
 import org.wso2.carbon.business.messaging.core.service.BrokerServiceImpl;
-import org.wso2.carbon.business.messaging.core.service.exception.ConfigurationException;
+import org.wso2.carbon.business.messaging.core.service.exception.ServiceConfigurationException;
 import org.wso2.carbon.business.messaging.core.utils.MessageBrokerDBUtil;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
@@ -63,6 +67,7 @@ import javax.sql.DataSource;
 /**
  * Service responsible for initializing  broker and registering data-sources and the relevant listeners.
  * This also acts as a capabilityListener for AuthenticationService where multiple implementations can be registered.
+ *
  * @since 5.0.0
  */
 @Component(name = "org.wso2.carbon.andes.internal.BrokerServiceComponent",
@@ -130,6 +135,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
     /**
      * This will store all the auth implementations of AuthenticationService class
+     *
      * @param service implementation of Authentication Service interface.
      */
     @Reference(name = "auth.service.reference",
@@ -153,6 +159,30 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
     }
 
     /**
+     * Get the ConfigProvider service.
+     * This is the bind method that gets called for ConfigProvider service registration that satisfy the policy.
+     *
+     * @param configProvider the ConfigProvider service that is registered as a service.
+     */
+    @Reference(name = "carbon.config.provider",
+               service = ConfigProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unregisterConfigProvider")
+    protected void registerConfigProvider(ConfigProvider configProvider) {
+        DataHolder.getInstance().setConfigProvider(configProvider);
+    }
+
+    /**
+     * This is the unbind method for the above reference that gets called for ConfigProvider instance un-registrations.
+     *
+     * @param configProvider the ConfigProvider service that get unregistered.
+     */
+    protected void unregisterConfigProvider(ConfigProvider configProvider) {
+        DataHolder.getInstance().setConfigProvider(null);
+    }
+
+    /**
      * This method will store the bundlecontext at component start-up
      *
      * @param context the carbon core bundle instance used for service registration
@@ -171,6 +201,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         try {
+            ConfigProvider configProvider = DataHolder.getInstance().getConfigProvider();
             //Initialize AndesConfigurationManager, this will inform broker on the relevant port offset
             AndesConfigurationManager.initialize(readPortOffset());
 
@@ -182,9 +213,12 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
             AndesContext.getInstance().constructStoreConfiguration();
 
             // Read deployment mode
-            String mode = AndesConfigurationManager.readValue(AndesConfiguration.DEPLOYMENT_MODE);
+            String mode = configProvider.getConfigurationObject(DeploymentConfiguration.class).getMode();
+            // String mode = AndesConfigurationManager.readValue(AndesConfiguration.DEPLOYMENT_MODE);
             // Read authentication service implementation class name from broker.xml
-            String authenticatorName = AndesConfigurationManager.readValue(AndesConfiguration.AUTHENTICATOR_CLASS);
+            String authenticatorName = configProvider.getConfigurationObject(BrokerConfiguration.class)
+                    .getAuthenticator();
+            //AndesConfigurationManager.readValue(AndesConfiguration.AUTHENTICATOR_CLASS);
             // All auth implementations that are registered , are available.
             //Get relevant authentication service implementation the user has specified.
             authList.forEach(service -> {
@@ -210,10 +244,10 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
                 AndesContext.getInstance().setClusteringEnabled(true);
                 this.startAndesBroker(bundleContext);
             } else {
-                throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
+                throw new ServiceConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
             }
 
-        } catch (ConfigurationException e) {
+        } catch (ServiceConfigurationException | ConfigurationException e) {
             //We do not propagate the exception further, to avoid the bundle to be attempted to be made active in cycle
             String error = "Invalid configuration found in a configuration file";
             log.error(error, e);
@@ -239,6 +273,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
     /**
      * This method will be called to add/register the data-sources with the broker
+     *
      * @param dataSourceService the declarative service which allows access to db instance
      */
     @Reference(name = "org.wso2.carbon.datasource.DataSourceService",
@@ -316,18 +351,26 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
      * @return host name as derived from broker.xml
      */
     private String getAMQPTransportBindAddress() {
-        return AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
-
+        String bindAddress = "";
+        try {
+            bindAddress = DataHolder.getInstance().getConfigProvider()
+                    .getConfigurationObject(TransportConfiguration.class).getAmqpConfiguration().getBindAddress();
+        } catch (ConfigurationException e) {
+            log.error("Configuration issue occurred..", e);
+        }
+        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
+        return bindAddress;
     }
 
     /**
      * Start Andes Broker and related components with given configurations.
      *
      * @param context the information containing OSGI bundle information
-     * @throws ConfigurationException
+     * @throws ServiceConfigurationException
      * @throws AndesException
      */
-    private void startAndesBroker(BundleContext context) throws ConfigurationException, AndesException {
+    private void startAndesBroker(BundleContext context)
+            throws ServiceConfigurationException, ConfigurationException, AndesException {
         String dSetupValue = System.getProperty(BrokerConstants.SYS_PROP_DATABASE_SETUP);
         if (dSetupValue != null) {
             // Source MB rdbms database if data source configurations and supported sql exist
@@ -380,9 +423,9 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
      * time out issues.
      * </p>
      *
-     * @throws ConfigurationException
+     * @throws ServiceConfigurationException
      */
-    private void startAMQPServer() throws ConfigurationException {
+    private void startAMQPServer() throws ServiceConfigurationException, ConfigurationException {
 
         boolean isServerStarted = false;
         int port;
@@ -392,7 +435,8 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
             port = brokerService.getAMQPPort();
         }
 
-        if (AndesConfigurationManager.<Boolean>readValue(AndesConfiguration.TRANSPORTS_AMQP_ENABLED)) {
+        if (DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
+                .getAmqpConfiguration().getEnabled()) {
             while (!isServerStarted) {
                 Socket socket = null;
                 try {

@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.business.messaging.core.internal;
 
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.kernel.CarbonRuntime;
 
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ public class DataHolder {
 
     private static DataHolder instance = new DataHolder();
     private CarbonRuntime carbonRuntime;
+    private ConfigProvider configProvider;
 
     private DataHolder() {
 
@@ -64,5 +66,21 @@ public class DataHolder {
      */
     public void setCarbonRuntime(CarbonRuntime carbonRuntime) {
         this.carbonRuntime = carbonRuntime;
+    }
+
+    /**
+     *
+     * @param configProvider
+     */
+    public void setConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ConfigProvider getConfigProvider() {
+        return configProvider;
     }
 }
