@@ -28,7 +28,7 @@
 
     <groupId>org.wso2.carbon.business.messaging</groupId>
     <artifactId>carbon-business-messaging</artifactId>
-    <version>4.0.4-SNAPSHOT</version>
+    <version>4.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon - Business messaging aggregator POM</name>
@@ -486,7 +486,7 @@
     </build>
 
     <properties>
-        <carbon.business.messaging.version>4.0.4-SNAPSHOT</carbon.business.messaging.version>
+        <carbon.business.messaging.version>4.0.5-SNAPSHOT</carbon.business.messaging.version>
         <carbon.feature.plugin.version>3.1.1</carbon.feature.plugin.version>
 
         <!-- C5 specific dependency versions -->
