@@ -28,7 +28,7 @@
 
     <groupId>org.wso2.carbon.business.messaging</groupId>
     <artifactId>carbon-business-messaging</artifactId>
-    <version>4.0.7-SNAPSHOT</version>
+    <version>4.0.7</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon - Business messaging aggregator POM</name>
@@ -37,7 +37,7 @@
         <url>https://github.com/wso2/carbon-business-messaging.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-business-messaging.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-business-messaging.git</connection>
-        <tag>HEAD</tag>
+        <tag>v4.0.7</tag>
     </scm>
 
     <profiles>
@@ -486,7 +486,7 @@
     </build>
 
     <properties>
-        <carbon.business.messaging.version>4.0.7-SNAPSHOT</carbon.business.messaging.version>
+        <carbon.business.messaging.version>4.0.7</carbon.business.messaging.version>
         <carbon.feature.plugin.version>3.1.1</carbon.feature.plugin.version>
 
         <!-- C5 specific dependency versions -->
