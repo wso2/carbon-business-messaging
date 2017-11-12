@@ -382,8 +382,7 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
         log.info("Activating Andes Message Broker Engine...");
         System.setProperty(BrokerOptions.ANDES_HOME, brokerService.getQpidHome());
         String[] args = {
-                "-p" + brokerService.getAMQPPort(), "-s" + brokerService.getAMQPSSLPort(),
-                "-q" + brokerService.getMqttPort()
+                "-p" + brokerService.getAMQPPort(), "-s" + brokerService.getAMQPSSLPort()
         };
 
         //TODO: Change the functionality in andes main method to an API
@@ -404,12 +403,12 @@ public class BrokerServiceComponent implements RequiredCapabilityListener {
 
         // TODO: Have to re-structure how andes broker getting started.
         // there should be a separate andes-core component to initialize Andes Broker. Within
-        // that component both Qpid and MQTT components should initialized.
+        // that component Qpid components should initialized.
 
         // Start AMQP server with given configurations
         startAMQPServer();
 
-        // Message broker is started with both AMQP and MQTT
+        // Message broker is started with AMQP transport
         log.info("WSO2 Message Broker is started.");
 
         // Publish Qpid properties
