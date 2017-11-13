@@ -137,11 +137,6 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!--MQTT related dependencies-->
-        <dependency>
-            <groupId>io.netty.wso2</groupId>
-            <artifactId>netty-all</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.h2database.wso2</groupId>
             <artifactId>h2-database-engine</artifactId>
@@ -379,10 +374,6 @@
                                 <bundle>
                                     <symbolicName>com.google.guava</symbolicName>
                                     <version>${guava.bundle.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>netty-all</symbolicName>
-                                    <version>${netty-all.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>libthrift</symbolicName>

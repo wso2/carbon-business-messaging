@@ -502,7 +502,7 @@
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
 
-        <andes.dependency.version>4.0.0</andes.dependency.version>
+        <andes.dependency.version>4.0.1-SNAPSHOT</andes.dependency.version>
         <orbit.version.commons.collection>3.2.0.wso2v1</orbit.version.commons.collection>
         <commons-lang.version>2.6</commons-lang.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>

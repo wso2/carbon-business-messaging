@@ -92,16 +92,6 @@ public class BrokerServiceImpl implements BrokerService {
     private Integer amqpSSLPort = 8672;
 
     /**
-     * The default MQTT port.
-     */
-    private Integer mqttPort = 1883;
-
-    /**
-     * The default MQTT SSL port.
-     */
-    private Integer mqttSSLPort = 8883;
-
-    /**
      * Creates a new Qpid Service.
      *
      * @param accessKey The access key for in VM connection string.
@@ -132,11 +122,6 @@ public class BrokerServiceImpl implements BrokerService {
         // Read Qpid broker SSL amqpPort from configuration file
         amqpSSLPort = readSSLPortFromConfig();
 
-        // Read MQTT amqpPort from configuration file
-        mqttPort = readMQTTPortFromConfig();
-
-        // Read MQTT ssl port value from configuation file
-        mqttSSLPort = readMQTTSSLPortFromConfig();
     }
 
     /**
@@ -201,38 +186,6 @@ public class BrokerServiceImpl implements BrokerService {
     @Override
     public void setAMQPSSLPort(Integer amqpSSLPort) {
         this.amqpSSLPort = amqpSSLPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer getMqttPort() {
-        return mqttPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMqttPort(Integer mqttPort) {
-        this.mqttPort = mqttPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer getMqttSSLPort() {
-        return mqttSSLPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMqttSSLPort(Integer mqttSSLPort) {
-        this.mqttSSLPort = mqttSSLPort;
     }
 
     /**
@@ -324,29 +277,6 @@ public class BrokerServiceImpl implements BrokerService {
         return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
                 .getAmqpConfiguration().getSslConnection().getPort();
         //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_SSL_CONNECTION_PORT);
-    }
-
-    /**
-     * Reads the MQTT port value from configuration.
-     *
-     * @return The port value
-     */
-    private Integer readMQTTPortFromConfig() throws ConfigurationException {
-        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
-                .getMqttConfiguration().getDefaultConnection().getPort();
-        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_DEFAULT_CONNECTION_PORT);
-
-    }
-
-    /**
-     * Reads the MQTT SSL port value from configuration.
-     *
-     * @return The port value
-     */
-    private Integer readMQTTSSLPortFromConfig() throws ConfigurationException {
-        return DataHolder.getInstance().getConfigProvider().getConfigurationObject(TransportConfiguration.class)
-                .getMqttConfiguration().getSslConnection().getPort();
-        //AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_MQTT_SSL_CONNECTION_PORT);
     }
 
     /**
