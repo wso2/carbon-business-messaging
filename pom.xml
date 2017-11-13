@@ -486,7 +486,7 @@
     </build>
 
     <properties>
-        <carbon.business.messaging.version>4.0.8-SNAPSHOT</carbon.business.messaging.version>
+        <carbon.business.messaging.version>4.0.7</carbon.business.messaging.version>
         <carbon.feature.plugin.version>3.1.1</carbon.feature.plugin.version>
 
         <!-- C5 specific dependency versions -->
@@ -502,7 +502,7 @@
         <version.log4j>1.2.13</version.log4j>
         <commons-logging.version>1.1.1</commons-logging.version>
 
-        <andes.dependency.version>4.0.1-SNAPSHOT</andes.dependency.version>
+        <andes.dependency.version>4.0.0</andes.dependency.version>
         <orbit.version.commons.collection>3.2.0.wso2v1</orbit.version.commons.collection>
         <commons-lang.version>2.6</commons-lang.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
