@@ -18,25 +18,26 @@ package org.wso2.carbon.business.messaging.admin.services.types;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * * This class represent a Protocols information object.
+ * This class will be used when creating a new destination. Class {@link Destination} will not be used for creating a
+ * new destination as it contains information that is not relevant for creating a destination.
  */
-@ApiModel(value = "Protocols",
-          description = "The structure represents protocols supported by the Message Broker.")
+@ApiModel(value = "New Destination.",
+          description = "The structure for creating a new destination.")
 @XmlRootElement
-public class Protocols {
-    @ApiModelProperty(value = "Protocols list.")
-    private List<String> protocol;
+public class NewDestination {
+    @ApiModelProperty(value = "The name for the destination.")
+    public String destinationName = StringUtils.EMPTY;
 
-    public List<String> getProtocol() {
-        return protocol;
+    public String getDestinationName() {
+        return destinationName;
     }
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
     }
 }

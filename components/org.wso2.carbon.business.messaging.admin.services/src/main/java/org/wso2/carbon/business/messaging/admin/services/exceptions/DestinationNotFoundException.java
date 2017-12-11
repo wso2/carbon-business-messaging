@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.business.messaging.admin.services.types;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package org.wso2.carbon.business.messaging.admin.services.exceptions;
 
 /**
- * * This class represent a message information object.
+ * Exception class for the rest server when a destination is not found.
  */
-@ApiModel(value = "Hello",
-          description = "The structure represents a hello message.")
-@XmlRootElement
-public class Hello {
-    @ApiModelProperty(value = "Welcoming party.")
-    private String welcome;
+public class DestinationNotFoundException extends Exception {
+    private static final long serialVersionUID = -5798412889952082745L;
 
-    public String getWelcome() {
-        return welcome;
-    }
-
-    public void setWelcome(String welcome) {
-        this.welcome = welcome;
+    /**
+     * Creates an exception with given string.
+     *
+     * @param message The exception message content.
+     */
+    public DestinationNotFoundException(String message) {
+        super(message);
     }
 }

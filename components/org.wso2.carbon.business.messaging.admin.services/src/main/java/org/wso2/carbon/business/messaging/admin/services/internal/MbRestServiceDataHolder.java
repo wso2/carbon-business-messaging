@@ -18,31 +18,30 @@
 
 package org.wso2.carbon.business.messaging.admin.services.internal;
 
-import org.wso2.carbon.business.messaging.core.Greeter;
+import org.wso2.andes.kernel.Andes;
 
 import java.util.logging.Logger;
 
 /**
- * MBRESTServiceDataHolder to hold object instances related to MB admin service
+ * MbRestServiceDataHolder to hold object instances related to MB admin service.
  *
  * @since 4.0.0-SNAPSHOT
  */
-public class MBRESTServiceDataHolder {
-    Logger logger = Logger.getLogger(MBRESTServiceDataHolder.class.getName());
+public class MbRestServiceDataHolder {
+    private static MbRestServiceDataHolder instance = new MbRestServiceDataHolder();
+    Logger logger = Logger.getLogger(MbRestServiceDataHolder.class.getName());
+    private Andes andesCore;
 
-    private static MBRESTServiceDataHolder instance = new MBRESTServiceDataHolder();
-    private Greeter messagingCore;
-
-    private MBRESTServiceDataHolder() {
+    private MbRestServiceDataHolder() {
 
     }
 
     /**
-     * This returns the MBRESTServiceDataHolder instance.
+     * This returns the MbRestServiceDataHolder instance.
      *
-     * @return The MBRESTServiceDataHolder instance of this singleton class
+     * @return The MbRestServiceDataHolder instance of this singleton class
      */
-    public static MBRESTServiceDataHolder getInstance() {
+    public static MbRestServiceDataHolder getInstance() {
         return instance;
     }
 
@@ -51,17 +50,17 @@ public class MBRESTServiceDataHolder {
      *
      * @return business-messaging-core Service
      */
-    public Greeter getMessagingCore() {
-        return messagingCore;
+    public Andes getAndesCore() {
+        return andesCore;
     }
 
     /**
      * This method is for setting the business-messaging-core service. This method is used by
      * ServiceComponent.
      *
-     * @param messagingCore The reference being passed through ServiceComponent
+     * @param andesCore The reference being passed through ServiceComponent
      */
-    public void setMessagingCore(Greeter messagingCore) {
-        this.messagingCore = messagingCore;
+    public void setAndesCore(Andes andesCore) {
+        this.andesCore = andesCore;
     }
 }

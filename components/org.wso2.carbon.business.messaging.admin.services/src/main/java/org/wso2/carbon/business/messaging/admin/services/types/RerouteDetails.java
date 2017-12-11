@@ -18,25 +18,33 @@ package org.wso2.carbon.business.messaging.admin.services.types;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.util.List;
+import java.util.Arrays;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * * This class represent a Protocols information object.
  */
-@ApiModel(value = "Protocols",
-          description = "The structure represents protocols supported by the Message Broker.")
+@ApiModel(value = "RerouteDetails", description = "The structure represents message id list and reroute destination.")
 @XmlRootElement
-public class Protocols {
-    @ApiModelProperty(value = "Protocols list.")
-    private List<String> protocol;
+public class RerouteDetails {
+    @ApiModelProperty(value = "Andes metadata id list.")
+    private long[] andesMetadataIDs;
+    @ApiModelProperty(value = "Reroute destination name.")
+    private String destinationName;
 
-    public List<String> getProtocol() {
-        return protocol;
+    public String getDestinationName() {
+        return destinationName;
     }
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public long[] getAndesMetadataIDs() {
+        return Arrays.copyOf(andesMetadataIDs, andesMetadataIDs.length);
+    }
+
+    public void setAndesMetadataIDs(long[] andesMetadataIDs) {
+        this.andesMetadataIDs = Arrays.copyOf(andesMetadataIDs, andesMetadataIDs.length);
     }
 }

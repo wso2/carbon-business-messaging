@@ -17,26 +17,33 @@
 package org.wso2.carbon.business.messaging.admin.services.types;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * * This class represent a Protocols information object.
+ * This class represent a cluster information object.
  */
-@ApiModel(value = "Protocols",
-          description = "The structure represents protocols supported by the Message Broker.")
+@ApiModel(value = "Cluster Information",
+          description = "Contains clustering related information and it's member " + "details.")
 @XmlRootElement
-public class Protocols {
-    @ApiModelProperty(value = "Protocols list.")
-    private List<String> protocol;
+public class ClusterInformation {
 
-    public List<String> getProtocol() {
-        return protocol;
+    /**
+     * This node belongs to a cluster or not.
+     */
+    private boolean isClusteringEnabled;
+
+    /**
+     * @param isClusteringEnabled isClusteringEnabled
+     */
+    public void setIsClusteringEnabled(Boolean isClusteringEnabled) {
+        this.isClusteringEnabled = isClusteringEnabled;
     }
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
+    /**
+     * @return isClusteringEnabled isClusteringEnabled
+     */
+    public boolean isClusteringEnabled() {
+        return isClusteringEnabled;
     }
 }

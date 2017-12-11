@@ -19,24 +19,25 @@ package org.wso2.carbon.business.messaging.admin.services.types;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * * This class represent a Protocols information object.
+ * This class represent a broker information object.
  */
-@ApiModel(value = "Protocols",
-          description = "The structure represents protocols supported by the Message Broker.")
+@ApiModel(value = "Broker Information",
+          description = "Contains properties of the current node.")
 @XmlRootElement
-public class Protocols {
-    @ApiModelProperty(value = "Protocols list.")
-    private List<String> protocol;
+public class BrokerInformation {
+    @ApiModelProperty(value = "A map that contains the properties of the current node.")
+    private Map<String, String> properties = new HashMap<>();
 
-    public List<String> getProtocol() {
-        return protocol;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

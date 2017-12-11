@@ -19,24 +19,19 @@ package org.wso2.carbon.business.messaging.admin.services.types;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
- * * This class represent a Protocols information object.
+ * This class represent a store information object.
  */
-@ApiModel(value = "Protocols",
-          description = "The structure represents protocols supported by the Message Broker.")
-@XmlRootElement
-public class Protocols {
-    @ApiModelProperty(value = "Protocols list.")
-    private List<String> protocol;
+@ApiModel(value = "Store Information", description = "The structure for representing message/context store information")
+public class StoreInformation {
+    @ApiModelProperty(value = "Whether the store is healthy or not.")
+    private boolean healthy;
 
-    public List<String> getProtocol() {
-        return protocol;
+    public boolean isHealthy() {
+        return healthy;
     }
 
-    public void setProtocol(List<String> protocol) {
-        this.protocol = protocol;
+    public void setHealthy(boolean healthy) {
+        this.healthy = healthy;
     }
 }
