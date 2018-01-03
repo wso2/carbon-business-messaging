@@ -19,14 +19,14 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>business-messaging</artifactId>
-        <version>3.2.21</version>
+        <version>3.2.22-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>metrics</artifactId>
     <packaging>pom</packaging>
-    <version>3.2.21</version>
+    <version>3.2.22-SNAPSHOT</version>
     <name>WSO2 Carbon - Component - Metrics - Aggregator Module</name>
     <description>Messaging Metrics related components</description>
     <url>http://wso2.org</url>
