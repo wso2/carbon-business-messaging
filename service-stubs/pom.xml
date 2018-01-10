@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>business-messaging</artifactId>
-        <version>3.2.23-SNAPSHOT</version>
+        <version>3.2.23</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>carbon-service-stubs</artifactId>
-    <version>3.2.23-SNAPSHOT</version>
+    <version>3.2.23</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Service Stubs - Aggregator Module</name>
     <url>http://wso2.org</url>
