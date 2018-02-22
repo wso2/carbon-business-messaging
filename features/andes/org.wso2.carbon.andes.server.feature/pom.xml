@@ -166,7 +166,7 @@
 
         <!--MQTT related dependencies-->
         <dependency>
-            <groupId>io.netty.wso2</groupId>
+            <groupId>org.wso2.orbit.io.netty</groupId>
             <artifactId>netty-all</artifactId>
         </dependency>
         <dependency>
@@ -332,7 +332,7 @@
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
                                 <bundleDef>com.google.guava:guava</bundleDef>
-                                <bundleDef>io.netty.wso2:netty-all</bundleDef>
+                                <bundleDef>org.wso2.orbit.io.netty:netty-all</bundleDef>
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.version}</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.version}</bundleDef>
