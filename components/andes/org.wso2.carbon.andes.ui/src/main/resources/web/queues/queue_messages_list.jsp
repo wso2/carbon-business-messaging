@@ -12,6 +12,7 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
 
 <script type="text/javascript" src="js/treecontrol.js"></script>
@@ -148,7 +149,7 @@
                     </td>
                     <td><%= queueMessage.getJMSTimeStamp()%>
                     </td>
-                    <td><%= msgProperties%>
+                    <td><%= Encode.forHtml(msgProperties)%>
                     </td>
                     <td>
                         <%=StringEscapeUtils.escapeHtml(messageContent[0])%>
