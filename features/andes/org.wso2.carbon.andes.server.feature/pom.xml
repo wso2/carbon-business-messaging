@@ -186,7 +186,7 @@
             <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
+            <groupId>org.wso2.carbon.identity.inbound.auth.oauth2</groupId>
             <artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>
         </dependency>
         <dependency>
@@ -336,7 +336,7 @@
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.version}</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.identity:org.wso2.carbon.identity.oauth.stub:${carbon.identity.oauth.stub.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.identity.inbound.auth.oauth2:org.wso2.carbon.identity.oauth.stub:${carbon.identity.oauth.stub.version}</bundleDef>
                                 <bundleDef>org.apache.commons:commons-pool2:${org.apache.commons.pool.version}</bundleDef>
                             </bundles>
                             <importFeatures>
