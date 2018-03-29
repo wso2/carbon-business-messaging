@@ -483,6 +483,10 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
             buffer of slots which can be allocated to a slot delivery worker in the near future. The specified
             number of slots from the last assigned should not be touched by the periodic deletion task.-->
             <safetySlotCount>3</safetySlotCount>
+            
+            <!--By default expired messages are removed from broker. Instead, to move expired messages to 
+            Dead Letter Channel make this to true-->
+            <moveExpiredMessagesToDLC>false</moveExpiredMessagesToDLC>
         </messageExpiration>
 
     </performanceTuning>
