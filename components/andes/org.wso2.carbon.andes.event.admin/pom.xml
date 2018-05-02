@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.42</version>
+        <version>3.2.43-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>3.2.42</version>
+    <version>3.2.43-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.event.admin</artifactId>
     <packaging>bundle</packaging>
