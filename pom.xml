@@ -677,7 +677,7 @@
         <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.6.26</carbon.commons.version>
+        <carbon.commons.version>4.6.29</carbon.commons.version>
         <carbon.registry.version>4.6.30</carbon.registry.version>
         <carbon.messaging.version>3.2.43-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.11.148</carbon.identity.version>
@@ -779,7 +779,7 @@
         <codahale.metrics.version>3.0.2</codahale.metrics.version>
         <metrics-core.version>2.0.3.wso2v1</metrics-core.version>
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
-        <axis2.transport.version>2.0.0-wso2v18</axis2.transport.version>
+        <axis2.transport.version>2.0.0-wso2v19</axis2.transport.version>
         <carbon.metrics.version>1.2.3</carbon.metrics.version>
         <gson.version>2.7</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
