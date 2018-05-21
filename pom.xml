@@ -681,7 +681,7 @@
         <carbon.registry.version>4.6.30</carbon.registry.version>
         <carbon.messaging.version>3.2.44-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.11.148</carbon.identity.version>
-        <carbon.identity.oauth.stub.version>5.6.46</carbon.identity.oauth.stub.version>
+        <carbon.identity.oauth.stub.version>6.0.3</carbon.identity.oauth.stub.version>
         <andes.dependency.version>3.2.55</andes.dependency.version>
         <andes.export.version>3.2.55</andes.export.version>
         <andes.import.version>3.2.55</andes.import.version>
@@ -783,7 +783,7 @@
         <carbon.metrics.version>1.2.3</carbon.metrics.version>
         <gson.version>2.7</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
-        <carbon.identity.oauth2.version.range>[5.0.8,6.0.0]</carbon.identity.oauth2.version.range>
+        <carbon.identity.oauth2.version.range>[6.0.0,7.0.0]</carbon.identity.oauth2.version.range>
         <httpcomponents.httpclient.version>4.2.3.wso2v1</httpcomponents.httpclient.version>
 		<!--CQEngine-->
 		<cqengine.version>2.7.0</cqengine.version>
