@@ -210,8 +210,6 @@
     </script>
 
  <%
-         boolean allowReRouteAllInDLC = AndesConfigurationManager.readValue(
-                                                                            AndesConfiguration.MANAGEMENT_CONSOLE_ALLOW_REREOUTE_ALL_IN_DLC);
          String destinationFilter = StringUtils.trimToEmpty(request.getParameter("destinationFilter"));
 
          AndesAdminServiceStub stub = UIUtils.getAndesAdminServiceStub(config, session, request);
@@ -386,13 +384,12 @@
                                    class="icon-link"
                                    onclick="doReRouteMessages('<%=nameOfQueue%>')">ReRoute</a>
                             </th>
-                                <% if (allowReRouteAllInDLC && (null != filteredMsgArray) && (filteredMsgArray.length > 0)) {%>
-                                    <th align="right">
-                                        <a style="background-image: url(images/move.gif);"
-                                           class="icon-link"
-                                           onclick="doReRouteAllMessages('<%=nameOfQueue%>')">ReRoute All Messages</a>
-                                    </th>
-                                <% } %>
+
+                                <th align="right">
+                                    <a style="background-image: url(images/move.gif);"
+                                        class="icon-link"
+                                        onclick="doReRouteAllMessages('<%=nameOfQueue%>')">ReRoute All Messages</a>
+                                </th>
                             <% } else { %>
                             <th align="right">
                                 <a style="background-image: url(images/move.gif);"
