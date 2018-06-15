@@ -16,9 +16,10 @@
         String[] durableQueues = stub.getNamesOfAllDurableQueues();
         // Creating a string with all destinations with delimiter as #
         for (String queueName : durableQueues) {
-            destinationList += queueName + "#";
+            if (!DLCQueueUtils.isDeadLetterQueue(queueName)) {
+                destinationList += queueName + "#";
+            }
         }
-
         // We can remove the # tag only if the destinationList is not empty
         if (destinationList.length() > 0) {
             //remove the last #
