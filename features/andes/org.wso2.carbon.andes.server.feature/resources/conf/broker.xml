@@ -89,6 +89,9 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
                     <password>wso2carbon</password>
                     <certType>SunX509</certType>
                 </trustStore>
+                <!--Configure SSL protocols and preferred cipher suites for AMQP transport-->
+                <!--<sslEnabledProtocols>TLSv1,TLSv1.1,TLSv1.2</sslEnabledProtocols>-->
+                <!--<ciphers>TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA</ciphers>-->
             </sslConnection>
 
             <maximumRedeliveryAttempts>10</maximumRedeliveryAttempts>
