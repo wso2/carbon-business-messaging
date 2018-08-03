@@ -19,11 +19,11 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>metrics-feature</artifactId>
-        <version>3.2.56-SNAPSHOT</version>
+        <version>3.2.56</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>3.2.56-SNAPSHOT</version>
+    <version>3.2.56</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.messaging.metrics.ui.feature</artifactId>
     <packaging>pom</packaging>
