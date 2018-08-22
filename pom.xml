@@ -677,14 +677,14 @@
         <project.scm.id>wso2-scm-server</project.scm.id>
         <!-- Carbon platform version comes here-->
         <carbon.platform.version>4.4.0</carbon.platform.version>
-        <carbon.commons.version>4.6.47</carbon.commons.version>
+        <carbon.commons.version>4.6.48</carbon.commons.version>
         <carbon.registry.version>4.6.38</carbon.registry.version>
         <carbon.messaging.version>3.2.58-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.11.256</carbon.identity.version>
         <carbon.identity.oauth.stub.version>6.0.3</carbon.identity.oauth.stub.version>
-        <andes.dependency.version>3.2.75</andes.dependency.version>
-        <andes.export.version>3.2.75</andes.export.version>
-        <andes.import.version>3.2.75</andes.import.version>
+        <andes.dependency.version>3.2.77</andes.dependency.version>
+        <andes.export.version>3.2.77</andes.export.version>
+        <andes.import.version>3.2.77</andes.import.version>
         <carbon.kernel.version>4.4.34</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
@@ -779,7 +779,7 @@
         <codahale.metrics.version>3.0.2</codahale.metrics.version>
         <metrics-core.version>2.0.3.wso2v1</metrics-core.version>
         <org.apache.felix.main.version>2.0.5</org.apache.felix.main.version>
-        <axis2.transport.version>2.0.0-wso2v27</axis2.transport.version>
+        <axis2.transport.version>2.0.0-wso2v28</axis2.transport.version>
         <carbon.metrics.version>1.2.3</carbon.metrics.version>
         <gson.version>2.7</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
