@@ -682,9 +682,9 @@
         <carbon.messaging.version>3.2.61-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.version>5.12.153</carbon.identity.version>
         <carbon.identity.oauth.stub.version>6.0.53</carbon.identity.oauth.stub.version>
-        <andes.dependency.version>3.2.78</andes.dependency.version>
-        <andes.export.version>3.2.78</andes.export.version>
-        <andes.import.version>3.2.78</andes.import.version>
+        <andes.dependency.version>3.2.80</andes.dependency.version>
+        <andes.export.version>3.2.80</andes.export.version>
+        <andes.import.version>3.2.80</andes.import.version>
         <carbon.kernel.version>4.4.35</carbon.kernel.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
