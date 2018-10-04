@@ -350,7 +350,17 @@ public class AndesAuthorizationHandler {
                                 username, queueID,
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
                             accessResult = Result.ALLOWED;
-                        } else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
+                        }  else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                                username, queueID,
+                                TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                            accessResult = Result.ALLOWED;
+                        }  else if (userRealm.getAuthorizationManager()
+                                             .isUserAuthorized(username,
+                                                               PERMISSION_ADMIN_MANAGE_QUEUE_ADD,
+                                                               UI_EXECUTE)) {
+                            accessResult = Result.ALLOWED;
+                        }
+                        else if (Boolean.valueOf(properties.get(ObjectProperties.Property.DURABLE)) &&
                                 Boolean.valueOf(properties.get(ObjectProperties.Property.EXCLUSIVE))) {
                             accessResult = Result.ALLOWED;
                         } else if (isTopicSubscriberQueue(queueName) && !Boolean.valueOf(
@@ -374,6 +384,15 @@ public class AndesAuthorizationHandler {
                         } else if (userRealm.getAuthorizationManager().isUserAuthorized(
                                 username, queueID,
                                 TreeNode.Permission.CONSUME.toString().toLowerCase())) {
+                            accessResult = Result.ALLOWED;
+                        } else if (userRealm.getAuthorizationManager().isUserAuthorized(
+                                username, queueID,
+                                TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                            accessResult = Result.ALLOWED;
+                        } else if (userRealm.getAuthorizationManager()
+                                            .isUserAuthorized(username,
+                                                              PERMISSION_ADMIN_MANAGE_QUEUE_ADD,
+                                                              UI_EXECUTE)) {
                             accessResult = Result.ALLOWED;
                         }
                         if (log.isDebugEnabled()) {
@@ -416,10 +435,12 @@ public class AndesAuthorizationHandler {
 
 
                             accessResult = Result.ALLOWED;
-                        } else if (!userStoreManager.isExistingRole(roleName) &&
-                                !userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                        topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase()) &&
-                                userRealm.getAuthorizationManager().isUserAuthorized(username,
+                        } else if (!userStoreManager.isExistingRole(roleName)
+                                   && !userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                        topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())
+                                   && !userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                        topicId, TreeNode.Permission.PUBLISH.toString().toLowerCase())
+                                   && userRealm.getAuthorizationManager().isUserAuthorized(username,
                                         PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
                             //If topic created by admin then we don't create internal role. Therefore we have to check
                             //given topic permission assigned to admin. If admin has permission, then we not allow to
@@ -441,13 +462,10 @@ public class AndesAuthorizationHandler {
                                 accessResult = Result.ALLOWED;
                             }
 
-                        } else {
+                        } //check that user authorize to parent of topic hierarchy
+                        else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase())) {
 
-                            //check that user authorize to parent of topic hierarchy
-                            boolean isUserAuthorized = userRealm.getAuthorizationManager().isUserAuthorized(username,
-                                    topicId, TreeNode.Permission.SUBSCRIBE.toString().toLowerCase());
-
-                            if (isUserAuthorized) {
                                 //This is triggered when a new subscriber is arrived when the topic
                                 // has already been created
 
@@ -474,7 +492,13 @@ public class AndesAuthorizationHandler {
 
                                 }
                                 accessResult = Result.ALLOWED;
-                            }
+
+                        } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                PERMISSION_ADMIN_MANAGE_TOPIC_ADD, UI_EXECUTE)) {
+                            accessResult = Result.ALLOWED;
+                        } else if (userRealm.getAuthorizationManager().isUserAuthorized(username,
+                                topicId, TreeNode.Permission.PUBLISH.toString().toLowerCase())) {
+                            accessResult = Result.ALLOWED;
                         }
                         if (log.isDebugEnabled()) {
                             log.debug(username + SPACE + accessResult.toString().toLowerCase() + SPACE
