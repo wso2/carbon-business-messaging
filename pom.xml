@@ -796,8 +796,8 @@
 		<asm.version>4.2</asm.version>
 		<javassist.version>3.18.1-GA</javassist.version>
 		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
-		<sqlite-jdbc.version>3.8.11.2</sqlite-jdbc.version>
-		<protobuf-java.version>2.6.1</protobuf-java.version>
+		<sqlite-jdbc.version>3.25.2</sqlite-jdbc.version>
+		<protobuf-java.version>3.6.1</protobuf-java.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
     </properties>
 
