@@ -64,7 +64,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Import-Package>
-                            org.wso2.carbon.andes.event.*;version="${andes.import.version}",
+                            org.wso2.carbon.andes.event.*;version="${andes.dependency.version}",
                             org.wso2.carbon.event.client.*,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*; version="${imp.pkg.version.axis2}",

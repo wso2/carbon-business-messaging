@@ -92,10 +92,10 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.andes.ui.*;version="${andes.export.version}"
+                            org.wso2.carbon.andes.ui.*;version="${andes.dependency.version}"
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.andes.stub.*;version="${andes.import.version}",
+                            org.wso2.carbon.andes.stub.*;version="${andes.dependency.version}",
                             org.wso2.carbon.utils,
                             org.wso2.andes.configuration,
                             *;resolution:=optional
