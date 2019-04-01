@@ -786,7 +786,7 @@
 		<concurrent-trees.version>2.6.0</concurrent-trees.version>
 		<objenesis.version>2.1</objenesis.version>
 		<reflectasm.version>1.10.0</reflectasm.version>
-		<asm.version>4.2</asm.version>
+		<asm.version>5.2</asm.version>
 		<javassist.version>3.18.1-GA</javassist.version>
 		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
 		<sqlite-jdbc.version>3.25.2</sqlite-jdbc.version>
