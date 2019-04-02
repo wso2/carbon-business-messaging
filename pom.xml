@@ -785,7 +785,7 @@
 		<minlog.version>1.3.0</minlog.version>
 		<concurrent-trees.version>2.6.0</concurrent-trees.version>
 		<objenesis.version>2.1</objenesis.version>
-		<reflectasm.version>1.10.0</reflectasm.version>
+		<reflectasm.version>1.11.9</reflectasm.version>
 		<asm.version>5.2</asm.version>
 		<javassist.version>3.18.1-GA</javassist.version>
 		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
