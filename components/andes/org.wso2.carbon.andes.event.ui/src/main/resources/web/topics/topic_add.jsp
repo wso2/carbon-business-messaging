@@ -9,6 +9,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.regex.Pattern" %>
 <%@ page import="org.wso2.carbon.andes.event.stub.service.AndesEventAdminServiceEventAdminException" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -202,7 +203,7 @@
             <tr>
                 <td class="leftCol-big"><fmt:message key="topic"/><span
                         class="required">*</span></td>
-                <td><input type="text" id="topic" value="<%=topicName%>" maxlength="242" /></td>
+                <td><input type="text" id="topic" value="<%=Encode.forHtml(topicName)%>" maxlength="242" /></td>
             </tr>
             </tbody>
         </table>
@@ -220,7 +221,7 @@
             <tr>
                 <td class="leftCol-big"><fmt:message key="search.label"/></td>
                 <td>
-                    <input type="text" id="search" value="<%=searchTerm%>"/>
+                    <input type="text" id="search" value="<%=Encode.forHtml(searchTerm)%>"/>
                     <input id="searchButton" class="button" type="button" onclick="searchRole()" value="Search"/>
                 </td>
             </tr>
@@ -233,7 +234,7 @@
                                           page="topic_add.jsp" pageNumberParameterName="pageNumber"
                                           resourceBundle="org.wso2.carbon.andes.event.ui.i18n.Resources"
                                           prevKey="prev" nextKey="next"
-                                          parameters="<%=concatenatedParams%>"/>
+                                          parameters="<%=Encode.forHtml(concatenatedParams)%>"/>
                     </div>
                     <table class="styledLeft" style="width:100%" id="permissionsTable">
                         <thead>
@@ -255,20 +256,20 @@
                             for (TopicRolePermission rolePermission : filteredRoleList) {
                         %>
                         <tr>
-                            <td><%=rolePermission.getRoleName()%>
+                            <td><%=Encode.forHtml(rolePermission.getRoleName())%>
                             </td>
                             <td><input type="checkbox"
                                        class="checkboxChanged"
-                                       role="<%=rolePermission.getRoleName()%>"
+                                       role="<%=Encode.forHtml(rolePermission.getRoleName())%>"
                                        permission="subscribe"
-                                       id="<%=rolePermission.getRoleName()%>^subscribe"
+                                       id="<%=Encode.forHtml(rolePermission.getRoleName())%>^subscribe"
                                        value="subscribe" <% if (rolePermission.getAllowedToSubscribe()) { %>
                                        checked <% } %></td>
                             <td><input type="checkbox"
                                        class="checkboxChanged"
-                                       role="<%=rolePermission.getRoleName()%>"
+                                       role="<%=Encode.forHtml(rolePermission.getRoleName())%>"
                                        permission="publish"
-                                       id="<%=rolePermission.getRoleName()%>^publish"
+                                       id="<%=Encode.forHtml(rolePermission.getRoleName())%>^publish"
                                        value="publish"  <% if (rolePermission.getAllowedToPublish()) { %>
                                        checked <% } %></td>
                         </tr>
@@ -283,7 +284,7 @@
                                           page="topic_add.jsp" pageNumberParameterName="pageNumber"
                                           resourceBundle="org.wso2.carbon.andes.event.ui.i18n.Resources"
                                           prevKey="prev" nextKey="next"
-                                          parameters="<%=concatenatedParams%>"/>
+                                          parameters="<%=Encode.forHtml(concatenatedParams)%>"/>
                     </div>
                 </td>
             </tr>

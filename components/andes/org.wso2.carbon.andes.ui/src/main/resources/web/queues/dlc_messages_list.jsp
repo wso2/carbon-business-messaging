@@ -18,6 +18,7 @@
 <%@ page import="org.wso2.andes.kernel.AndesConstants" %>
 <%@ page import="org.wso2.andes.server.queue.DLCQueueUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <script type="text/javascript" src="js/treecontrol.js"></script>
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <jsp:include page="resources-i18n-ajaxprocessor.jsp"/>
@@ -413,7 +414,7 @@
             <carbon:paginator pageNumber="<%=pageNumber%>" numberOfPages="<%=numberOfPages%>"
                               page="dlc_messages_list.jsp" pageNumberParameterName="pageNumber"
                               resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
-                              prevKey="prev" nextKey="next" parameters="<%=concatenatedParameters%>"
+                              prevKey="prev" nextKey="next" parameters="<%=Encode.forHtml(concatenatedParameters)%>"
                               showPageNumbers="false"/>
 
             <table class="styledLeft" style="width:100%">

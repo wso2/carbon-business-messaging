@@ -19,6 +19,7 @@
 <%@ page import="org.wso2.andes.kernel.ProtocolType" %>
 <%@ page import="org.wso2.andes.configuration.AndesConfigurationManager" %>
 <%@ page import="org.wso2.andes.configuration.enums.AndesConfiguration" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" prefix="csrf" %>
 
 <script>
@@ -336,7 +337,7 @@
                     <td class="leftCol-big" style="padding-right: 0 !important;">Topic name pattern
                     </td>
                     <td>
-                        <input type="text" name="topicNamePattern" value="<%=filteredName%>"/>
+                        <input type="text" name="topicNamePattern" value="<%=Encode.forHtml(filteredName)%>"/>
                         <%
                            if (isFilteredNameByExactMatch) {
                         %>
@@ -358,7 +359,8 @@
                                 try {
                                     if (isClusteringEnabled) {
                             %>
-                                 <option selected="selected" value="<%=ownNodeId%>"><%=ownNodeId%></option>
+                                 <option selected="selected"
+                                         value="<%=Encode.forHtml(ownNodeId)%>"><%=Encode.forHtml(ownNodeId)%></option>
                                  <% for (int i = 0; i < allClusterNodeAddressesInDropdown.length; i++) {
                                          if (!ownNodeId.equals(allClusterNodeAddressesInDropdown[i].split(",")[0])) {
                                  %>
@@ -380,7 +382,7 @@
                     <td class="leftCol-big" style="padding-right: 0 !important;">ID / Subscription Identifier pattern
                     </td>
                     <td>
-                        <input type="text" name="identifier" value="<%=identifierPattern%>"/>
+                        <input type="text" name="identifier" value="<%=Encode.forHtml(identifierPattern)%>"/>
                          <%
                           if (isIdentifierPatternByExactMatch) {
                          %>
