@@ -21,11 +21,11 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.63-SNAPSHOT</version>
+        <version>3.2.70-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>3.2.63-SNAPSHOT</version>
+    <version>3.2.70-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.ui</artifactId>
     <packaging>bundle</packaging>
@@ -92,10 +92,10 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.andes.ui.*;version="${andes.export.version}"
+                            org.wso2.carbon.andes.ui.*;version="${andes.dependency.version}"
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.andes.stub.*;version="${andes.import.version}",
+                            org.wso2.carbon.andes.stub.*;version="${andes.dependency.version}",
                             org.wso2.carbon.utils,
                             org.wso2.andes.configuration,
                             *;resolution:=optional

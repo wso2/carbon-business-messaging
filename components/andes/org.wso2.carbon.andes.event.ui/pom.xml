@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.63-SNAPSHOT</version>
+        <version>3.2.70-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <version>3.2.63-SNAPSHOT</version>
+    <version>3.2.70-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.event.ui</artifactId>
     <packaging>bundle</packaging>
@@ -64,7 +64,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Import-Package>
-                            org.wso2.carbon.andes.event.*;version="${andes.import.version}",
+                            org.wso2.carbon.andes.event.*;version="${andes.dependency.version}",
                             org.wso2.carbon.event.client.*,
                             org.wso2.carbon.utils,
                             org.apache.axis2.*; version="${imp.pkg.version.axis2}",

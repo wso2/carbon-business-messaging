@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>andes</artifactId>
-        <version>3.2.63-SNAPSHOT</version>
+        <version>3.2.70-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.andes.cluster.mgt.ui</artifactId>
-    <version>3.2.63-SNAPSHOT</version>
+    <version>3.2.70-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Component - MB Cluster Management - UI</name>
     <description>org.wso2.carbon.mb.cluster.mgt.ui represent the UI aspects of
@@ -74,11 +74,11 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Carbon-Component>UIBundle</Carbon-Component>
                         <Export-Package>
-                            org.wso2.carbon.andes.cluster.mgt.ui.*;version="${andes.export.version}"
+                            org.wso2.carbon.andes.cluster.mgt.ui.*;version="${andes.dependency.version}"
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.mb.cluster.mgt.stub.*;version="${carbon.platform.package.import.version.range}",
-                            org.wso2.carbon.andes.mgt.stub.*;version="${andes.import.version}",
+                            org.wso2.carbon.andes.mgt.stub.*;version="${andes.dependency.version}",
                             org.wso2.carbon.utils,
                             *;resolution:=optional
                         </Import-Package>

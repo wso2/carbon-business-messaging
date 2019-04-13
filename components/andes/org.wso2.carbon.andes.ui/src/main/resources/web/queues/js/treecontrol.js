@@ -180,10 +180,10 @@ function doPurge(queueName) {
 	 }
 	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.delete"], function(){
 		 $.ajax({
-	 				url:'../queues/dlc_message_delete_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue,
+	 				url:'../queues/dlc_message_delete_ajaxprocessor.jsp',
 	 				async:true,
 	 				dataType:"html",
-	 				data : { msgList : checkedValues },
+	 				data : { msgList : checkedValues, nameOfQueue : nameOfQueue },
 	 				type: "POST",
 	 				success: function() {
        	                	CARBON.showInfoDialog(org_wso2_carbon_andes_ui_jsi18n["info.successful.delete"], function(){
@@ -211,10 +211,10 @@ function doPurge(queueName) {
 	 }
 	 CARBON.showConfirmationDialog(org_wso2_carbon_andes_ui_jsi18n["confirmation.restore"], function(){
 		 $.ajax({
-	 				url:'../queues/dlc_message_restore_ajaxprocessor.jsp?nameOfQueue=' + nameOfQueue,
+	 				url:'../queues/dlc_message_restore_ajaxprocessor.jsp',
 	 				async:true,
 	 				dataType:"html",
-	 				data : { msgList : checkedValues },
+	 				data : { msgList : checkedValues, nameOfQueue : nameOfQueue },
 	 				type: "POST",
 	 				success: function(data) {
        	                	data = data.trim();
@@ -257,7 +257,8 @@ function doReRouteMessages(nameOfQueue) {
     }
     
     jQuery.ajax({
-        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp?nameOfQueue=" + nameOfQueue,
+        url: "../queues/queue_list_retrieve_ajaxprocessor.jsp",
+        data : { nameOfQueue : nameOfQueue },
         type: "POST",
         success: function (data) {
             //Let's say data is something like the following string
