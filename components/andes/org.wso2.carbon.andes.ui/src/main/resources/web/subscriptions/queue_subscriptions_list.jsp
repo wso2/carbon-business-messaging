@@ -15,6 +15,7 @@
 <%@ page import="org.wso2.carbon.andes.mgt.stub.AndesManagerServiceStub" %>
 <%@ page import="org.wso2.andes.kernel.DestinationType" %>
 <%@ page import="org.wso2.andes.kernel.ProtocolType" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <fmt:bundle basename="org.wso2.carbon.andes.ui.i18n.Resources">
     <carbon:breadcrumb
@@ -41,7 +42,7 @@
                 success:function(data){
                     data = data.trim();
                     //$('#msg-'+subscriptionId).html(data);
-                    $(aTag).parent().prev().html(data)
+                    $(aTag).parent().prev().html(data);
                     aTag.css('font-weight', 'normal');
                     // jQuery('.normalTopicMsgCount',aTag.parent().parent()).html(data);
                 }
@@ -209,7 +210,7 @@
                             <td class="leftCol-big" style="padding-right: 0 !important;">Queue name pattern
                             </td>
                             <td>
-                                <input type="text" name="queueNamePattern" value="<%=filteredName%>"/>
+                                <input type="text" name="queueNamePattern" value="<%=Encode.forHtml(filteredName)%>"/>
                                 <%
                                     if (isFilteredNameByExactMatch) {
                                 %>
@@ -252,7 +253,7 @@
                             <td class="leftCol-big" style="padding-right: 0 !important;">Identifier pattern
                             </td>
                             <td>
-                                <input type="text" name="identifier" value="<%=identifierPattern%>"/>
+                                <input type="text" name="identifier" value="<%=Encode.forHtml(identifierPattern)%>"/>
                                  <%
                                     if (isIdentifierPatternByExactMatch) {
                                 %>
