@@ -293,7 +293,7 @@
                               page="queue_subscriptions_list.jsp" pageNumberParameterName="pageNumber"
                               resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                               prevKey="prev" nextKey="next"
-                              parameters="<%=concatenatedParams%>"/>
+                              parameters="<%=Encode.forHtml(concatenatedParams)%>"/>
             <table class="styledLeft" style="width:100%">
                 <caption>Total queue subscription count is <%=totalQueueSubscriptionCount%></caption>
                 <thead>
