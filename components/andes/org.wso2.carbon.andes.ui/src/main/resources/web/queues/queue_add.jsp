@@ -213,7 +213,7 @@
                                           page="queue_add.jsp" pageNumberParameterName="pageNumber"
                                           resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                                           prevKey="prev" nextKey="next"
-                                          parameters="<%=concatenatedParams%>"/>
+                                          parameters="<%=Encode.forHtml(concatenatedParams)%>"/>
                     </div>
                     <table class="styledLeft" style="width:100%" id="permissionsTable">
                         <thead>
@@ -239,16 +239,16 @@
                             </td>
                             <td><input type="checkbox"
                                        class="checkboxChanged"
-                                       role="<%=rolePermission.getRoleName()%>"
+                                       role="<%=Encode.forHtml(rolePermission.getRoleName())%>"
                                        permission="consume"
-                                       id="<%=rolePermission.getRoleName()%>^consume"
+                                       id="<%=Encode.forHtml(rolePermission.getRoleName())%>^consume"
                                        value="consume" <% if (rolePermission.getAllowedToConsume()) { %>
                                        checked <% } %></td>
                             <td><input type="checkbox"
                                        class="checkboxChanged"
-                                       role="<%=rolePermission.getRoleName()%>"
+                                       role="<%=Encode.forHtml(rolePermission.getRoleName())%>"
                                        permission="publish"
-                                       id="<%=rolePermission.getRoleName()%>^publish"
+                                       id="<%=Encode.forHtml(rolePermission.getRoleName())%>^publish"
                                        value="publish"  <% if (rolePermission.getAllowedToPublish()) { %>
                                        checked <% } %></td>
                         </tr>
@@ -264,7 +264,7 @@
                                           page="queue_add.jsp" pageNumberParameterName="pageNumber"
                                           resourceBundle="org.wso2.carbon.andes.ui.i18n.Resources"
                                           prevKey="prev" nextKey="next"
-                                          parameters="<%=concatenatedParams%>"/>
+                                          parameters="<%=Encode.forHtml(concatenatedParams)%>"/>
                     </div>
                 </td>
             </tr>
