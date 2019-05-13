@@ -681,9 +681,9 @@
         <carbon.registry.version>4.6.46</carbon.registry.version>
 
         <carbon.messaging.version>3.2.77-SNAPSHOT</carbon.messaging.version>
-        <carbon.identity.framework.version>5.12.364</carbon.identity.framework.version>
+        <carbon.identity.framework.version>5.12.387</carbon.identity.framework.version>
 
-        <carbon.identity.oauth.stub.version>6.0.167</carbon.identity.oauth.stub.version>
+        <carbon.identity.oauth.stub.version>6.0.168</carbon.identity.oauth.stub.version>
         <andes.dependency.version>3.2.98</andes.dependency.version>
         <carbon.kernel.version>4.4.40</carbon.kernel.version>
         <carbon.platform.package.import.version.range>[4.4.0, 4.5.0)
