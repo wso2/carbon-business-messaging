@@ -15,50 +15,62 @@
  *   specific language governing permissions and limitations
  *   under the License.
  */
-
 package org.wso2.carbon.andes.commons.internal;
 
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="org.wso2.carbon.andes.commons.internal.CommonsServiceComponent"
- *                             immediate="true"
- * @scr.reference name="registry.service"
- *                           interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                           cardinality="1..1"
- *                           policy="dynamic"
- *                           bind="setRegistryService"
- *                           unbind="unsetRegistryService"
- * @scr.reference name="realm.service"
- *                           interface="org.wso2.carbon.user.core.service.RealmService"
- *                           cardinality="1..1"
- *                           policy="dynamic"
- *                           bind="setRealmService"
- *                           unbind="unsetRealmService"
- */
+@Component(
+        name = "org.wso2.carbon.andes.commons.internal.CommonsServiceComponent",
+        immediate = true)
 public class CommonsServiceComponent {
 
+    @Activate
     protected void activate(ComponentContext ctx) {
+
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext ctx) {
+
     }
 
+    @Reference(
+            name = "registry.service",
+            service = org.wso2.carbon.registry.core.service.RegistryService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
+
         CommonsDataHolder.getInstance().setRegistryService(registryService);
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         CommonsDataHolder.getInstance().setRegistryService(null);
     }
 
+    @Reference(
+            name = "realm.service",
+            service = org.wso2.carbon.user.core.service.RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
+
         CommonsDataHolder.getInstance().setRealmService(realmService);
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         CommonsDataHolder.getInstance().setRealmService(null);
     }
 }

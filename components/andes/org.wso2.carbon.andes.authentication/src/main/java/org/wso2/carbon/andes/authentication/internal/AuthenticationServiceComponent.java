@@ -15,7 +15,6 @@
  *   specific language governing permissions and limitations
  *   under the License.
  */
-
 package org.wso2.carbon.andes.authentication.internal;
 
 import org.osgi.framework.ServiceRegistration;
@@ -32,48 +31,39 @@ import org.wso2.carbon.user.core.service.RealmService;
 
 import java.util.UUID;
 
-/**
- * @scr.component  name="org.wso2.carbon.andes.authentication.internal.AuthenticationServiceComponent"
- *                              immediate="true"
- * @scr.reference    name="registry.service"
- *                              interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRegistryService"
- *                              unbind="unsetRegistryService"
- * @scr.reference    name="realm.service"
- *                              interface="org.wso2.carbon.user.core.service.RealmService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRealmService"
- *                              unbind="unsetRealmService"
- * @scr.reference name="server.configuration" interface="org.wso2.carbon.base.api.ServerConfigurationService"
- *                  cardinality="1..1"
- *                  policy="dynamic"
- *                  bind="setServerConfiguration"
- *                  unbind="unsetServerConfiguration"
- */
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+@Component(
+        name = "org.wso2.carbon.andes.authentication.internal.AuthenticationServiceComponent",
+        immediate = true)
 public class AuthenticationServiceComponent {
 
     private ServiceRegistration authenticationService = null;
+
     private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
 
-    protected void activate(ComponentContext ctx) throws AndesException{
-        //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
+    @Activate
+    protected void activate(ComponentContext ctx) throws AndesException {
+        // TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to
+        // provide proper configuration service
         AndesConfigurationManager.initialize(getPortOffset());
         OAuthConfigurationManager.getInstance().initConfig();
-
         // Generate access key
         String accessKey = UUID.randomUUID().toString();
         AuthenticationServiceDataHolder.getInstance().setAccessKey(accessKey);
-
         // Publish access key
-        authenticationService = ctx.getBundleContext().registerService(
-                AuthenticationService.class.getName(),
-                new AuthenticationServiceImpl(accessKey), null);
+        authenticationService = ctx.getBundleContext().registerService(AuthenticationService.class.getName(), new
+                AuthenticationServiceImpl(accessKey), null);
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext ctx) {
         // Unregister AuthenticationService
         if (null != authenticationService) {
@@ -81,34 +71,57 @@ public class AuthenticationServiceComponent {
         }
     }
 
+    @Reference(
+            name = "registry.service",
+            service = org.wso2.carbon.registry.core.service.RegistryService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
+
         AuthenticationServiceDataHolder.getInstance().setRegistryService(registryService);
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         AuthenticationServiceDataHolder.getInstance().setRegistryService(null);
     }
 
+    @Reference(
+            name = "realm.service",
+            service = org.wso2.carbon.user.core.service.RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
+
         AuthenticationServiceDataHolder.getInstance().setRealmService(realmService);
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         AuthenticationServiceDataHolder.getInstance().setRealmService(null);
     }
 
-    //wait till serverConfigurationService is started to pick the carbon offset
+    // wait till serverConfigurationService is started to pick the carbon offset
+    @Reference(
+            name = "server.configuration",
+            service = org.wso2.carbon.base.api.ServerConfigurationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetServerConfiguration")
     protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
 
     }
 
     protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
+
     }
 
     private int getPortOffset() {
+
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = System.getProperty("portOffset",
-                                               carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
+        String portOffset = System.getProperty("portOffset", carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
         try {
             if ((portOffset != null)) {
                 return Integer.parseInt(portOffset.trim());
