@@ -15,7 +15,6 @@
  *   specific language governing permissions and limitations
  *   under the License.
  */
-
 package org.wso2.carbon.andes.core.internal.ds;
 
 import org.apache.commons.logging.Log;
@@ -26,27 +25,26 @@ import org.wso2.carbon.andes.core.internal.builder.SubscriptionManagerServiceBui
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="SubscriptionManagerService.component" immediate="true"
- * @scr.reference name="registry.service"
- * interface="org.wso2.carbon.registry.core.service.RegistryService" cardinality="1..1"
- * policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
- * @scr.reference name="realm.service" interface="org.wso2.carbon.user.core.service.RealmService"
- * cardinality="1..1" policy="dynamic" bind="setRealmService"  unbind="unsetRealmService"
- * @scr.reference name="configurationcontext.service"
- * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
- * policy="dynamic" bind="setConfigurationContextService" unbind="unsetConfigurationContextService"
- */
-
+@Component(
+        name = "SubscriptionManagerService.component",
+        immediate = true)
 public class SubscriptionManagerServiceDS {
 
     public static Log log = LogFactory.getLog(SubscriptionManagerServiceDS.class);
 
+    @Activate
     protected void activate(ComponentContext context) {
+
         try {
-            SubscriptionManagerService subscriptionManagerService = SubscriptionManagerServiceBuilder.
-                    createSubscriptionManagerService();
+            SubscriptionManagerService subscriptionManagerService = SubscriptionManagerServiceBuilder
+                    .createSubscriptionManagerService();
             context.getBundleContext().registerService(SubscriptionManagerService.class.getName(),
                     subscriptionManagerService, null);
             log.info("Successfully created the subscription manager service");
@@ -55,15 +53,30 @@ public class SubscriptionManagerServiceDS {
         }
     }
 
+    @Reference(
+            name = "realm.service",
+            service = org.wso2.carbon.user.core.service.RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
+
         SubscriptionManagerServiceValueHolder.getInstance().registerRealmService(realmService);
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         SubscriptionManagerServiceValueHolder.getInstance().registerRealmService(null);
     }
 
+    @Reference(
+            name = "registry.service",
+            service = org.wso2.carbon.registry.core.service.RegistryService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
+
         SubscriptionManagerServiceValueHolder.getInstance().registerRegistryService(registryService);
     }
 
@@ -71,10 +84,16 @@ public class SubscriptionManagerServiceDS {
 
     }
 
-    protected void setConfigurationContextService(
-            ConfigurationContextService configurationContextService) {
-        SubscriptionManagerServiceValueHolder.getInstance().
-                registerConfigurationContextService(configurationContextService);
+    @Reference(
+            name = "configurationcontext.service",
+            service = org.wso2.carbon.utils.ConfigurationContextService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigurationContextService")
+    protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
+
+        SubscriptionManagerServiceValueHolder.getInstance().registerConfigurationContextService
+                (configurationContextService);
     }
 
     protected void unsetConfigurationContextService(ConfigurationContextService configurationContextService) {

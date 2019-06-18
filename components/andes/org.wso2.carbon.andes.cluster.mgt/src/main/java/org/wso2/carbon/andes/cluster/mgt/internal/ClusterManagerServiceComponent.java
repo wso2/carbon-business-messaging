@@ -17,27 +17,31 @@
  */
 package org.wso2.carbon.andes.cluster.mgt.internal;
 
-
 import org.wso2.carbon.andes.service.QpidService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component  name="org.wso2.carbon.andes.cluster.mgt.internal.ClusterManagerServiceComponent"
- *                              immediate="true"
- * @scr.reference    name="qpid.service"
- *                              interface="org.wso2.carbon.andes.service.QpidService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setQpidService"
- *                              unbind="unsetQpidService"
- */
+@Component(
+        name = "org.wso2.carbon.andes.cluster.mgt.internal.ClusterManagerServiceComponent",
+        immediate = true)
 public class ClusterManagerServiceComponent {
 
-    public void   setQpidService(QpidService service) {
-        if(ClusterManagementDataHolder.getClusterManagementDataHolder().getQpidService() == null) {
+    @Reference(
+            name = "qpid.service",
+            service = org.wso2.carbon.andes.service.QpidService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetQpidService")
+    public void setQpidService(QpidService service) {
+
+        if (ClusterManagementDataHolder.getClusterManagementDataHolder().getQpidService() == null) {
             ClusterManagementDataHolder.getClusterManagementDataHolder().setQpidService(service);
         }
     }
-
 
     public void unsetQpidService(QpidService service) {
 

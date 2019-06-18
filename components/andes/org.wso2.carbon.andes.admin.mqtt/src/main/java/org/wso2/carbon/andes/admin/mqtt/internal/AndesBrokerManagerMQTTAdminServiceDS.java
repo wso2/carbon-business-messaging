@@ -15,70 +15,90 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.wso2.carbon.andes.admin.mqtt.internal;
 
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * This class is used to get the QueueMangerInterface service. it is used to send the
  * requests received from the Admin service to real cep engine
- *
- * @scr.component name="AndesQueueManagerAdminMQTT.component" immediate="true"
- * @scr.reference name="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * interface="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setAccessKey"
- * unbind="unsetAccessKey"
- * @scr.reference name="QueueManagerMQTTService.component"
- * interface="org.wso2.carbon.andes.core.QueueManagerService" cardinality="1..1"
- * policy="dynamic" bind="setQueueManagerService" unbind="unSetQueueManagerService"
- * @scr.reference name="SubscriptionManagerMQTTService.component"
- * interface="org.wso2.carbon.andes.core.SubscriptionManagerService" cardinality="1..1"
- * policy="dynamic" bind="setSubscriptionManagerService" unbind="unSetSubscriptionManagerService"
  */
-
+@Component(
+        name = "AndesQueueManagerAdminMQTT.component",
+        immediate = true)
 public class AndesBrokerManagerMQTTAdminServiceDS {
 
+    @Activate
     protected void activate(ComponentContext context) {
 
     }
 
+    @Reference(
+            name = "QueueManagerMQTTService.component",
+            service = org.wso2.carbon.andes.core.QueueManagerService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unSetQueueManagerService")
     protected void setQueueManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
     }
 
     protected void unSetQueueManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
     }
 
     protected void setTopicManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
     }
 
     protected void unSetTopoicManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
     }
 
+    @Reference(
+            name = "SubscriptionManagerMQTTService.component",
+            service = org.wso2.carbon.andes.core.SubscriptionManagerService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unSetSubscriptionManagerService")
     protected void setSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
-        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().
-                registerSubscriptionManagerService(subscriptionManagerService);
+
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().registerSubscriptionManagerService
+                (subscriptionManagerService);
     }
 
     protected void unSetSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
-        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().
-                unRegisterSubscriptionManagerService(subscriptionManagerService);
+
+        AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().unRegisterSubscriptionManagerService
+                (subscriptionManagerService);
     }
 
+    @Reference(
+            name = "org.wso2.carbon.andes.authentication.service.AuthenticationService",
+            service = org.wso2.carbon.andes.authentication.service.AuthenticationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetAccessKey")
     protected void setAccessKey(AuthenticationService authenticationService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().setAccessKey(authenticationService.getAccessKey());
     }
 
     protected void unsetAccessKey(AuthenticationService authenticationService) {
+
         AndesBrokerManagerMQTTAdminServiceDSHolder.getInstance().setAccessKey(null);
     }
 }

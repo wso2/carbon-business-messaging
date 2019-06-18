@@ -13,34 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wso2.carbon.andes.event.admin.internal;
 
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.andes.event.core.EventBroker;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * Service references initialize by this class. All necessary services references get initialize in bundle
  * activation.
- *
- * @scr.component name="AndesEventManagerAdmin.component" immediate="true"
- * @scr.reference name="eventbroker.service"
- * interface="org.wso2.carbon.andes.event.core.EventBroker" cardinality="1..1"
- * policy="dynamic" bind="setEventBroker" unbind="unSetEventBroker"
- *
  */
+@Component(
+        name = "AndesEventManagerAdmin.component",
+        immediate = true)
 public class EventAdminDS {
 
+    @Activate
     protected void activate(ComponentContext context) {
 
     }
 
+    @Reference(
+            name = "eventbroker.service",
+            service = org.wso2.carbon.andes.event.core.EventBroker.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unSetEventBroker")
     protected void setEventBroker(EventBroker eventBroker) {
+
         EventAdminHolder.getInstance().registerEventBroker(eventBroker);
     }
 
     protected void unSetEventBroker(EventBroker eventBroker) {
 
     }
-   
 }

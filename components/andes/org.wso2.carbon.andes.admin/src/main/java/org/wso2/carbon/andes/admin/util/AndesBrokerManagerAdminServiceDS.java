@@ -21,56 +21,74 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.core.QueueManagerService;
 import org.wso2.carbon.andes.core.SubscriptionManagerService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * this class is used to get the QueueMangerInterface service. it is used to send the
  * requests received from the Admin service to real cep engine
- *
- * @scr.component name="AndesQueueManagerAdmin.component" immediate="true"
- * @scr.reference name="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * interface="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setAccessKey"
- * unbind="unsetAccessKey"
- * @scr.reference name="QueueManagerService.component"
- * interface="org.wso2.carbon.andes.core.QueueManagerService" cardinality="1..1"
- * policy="dynamic" bind="setQueueManagerService" unbind="unSetQueueManagerService"
- * @scr.reference name="SubscriptionManagerService.component"
- * interface="org.wso2.carbon.andes.core.SubscriptionManagerService" cardinality="1..1"
- * policy="dynamic" bind="setSubscriptionManagerService" unbind="unSetSubscriptionManagerService"
  */
-
+@Component(
+        name = "AndesQueueManagerAdmin.component",
+        immediate = true)
 public class AndesBrokerManagerAdminServiceDS {
 
+    @Activate
     protected void activate(ComponentContext context) {
 
     }
 
+    @Reference(
+            name = "QueueManagerService.component",
+            service = org.wso2.carbon.andes.core.QueueManagerService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unSetQueueManagerService")
     protected void setQueueManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().registerQueueManagerService(cepService);
     }
 
     protected void unSetQueueManagerService(QueueManagerService cepService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().unRegisterQueueManagerService(cepService);
     }
 
+    @Reference(
+            name = "SubscriptionManagerService.component",
+            service = org.wso2.carbon.andes.core.SubscriptionManagerService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unSetSubscriptionManagerService")
     protected void setSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().registerSubscriptionManagerService
                 (subscriptionManagerService);
     }
 
     protected void unSetSubscriptionManagerService(SubscriptionManagerService subscriptionManagerService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().unRegisterSubscriptionManagerService
                 (subscriptionManagerService);
     }
 
-
+    @Reference(
+            name = "org.wso2.carbon.andes.authentication.service.AuthenticationService",
+            service = org.wso2.carbon.andes.authentication.service.AuthenticationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetAccessKey")
     protected void setAccessKey(AuthenticationService authenticationService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().setAccessKey(authenticationService.getAccessKey());
     }
 
     protected void unsetAccessKey(AuthenticationService authenticationService) {
+
         AndesBrokerManagerAdminServiceDSHolder.getInstance().setAccessKey(null);
     }
 }

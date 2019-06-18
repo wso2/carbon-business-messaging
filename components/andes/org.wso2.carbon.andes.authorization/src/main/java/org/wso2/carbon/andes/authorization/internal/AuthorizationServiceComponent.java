@@ -15,7 +15,6 @@
  *   specific language governing permissions and limitations
  *   under the License.
  */
-
 package org.wso2.carbon.andes.authorization.internal;
 
 import org.apache.commons.logging.LogFactory;
@@ -32,94 +31,110 @@ import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component  name="org.wso2.carbon.andes.authorization.internal.AuthorizationServiceComponent"
- *                              immediate="true"
- * @scr.reference    name="registry.service"
- *                              interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRegistryService"
- *                              unbind="unsetRegistryService"
- * @scr.reference    name="realm.service"
- *                              interface="org.wso2.carbon.user.core.service.RealmService"
- *                              cardinality="1..1"
- *                              policy="dynamic"
- *                              bind="setRealmService"
- *                              unbind="unsetRealmService"
- * @scr.reference name="server.configuration" interface="org.wso2.carbon.base.api.ServerConfigurationService"
- *                  cardinality="1..1"
- *                  policy="dynamic"
- *                  bind="setServerConfiguration"
- *                  unbind="unsetServerConfiguration"
- */
+@Component(
+        name = "org.wso2.carbon.andes.authorization.internal.AuthorizationServiceComponent",
+        immediate = true)
 public class AuthorizationServiceComponent {
 
     private static final Log log = LogFactory.getLog(AuthorizationServiceComponent.class);
+
     private ServiceRegistration securityPluginFactory = null;
+
     private ServiceRegistration configurationPluginFactory = null;
+
     private static final String CARBON_CONFIG_PORT_OFFSET = "Ports.Offset";
+
     private static final int CARBON_DEFAULT_PORT_OFFSET = 0;
 
+    @Activate
     protected void activate(ComponentContext ctx) {
+
         try {
-            //TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to provide proper configuration service
+            // TODO :reinitializing Andes Configuration manager, since we cannot guarantee the startup order, have to
+            // provide proper configuration service
             AndesConfigurationManager.initialize(getPortOffset());
             AuthorizationConfigurationManager.getInstance().initConfig();
             // Register security plugin factory
-            securityPluginFactory = ctx.getBundleContext().registerService(
-                    SecurityPluginFactory.class.getName(), AndesAuthorizationPlugin.FACTORY, null);
-
+            securityPluginFactory = ctx.getBundleContext().registerService(SecurityPluginFactory.class.getName(),
+                    AndesAuthorizationPlugin.FACTORY, null);
             // Register security configuration plugin factory
-            configurationPluginFactory = ctx.getBundleContext().registerService(
-                    ConfigurationPluginFactory.class.getName(),
-                    AndesAuthorizationPluginConfiguration.FACTORY, null);
+            configurationPluginFactory = ctx.getBundleContext().registerService(ConfigurationPluginFactory.class
+                    .getName(), AndesAuthorizationPluginConfiguration.FACTORY, null);
         } catch (Throwable e) {
             log.error("Failed to activate org.wso2.carbon.andes.authorization.internal." +
-                      "AuthorizationServiceComponent : " + e);
+                    "AuthorizationServiceComponent : " + e);
         }
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext ctx) {
         // Unregister OSGi services that were registered at the time of activation
         if (null != securityPluginFactory) {
             securityPluginFactory.unregister();
         }
-
         if (null != configurationPluginFactory) {
             configurationPluginFactory.unregister();
         }
     }
 
+    @Reference(
+            name = "registry.service",
+            service = org.wso2.carbon.registry.core.service.RegistryService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRegistryService")
     protected void setRegistryService(RegistryService registryService) {
+
         AuthorizationServiceDataHolder.getInstance().setRegistryService(registryService);
     }
 
     protected void unsetRegistryService(RegistryService registryService) {
+
         AuthorizationServiceDataHolder.getInstance().setRegistryService(null);
     }
 
+    @Reference(
+            name = "realm.service",
+            service = org.wso2.carbon.user.core.service.RealmService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
+
         AuthorizationServiceDataHolder.getInstance().setRealmService(realmService);
     }
 
     protected void unsetRealmService(RealmService realmService) {
+
         AuthorizationServiceDataHolder.getInstance().setRealmService(null);
     }
 
-    //wait till serverConfigurationService is started to pick the carbon offset
+    // wait till serverConfigurationService is started to pick the carbon offset
+    @Reference(
+            name = "server.configuration",
+            service = org.wso2.carbon.base.api.ServerConfigurationService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetServerConfiguration")
     protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
 
     }
 
     protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
+
     }
 
     private int getPortOffset() {
+
         ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
-        String portOffset = System.getProperty("portOffset",
-                                               carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
+        String portOffset = System.getProperty("portOffset", carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
         try {
             if ((portOffset != null)) {
                 return Integer.parseInt(portOffset.trim());
@@ -131,3 +146,4 @@ public class AuthorizationServiceComponent {
         }
     }
 }
+
