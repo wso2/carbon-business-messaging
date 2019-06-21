@@ -537,9 +537,6 @@ public class QpidServiceComponent {
         }
     }
 
-    @Component(
-            name = "org.wso2.carbon.andes.internal.QpidServiceComponent",
-            immediate = true)
     private static class MBShutdownHandler implements ServerShutdownHandler, ServerRestartHandler {
 
         @Override
