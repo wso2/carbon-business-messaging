@@ -170,8 +170,8 @@
             <artifactId>netty-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.h2database.wso2</groupId>
-            <artifactId>h2-database-engine</artifactId>
+            <groupId>org.wso2.orbit.com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
         <dependency>
             <groupId>libthrift.wso2</groupId>
@@ -210,7 +210,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete file="resources/databases/WSO2MB_DB.h2.db" />
+                                <delete file="resources/databases/WSO2MB_DB.mv.db" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -270,7 +270,7 @@
                                         <include>dbscripts/h2-mb.sql</include>
                                         <include>dbscripts/migration-3.0.0_to_3.1.0/oracle-mb.sql</include>
                                         <include>dbscripts/migration-3.1.0_to_3.2.0/*</include>
-                                        <include>databases/WSO2MB_DB.h2.db</include>
+                                        <include>databases/WSO2MB_DB.mv.db</include>
                                         <include>p2.inf</include>
                                         <include>build.properties</include>
                                     </includes>
