@@ -20,7 +20,8 @@ package org.wso2.carbon.andes.authentication.andes;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dna.mqtt.moquette.server.IAuthenticator;
 import org.dna.mqtt.moquette.server.AuthenticationInfo;
 import org.wso2.carbon.andes.authentication.andes.oauth.OAuthTokenValidaterStubFactory;
@@ -39,7 +40,7 @@ import java.util.List;
  * in broker.xml
  */
 public class OAuth2BasedMQTTAuthenticator implements IAuthenticator {
-	private static final Logger log = Logger.getLogger(OAuth2BasedMQTTAuthenticator.class);
+	private static final Log log = LogFactory.getLog(OAuth2BasedMQTTAuthenticator.class);
 	private static final String TOKEN_TYPE = "bearer";
 	private static final String SCOPE_IDENTIFIER = "scope";
 	private static final String TOKEN_EXPIRY_TIME_IDENTIFIER = "expiry_time";

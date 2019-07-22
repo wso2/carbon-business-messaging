@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.andes.authentication.andes;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.server.security.auth.database.PrincipalDatabase;
 import org.wso2.andes.server.security.auth.sasl.AuthenticationProviderInitialiser;
 import org.wso2.andes.server.security.auth.sasl.UsernamePrincipal;
@@ -46,7 +47,7 @@ public class CarbonBasedPrincipalDatabase implements PrincipalDatabase {
 
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
-    private static final Logger logger = Logger.getLogger(CarbonBasedPrincipalDatabase.class);
+    private static final Log logger = LogFactory.getLog(CarbonBasedPrincipalDatabase.class);
     private Map<String, AuthenticationProviderInitialiser> saslServers;
 
     public CarbonBasedPrincipalDatabase() {

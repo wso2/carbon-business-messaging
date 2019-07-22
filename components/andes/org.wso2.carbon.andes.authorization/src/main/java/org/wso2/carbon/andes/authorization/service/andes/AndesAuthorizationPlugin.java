@@ -19,7 +19,8 @@
 package org.wso2.carbon.andes.authorization.service.andes;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.configuration.qpid.plugins.ConfigurationPlugin;
 import org.wso2.andes.server.security.AbstractPlugin;
 import org.wso2.andes.server.security.Result;
@@ -45,7 +46,7 @@ import java.security.Principal;
  */
 public class AndesAuthorizationPlugin extends AbstractPlugin {
 
-    private static final Logger logger = Logger.getLogger(AndesAuthorizationPlugin.class);
+    private static final Log logger = LogFactory.getLog(AndesAuthorizationPlugin.class);
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
     /**

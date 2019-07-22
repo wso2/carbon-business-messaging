@@ -174,7 +174,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>2.3.5</version>
                     <extensions>true</extensions>
                     <configuration>
                         <obrRepository>NONE</obrRepository>
@@ -362,11 +362,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.logging</artifactId>
-                <version>${carbon.kernel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.ui</artifactId>
                 <version>${carbon.kernel.version}</version>
             </dependency>
@@ -493,9 +488,9 @@
                 <version>${orbit.version.xmlschema}</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons-logging.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom.wso2</groupId>
@@ -753,7 +748,7 @@
         <stratos.common.version>2.2.0</stratos.common.version>
         <netty-all.version>4.0.23.wso2v1</netty-all.version>
         <netty.version>4.0.39.Final</netty.version>
-        <commons-logging.version>1.1.1</commons-logging.version>
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
         <commons-cli.wso2.version>1.2.0.wso2v1</commons-cli.wso2.version>
         <libthrift.version>0.9.2.wso2v1</libthrift.version>
         <testng.version>6.3.1</testng.version>
