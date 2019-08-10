@@ -37,7 +37,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
  * activation.
  */
 @Component(
-        name = "eventbrokerbuilder.component",
+        name = "andes.event.core.component",
         immediate = true)
 public class EventBrokerBuilderDS {
 
