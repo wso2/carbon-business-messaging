@@ -89,6 +89,7 @@
                             org.apache.http.conn,
                             org.apache.http.impl.conn,
                             org.wso2.andes.configuration,
+                            org.osgi.service.component.*;version="${imp.package.version.osgi.services}",
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

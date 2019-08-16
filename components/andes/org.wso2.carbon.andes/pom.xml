@@ -114,6 +114,7 @@
                             org.wso2.andes.configuration.*,
                             org.apache.commons.*,
                             org.wso2.carbon.stratos.common.listeners.*,
+                            org.osgi.service.component.*;version="${imp.package.version.osgi.services}",
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

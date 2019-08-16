@@ -90,6 +90,7 @@
                             org.apache.qpid.*,
                             org.wso2.carbon.andes.commons.registry,
                             org.wso2.carbon.andes.authentication.service,
+                            org.osgi.service.component.*;version="${imp.package.version.osgi.services}",
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
