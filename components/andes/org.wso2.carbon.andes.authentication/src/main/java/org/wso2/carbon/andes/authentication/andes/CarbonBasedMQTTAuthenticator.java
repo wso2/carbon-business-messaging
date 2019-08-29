@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.andes.authentication.andes;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dna.mqtt.moquette.server.IAuthenticator;
 import org.dna.mqtt.moquette.server.AuthenticationInfo;
 import org.wso2.carbon.andes.authentication.internal.AuthenticationServiceDataHolder;
@@ -37,7 +38,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
  */
 public class CarbonBasedMQTTAuthenticator implements IAuthenticator {
 
-    private static final Logger logger = Logger.getLogger(CarbonBasedMQTTAuthenticator.class);
+    private static final Log logger = LogFactory.getLog(CarbonBasedMQTTAuthenticator.class);
     private static final String DOMAIN_NAME_SEPARATOR = "!";
 
     /**

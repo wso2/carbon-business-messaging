@@ -1,6 +1,7 @@
 package org.wso2.carbon.andes.listeners;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.carbon.stratos.common.beans.TenantInfoBean;
@@ -13,7 +14,7 @@ import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
  */
 public class MessageBrokerTenantManagementListener implements TenantMgtListener {
 
-    private static final Logger logger = Logger.getLogger(MessageBrokerTenantManagementListener.class);
+    private static final Log logger = LogFactory.getLog(MessageBrokerTenantManagementListener.class);
 
     /**
      * {@inheritDoc}

@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.andes.authorization.andes;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dna.mqtt.moquette.server.IAuthorizer;
 import org.wso2.andes.configuration.enums.MQTTAuthoriztionPermissionLevel;
 import org.wso2.andes.mqtt.MQTTAuthorizationSubject;
@@ -37,7 +38,7 @@ import org.wso2.carbon.user.core.authorization.TreeNode;
  */
 public class CarbonPermissionBasedMQTTAuthorizer implements IAuthorizer {
 
-	private static final Logger logger = Logger.getLogger(CarbonPermissionBasedMQTTAuthorizer.class);
+	private static final Log logger = LogFactory.getLog(CarbonPermissionBasedMQTTAuthorizer.class);
 
 	//topic will be based on carbon permission based model eg: if the topic is smarthome/bulb then the
 	//permission string will be /permission/mqtt/topic/smarthome/bulb

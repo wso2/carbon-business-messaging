@@ -32,7 +32,8 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.ssl.KeyMaterial;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.andes.configuration.modules.JKSStore;
 import org.wso2.carbon.andes.authentication.andes.oauth.config.OAuthConfigurationManager;
 import org.wso2.carbon.andes.authentication.andes.oauth.exception.OAuthTokenValidationException;
@@ -46,7 +47,7 @@ import java.security.GeneralSecurityException;
  * This follows object pool pattern to manage the stub for oauth validation service.
  */
 public class OAuthTokenValidaterStubFactory extends BasePoolableObjectFactory {
-	private static final Logger log = Logger.getLogger(OAuthTokenValidaterStubFactory.class);
+	private static final Log log = LogFactory.getLog(OAuthTokenValidaterStubFactory.class);
 	OAuthConfigurationManager config;
 	private HttpClient httpClient;
 
