@@ -38,6 +38,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         <thriftSOTimeout>0</thriftSOTimeout>
         <!--Thrift server reconnect timeout. Value specified in SECONDS-->
         <thriftServerReconnectTimeout>5</thriftServerReconnectTimeout>
+        <thriftServerMaxWorkerThreads>200</thriftServerMaxWorkerThreads>
         <!-- Hazelcast reliable topics are used to share all notifications across the MB cluster (e.g. subscription
         changes), And this property defines the time-to-live for a notification since its creation. (in Seconds) -->
         <clusterNotificationTimeout>10</clusterNotificationTimeout>
