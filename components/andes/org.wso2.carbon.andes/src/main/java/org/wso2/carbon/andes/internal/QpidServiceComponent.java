@@ -533,7 +533,9 @@ public class QpidServiceComponent {
                 }
             }
         } else {
-            log.warn("MQTT Transport is disabled as per configuration.");
+            if (log.isDebugEnabled()) {
+                log.debug("MQTT Transport is disabled as per configuration.");
+            }
         }
     }
 
