@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_MAPPING (
 );
 
 CREATE TABLE IF NOT EXISTS MB_METADATA (
-                MESSAGE_ID BIGINT,
+                MESSAGE_ID BIGINT UNIQUE,
                 QUEUE_ID INT,
                 DLC_QUEUE_ID INT NOT NULL,
                 MESSAGE_METADATA BINARY,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS MB_RETAINED_METADATA (
 );
 
 CREATE TABLE IF NOT EXISTS MB_DTX_XID (
-                INTERNAL_XID BIGINT NOT NULL,
+                INTERNAL_XID BIGINT NOT NULL UNIQUE,
                 NODE_ID VARCHAR(512) NOT NULL,
                 FORMAT_CODE BIGINT NOT NULL,
                 GLOBAL_ID BINARY NOT NULL,
@@ -154,11 +154,11 @@ CREATE TABLE IF NOT EXISTS MB_QUEUE_COUNTER (
 );
                     
 CREATE TABLE IF NOT EXISTS MB_SLOT (
-                SLOT_ID bigint(11) NOT NULL AUTO_INCREMENT,
-                START_MESSAGE_ID bigint(20) NOT NULL,
-                END_MESSAGE_ID bigint(20) NOT NULL,
+                SLOT_ID bigint NOT NULL AUTO_INCREMENT,
+                START_MESSAGE_ID bigint NOT NULL,
+                END_MESSAGE_ID bigint NOT NULL,
                 STORAGE_QUEUE_NAME varchar(512) NOT NULL,
-                SLOT_STATE tinyint(4) NOT NULL DEFAULT '1',
+                SLOT_STATE tinyint NOT NULL DEFAULT '1',
                 ASSIGNED_NODE_ID varchar(512) DEFAULT NULL,
                 ASSIGNED_QUEUE_NAME varchar(512) DEFAULT NULL,
                 PRIMARY KEY (SLOT_ID)
@@ -168,19 +168,19 @@ CREATE TABLE IF NOT EXISTS MB_SLOT (
 
 CREATE TABLE IF NOT EXISTS MB_SLOT_MESSAGE_ID (
                 QUEUE_NAME VARCHAR(512) NOT NULL,
-                MESSAGE_ID bigint(20) NOT NULL,
+                MESSAGE_ID bigint NOT NULL,
                 PRIMARY KEY (QUEUE_NAME,MESSAGE_ID)
 );
 
 CREATE TABLE IF NOT EXISTS MB_NODE_TO_LAST_PUBLISHED_ID (
                 NODE_ID VARCHAR(512) NOT NULL,
-                MESSAGE_ID bigint(20) NOT NULL,
+                MESSAGE_ID bigint NOT NULL,
                 PRIMARY KEY (NODE_ID)
 );
 
 CREATE TABLE IF NOT EXISTS MB_QUEUE_TO_LAST_ASSIGNED_ID (
                 QUEUE_NAME VARCHAR(512) NOT NULL,
-                MESSAGE_ID bigint(20) NOT NULL,
+                MESSAGE_ID bigint NOT NULL,
                 PRIMARY KEY (QUEUE_NAME)
 );
 
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS MB_NODE_HEARTBEAT (
 CREATE TABLE IF NOT EXISTS MB_MEMBERSHIP (
                 EVENT_ID BIGINT NOT NULL AUTO_INCREMENT,
                 NODE_ID VARCHAR(512) NOT NULL,
-                CHANGE_TYPE tinyint(4) NOT NULL,
+                CHANGE_TYPE tinyint NOT NULL,
                 CHANGED_MEMBER_ID VARCHAR(512) NOT NULL,
                 PRIMARY KEY (EVENT_ID)
 );
