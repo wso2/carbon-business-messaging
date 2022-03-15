@@ -19,13 +19,13 @@
     <parent>
         <groupId>org.wso2.carbon.messaging</groupId>
         <artifactId>metrics-feature</artifactId>
-        <version>3.3.22-SNAPSHOT</version>
+        <version>3.3.23</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.messaging.metrics.feature</artifactId>
-    <version>3.3.22-SNAPSHOT</version>
+    <version>3.3.23</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Feature - Messaging Metrics</name>
     <url>http://wso2.org</url>
