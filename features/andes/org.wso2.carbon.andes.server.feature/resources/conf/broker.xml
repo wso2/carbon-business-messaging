@@ -57,8 +57,7 @@ This file is ciphertool compliant. Refer PRODUCT_HOME/repository/conf/security/c
         </rdbmsBasedCoordination>
 
         <!-- Enabling this will make the cluster notifications such as Queue changes(additions and deletions),
-        Subscription changes, etc. sent within the cluster be synchronized using RDBMS. If set to false, Hazelcast
-        will be used for this purpose.-->
+        Subscription changes, etc. sent within the cluster be synchronized using RDBMS. -->
         <rdbmsBasedClusterEventSynchronization enabled="true">
 
             <!--Specifies the interval at which, the cluster events will be read from the database. Needs to be
