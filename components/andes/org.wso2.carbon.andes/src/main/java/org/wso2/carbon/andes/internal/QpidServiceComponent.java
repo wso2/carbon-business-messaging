@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.andes.internal;
 
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +30,6 @@ import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.AndesKernelBoot;
 import org.wso2.andes.server.BrokerOptions;
 import org.wso2.andes.server.Main;
-import org.wso2.andes.server.cluster.coordination.hazelcast.HazelcastAgent;
 import org.wso2.andes.server.registry.ApplicationRegistry;
 import org.wso2.andes.wso2.service.QpidNotificationService;
 import org.wso2.carbon.andes.authentication.service.AuthenticationService;
@@ -88,19 +86,6 @@ public class QpidServiceComponent {
     private static Stack<ServiceRegistration> registrations = new Stack<ServiceRegistration>();
 
     /**
-     * This is used in the situations where the Hazelcast instance is not registered but the activate method of the
-     * QpidServiceComponent is called when clustering is enabled.
-     * This property is used to block the process of starting the broker until the hazelcast instance getting
-     * registered.
-     */
-    private boolean brokerShouldBeStarted = false;
-
-    /**
-     * This flag true if HazelcastInstance has been registered.
-     */
-    private boolean registeredHazelcast = false;
-
-    /**
      * This holds the configuration values
      */
     private QpidServiceImpl qpidServiceImpl;
@@ -133,19 +118,8 @@ public class QpidServiceComponent {
             } else if (mode.equalsIgnoreCase(MODE_DEFAULT)) {
                 // Start broker in HA mode
                 if (!AndesContext.getInstance().isClusteringEnabled()) {
-                    // If clustering is disabled, broker starts without waiting for hazelcastInstance
+                    // If clustering is disabled, broker starts
                     this.startAndesBroker();
-                } else {
-                    // Start broker in distributed mode
-                    if (registeredHazelcast) {
-                        // When clustering is enabled, starts broker only if the hazelcastInstance has also been
-                        // registered.
-                        this.startAndesBroker();
-                    } else {
-                        // If hazelcastInstance has not been registered yet, turn the brokerShouldBeStarted flag to
-                        // true and wait for hazelcastInstance to be registered.
-                        this.brokerShouldBeStarted = true;
-                    }
                 }
             } else {
                 throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
@@ -230,36 +204,6 @@ public class QpidServiceComponent {
 
     protected void unsetEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService) {
         // unsetting
-    }
-
-    /**
-     * Access Hazelcast Instance, which is exposed as an OSGI service.
-     *
-     * @param hazelcastInstance hazelcastInstance found from the OSGI service
-     */
-    @Reference(
-            name = "hazelcast.instance.service",
-            service = com.hazelcast.core.HazelcastInstance.class,
-            cardinality = ReferenceCardinality.OPTIONAL,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetHazelcastInstance")
-    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) throws AndesException {
-
-        HazelcastAgent.getInstance().init(hazelcastInstance);
-        registeredHazelcast = true;
-        if (brokerShouldBeStarted) {
-            // getting registered
-            try {
-                this.startAndesBroker();
-            } catch (ConfigurationException e) {
-                log.error("Invalid configuration found in a configuration file", e);
-                this.shutdown();
-            }
-        }
-    }
-
-    protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
-
     }
 
     /**
@@ -391,7 +335,6 @@ public class QpidServiceComponent {
      */
     private void startAndesBroker() throws ConfigurationException, AndesException {
 
-        brokerShouldBeStarted = false;
         String dSetupValue = System.getProperty("setup");
         if (dSetupValue != null) {
             // Source MB rdbms database if data source configurations and supported sql exist
