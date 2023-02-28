@@ -20,9 +20,12 @@ package org.wso2.carbon.andes.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.impl.Constants;
+import org.apache.xerces.util.SecurityManager;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,6 +43,7 @@ public class MBDatabaseConfig {
     private static final Log log = LogFactory.getLog(MBDatabaseConfig.class);
     private String messageStoreJndiName;
     private String contextStoreJndiName;
+    private static final int ENTITY_EXPANSION_LIMIT = 0;
 
     /**
      * Construct MB database config. This will load config values
@@ -49,7 +53,7 @@ public class MBDatabaseConfig {
      */
     public MBDatabaseConfig(String filePath) {
 
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory domFactory = getSecuredDocumentBuilderFactory();
 
         try {
             DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -68,6 +72,37 @@ public class MBDatabaseConfig {
             log.error("Error when parsing file " + filePath + " to get MB data source JNDI names", e);
 
         }
+
+    }
+
+    /**
+     * Create DocumentBuilderFactory with the XXE and XEE prevention measurements.
+     *
+     * @return DocumentBuilderFactory instance
+     */
+    public static DocumentBuilderFactory getSecuredDocumentBuilderFactory() {
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        try {
+            dbf.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE, false);
+            dbf.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE, false);
+            dbf.setFeature(Constants.XERCES_FEATURE_PREFIX + Constants.LOAD_EXTERNAL_DTD_FEATURE, false);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        } catch (ParserConfigurationException e) {
+            log.error("Failed to load XML Processor Feature " + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE + " or " +
+                    Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE + " or " + Constants.LOAD_EXTERNAL_DTD_FEATURE +
+                    " or secure-processing.");
+        }
+
+        SecurityManager securityManager = new SecurityManager();
+        securityManager.setEntityExpansionLimit(ENTITY_EXPANSION_LIMIT);
+        dbf.setAttribute(Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY, securityManager);
+
+        return dbf;
 
     }
 
