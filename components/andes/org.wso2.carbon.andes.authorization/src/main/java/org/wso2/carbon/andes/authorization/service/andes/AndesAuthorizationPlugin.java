@@ -32,6 +32,7 @@ import org.wso2.andes.server.security.access.Operation;
 import org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandler;
 import org.wso2.carbon.andes.authorization.andes.AndesAuthorizationHandlerException;
 import org.wso2.carbon.andes.authorization.internal.AuthorizationServiceDataHolder;
+import org.wso2.carbon.andes.commons.CommonsUtil;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
@@ -107,6 +108,11 @@ public class AndesAuthorizationPlugin extends AbstractPlugin {
      */
     public Result authorise(Operation operation, ObjectType objectType,
                             ObjectProperties properties) {
+        // If authorization set as optional, allow access
+        if (!CommonsUtil.checkAuthRequired()) {
+            return Result.ALLOWED;
+        }
+
         try {
 
             // Get username from tenant username

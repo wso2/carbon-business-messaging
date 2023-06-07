@@ -19,7 +19,9 @@
 package org.wso2.carbon.andes.commons;
 
 import org.wso2.carbon.context.CarbonContext;
-
+import org.apache.commons.lang.StringUtils;
+import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AndesConfiguration;
 /**
  * Utility functions for Registry operations
  */
@@ -28,6 +30,8 @@ public class CommonsUtil {
     private static final String JMS_QUEUES = "event/queues/jms";
     private static final String TOPICS = "event/topics";
     private static final String JMS_SUBSCRIPTIONS = "jms.subscriptions";
+
+    private static final String AMQP_AUTH_OPTIONAL = "OPTIONAL";
 
     /**
      * Get unique id for a queue
@@ -110,4 +114,14 @@ public class CommonsUtil {
     public static String getSubscriptionsID(String topicName) {
         return getTopicID(topicName) + "/" + JMS_SUBSCRIPTIONS;
     }
+
+    /**
+     * Check whether authorization is required for AMQP from broker.xml file
+     * @return true if authorization is required
+     */
+    public static boolean checkAuthRequired() {
+        String authRequired = AndesConfigurationManager.readValue(AndesConfiguration.AUTHORIZATION);
+        return StringUtils.isEmpty(authRequired) || !AMQP_AUTH_OPTIONAL.equalsIgnoreCase(authRequired);
+    }
+
 }
