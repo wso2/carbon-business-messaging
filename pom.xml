@@ -706,7 +706,7 @@
         <carbon.messaging.version>3.3.28-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.framework.version>5.15.17</carbon.identity.framework.version>
         <carbon.identity.oauth.stub.version>6.0.103</carbon.identity.oauth.stub.version>
-        <andes.dependency.version>3.3.24</andes.dependency.version>
+        <andes.dependency.version>3.3.28</andes.dependency.version>
         <carbon.kernel.version>4.5.3</carbon.kernel.version>
         <carbon.kernel.feature.version>${carbon.kernel.version}</carbon.kernel.feature.version>
         <carbon.platform.package.export.version>4.4.0</carbon.platform.package.export.version>
