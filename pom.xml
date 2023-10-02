@@ -28,7 +28,7 @@
     <groupId>org.wso2.carbon.messaging</groupId>
     <artifactId>business-messaging</artifactId>
     <packaging>pom</packaging>
-    <version>3.3.29</version>
+    <version>3.3.30-SNAPSHOT</version>
     <name>WSO2 Carbon - Business Messaging Parent Pom</name>
     <description>Business Messaging Parent pom hold the properties, plugins which are required to
         build carbon component, carbon feature and product
@@ -47,7 +47,7 @@
         <url>https://github.com/wso2/carbon-business-messaging.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-business-messaging.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-business-messaging.git</connection>
-        <tag>v3.3.29</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <repositories>
@@ -703,7 +703,7 @@
         <!-- Carbon platform version comes here-->
         <carbon.commons.version>4.7.31</carbon.commons.version>
         <carbon.registry.version>4.7.24</carbon.registry.version>
-        <carbon.messaging.version>3.3.29</carbon.messaging.version>
+        <carbon.messaging.version>3.3.30-SNAPSHOT</carbon.messaging.version>
         <carbon.identity.framework.version>5.15.17</carbon.identity.framework.version>
         <carbon.identity.oauth.stub.version>6.0.103</carbon.identity.oauth.stub.version>
         <andes.dependency.version>3.3.28</andes.dependency.version>
