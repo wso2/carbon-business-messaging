@@ -814,7 +814,7 @@
 		<asm.version>5.2</asm.version>
 		<javassist.version>3.18.1-GA</javassist.version>
 		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
-		<sqlite-jdbc.version>3.25.2</sqlite-jdbc.version>
+		<sqlite-jdbc.version>3.44.1.0</sqlite-jdbc.version>
 		<protobuf-java.version>3.21.12</protobuf-java.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
