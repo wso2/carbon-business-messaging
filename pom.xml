@@ -364,8 +364,8 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
                 <version>${commons-configuration.version}</version>
             </dependency>
             <dependency>
@@ -779,7 +779,7 @@
         <!-- XML Schema -->
         <orbit.version.xmlschema>1.4.7.wso2v2</orbit.version.xmlschema>
         <commons-cli.version>1.2.0</commons-cli.version>
-        <commons-configuration.version>1.10</commons-configuration.version>
+        <commons-configuration.version>2.12.0</commons-configuration.version>
         <commons-digester.version>1.8.1</commons-digester.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <geronimo-jms_1.1_spec.version>1.1.0</geronimo-jms_1.1_spec.version>
