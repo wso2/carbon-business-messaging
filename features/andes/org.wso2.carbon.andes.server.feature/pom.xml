@@ -136,8 +136,8 @@
 		    <artifactId>protobuf-java</artifactId>
 		</dependency>
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs.wso2</groupId>
@@ -162,6 +162,14 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
         </dependency>
 
         <!--MQTT related dependencies-->
@@ -328,10 +336,12 @@
 								<bundleDef>org.xerial:sqlite-jdbc:${sqlite-jdbc.version}</bundleDef>
 								<bundleDef>com.google.protobuf:protobuf-java:${protobuf-java.version}</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
-                                <bundleDef>commons-configuration:commons-configuration</bundleDef>
+                                <bundleDef>org.apache.commons:commons-configuration2</bundleDef>
                                 <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
                                 <bundleDef>org.wso2.orbit.commons-beanutils:commons-beanutils</bundleDef>
                                 <bundleDef>com.google.guava:guava</bundleDef>
+                                <bundleDef>jakarta.servlet:jakarta.servlet-api</bundleDef>
+                                <bundleDef>org.apache.commons:commons-text</bundleDef>
                                 <bundleDef>io.netty.wso2:netty-all</bundleDef>
                                 <bundleDef>libthrift.wso2:libthrift</bundleDef>
                                 <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.version}</bundleDef>
