@@ -117,6 +117,9 @@
                             org.osgi.service.component.*;version="${imp.package.version.osgi.services}",
                             *;resolution:=optional
                         </Import-Package>
+                        <Provide-Capability>
+                            osgi.service;objectClass=org.wso2.carbon.andes.service.QpidService
+                        </Provide-Capability>
                     </instructions>
                 </configuration>
             </plugin>
