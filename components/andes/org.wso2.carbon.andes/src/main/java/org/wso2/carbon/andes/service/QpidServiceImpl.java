@@ -129,6 +129,9 @@ public class QpidServiceImpl implements QpidService {
             andesConfigHostAddress = String.valueOf(conf);
         }
         if (StringUtils.isNotBlank(andesConfigHostAddress)) {
+            if (log.isDebugEnabled()) {
+                log.debug("AMQP bind address configured as: " + andesConfigHostAddress);
+            }
             try {
                 hostname = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
             } catch (UnknownHostException e) {
