@@ -121,8 +121,13 @@ public class QpidServiceImpl implements QpidService {
      */
     public void loadConfigurations() {
         // Get the hostname that Carbon runs on
-        String andesConfigHostAddress =
-                String.valueOf(AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS));
+        String andesConfigHostAddress;
+        Object conf = AndesConfigurationManager.readValue(AndesConfiguration.TRANSPORTS_AMQP_BIND_ADDRESS);
+        if  (conf instanceof String) {
+            andesConfigHostAddress = (String)conf;
+        } else {
+            andesConfigHostAddress = String.valueOf(conf);
+        }
         if (StringUtils.isNotBlank(andesConfigHostAddress)) {
             try {
                 hostname = InetAddress.getByName(andesConfigHostAddress).getHostAddress();
