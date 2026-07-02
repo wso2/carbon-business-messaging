@@ -124,7 +124,7 @@
 		    <artifactId>javassist</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.antlr</groupId>
+		    <groupId>org.wso2.orbit.org.antlr</groupId>
 		    <artifactId>antlr4-runtime</artifactId>
 		</dependency>
 		<dependency>
@@ -332,7 +332,7 @@
 								<bundleDef>com.esotericsoftware:reflectasm:${reflectasm.version}</bundleDef>
 								<bundleDef>org.ow2.asm:asm:${asm.version}</bundleDef>
 								<bundleDef>org.javassist:javassist:${javassist.version}</bundleDef>
-								<bundleDef>org.antlr:antlr4-runtime:${antlr4-runtime.version}</bundleDef>
+								<bundleDef>org.wso2.orbit.org.antlr:antlr4-runtime:${antlr4-runtime.version}</bundleDef>
 								<bundleDef>org.xerial:sqlite-jdbc:${sqlite-jdbc.version}</bundleDef>
 								<bundleDef>com.google.protobuf:protobuf-java:${protobuf-java.version}</bundleDef>
                                 <bundleDef>commons-cli.wso2:commons-cli</bundleDef>

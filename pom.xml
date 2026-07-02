@@ -480,7 +480,7 @@
 			    <version>${javassist.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.antlr</groupId>
+			    <groupId>org.wso2.orbit.org.antlr</groupId>
 			    <artifactId>antlr4-runtime</artifactId>
 			    <version>${antlr4-runtime.version}</version>
 			</dependency>
@@ -824,7 +824,7 @@
 		<reflectasm.version>1.11.9</reflectasm.version>
 		<asm.version>5.2</asm.version>
 		<javassist.version>3.18.1-GA</javassist.version>
-		<antlr4-runtime.version>4.5.1</antlr4-runtime.version>
+		<antlr4-runtime.version>4.7.2.wso2v1</antlr4-runtime.version>
 		<sqlite-jdbc.version>3.44.1.0</sqlite-jdbc.version>
 		<protobuf-java.version>3.25.5</protobuf-java.version>
         <org.apache.commons.pool.version>2.4.2</org.apache.commons.pool.version>
